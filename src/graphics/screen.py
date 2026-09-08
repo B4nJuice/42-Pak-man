@@ -41,7 +41,9 @@ class Screen:
         if self.grid[position.y][position.x].default:
             operation = OperationEnum.SET
 
-        new_color: Color = color.apply_operation(color, operation)
+        new_color: Color = self.grid[position.y][position.x].apply_operation(
+                color, operation
+            )
         self.grid[position.y][position.x] = new_color
 
         self.pygame_screen.set_at((position.x, position.y), new_color.to_tuple)
@@ -67,7 +69,7 @@ class Screen:
         n = np.max(np.abs(end - start)) + 1
         coords = np.linspace(start, end, n)
 
-        for coord in np.round(coords).astype(int):
+        for coord in np.floor(coords).astype(int):
             self.put_pixel(Position(*coord), color, operation, skip_default)
         
         if thickness > 1:
@@ -82,27 +84,54 @@ class Screen:
 
             for i in range(-thickness, thickness + 1):
                 if thickness == 0:
-                    return
+                    continue
                 offset = np.round(perp * i).astype(int)
 
-                self.put_line(
-                    start_position.copy_and_shift(*offset),
-                    end_position.copy_and_shift(*offset),
-                    color,
-                    operation=operation,
-                    skip_default=skip_default
-                )
+                start_offset = np.array([0, 0])
+                end_offset = np.array(offset)
 
-                if abs(offset[0]) == abs(offset[1]):
-                    offset[0] = offset[0] - 1
+                n = np.max(np.abs(end_offset - start_offset)) + 1
+                offsets = np.linspace(start_offset, end_offset, n)
 
+                for of in np.floor(offsets).astype(int):
                     self.put_line(
-                        start_position.copy_and_shift(*offset),
-                        end_position.copy_and_shift(*offset),
+                        start_position.copy_and_shift(*of),
+                        end_position.copy_and_shift(*of),
                         color,
                         operation=operation,
                         skip_default=skip_default
                     )
+
+                    if abs(of[0]) == abs(of[1]):
+                        of[0] = of[0] - 1
+
+                        self.put_line(
+                            start_position.copy_and_shift(*of),
+                            end_position.copy_and_shift(*of),
+                            color,
+                            operation=operation,
+                            skip_default=skip_default
+                        )
+
+    def put_polygon(
+                self,
+                positions: list[Position],
+                color: Color,
+                operation: OperationEnum = OperationEnum.SET,
+                thickness: int = 1,
+                skip_default: bool = True,
+            ) -> None:
+        positions.append(positions[0])
+
+        for i in range(len(positions) - 1):
+            self.put_line(
+                positions[i],
+                positions[i + 1],
+                color,
+                operation=operation,
+                thickness=thickness,
+                skip_default=skip_default
+                )
 
     def add_screen(
                 self,
