@@ -1,29 +1,109 @@
 from src.graphics import Position, Color, OperationEnum
 
+from pygame import Surface
+import numpy as np
+
+
 class Screen:
     def __init__(
                 self,
                 width: int,
-                height: int
+                height: int,
+                pygame_screen: Surface | None = None
             ) -> None:
         self.width: int = width
         self.height: int = height
 
         self.grid: list[list[Color]] = [
                 [
-                    Color.default for _ in range(width)
+                    Color.default() for _ in range(width)
                 ] for _ in range(height)
             ]
+
+        self.pygame_screen: Surface | None = pygame_screen
 
     def put_pixel(
                 self,
                 position: Position,
                 color: Color,
-                operation: OperationEnum
+                operation: OperationEnum = OperationEnum.SET,
+                skip_default: bool = True
             ) -> None:
-        self.grid[position.y][position.x] =\
-            Color.apply_operation(color, OperationEnum)
-    
+
+        if position.x < 0 or position.x >= self.width or\
+            position.y < 0 or position.y >= self.height:
+            # TODO: LOG WARNING
+            return
+
+        if color.default:
+            return
+
+        if self.grid[position.y][position.x].default:
+            operation = OperationEnum.SET
+
+        new_color: Color = color.apply_operation(color, operation)
+        self.grid[position.y][position.x] = new_color
+
+        self.pygame_screen.set_at((position.x, position.y), new_color.to_tuple)
+
+    def put_line(
+                self,
+                start_position: Position,
+                end_position: Position,
+                color: Color,
+                thickness: int = 1,
+                operation: OperationEnum = OperationEnum.SET,
+                skip_default: bool = True
+            ) -> None:
+
+        if thickness <= 0:
+            return
+
+        thickness = (thickness + thickness % 2) // 2
+
+        start = np.array(start_position.to_list)
+        end = np.array(end_position.to_list)
+
+        n = np.max(np.abs(end - start)) + 1
+        coords = np.linspace(start, end, n)
+
+        for coord in np.round(coords).astype(int):
+            self.put_pixel(Position(*coord), color, operation, skip_default)
+        
+        if thickness > 1:
+            vector = end - start
+
+            perp = np.array([
+                -vector[1],
+                vector[0]
+            ], dtype=float)
+
+            perp /= np.linalg.norm(perp)
+
+            for i in range(-thickness, thickness + 1):
+                if thickness == 0:
+                    return
+                offset = np.round(perp * i).astype(int)
+
+                self.put_line(
+                    start_position.copy_and_shift(*offset),
+                    end_position.copy_and_shift(*offset),
+                    color,
+                    operation=operation,
+                    skip_default=skip_default
+                )
+
+                if abs(offset[0]) == abs(offset[1]):
+                    offset[0] = offset[0] - 1
+
+                    self.put_line(
+                        start_position.copy_and_shift(*offset),
+                        end_position.copy_and_shift(*offset),
+                        color,
+                        operation=operation,
+                        skip_default=skip_default
+                    )
+
     def add_screen(
                 self,
                 screen: 'Screen',

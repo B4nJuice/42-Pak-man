@@ -44,14 +44,17 @@ class Color:
         return (min(_max, max(_min, value)))
 
     @classmethod
-    @property
     def default(cls) -> 'Color':
         return Color(0, 0, 0, 255, True)
+
+    @property
+    def to_tuple(self) -> tuple[int, int, int, int]:
+        return (self.r, self.g, self.b, self.a)
 
     def apply_operation(
                 self,
                 color: 'Color',
                 operation: OperationEnum,
-                *kwargs: Any
+                **kwargs: Any
             ) -> 'Color':
-        return operation.value()(self, color, **kwargs)
+        return Color(*operation(self, color, **kwargs))

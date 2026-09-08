@@ -5,6 +5,7 @@ description = "42 project pak-man"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "numpy>=2.5.3",
     "pygame-ce>=2.5.8",
 ]
 
