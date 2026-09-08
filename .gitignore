@@ -1,0 +1,21 @@
+# Project files
+maps.tar.gz
+output.txt
+
+# Virtual environment
+.venv
+
+# Python cache files
+__pycache__
+
+# Mypy cache files
+.mypy_cache
+
+# VS Code settings
+.vscode
+
+# MacOS system files
+.DS_Store
+
+# for me
+.notes
