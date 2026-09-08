@@ -25,13 +25,15 @@ class Color:
                 r: int,
                 g: int,
                 b: int,
-                a: int = 255
+                a: int = 255,
+                default: bool = False
             ) -> None:
         self.r: int = self._min_max(r)
         self.g: int = self._min_max(g)
         self.b: int = self._min_max(b)
 
         self.a: int = self._min_max(a)
+        self.default: bool = default
 
     @staticmethod
     def _min_max(
@@ -44,7 +46,7 @@ class Color:
     @classmethod
     @property
     def default(cls) -> 'Color':
-        return Color(0, 0, 0, 255)
+        return Color(0, 0, 0, 255, True)
 
     def apply_operation(
                 self,
