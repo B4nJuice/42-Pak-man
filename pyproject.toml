@@ -5,9 +5,13 @@ description = "42 project pak-man"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "mazegenerator",
     "pygame-ce>=2.5.8",
 ]
 
 [tool.uv]
 cache-dir = "/tmp/.uv_cache"
 link-mode = "symlink"
+
+[tool.uv.sources]
+mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
