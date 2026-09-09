@@ -33,7 +33,7 @@ class Color:
         self.b: int = self._min_max(b)
 
         self.a: int = self._min_max(a)
-        self.default: bool = default
+        self.is_default: bool = default
 
     @staticmethod
     def _min_max(

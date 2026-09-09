@@ -18,13 +18,13 @@ class Layer:
         self.height: int = height
         self.operation: OperationEnum = operation
 
-        self.grid: list[list[Color]] = [
-                [
-                    Color.default() for _ in range(width)
-                ] for _ in range(height)
-            ]
+        self.grid: list[list[Color]] = np.full(
+                (self.height, self.width), Color.default(), dtype=object
+            )
 
-        self.dirty_grid: list[list[bool]] = np.zeros((800, 600), dtype=bool)
+        self.dirty_grid: list[list[bool]] = np.zeros(
+                (self.height, self.width), dtype=bool
+            )
 
         self.meshes: list[Mesh] = []
 
@@ -37,9 +37,9 @@ class Layer:
             for x in range(min(self.width, layer.width)):
                 pos: Position = Position(x, y)
                 if skip_default:
-                    if layer.grid[y][x].default:
+                    if layer.grid[y][x].is_default:
                         continue
-                    if self.grid[y][x].default:
+                    if self.grid[y][x].is_default:
                         self.put_pixel(
                                 pos,
                                 layer.grid[y][x],
@@ -167,10 +167,10 @@ class Layer:
             # TODO: LOG WARNING
             return
 
-        if color.default:
+        if color.is_default:
             return
 
-        if self.grid[position.y][position.x].default:
+        if self.grid[position.y][position.x].is_default:
             operation = OperationEnum.SET
 
         new_color: Color = self.grid[position.y][position.x].apply_operation(
