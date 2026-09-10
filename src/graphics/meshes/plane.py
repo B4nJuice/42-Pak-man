@@ -1,12 +1,11 @@
 from src.graphics import Mesh, Position, Color, OperationEnum
 
-class Polygon(Mesh):
+class Plane(Mesh):
     def __init__(
                 self,
                 color: Color,
-                positions: list[Position],
+                positions: tuple[Position],
                 operation: OperationEnum = OperationEnum.SET,
-                thickness: int = 1,
                 is_dynamic: bool = False
             ) -> None:
         super().__init__(
@@ -15,5 +14,4 @@ class Polygon(Mesh):
                 is_dynamic
             )
 
-        self.positions: list[Position] = positions
-        self.thickness: int = thickness
+        self.positions: tuple[Position] = positions

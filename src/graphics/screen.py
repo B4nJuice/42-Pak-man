@@ -1,5 +1,5 @@
 from src.graphics import Position, Color, OperationEnum, Mesh
-from src.graphics.meshes import Line, Polygon
+from src.graphics.meshes import Line, Polygon, Plane
 
 from functools import singledispatchmethod
 from pygame import Surface
@@ -52,16 +52,22 @@ class Layer:
     def put_mesh(
                 self,
                 mesh: Mesh,
-                skip_default: bool = True
+                skip_default: bool = True,
+                positions: set[tuple[int, int]] | None = None,
+                record_pixels: bool = True,
+                collected_pixels: set[tuple[int, int]] | None = None
             ) -> None:
-        print(mesh)
+        ...
 
     @put_mesh.register(Line)
     def put_line(
                 self,
                 line: Line,
                 skip_default: bool = True,
-                source_mesh: Mesh | None = None
+                source_mesh: Mesh | None = None,
+                positions: set[tuple[int, int]] | None = None,
+                record_pixels: bool = True,
+                collected_pixels: set[tuple[int, int]] | None = None
             ) -> None:
 
         if line.thickness <= 0:
@@ -76,15 +82,19 @@ class Layer:
         coords = np.linspace(start, end, n)
 
         for coord in np.floor(coords).astype(int):
-            if source_mesh:
-                source_mesh.clean_pixel.append(coord)
-            else:
-                line.clean_pixel.append(coord)
+            if record_pixels:
+                if positions is None or tuple(coord) in positions:
+                    if source_mesh:
+                        source_mesh.clean_pixel.append(coord.tolist())
+                    else:
+                        line.clean_pixel.append(coord.tolist())
             self.put_pixel(
                     Position(*coord),
                     line.color,
                     line.operation,
-                    skip_default
+                    skip_default,
+                    positions,
+                    collected_pixels
                 )
 
         if thickness > 1:
@@ -117,7 +127,10 @@ class Layer:
                             operation=line.operation
                         ),
                         skip_default=skip_default,
-                        source_mesh=source_mesh or line
+                        source_mesh=source_mesh or line,
+                        positions=positions,
+                        record_pixels=record_pixels,
+                        collected_pixels=collected_pixels
                     )
 
                     if abs(of[0]) == abs(of[1]):
@@ -131,7 +144,10 @@ class Layer:
                                 operation=line.operation
                             ),
                             skip_default=skip_default,
-                            source_mesh=source_mesh or line
+                            source_mesh=source_mesh or line,
+                            positions=positions,
+                            record_pixels=record_pixels,
+                            collected_pixels=collected_pixels
                         )
 
     @put_mesh.register(Polygon)
@@ -139,32 +155,133 @@ class Layer:
                 self,
                 polygon: Polygon,
                 skip_default: bool = True,
+                positions: set[tuple[int, int]] | None = None,
+                record_pixels: bool = True,
+                collected_pixels: set[tuple[int, int]] | None = None
             ) -> None:
-        polygon.positions.append(polygon.positions[0])
+        polygon_positions = polygon.positions + [polygon.positions[0]]
 
-        for i in range(len(polygon.positions) - 1):
+        for i in range(len(polygon_positions) - 1):
             self.put_line(
                     Line(
                         polygon.color,
-                        polygon.positions[i],
-                        polygon.positions[i + 1],
+                        polygon_positions[i],
+                        polygon_positions[i + 1],
                         operation=polygon.operation,
                         thickness=polygon.thickness,
                     ),
-                    source_mesh=polygon
+                    source_mesh=polygon,
+                    positions=positions,
+                    record_pixels=record_pixels,
+                    collected_pixels=collected_pixels
                 )
+
+    @put_mesh.register(Plane)
+    def put_plane(
+                self,
+                plane: Plane,
+                skip_default: bool = True,
+                positions: set[tuple[int, int]] | None = None,
+                record_pixels: bool = True,
+                collected_pixels: set[tuple[int, int]] | None = None
+            ) -> None:
+        a, b = plane.positions
+
+        x_start = max(0, min(a.x, b.x))
+        x_end = min(self.width, max(a.x, b.x))
+        y_start = max(0, min(a.y, b.y))
+        y_end = min(self.height, max(a.y, b.y))
+
+        if x_start >= x_end or y_start >= y_end:
+            return
+
+        x_coords, y_coords = np.meshgrid(
+            np.arange(x_start, x_end),
+            np.arange(y_start, y_end),
+            indexing='xy'
+        )
+        self.put_pixels(
+            x_coords.ravel(),
+            y_coords.ravel(),
+            plane.color,
+            plane.operation,
+            skip_default=skip_default,
+            positions=positions,
+            collected_pixels=collected_pixels,
+            record_pixels=record_pixels,
+            source_mesh=plane
+        )
+
+    def put_pixels(
+                self,
+                x_coords: np.ndarray,
+                y_coords: np.ndarray,
+                color: Color,
+                operation: OperationEnum = OperationEnum.SET,
+                skip_default: bool = True,
+                positions: set[tuple[int, int]] | None = None,
+                collected_pixels: set[tuple[int, int]] | None = None,
+                record_pixels: bool = True,
+                source_mesh: Mesh | None = None
+            ) -> None:
+        if x_coords.size == 0 or color.is_default:
+            return
+
+        valid = (
+            (x_coords >= 0) & (x_coords < self.width) &
+            (y_coords >= 0) & (y_coords < self.height)
+        )
+
+        if positions is not None:
+            valid &= np.array([
+                (int(x), int(y)) in positions
+                for x, y in zip(x_coords, y_coords)
+            ])
+
+        x_coords = x_coords[valid].astype(int)
+        y_coords = y_coords[valid].astype(int)
+
+        if record_pixels and source_mesh is not None:
+            source_mesh.clean_pixel.extend(
+                zip(x_coords.tolist(), y_coords.tolist())
+            )
+
+        if collected_pixels is not None:
+            collected_pixels.update(zip(x_coords.tolist(), y_coords.tolist()))
+            return
+
+        if operation == OperationEnum.SET:
+            self.grid[y_coords, x_coords] = color
+            return
+
+        for x, y in zip(x_coords.tolist(), y_coords.tolist()):
+            self.put_pixel(
+                Position(x, y),
+                color,
+                operation,
+                skip_default=skip_default
+            )
 
     def put_pixel(
                 self,
                 position: Position,
                 color: Color,
                 operation: OperationEnum = OperationEnum.SET,
-                skip_default: bool = True
+                skip_default: bool = True,
+                positions: set[tuple[int, int]] | None = None,
+                collected_pixels: set[tuple[int, int]] | None = None
             ) -> None:
 
         if position.x < 0 or position.x >= self.width or\
             position.y < 0 or position.y >= self.height:
             # TODO: LOG WARNING
+            return
+
+        if positions is not None and (position.x, position.y) not in positions:
+            return
+
+        if collected_pixels is not None:
+            collected_pixels.add((int(position.x), int(position.y)))
             return
 
         if color.is_default:
@@ -182,10 +299,71 @@ class Layer:
     def refresh_grid(
                 self
             ) -> None:
+        self.grid[:, :] = Color.default()
         for mesh in self.meshes:
+            mesh.clean_pixel.clear()
             self.put_mesh(
                     mesh
                 )
+
+    def calculate_mesh_pixels(
+                self,
+                mesh: Mesh,
+                positions: list[list[int]] | None = None
+            ) -> list[list[int]]:
+        collected_pixels: set[tuple[int, int]] = set()
+        target_positions = None
+
+        if positions is not None:
+            target_positions = {
+                (x, y)
+                for x, y in positions
+                if 0 <= x < self.width and 0 <= y < self.height
+            }
+
+        self.put_mesh(
+            mesh,
+            positions=target_positions,
+            record_pixels=False,
+            collected_pixels=collected_pixels
+        )
+
+        return [[x, y] for x, y in collected_pixels]
+
+    def refresh_at(
+                self,
+                positions: list[list[int]]
+            ) -> None:
+        target_positions = {
+            (x, y)
+            for x, y in positions
+            if 0 <= x < self.width and 0 <= y < self.height
+        }
+
+        for x, y in target_positions:
+            self.grid[y][x] = Color.default()
+
+        for mesh in self.meshes:
+            mesh.clean_pixel = [
+                coord for coord in mesh.clean_pixel
+                if tuple(coord) not in target_positions
+            ]
+            self.put_mesh(
+                mesh,
+                positions=target_positions,
+                record_pixels=True
+            )
+
+    def refresh_mesh(
+                self,
+                mesh: Mesh
+            ) -> None:
+        old_pixels = [coord[:] for coord in mesh.clean_pixel]
+        new_pixels = self.calculate_mesh_pixels(mesh)
+        to_refresh = old_pixels + new_pixels
+        self.refresh_at(to_refresh)
+        for x, y in to_refresh:
+            self.dirty_grid[y][x] = True
 
 
 class Screen:
@@ -247,5 +425,38 @@ class Screen:
             ) -> None:
         for position in positions:
             x, y = position
-            self.pygame_matrix[x][y] =\
-                self.static_mesh_layer.grid[y][x].to_32
+            self.put_pixel(Position(*position), self.static_mesh_layer.grid[y][x])
+            # self.pygame_matrix[x][y] =\
+            #     self.static_mesh_layer.grid[y][x].to_32
+
+    def refresh_at(
+                self,
+                positions: list[list[int]]
+            ) -> None:
+        self.dynamic_mesh_layer.refresh_at(positions)
+
+        for x, y in positions:
+            if x < 0 or x >= self.width or y < 0 or y >= self.height:
+                continue
+
+            static_color = self.static_mesh_layer.grid[y][x]
+            dynamic_color = self.dynamic_mesh_layer.grid[y][x]
+            self.grid.grid[y][x] = static_color
+
+            if not dynamic_color.is_default:
+                self.grid.grid[y][x] = static_color.apply_operation(
+                    dynamic_color,
+                    self.dynamic_mesh_layer.operation
+                )
+
+            self.put_pixel(Position(x, y), self.grid.grid[y][x])
+
+    def refresh_dynamic(
+                self
+            ) -> None:
+        coords = np.argwhere(self.dynamic_mesh_layer.dirty_grid)[:, ::-1]
+        self.clear_at(coords)
+        self.refresh_at(coords)
+        self.dynamic_mesh_layer.dirty_grid = np.zeros(
+                (self.height, self.width), dtype=bool
+            )
