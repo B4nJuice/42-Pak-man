@@ -13,6 +13,9 @@ install:
 debug: install
 	@$(UV_RUN) -B -m pdb -m src $(ARGS)
 
+test:
+	uv run pytest
+
 lint: install
 	$(FLAKE8) src
 	$(MYPY) src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
@@ -28,4 +31,4 @@ clean:
 fclean: clean
 	rm -rf .venv
 
-.PHONY: run clean fclean install lint lint-strict debug
+.PHONY: run clean fclean install lint lint-strict debug test
