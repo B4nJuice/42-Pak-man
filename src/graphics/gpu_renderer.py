@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from functools import singledispatchmethod
 
 import moderngl
 import numpy as np
@@ -185,52 +186,78 @@ class GPURenderer:
             "in_position",
         )
 
-    @staticmethod
-    def _vertices(mesh: Mesh) -> tuple[np.ndarray, int]:
-        if isinstance(mesh, Plane):
-            first, second = mesh.positions
-            vertices = np.array(
-                [
-                    first.x, first.y,
-                    second.x, first.y,
-                    first.x, second.y,
-                    second.x, second.y,
-                ],
-                dtype="f4",
-            )
-            return vertices, moderngl.TRIANGLE_STRIP
-
-        if isinstance(mesh, Line):
-            dx = mesh.end_position.x - mesh.start_position.x
-            dy = mesh.end_position.y - mesh.start_position.y
-            length = max((dx * dx + dy * dy) ** 0.5, 1.0)
-            radius = mesh.thickness * 0.5
-            offset_x = -dy / length * radius
-            offset_y = dx / length * radius
-            vertices = np.array(
-                [
-                    mesh.start_position.x - offset_x,
-                    mesh.start_position.y - offset_y,
-                    mesh.start_position.x + offset_x,
-                    mesh.start_position.y + offset_y,
-                    mesh.end_position.x - offset_x,
-                    mesh.end_position.y - offset_y,
-                    mesh.end_position.x + offset_x,
-                    mesh.end_position.y + offset_y,
-                ],
-                dtype="f4",
-            )
-            return vertices, moderngl.TRIANGLE_STRIP
-
-        if isinstance(mesh, Polygon):
-            positions = mesh.positions + [mesh.positions[0]]
-            vertices = np.array(
-                [coordinate for position in positions for coordinate in (position.x, position.y)],
-                dtype="f4",
-            )
-            return vertices, moderngl.LINE_STRIP
-
+    @singledispatchmethod
+    def _vertices(self, mesh: Mesh) -> tuple[np.ndarray, int]:
         raise TypeError(f"Unsupported mesh type: {type(mesh).__name__}")
+
+    @_vertices.register
+    def _(self, plane: Plane) -> tuple[np.ndarray, int]:
+        first, second = plane.positions
+        vertices = np.array(
+            [
+                first.x, first.y,
+                second.x, first.y,
+                first.x, second.y,
+                second.x, second.y,
+            ],
+            dtype="f4",
+        )
+        return vertices, moderngl.TRIANGLE_STRIP
+
+    @_vertices.register
+    def _(self, line: Line) -> tuple[np.ndarray, int]:
+        return self._thick_segment_vertices(
+            line.start_position.x,
+            line.start_position.y,
+            line.end_position.x,
+            line.end_position.y,
+            line.thickness,
+        )
+
+    @_vertices.register
+    def _(self, polygon: Polygon) -> tuple[np.ndarray, int]:
+        if len(polygon.positions) < 2:
+            return np.empty(0, dtype="f4"), moderngl.TRIANGLES
+
+        positions = polygon.positions + [polygon.positions[0]]
+        segments = []
+        for start, end in zip(positions, positions[1:]):
+            vertices, _ = self._thick_segment_vertices(
+                start.x,
+                start.y,
+                end.x,
+                end.y,
+                polygon.thickness,
+            )
+            first, second, third, fourth = vertices.reshape(4, 2)
+            segments.extend((first, second, third, third, second, fourth))
+
+        return np.asarray(segments, dtype="f4").reshape(-1), moderngl.TRIANGLES
+
+    @staticmethod
+    def _thick_segment_vertices(
+        start_x: float,
+        start_y: float,
+        end_x: float,
+        end_y: float,
+        thickness: int,
+    ) -> tuple[np.ndarray, int]:
+        dx = end_x - start_x
+        dy = end_y - start_y
+        length = max((dx * dx + dy * dy) ** 0.5, 1.0)
+        radius = max(thickness, 1) * 0.5
+        offset_x = -dy / length * radius
+        offset_y = dx / length * radius
+        vertices = np.array(
+            [
+                start_x - offset_x, start_y - offset_y,
+                start_x + offset_x, start_y + offset_y,
+                end_x - offset_x, end_y - offset_y,
+                end_x + offset_x, end_y + offset_y,
+            ],
+            dtype="f4",
+        )
+        return vertices, moderngl.TRIANGLE_STRIP
 
     def _draw_mesh(self, mesh: Mesh, source: moderngl.Texture, target: moderngl.Framebuffer) -> None:
         if mesh.hidden or mesh.color.is_default:

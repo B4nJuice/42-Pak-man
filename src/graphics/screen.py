@@ -164,6 +164,7 @@ class Layer:
             ) -> None:
         polygon_positions = polygon.positions + [polygon.positions[0]]
 
+
         for i in range(len(polygon_positions) - 1):
             self.put_line(
                     Line(

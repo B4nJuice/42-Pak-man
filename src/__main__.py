@@ -7,6 +7,7 @@ import pygame
 
 if __name__ == "__main__":
     pygame.init()
+    # print("ok")
 
     width, height = 800, 600
     pygame_screen = pygame.display.set_mode(
