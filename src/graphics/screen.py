@@ -6,6 +6,8 @@ from pygame import Surface
 import numpy as np
 import pygame 
 
+from .gpu_renderer import GPURenderer
+
 
 class Layer:
     def __init__(
@@ -27,6 +29,7 @@ class Layer:
             )
 
         self.meshes: list[Mesh] = []
+        self.gpu_mode: bool = False
 
     def add_layer(
                 self,
@@ -358,6 +361,10 @@ class Layer:
                 self,
                 mesh: Mesh
             ) -> None:
+        if self.gpu_mode:
+            mesh.dirty = True
+            return
+
         old_pixels = [coord[:] for coord in mesh.clean_pixel]
         new_pixels = self.calculate_mesh_pixels(mesh)
         to_refresh = old_pixels + new_pixels
@@ -391,6 +398,15 @@ class Screen:
         self.pygame_matrix: list[int] = pygame.surfarray.pixels2d(
                 self.pygame_screen
             )
+        self.gpu_renderer: GPURenderer | None = None
+
+        if pygame_screen.get_flags() & pygame.OPENGL:
+            self.gpu_renderer = GPURenderer(
+                self.width,
+                self.height
+            )
+            self.static_mesh_layer.gpu_mode = True
+            self.dynamic_mesh_layer.gpu_mode = True
 
     def add_mesh(
                 self,
@@ -411,6 +427,13 @@ class Screen:
     def init(
                 self
             ) -> None:
+        if self.gpu_renderer is not None:
+            self.gpu_renderer.render(
+                self.static_mesh_layer.meshes,
+                self.dynamic_mesh_layer.meshes
+            )
+            return
+
         self.static_mesh_layer.refresh_grid()
         self.dynamic_mesh_layer.refresh_grid()
         self.grid.add_layer(self.static_mesh_layer)
@@ -454,6 +477,13 @@ class Screen:
     def refresh_dynamic(
                 self
             ) -> None:
+        if self.gpu_renderer is not None:
+            self.gpu_renderer.render(
+                self.static_mesh_layer.meshes,
+                self.dynamic_mesh_layer.meshes
+            )
+            return
+
         coords = np.argwhere(self.dynamic_mesh_layer.dirty_grid)[:, ::-1]
         self.clear_at(coords)
         self.refresh_at(coords)
