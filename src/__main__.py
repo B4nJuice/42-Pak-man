@@ -2,7 +2,7 @@ from .config import ConfigManager
 
 def main():
     # config: ConfigManager = ConfigManager('test.json')
-    ConfigManager('test.jsonc')
+    ConfigManager('config.jsonc')
     print("Hello from pak-man!")
 
 

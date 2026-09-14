@@ -54,6 +54,10 @@ dependencies = [
     { name = "mazegenerator" },
     { name = "pydantic" },
     { name = "pygame-ce" },
+]
+
+[package.dev-dependencies]
+dev = [
     { name = "pytest" },
 ]
 
@@ -62,8 +66,10 @@ requires-dist = [
     { name = "mazegenerator", path = "lib/mazegenerator-2.1.0-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.13.5" },
     { name = "pygame-ce", specifier = ">=2.5.8" },
-    { name = "pytest", specifier = ">=9.1.1" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.1.1" }]
 
 [[package]]
 name = "pluggy"

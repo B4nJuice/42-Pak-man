@@ -7,7 +7,8 @@ import os
 
 class ConfigManager:
     config_path: Path
-    config: ConfigModel
+    _config: ConfigModel
+    _in_comment_block: int
 
     COMMENTS_LINE: list[str] = ['#', '//']
     COMMENTS_BLOCK: list[tuple[str, str]] = [('/*', '*/')]
@@ -22,6 +23,9 @@ class ConfigManager:
         except JSONDecodeError as e:
             raise RuntimeError(f'Failed to parse config: {e}')
 
+    def get_config(self) -> ConfigModel:
+        return self._config
+
     def _set_config_path(self, path: str) -> None:
         self.config_path = Path(path)
         if not self.config_path.is_file():
@@ -33,33 +37,38 @@ class ConfigManager:
                 f'Config file is not readable: {self.config_path}'
             )
 
+    def _init_formater(self) -> None:
+        self._in_comment_block = -1
+
     def _load_config(self) -> None:
+        self._init_formater()
+
         with self.config_path.open('r') as f:
             lines: list[str] = [
-                self._format_line(line)
+                self._format_line(line.strip())
                 for line in f
             ]
-        self.config = ConfigModel.model_validate(
+
+        self._config = ConfigModel.model_validate(
             json.loads(''.join(lines))
         )
 
     def _format_line(self, line: str) -> str:
         formatted_line: list[str] = []
-        in_comment_block: int = -1
         in_string: bool = False
         escaped: bool = False
         idx: int = 0
 
         while idx < len(line):
-            if in_comment_block != -1:
+            if self._in_comment_block != -1:
                 idx, closed = self._consume_comment_block(
                     line,
                     idx,
-                    in_comment_block
+                    self._in_comment_block
                 )
                 if not closed:
                     return ''.join(formatted_line)
-                in_comment_block = -1
+                self._in_comment_block = -1
                 continue
 
             if in_string:
@@ -85,10 +94,11 @@ class ConfigManager:
 
             block_start = self._match_block_comment_start(line, idx)
             if block_start is not None:
-                _, start_token, end_token = block_start
+                block_idx, start_token, end_token = block_start
                 idx += len(start_token)
                 end_idx = line.find(end_token, idx)
                 if end_idx == -1:
+                    self._in_comment_block = block_idx
                     return ''.join(formatted_line)
                 idx = end_idx + len(end_token)
                 continue

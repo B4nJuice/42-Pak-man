@@ -14,7 +14,10 @@ debug: install
 	@$(UV_RUN) -B -m pdb -m src $(ARGS)
 
 test:
-	uv run pytest
+	uv run pytest $(ARGS)
+
+test-verbose:
+	uv run pytest -v $(ARGS)
 
 lint: install
 	$(FLAKE8) src

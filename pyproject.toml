@@ -11,9 +11,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-test = [
-  "pytest>=9.1.1"
+dev = [
+    "pytest>=9.1.1",
 ]
+test = []
 
 [tool.uv]
 cache-dir = "/tmp/.uv_cache"
