@@ -9,10 +9,10 @@ if __name__ == "__main__":
     pygame.init()
     # print("ok")
 
-    width, height = 800, 600
+    width, height = 1920, 1080 
     pygame_screen = pygame.display.set_mode(
-        (width, height),
-        pygame.OPENGL | pygame.DOUBLEBUF
+        (1920, 1080),
+        pygame.OPENGL | pygame.DOUBLEBUF ,
     )
     pygame.display.set_caption("Plane refresh test")
     clock = pygame.time.Clock()
@@ -21,11 +21,12 @@ if __name__ == "__main__":
 
     background = Plane(
         Color(255, 0, 0),
-        (Position(0, 0), Position(width, height))
+        (Position(0, 0), Position(width, height)),
+        is_dynamic=True
     )
 
     poly = Polygon(
-            Color(0, 255, 0, 50),
+            Color(10, 128, 255, 50),
             [
                 Position(80, 100),
                 Position(250, 50),
@@ -39,7 +40,7 @@ if __name__ == "__main__":
                 Position(140, 300),
             ],
             thickness=15,
-            operation=OperationEnum.MULTIPLY,
+            operation=OperationEnum.MAXIMUM,
             is_dynamic=True
         )
 
@@ -53,7 +54,7 @@ if __name__ == "__main__":
         Color(0, 0, 255),
         (Position(450, 300), Position(700, 500)),
         is_dynamic=True,
-        operation=OperationEnum.AVERAGE
+        operation=OperationEnum.ADD
     )
 
     screen.add_mesh(background)
@@ -66,10 +67,13 @@ if __name__ == "__main__":
     running = True
     elapsed = 0
     while running:
+        elapsed += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+        if elapsed%500000:
+            continue
 
         for plane in (plane_one, plane_two):
             plane.color = Color(
@@ -87,22 +91,31 @@ if __name__ == "__main__":
                     random.randrange(y_start + 20, min(height, y_start + 300))
                 )
             )
-            screen.dynamic_mesh_layer.refresh_mesh(plane)
+
+        background.color = Color(
+                random.randrange(256),
+                random.randrange(256),
+                random.randrange(256)
+            )
+
+        poly.color = Color(
+                random.randrange(256),
+                random.randrange(256),
+                random.randrange(256)
+            )
 
         poly.positions = [
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
-                Position(random.randint(0,800), random.randint(0,600)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0,1920), random.randint(0,1080)),
             ]
-        screen.dynamic_mesh_layer.refresh_mesh(poly)
-
         screen.refresh_dynamic()
         pygame.display.flip()
 

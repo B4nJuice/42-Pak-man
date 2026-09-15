@@ -5,18 +5,18 @@ from src.graphics import ColorOperations
 
 
 class OperationEnum(Enum):
-    SET = ColorOperations.set_color
-    ADD = ColorOperations.add
-    SUBTRACT = ColorOperations.subtract
-    MULTIPLY = ColorOperations.multiply
-    DIVIDE = ColorOperations.divide
-    MINIMUM = ColorOperations.minimum
-    MAXIMUM = ColorOperations.maximum
-    AVERAGE = ColorOperations.average
-    SCREEN = ColorOperations.screen
-    DIFFERENCE = ColorOperations.difference
-    INVERT = ColorOperations.invert
-    ALPHA = ColorOperations.alpha
+    SET = 0
+    ADD = 1
+    SUBTRACT = 2
+    MULTIPLY = 3
+    DIVIDE = 4
+    MINIMUM = 5
+    MAXIMUM = 6
+    AVERAGE = 7
+    SCREEN = 8
+    DIFFERENCE = 9
+    INVERT = 10
+    ALPHA = 11
 
 
 class Color:

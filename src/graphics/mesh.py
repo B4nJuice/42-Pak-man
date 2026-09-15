@@ -10,9 +10,5 @@ class Mesh():
             ) -> None:
         self.color: Color = color
         self.operation: OperationEnum = operation
-        self.dirty: bool = True
         self.hidden: bool = False
         self.is_dynamic: bool = is_dynamic
-
-        self.clean_pixel: list[list[int]] = []
-        self.dirty_pixel: list[list[int]] = []

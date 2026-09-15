@@ -114,21 +114,6 @@ void main() {
 }
 """
 
-_OPERATION_IDS = {
-    OperationEnum.SET: 0,
-    OperationEnum.ADD: 1,
-    OperationEnum.SUBTRACT: 2,
-    OperationEnum.MULTIPLY: 3,
-    OperationEnum.DIVIDE: 4,
-    OperationEnum.MINIMUM: 5,
-    OperationEnum.MAXIMUM: 6,
-    OperationEnum.AVERAGE: 7,
-    OperationEnum.SCREEN: 8,
-    OperationEnum.DIFFERENCE: 9,
-    OperationEnum.INVERT: 10,
-    OperationEnum.ALPHA: 11,
-}
-
 
 class GPURenderer:
     def __init__(self, width: int, height: int) -> None:
@@ -272,12 +257,12 @@ class GPURenderer:
         )
         self.mesh_program["screen_size"].value = (self.width, self.height)
         self.mesh_program["mesh_color"].value = (
-            mesh.color.r / 255.0,
-            mesh.color.g / 255.0,
-            mesh.color.b / 255.0,
-            mesh.color.a / 255.0,
+            mesh.color.r / 255,
+            mesh.color.g / 255,
+            mesh.color.b / 255,
+            mesh.color.a / 255,
         )
-        self.mesh_program["operation"].value = _OPERATION_IDS[mesh.operation]
+        self.mesh_program["operation"].value = mesh.operation.value
         source.use(0)
         target.use()
         vao.render(mode=mode)
