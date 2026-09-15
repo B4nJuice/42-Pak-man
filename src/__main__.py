@@ -7,7 +7,6 @@ import pygame
 
 if __name__ == "__main__":
     pygame.init()
-    # print("ok")
 
     width, height = 1920, 1080 
     pygame_screen = pygame.display.set_mode(
@@ -61,7 +60,7 @@ if __name__ == "__main__":
     screen.add_mesh(plane_one)
     screen.add_mesh(plane_two)
     screen.add_mesh(poly)
-    screen.init()
+    screen.refresh()
     pygame.display.flip()
 
     running = True
@@ -116,7 +115,7 @@ if __name__ == "__main__":
                 Position(random.randint(0,1920), random.randint(0,1080)),
                 Position(random.randint(0,1920), random.randint(0,1080)),
             ]
-        screen.refresh_dynamic()
+        screen.refresh()
         pygame.display.flip()
 
     pygame.quit()

@@ -20,12 +20,11 @@ class Screen:
         if not pygame_screen.get_flags() & pygame.OPENGL:
             raise ValueError("Screen requires a pygame OpenGL display")
 
-        self.width = width
-        self.height = height
-        self.pygame_screen = pygame_screen
-        self.gpu_renderer = GPURenderer(width, height)
-        self.static_mesh_layer = MeshLayer()
-        self.dynamic_mesh_layer = MeshLayer()
+        self.width: int = width
+        self.height: int = height
+        self.gpu_renderer: GPURenderer = GPURenderer(width, height)
+        self.static_mesh_layer: MeshLayer = MeshLayer()
+        self.dynamic_mesh_layer: MeshLayer = MeshLayer()
 
     def add_mesh(self, mesh: Mesh) -> None:
         layer = (
@@ -35,13 +34,7 @@ class Screen:
         )
         layer.meshes.append(mesh)
 
-    def init(self) -> None:
-        self.gpu_renderer.render(
-            self.static_mesh_layer.meshes,
-            self.dynamic_mesh_layer.meshes
-        )
-
-    def refresh_dynamic(self) -> None:
+    def refresh(self) -> None:
         self.gpu_renderer.render(
             self.static_mesh_layer.meshes,
             self.dynamic_mesh_layer.meshes

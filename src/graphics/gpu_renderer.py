@@ -244,7 +244,12 @@ class GPURenderer:
         )
         return vertices, moderngl.TRIANGLE_STRIP
 
-    def _draw_mesh(self, mesh: Mesh, source: moderngl.Texture, target: moderngl.Framebuffer) -> None:
+    def _draw_mesh(
+                self,
+                mesh: Mesh,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
         if mesh.hidden or mesh.color.is_default:
             return
 
@@ -269,7 +274,11 @@ class GPURenderer:
         vertex_buffer.release()
         vao.release()
 
-    def render(self, static_meshes: Iterable[Mesh], dynamic_meshes: Iterable[Mesh]) -> None:
+    def render(
+                self,
+                static_meshes: Iterable[Mesh],
+                dynamic_meshes: Iterable[Mesh]
+            ) -> None:
         source_index = 0
         target_index = 1
         self.framebuffers[source_index].clear(0.0, 0.0, 0.0, 0.0)
