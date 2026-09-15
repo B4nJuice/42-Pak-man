@@ -1,5 +1,6 @@
 from json.decoder import JSONDecodeError
 from .config_model import ConfigModel
+from pydantic import ValidationError
 from pathlib import Path
 import json
 import os
@@ -14,17 +15,17 @@ class ConfigManager:
     COMMENTS_BLOCK: list[tuple[str, str]] = [('/*', '*/')]
 
     def __init__(self, config_path: str) -> None:
-        self._set_config_path(config_path)
-
         try:
+            self._set_config_path(config_path)
             self._load_config()
-        except (FileNotFoundError, PermissionError) as e:
-            raise RuntimeError(f'Failed to load config: {e}')
-        except JSONDecodeError as e:
-            raise RuntimeError(f'Failed to parse config: {e}')
+        except (FileNotFoundError, PermissionError, JSONDecodeError):
+            self._config = ConfigModel()
 
     def get_config(self) -> ConfigModel:
         return self._config
+
+    def display_config(self) -> None:
+        print(self._config.model_dump_json(indent=2))
 
     def _set_config_path(self, path: str) -> None:
         self.config_path = Path(path)
@@ -49,9 +50,24 @@ class ConfigManager:
                 for line in f
             ]
 
-        self._config = ConfigModel.model_validate(
-            json.loads(''.join(lines))
-        )
+        raw_data = json.loads(''.join(lines))
+
+        if not isinstance(raw_data, dict):
+            self._config = ConfigModel()
+            return
+
+        validated_data = {}
+        default_instance = ConfigModel()
+
+        for key, value in raw_data.items():
+            if key in ConfigModel.model_fields:
+                try:
+                    test_obj = ConfigModel.model_validate({**default_instance.model_dump(), key: value})
+                    validated_data[key] = getattr(test_obj, key)
+                except ValidationError:
+                    continue
+
+        self._config = ConfigModel(**validated_data)
 
     def _format_line(self, line: str) -> str:
         formatted_line: list[str] = []
