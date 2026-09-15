@@ -1,5 +1,7 @@
 from .config import ConfigManager
-from .core import Game
+
+# from .core import Game
+
 
 def main():
     config: ConfigManager = ConfigManager('config.jsonc')
