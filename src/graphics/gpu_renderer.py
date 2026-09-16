@@ -1,14 +1,10 @@
-from collections.abc import Iterable
 from functools import singledispatchmethod
-
-import moderngl
+from collections.abc import Iterable
 import numpy as np
+import moderngl
 
-from .color import OperationEnum
-from .mesh import Mesh
-from .meshes.line import Line
-from .meshes.plane import Plane
-from .meshes.polygon import Polygon
+from src.graphics import OperationEnum, Mesh
+from src.graphics.meshes import Line, Plane, Polygon, ImageTexture
 
 
 _VERTEX_SHADER = """
@@ -114,6 +110,49 @@ void main() {
 }
 """
 
+_IMAGE_VERTEX_SHADER = """
+#version 330
+
+in vec2 in_position;
+in vec2 in_texcoord;
+
+uniform vec2 screen_size;
+
+out vec2 texture_coordinate;
+
+void main() {
+    vec2 ndc = in_position / screen_size * 2.0 - 1.0;
+
+    gl_Position = vec4(ndc.x, -ndc.y, 0.0, 1.0);
+
+    texture_coordinate = in_texcoord;
+}
+"""
+
+_IMAGE_FRAGMENT_SHADER = """
+#version 330
+
+uniform sampler2D image_texture;
+uniform vec4 mesh_color;
+
+in vec2 texture_coordinate;
+
+out vec4 fragment_color;
+
+void main() {
+    vec4 color = texture(image_texture, texture_coordinate);
+
+    // Permet de conserver la couleur/alpha du Mesh
+    color *= mesh_color;
+
+    if (color.a <= 0.0) {
+        discard;
+    }
+
+    fragment_color = color;
+}
+"""
+
 
 class GPURenderer:
     def __init__(self, width: int, height: int) -> None:
@@ -132,6 +171,10 @@ class GPURenderer:
         self.blit_program = self.context.program(
             vertex_shader=_BLIT_VERTEX_SHADER,
             fragment_shader=_BLIT_FRAGMENT_SHADER,
+        )
+        self.image_program = self.context.program(
+            vertex_shader=_IMAGE_VERTEX_SHADER,
+            fragment_shader=_IMAGE_FRAGMENT_SHADER,
         )
 
         self.copy_quad = self._create_copy_quad()
@@ -219,6 +262,31 @@ class GPURenderer:
 
         return np.asarray(segments, dtype="f4").reshape(-1), moderngl.TRIANGLES
 
+    @_vertices.register
+    def _(self, image: ImageTexture) -> tuple[np.ndarray, int]:
+        width, height = image.image.size
+        x, y = image.position.x, image.position.y
+
+        left: float = x - width / 2
+        right: float = x + width / 2
+        top: float = y - height / 2
+        bottom: float = y + height / 2
+
+        vertices = np.array([
+            left, top, 0, 0,
+            right, top, 1, 0,
+            right, bottom, 1, 1,
+            left, bottom, 0, 1,
+        ], dtype="f4")
+
+        image.texture = self.context.texture(
+            image.image.size,
+            4,
+            image.image.tobytes(),
+        )
+
+        return vertices, moderngl.TRIANGLE_STRIP
+
     @staticmethod
     def _thick_segment_vertices(
         start_x: float,
@@ -242,6 +310,7 @@ class GPURenderer:
             ],
             dtype="f4",
         )
+
         return vertices, moderngl.TRIANGLE_STRIP
 
     def _draw_mesh(
@@ -250,26 +319,55 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.hidden or mesh.color.is_default:
+        if not isinstance(mesh, ImageTexture) and (
+                    mesh.hidden or mesh.color.is_default
+                ):
             return
 
         vertices, mode = self._vertices(mesh)
         vertex_buffer = self.context.buffer(vertices.tobytes())
-        vao = self.context.simple_vertex_array(
-            self.mesh_program,
-            vertex_buffer,
-            "in_position",
-        )
-        self.mesh_program["screen_size"].value = (self.width, self.height)
-        self.mesh_program["mesh_color"].value = (
-            mesh.color.r / 255,
-            mesh.color.g / 255,
-            mesh.color.b / 255,
-            mesh.color.a / 255,
-        )
-        self.mesh_program["operation"].value = mesh.operation.value
-        source.use(0)
+
+        if isinstance(mesh, ImageTexture):
+            program = self.image_program
+
+            vao = self.context.vertex_array(
+                program,
+                [
+                    (
+                        vertex_buffer,
+                        "2f 2f",
+                        "in_position",
+                        "in_texcoord",
+                    ),
+                ],
+            )
+
+            mesh.texture.use(1)
+            program["image_texture"].value = 1
+
+        else:
+            vao = self.context.simple_vertex_array(
+                self.mesh_program,
+                vertex_buffer,
+                "in_position",
+            )
+            self.mesh_program["screen_size"].value = (self.width, self.height)
+            self.mesh_program["mesh_color"].value = (
+                mesh.color.r / 255,
+                mesh.color.g / 255,
+                mesh.color.b / 255,
+                mesh.color.a / 255,
+            )
+            self.mesh_program["operation"].value = mesh.operation.value
+            source.use(0)
         target.use()
+
+        if isinstance(mesh, ImageTexture):
+            program["screen_size"].value = (
+                self.width,
+                self.height,
+            )
+
         vao.render(mode=mode)
         vertex_buffer.release()
         vao.release()

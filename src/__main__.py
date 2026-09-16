@@ -1,5 +1,5 @@
 from .graphics import Screen, Position, Color, OperationEnum
-from src.graphics.meshes import Plane, Polygon
+from src.graphics.meshes import Plane, Polygon, ImageTexture
 
 import random
 import pygame
@@ -7,6 +7,8 @@ import pygame
 
 if __name__ == "__main__":
     pygame.init()
+
+    clock = pygame.time.Clock()
 
     width, height = 1920, 1080 
     pygame_screen = pygame.display.set_mode(
@@ -56,23 +58,25 @@ if __name__ == "__main__":
         operation=OperationEnum.ADD
     )
 
+    image = ImageTexture(
+        "/home/lgirard/Downloads/PulpLogoInvert.png",
+        Position(500, 500),
+        is_dynamic=True,
+    )
+
     screen.add_mesh(background)
     screen.add_mesh(plane_one)
     screen.add_mesh(plane_two)
     screen.add_mesh(poly)
+    screen.add_mesh(image)
     screen.refresh()
     pygame.display.flip()
 
     running = True
-    elapsed = 0
     while running:
-        elapsed += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        if elapsed%500000:
-            continue
 
         for plane in (plane_one, plane_two):
             plane.color = Color(
@@ -117,5 +121,6 @@ if __name__ == "__main__":
             ]
         screen.refresh()
         pygame.display.flip()
+        clock.tick(1)
 
     pygame.quit()
