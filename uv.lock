@@ -310,7 +310,6 @@ dev = [
     { name = "mypy", specifier = ">=2.3.1" },
     { name = "pytest", specifier = ">=9.1.1" },
 ]
-test = []
 
 [[package]]
 name = "pathspec"

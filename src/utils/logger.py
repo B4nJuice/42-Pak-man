@@ -1,6 +1,6 @@
-import datetime
 import os
 import re
+from datetime import UTC, datetime
 
 from pydantic import ValidationError
 
@@ -147,7 +147,7 @@ class Logger:
         Returns:
             str: Formatted time string (HH:MM:SS).
         '''
-        now = datetime.datetime.now()
+        now = datetime.now(UTC).astimezone()
         return now.strftime('%X')
 
     def pydantic_error(self, e: ValidationError, message: str = '') -> None:
