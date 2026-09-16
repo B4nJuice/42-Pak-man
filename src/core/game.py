@@ -1,8 +1,8 @@
-from ..config.config_model import ConfigModel
-from ..utils import Direction
-from ..core import Cell
 from mazegenerator import MazeGenerator
 
+from ..config.config_model import ConfigModel
+from ..core import Cell
+from ..utils import Direction
 
 
 class Game:
@@ -14,7 +14,9 @@ class Game:
         self._generate_level()
 
     def _generate_level(self) -> None:
-        maze = MazeGenerator((self._config.level_width, self._config.level_height), False)
+        maze = MazeGenerator(
+            (self._config.level_width, self._config.level_height), False
+        )
 
         self._level = []
         for y, row in enumerate(maze.maze):
@@ -39,7 +41,12 @@ class Game:
             middle += '│' if row[-1].has_wall(Direction.EAST) else ' '
             print(middle)
 
-        print('└' + '───' * (self._config.level_width) + '─' * (self._config.level_width - 1) + '┘')
+        print(
+            '└'
+            + '───' * (self._config.level_width)
+            + '─' * (self._config.level_width - 1)
+            + '┘'
+        )
 
     def load_level(self, level: list[list[Cell]]) -> None:
         self._level = level

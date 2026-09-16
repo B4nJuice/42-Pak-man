@@ -12,9 +12,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "flake8>=7.3.0",
+    "mypy>=2.3.1",
     "pytest>=9.1.1",
 ]
-test = []
 
 [tool.uv]
 cache-dir = "/tmp/.uv_cache"
@@ -22,3 +23,12 @@ link-mode = "symlink"
 
 [tool.uv.sources]
 mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff]
+line-length = 79

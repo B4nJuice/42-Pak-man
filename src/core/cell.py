@@ -21,7 +21,7 @@ class Cell:
         return self._walls
 
     def has_wall(self, direction: Direction) -> bool:
-        return (self._walls & direction.value) != 0
+        return (self._walls & int(direction.value)) != 0
 
     def __str__(self) -> str:
         n = self.has_wall(Direction.NORTH)
@@ -30,25 +30,22 @@ class Cell:
         w = self.has_wall(Direction.WEST)
 
         chars = {
-            (False, False, False, False): " ",
-            (True,  False, False, False): "╵",
-            (False, True,  False, False): "╴",
-            (False, False, True,  False): "╷",
-            (False, False, False, True ): "╶",
-
-            (True,  True,  False, False): "└",
-            (True,  False, True,  False): "│",
-            (True,  False, False, True ): "┘",
-            (False, True,  True,  False): "┌",
-            (False, True,  False, True ): "─",
-            (False, False, True,  True ): "┐",
-
-            (True, True, True, False): "├",
-            (True, True, False, True): "┴",
-            (True, False, True, True): "┤",
-            (False, True, True, True): "┬",
-
-            (True, True, True, True): "┼",
+            (False, False, False, False): ' ',
+            (True, False, False, False): '╵',
+            (False, True, False, False): '╴',
+            (False, False, True, False): '╷',
+            (False, False, False, True): '╶',
+            (True, True, False, False): '└',
+            (True, False, True, False): '│',
+            (True, False, False, True): '┘',
+            (False, True, True, False): '┌',
+            (False, True, False, True): '─',
+            (False, False, True, True): '┐',
+            (True, True, True, False): '├',
+            (True, True, False, True): '┴',
+            (True, False, True, True): '┤',
+            (False, True, True, True): '┬',
+            (True, True, True, True): '┼',
         }
 
         return chars[(n, e, s, w)]
