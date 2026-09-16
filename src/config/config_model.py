@@ -3,11 +3,16 @@ from pydantic import BaseModel, Field
 
 class ConfigModel(BaseModel):
     highscore_path: str = Field(
-        'data/highscores.json', description='Path to the highscore file'
+        default='data/highscores.json',
+        description='Path to the highscore file'
     )
     level_width: int = Field(
-        20, description='Width of the level', lt=30
+        default=20,
+        lt=30,
+        description='Width of the level'
     )
     level_height: int = Field(
-        20, description='Height of the level'
+        default=20,
+        lt=30,
+        description='Height of the level'
     )
