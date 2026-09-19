@@ -7,6 +7,8 @@ class ImageTexture(Mesh):
                 self,
                 path: str,
                 position: Position,
+                width: int = 0,
+                height: int = 0,
                 operation: OperationEnum = OperationEnum.SET,
                 is_dynamic: bool = False
             ) -> None:
@@ -19,3 +21,6 @@ class ImageTexture(Mesh):
         self.position: Position = position
         self.path: str = path
         self.image: Image = Image.open(self.path).convert("RGBA")
+        self.original_width, self.original_height = self.image.size
+        self.width: int = width or self.original_width
+        self.height: int = height or self.original_height

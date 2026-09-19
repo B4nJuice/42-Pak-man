@@ -142,7 +142,6 @@ out vec4 fragment_color;
 void main() {
     vec4 color = texture(image_texture, texture_coordinate);
 
-    // Permet de conserver la couleur/alpha du Mesh
     color *= mesh_color;
 
     if (color.a <= 0.0) {
@@ -264,19 +263,18 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, image: ImageTexture) -> tuple[np.ndarray, int]:
-        width, height = image.image.size
         x, y = image.position.x, image.position.y
 
-        left: float = x - width / 2
-        right: float = x + width / 2
-        top: float = y - height / 2
-        bottom: float = y + height / 2
+        left: float = x - image.width / 2
+        right: float = x + image.width / 2
+        top: float = y - image.height / 2
+        bottom: float = y + image.height / 2
 
         vertices = np.array([
-            left, top, 0, 0,
-            right, top, 1, 0,
+            left,  top,    0, 0,
+            right, top,    1, 0,
+            left,  bottom, 0, 1,
             right, bottom, 1, 1,
-            left, bottom, 0, 1,
         ], dtype="f4")
 
         image.texture = self.context.texture(
@@ -329,6 +327,7 @@ class GPURenderer:
 
         if isinstance(mesh, ImageTexture):
             program = self.image_program
+            program["mesh_color"].value = (1.0, 1.0, 1.0, 1.0)
 
             vao = self.context.vertex_array(
                 program,

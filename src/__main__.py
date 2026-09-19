@@ -8,11 +8,18 @@ import pygame
 if __name__ == "__main__":
     pygame.init()
 
+    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
+    pygame.display.gl_set_attribute(
+        pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE
+    )
+    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
+
     clock = pygame.time.Clock()
 
-    width, height = 1920, 1080 
+    width, height = 720, 480 
     pygame_screen = pygame.display.set_mode(
-        (1920, 1080),
+        (width, height),
         pygame.OPENGL | pygame.DOUBLEBUF ,
     )
     pygame.display.set_caption("Plane refresh test")
@@ -59,8 +66,10 @@ if __name__ == "__main__":
     )
 
     image = ImageTexture(
-        "/home/lgirard/Downloads/PulpLogoInvert.png",
-        Position(500, 500),
+        "/Users/louis/Downloads/1.jpg",
+        Position(100, 100),
+        width=100,
+        height=200,
         is_dynamic=True,
     )
 
