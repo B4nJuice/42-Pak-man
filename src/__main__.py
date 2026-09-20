@@ -17,14 +17,12 @@ if __name__ == "__main__":
 
     clock = pygame.time.Clock()
 
-    width, height = 720, 480 
+    width, height = 720, 480
     pygame_screen = pygame.display.set_mode(
         (width, height),
-        pygame.OPENGL | pygame.DOUBLEBUF ,
+        pygame.OPENGL | pygame.DOUBLEBUF,
     )
     pygame.display.set_caption("Plane refresh test")
-    clock = pygame.time.Clock()
-
     screen: Screen = Screen(width, height, pygame_screen)
 
     background = Plane(
@@ -66,11 +64,12 @@ if __name__ == "__main__":
     )
 
     image = ImageTexture(
-        "/Users/louis/Downloads/1.jpg",
+        "/Users/louis/Downloads/sservant.jpg",
         Position(100, 100),
         width=100,
         height=200,
         is_dynamic=True,
+        operation=OperationEnum.ADD
     )
 
     screen.add_mesh(background)
@@ -117,17 +116,16 @@ if __name__ == "__main__":
             )
 
         poly.positions = [
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
-                Position(random.randint(0,1920), random.randint(0,1080)),
+                Position(random.randint(0, width), random.randint(0, height))
+                for _ in range(10)
             ]
+
+        image.position = Position(
+            random.randint(image.width // 2, width - image.width // 2),
+            random.randint(image.height // 2, height - image.height // 2),
+        )
+        image.operation = random.choice(list(OperationEnum))
+
         screen.refresh()
         pygame.display.flip()
         clock.tick(1)
