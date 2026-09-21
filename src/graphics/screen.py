@@ -26,6 +26,13 @@ class Screen:
         self.static_mesh_layer: MeshLayer = MeshLayer()
         self.dynamic_mesh_layer: MeshLayer = MeshLayer()
 
+    def add_layer(
+                self,
+                layer: MeshLayer
+            ) -> None:
+        for mesh in layer:
+            self.add_mesh(mesh)
+
     def add_mesh(self, mesh: Mesh) -> None:
         layer = (
             self.dynamic_mesh_layer
