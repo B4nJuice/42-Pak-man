@@ -1,7 +1,7 @@
-from ..utils import Direction
+from ..utils import Direction, Pos, Vec2
 
 
-class Cell:
+class Tile:
     _x: int
     _y: int
     _walls: int
@@ -19,6 +19,12 @@ class Cell:
 
     def get_walls(self) -> int:
         return self._walls
+
+    def get_pos(self) -> Pos:
+        return self._x, self._y
+
+    def get_vec(self) -> Vec2:
+        return float(self._x), float(self._y)
 
     def has_wall(self, direction: Direction) -> bool:
         return (self._walls & int(direction.value)) != 0
