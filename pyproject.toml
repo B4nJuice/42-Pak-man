@@ -6,11 +6,22 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.5.3",
+    "mazegenerator",
+    "pydantic>=2.13.5",
     "pygame-ce>=2.5.8",
     "moderngl>=5.12.0",
     "pillow>=12.3.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+test = []
+
 [tool.uv]
 cache-dir = "/tmp/.uv_cache"
 link-mode = "symlink"
+
+[tool.uv.sources]
+mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
