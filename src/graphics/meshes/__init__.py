@@ -4,8 +4,8 @@ from .plane import Plane
 from .image_texture import ImageTexture
 
 __all__ = [
-    Line,
-    Polygon,
-    Plane,
-    ImageTexture
+    "Line",
+    "Polygon",
+    "Plane",
+    "ImageTexture"
 ]

@@ -30,10 +30,15 @@ class Screen:
                 self,
                 layer: MeshLayer
             ) -> None:
-        for mesh in layer:
+        for mesh in layer.meshes:
             self.add_mesh(mesh)
 
     def add_mesh(self, mesh: Mesh) -> None:
+
+        if hasattr(mesh, "get_layer"):
+            self.add_layer(mesh.get_layer())
+            return
+
         layer = (
             self.dynamic_mesh_layer
             if mesh.is_dynamic
