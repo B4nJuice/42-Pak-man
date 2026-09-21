@@ -24,3 +24,4 @@ class ImageTexture(Mesh):
         self.original_width, self.original_height = self.image.size
         self.width: int = width or self.original_width
         self.height: int = height or self.original_height
+        self.texture = None

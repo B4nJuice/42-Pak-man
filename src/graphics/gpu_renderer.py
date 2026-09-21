@@ -313,11 +313,12 @@ class GPURenderer:
             right, bottom, 1, 1,
         ], dtype="f4")
 
-        image.texture = self.context.texture(
-            image.image.size,
-            4,
-            image.image.tobytes(),
-        )
+        if image.texture is None:
+            image.texture = self.context.texture(
+                image.image.size,
+                4,
+                image.image.tobytes(),
+            )
 
         return vertices, moderngl.TRIANGLE_STRIP
 
@@ -431,3 +432,15 @@ class GPURenderer:
         self.blit_program["source_texture"].value = 0
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
         self.context.finish()
+
+    def release(self) -> None:
+        for framebuffer in self.framebuffers:
+            framebuffer.release()
+        for texture in self.textures:
+            texture.release()
+        self.copy_quad.release()
+        self.screen_quad.release()
+        self.mesh_program.release()
+        self.copy_program.release()
+        self.blit_program.release()
+        self.image_program.release()

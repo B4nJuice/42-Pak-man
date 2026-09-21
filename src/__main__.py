@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     clock = pygame.time.Clock()
 
-    width, height = 720, 480
+    width, height = 1920, 1080
     pygame_screen = pygame.display.set_mode(
         (width, height),
         pygame.OPENGL | pygame.DOUBLEBUF,
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     )
 
     image = ImageTexture(
-        "/Users/louis/Downloads/sservant.jpg",
+        "/home/lgirard/Downloads/PulpLogoInvert.png",
         Position(100, 100),
         width=100,
         height=200,
@@ -120,6 +120,8 @@ if __name__ == "__main__":
                 for _ in range(10)
             ]
 
+        image.width = random.randint(100, width)
+        image.height = random.randint(100, height)
         image.position = Position(
             random.randint(image.width // 2, width - image.width // 2),
             random.randint(image.height // 2, height - image.height // 2),
@@ -128,6 +130,7 @@ if __name__ == "__main__":
 
         screen.refresh()
         pygame.display.flip()
-        clock.tick(1)
+        clock.tick(60)
 
+    screen.release()
     pygame.quit()

@@ -39,3 +39,12 @@ class Screen:
             self.static_mesh_layer.meshes,
             self.dynamic_mesh_layer.meshes
         )
+
+    def release(self) -> None:
+        for layer in (self.static_mesh_layer, self.dynamic_mesh_layer):
+            for mesh in layer.meshes:
+                texture = getattr(mesh, "texture", None)
+                if texture is not None:
+                    texture.release()
+                    mesh.texture = None
+        self.gpu_renderer.release()
