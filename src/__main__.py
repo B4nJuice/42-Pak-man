@@ -1,5 +1,5 @@
 from .graphics import Screen, Position, Color, OperationEnum
-from src.graphics.meshes import Plane, Polygon, ImageTexture
+from src.graphics.meshes import Plane, Polygon, ImageTexture, Circle
 from src.graphics.super_meshes import Rectangle
 
 import random
@@ -53,9 +53,29 @@ if __name__ == "__main__":
         15
     )
 
+    circle = Circle(
+        Color(255, 255, 255),
+        Position(500, 500),
+        30,
+        thickness=5,
+        filled=False,
+        is_dynamic=True
+    )
+
+    circle2 = Circle(
+        Color(255, 255, 0),
+        Position(600, 500),
+        20,
+        thickness=5,
+        filled=True,
+        is_dynamic=True
+    )
+
     screen.add_mesh(background)
     screen.add_mesh(game)
     screen.add_mesh(stats)
+    screen.add_mesh(circle)
+    screen.add_mesh(circle2)
     screen.refresh()
     pygame.display.flip()
 

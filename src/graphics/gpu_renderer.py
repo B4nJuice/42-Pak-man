@@ -4,7 +4,7 @@ import numpy as np
 import moderngl
 
 from src.graphics import OperationEnum, Mesh
-from src.graphics.meshes import Line, Plane, Polygon, ImageTexture
+from src.graphics.meshes import Line, Plane, Polygon, ImageTexture, Circle
 
 
 _VERTEX_SHADER = """
@@ -188,6 +188,58 @@ void main() {
 }
 """
 
+_CIRCLE_VERTEX_SHADER = """
+#version 330
+
+in vec2 in_position;
+
+uniform vec2 screen_size;
+
+void main() {
+    vec2 ndc = in_position / screen_size * 2.0 - 1.0;
+
+    ndc.y = -ndc.y;
+
+    gl_Position = vec4(ndc, 0.0, 1.0);
+}
+"""
+
+_CIRCLE_FRAGMENT_SHADER = """
+#version 330
+
+uniform vec4 color;
+uniform vec2 center;
+uniform float radius;
+uniform float thickness;
+uniform bool filled;
+uniform int height;
+
+out vec4 frag_color;
+
+void main() {
+    vec2 pos = gl_FragCoord.xy;
+
+    pos.y = height - pos.y;
+
+    float distance = length(pos - center) + thickness;
+
+    if (filled) {
+        if (distance > radius) {
+            discard;
+        }
+    } else {
+        float border_distance = abs(distance - radius);
+
+        if (border_distance > thickness / 2.0) {
+            discard;
+        }
+    }
+
+    frag_color = color;
+}
+
+"""
+
 
 class GPURenderer:
     def __init__(self, width: int, height: int) -> None:
@@ -210,6 +262,10 @@ class GPURenderer:
         self.image_program = self.context.program(
             vertex_shader=_IMAGE_VERTEX_SHADER,
             fragment_shader=_IMAGE_FRAGMENT_SHADER,
+        )
+        self.circle_program = self.context.program(
+            vertex_shader=_CIRCLE_VERTEX_SHADER,
+            fragment_shader=_CIRCLE_FRAGMENT_SHADER,
         )
 
         self.copy_quad = self._create_copy_quad()
@@ -322,6 +378,21 @@ class GPURenderer:
 
         return vertices, moderngl.TRIANGLE_STRIP
 
+    @_vertices.register
+    def _(self, circle: Circle) -> tuple[np.ndarray, int]:
+        x, y = circle.position.x, circle.position.y
+        radius = circle.radius
+        vertices = np.array(
+            [
+                x - radius, y - radius,
+                x + radius, y - radius,
+                x - radius, y + radius,
+                x + radius, y + radius,
+            ],
+            dtype="f4",
+        )
+        return vertices, moderngl.TRIANGLE_STRIP
+
     @staticmethod
     def _thick_segment_vertices(
         start_x: float,
@@ -348,62 +419,110 @@ class GPURenderer:
 
         return vertices, moderngl.TRIANGLE_STRIP
 
+    @singledispatchmethod
     def _draw_mesh(
                 self,
                 mesh: Mesh,
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if not isinstance(mesh, ImageTexture) and (
-                    mesh.hidden or mesh.color.is_default
-                ):
+        raise TypeError(f"Unsupported mesh type: {type(mesh).__name__}")
+
+    @_draw_mesh.register
+    def _(
+                self,
+                mesh: Mesh,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
+        if mesh.hidden or mesh.color.is_default:
             return
 
         vertices, mode = self._vertices(mesh)
         vertex_buffer = self.context.buffer(vertices.tobytes())
 
-        if isinstance(mesh, ImageTexture):
-            program = self.image_program
-
-            vao = self.context.vertex_array(
-                program,
-                [
-                    (
-                        vertex_buffer,
-                        "2f 2f",
-                        "in_position",
-                        "in_texcoord",
-                    ),
-                ],
-            )
-
-            mesh.texture.use(1)
-            program["image_texture"].value = 1
-            program["operation"].value = mesh.operation.value
-
-        else:
-            vao = self.context.simple_vertex_array(
-                self.mesh_program,
-                vertex_buffer,
-                "in_position",
-            )
-            self.mesh_program["screen_size"].value = (self.width, self.height)
-            self.mesh_program["mesh_color"].value = (
-                mesh.color.r / 255,
-                mesh.color.g / 255,
-                mesh.color.b / 255,
-                mesh.color.a / 255,
-            )
-            self.mesh_program["operation"].value = mesh.operation.value
-            source.use(0)
+        vao = self.context.simple_vertex_array(
+            self.mesh_program,
+            vertex_buffer,
+            "in_position",
+        )
+        self.mesh_program["screen_size"].value = (self.width, self.height)
+        self.mesh_program["mesh_color"].value = (
+            mesh.color.r / 255,
+            mesh.color.g / 255,
+            mesh.color.b / 255,
+            mesh.color.a / 255,
+        )
+        self.mesh_program["operation"].value = mesh.operation.value
+        source.use(0)
         target.use()
 
-        if isinstance(mesh, ImageTexture):
-            program["screen_size"].value = (
-                self.width,
-                self.height,
-            )
+        vao.render(mode=mode)
+        vertex_buffer.release()
+        vao.release()
 
+    @_draw_mesh.register
+    def _(
+                self,
+                mesh: Circle,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
+        if mesh.hidden or mesh.color.is_default:
+            return
+
+        vertices, mode = self._vertices(mesh)
+        vertex_buffer = self.context.buffer(vertices.tobytes())
+        vao = self.context.simple_vertex_array(
+            self.circle_program,
+            vertex_buffer,
+            "in_position",
+        )
+        self.circle_program["height"].value = self.height
+        self.circle_program["screen_size"].value = (self.width, self.height)
+        self.circle_program["color"].value = (
+            mesh.color.r / 255,
+            mesh.color.g / 255,
+            mesh.color.b / 255,
+            mesh.color.a / 255,
+        )
+        self.circle_program["center"].value = (
+            mesh.position.x,
+            mesh.position.y,
+        )
+        self.circle_program["radius"].value = mesh.radius
+        self.circle_program["thickness"].value = mesh.thickness
+        self.circle_program["filled"].value = mesh.filled
+        target.use()
+        vao.render(mode=mode)
+        vertex_buffer.release()
+        vao.release()
+
+    @_draw_mesh.register
+    def _(
+                self,
+                mesh: ImageTexture,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
+        vertices, mode = self._vertices(mesh)
+        vertex_buffer = self.context.buffer(vertices.tobytes())
+        vao = self.context.vertex_array(
+            self.image_program,
+            [
+                (
+                    vertex_buffer,
+                    "2f 2f",
+                    "in_position",
+                    "in_texcoord",
+                ),
+            ],
+        )
+        mesh.texture.use(1)
+        self.image_program["image_texture"].value = 1
+        self.image_program["operation"].value = mesh.operation.value
+        self.image_program["screen_size"].value = (self.width, self.height)
+        target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
         vao.release()
