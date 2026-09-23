@@ -12,10 +12,14 @@ class Displayable(ABC):
                 **kwargs
             ) -> None:
         super().__init__(*args, **kwargs)
+        self.init_mesh()
 
     @abstractmethod
-    def get_mesh(self) -> Mesh:
+    def init_mesh(self) -> None:
         pass
+
+    def get_mesh(self) -> Mesh:
+        return self._mesh
 
     @abstractmethod
     def update_mesh(self) -> None:
