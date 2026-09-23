@@ -17,7 +17,8 @@ class MeshLevel(SuperMesh):
                 height: int,
                 wall_thickness: int,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                is_dynamic: bool = False,
+                smooth_end: bool = False,
             ) -> None:
         super().__init__(
             color,
@@ -51,7 +52,8 @@ class MeshLevel(SuperMesh):
             self.color,
             operation=self.operation,
             thickness=self.wall_thickness,
-            is_dynamic=self.is_dynamic
+            is_dynamic=self.is_dynamic,
+            smooth_end=smooth_end
         )
 
         self.init()

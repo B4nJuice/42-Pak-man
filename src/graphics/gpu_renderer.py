@@ -113,11 +113,26 @@ class GPURenderer:
         positions = polygon.positions + [polygon.positions[0]]
         segments = []
         for start, end in zip(positions, positions[1:]):
+            start_x, start_y = start.x, start.y
+            end_x, end_y = end.x, end.y
+
+            if polygon.smooth_end:
+                delta_x = end_x - start_x
+                delta_y = end_y - start_y
+                length = (delta_x * delta_x + delta_y * delta_y) ** 0.5
+
+                if length > 0:
+                    extension = polygon.thickness / (2 * length)
+                    start_x -= delta_x * extension
+                    start_y -= delta_y * extension
+                    end_x += delta_x * extension
+                    end_y += delta_y * extension
+
             vertices, _ = self._thick_segment_vertices(
-                start.x,
-                start.y,
-                end.x,
-                end.y,
+                start_x,
+                start_y,
+                end_x,
+                end_y,
                 polygon.thickness,
             )
             first, second, third, fourth = vertices.reshape(4, 2)

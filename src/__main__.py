@@ -55,7 +55,8 @@ if __name__ == "__main__":
         Position(int(width * 0.25), 100),
         int(width * 0.75 - 100),
         height - 200,
-        15
+        15,
+        smooth_end=True
     )
 
     stats_rectangle = Rectangle(
@@ -63,7 +64,8 @@ if __name__ == "__main__":
         Position(100, 100),
         int(width * 0.25 - 150),
         height - 200,
-        15
+        15,
+        smooth_end=True
     )
 
     verbose=False
@@ -78,7 +80,8 @@ if __name__ == "__main__":
         Position(int(width * 0.25) + 50, 150),
         height - 300,
         height - 300,
-        wall_thickness = 10,
+        wall_thickness=10,
+        smooth_end=True
     )
 
     screen.add_mesh(background)

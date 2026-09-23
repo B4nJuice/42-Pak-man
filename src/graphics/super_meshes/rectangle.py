@@ -11,7 +11,8 @@ class Rectangle(SuperMesh):
                 height: int,
                 thickness: int,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                is_dynamic: bool = False,
+                smooth_end: bool = False
             ) -> None:
         super().__init__(
             color,
@@ -23,6 +24,7 @@ class Rectangle(SuperMesh):
         self.width: int = width
         self.height: int = height
         self.thickness: int = thickness
+        self.smooth_end: bool = smooth_end
 
         self.layer: MeshLayer = MeshLayer()
 
@@ -47,9 +49,10 @@ class Rectangle(SuperMesh):
                     self.position3,
                     self.position4,
                 ],
-                self.operation,
-                self.thickness,
-                self.is_dynamic
+                operation=self.operation,
+                thickness=self.thickness,
+                is_dynamic=self.is_dynamic,
+                smooth_end=self.smooth_end
             )
 
         self.layer.meshes.append(self.rectangle)
