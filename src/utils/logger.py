@@ -67,7 +67,8 @@ class Logger:
             end (str | None): End character appended to the message.
         '''
         print(
-            f'{self._get_format()} {TColor.RED}[ERROR]{TColor.RESET} {message}',
+            f'{self._get_format()} {TColor.RED}[ERROR]{TColor.RESET} '
+            + message,
             end=end
         )
 

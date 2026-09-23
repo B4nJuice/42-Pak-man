@@ -6,7 +6,7 @@ from typing import ClassVar
 
 from pydantic import ValidationError
 
-from ..utils import Color, Logger
+from ..utils import Logger, TColor
 from .config_model import ConfigModel
 
 
@@ -39,7 +39,7 @@ class ConfigManager:
 
     def _init_logger(self, verbose: bool) -> None:
         self._logger = Logger(
-            verbose=verbose, name='ConfigManager', color=Color.BRIGHT_BLUE
+            verbose=verbose, name='ConfigManager', color=TColor.BRIGHT_BLUE
         )
 
     def _set_config_path(self, path: str) -> None:
