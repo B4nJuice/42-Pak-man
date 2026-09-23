@@ -1,40 +1,56 @@
-from json.decoder import JSONDecodeError
-from .config_model import ConfigModel
-from pathlib import Path
 import json
 import os
+from json.decoder import JSONDecodeError
+from pathlib import Path
+from typing import ClassVar
+
+from pydantic import ValidationError
+
+from ..utils import Color, Logger
+from .config_model import ConfigModel
 
 
 class ConfigManager:
-    config_path: Path
+    _config_path: Path
     _config: ConfigModel
     _in_comment_block: int
+    _logger: Logger
 
-    COMMENTS_LINE: list[str] = ['#', '//']
-    COMMENTS_BLOCK: list[tuple[str, str]] = [('/*', '*/')]
+    COMMENTS_LINE: ClassVar[list[str]] = ['#', '//']
+    COMMENTS_BLOCK: ClassVar[list[tuple[str, str]]] = [('/*', '*/')]
 
-    def __init__(self, config_path: str) -> None:
-        self._set_config_path(config_path)
+    def __init__(self, config_path: str, verbose: bool = False) -> None:
+        self._init_logger(verbose)
 
         try:
+            self._set_config_path(config_path)
             self._load_config()
-        except (FileNotFoundError, PermissionError) as e:
-            raise RuntimeError(f'Failed to load config: {e}')
-        except JSONDecodeError as e:
-            raise RuntimeError(f'Failed to parse config: {e}')
+        except (FileNotFoundError, PermissionError, JSONDecodeError):
+            self._logger.warning(
+                'Failed to load config, using default settings'
+            )
+            self._config = ConfigModel()
 
     def get_config(self) -> ConfigModel:
         return self._config
 
+    def display_config(self) -> None:
+        print(self._config.model_dump_json(indent=2))
+
+    def _init_logger(self, verbose: bool) -> None:
+        self._logger = Logger(
+            verbose=verbose, name='ConfigManager', color=Color.BRIGHT_BLUE
+        )
+
     def _set_config_path(self, path: str) -> None:
-        self.config_path = Path(path)
-        if not self.config_path.is_file():
+        self._config_path = Path(path)
+        if not self._config_path.is_file():
             raise FileNotFoundError(
-                f'Config file not found: {self.config_path}'
-            )
+                f'Config file not found: {self._config_path}'
+                )
         if not os.access(path, os.R_OK):
             raise PermissionError(
-                f'Config file is not readable: {self.config_path}'
+                f'Config file is not readable: {self._config_path}'
             )
 
     def _init_formater(self) -> None:
@@ -43,15 +59,39 @@ class ConfigManager:
     def _load_config(self) -> None:
         self._init_formater()
 
-        with self.config_path.open('r') as f:
-            lines: list[str] = [
-                self._format_line(line.strip())
-                for line in f
-            ]
+        with self._config_path.open('r') as f:
+            lines: list[str] = [self._format_line(line.strip()) for line in f]
 
-        self._config = ConfigModel.model_validate(
-            json.loads(''.join(lines))
-        )
+        raw_data = json.loads(''.join(lines))
+
+        if not isinstance(raw_data, dict):
+            self._logger.warning(
+                'Config file is not a dictionary, using default settings'
+            )
+            self._config = ConfigModel()
+            return
+
+        validated_data = {}
+        default_instance = ConfigModel()
+
+        for key, value in raw_data.items():
+            if key in ConfigModel.model_fields:
+                try:
+                    test_obj = ConfigModel.model_validate(
+                        {**default_instance.model_dump(), key: value}
+                    )
+                    validated_data[key] = getattr(test_obj, key)
+                except ValidationError as e:
+                    self._logger.pydantic_warning(
+                        e, prefix='Invalid value for'
+                    )
+                    self._logger.log(
+                        f'Falling back to default value for {key} ({value} ->'
+                        f' {default_instance.model_dump()[key]})'
+                    )
+                    continue
+
+        self._config = ConfigModel(**validated_data)
 
     def _format_line(self, line: str) -> str:
         formatted_line: list[str] = []
@@ -62,9 +102,7 @@ class ConfigManager:
         while idx < len(line):
             if self._in_comment_block != -1:
                 idx, closed = self._consume_comment_block(
-                    line,
-                    idx,
-                    self._in_comment_block
+                    line, idx, self._in_comment_block
                 )
                 if not closed:
                     return ''.join(formatted_line)
@@ -109,16 +147,13 @@ class ConfigManager:
         return ''.join(formatted_line)
 
     def _consume_comment_block(
-                self,
-                line: str,
-                idx: int,
-                block_idx: int
-            ) -> tuple[int, bool]:
-        """Advance past the closing token of an open block comment.
+        self, line: str, idx: int, block_idx: int
+    ) -> tuple[int, bool]:
+        '''Advance past the closing token of an open block comment.
 
         Returns (new_idx, closed) — closed=False means the line ended
         before the comment closed.
-        """
+        '''
         end_token = self.COMMENTS_BLOCK[block_idx][1]
         end_idx = line.find(end_token, idx)
         if end_idx == -1:
@@ -129,10 +164,8 @@ class ConfigManager:
         return any(line.startswith(c, idx) for c in self.COMMENTS_LINE)
 
     def _match_block_comment_start(
-                self,
-                line: str,
-                idx: int
-            ) -> tuple[int, str, str] | None:
+        self, line: str, idx: int
+    ) -> tuple[int, str, str] | None:
         return next(
             (
                 (block_idx, start, end)

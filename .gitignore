@@ -1,5 +1,5 @@
 # Project files
-
+build
 
 # Virtual environment
 .venv
@@ -9,6 +9,9 @@ __pycache__
 
 # Mypy cache files
 .mypy_cache
+
+# PyTest cache files
+.pytest_cache
 
 # VS Code settings
 .vscode
