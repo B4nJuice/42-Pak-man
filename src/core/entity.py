@@ -1,19 +1,24 @@
+from typing import TYPE_CHECKING
+
 from ..utils import Pos, Vec2
-from .level import Level
+
+if TYPE_CHECKING:
+    from .level import Level
+
 from .tile import Tile
 
 
 class Entity:
     _name: str
     tile: Tile
-    level: Level
+    level: 'Level'
 
-    def __init__(self, name: str, tile: Pos | Tile, level: Level) -> None:
+    def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
         self._name = name
         self.level = level
         self.set_tile(tile)
 
-        # TODO: register to level
+        self.level.register_entity(self)
 
     def get_name(self) -> str:
         return self._name
@@ -35,7 +40,7 @@ class Entity:
         pass
 
     def destroy(self) -> None:
-        pass
+        self.level.unregister_entity(self)
 
     def __repr__(self) -> str:
         return f'<{self.get_name()} tile={self.get_tile()}>'

@@ -25,7 +25,7 @@ class Movable:
         super().__init__(*args, **kwargs)
 
         if not isinstance(self, Entity):
-             raise TypeError('Movable must be used with Entity')
+            raise TypeError('Movable must be used with Entity')
 
         self.set_speed(speed)
         self._target = None
