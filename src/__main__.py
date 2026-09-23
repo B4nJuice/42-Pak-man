@@ -1,6 +1,6 @@
 from .graphics import Screen, Position, Color, OperationEnum
 from src.graphics.meshes import Plane, Polygon, ImageTexture, Circle
-from src.graphics.super_meshes import Rectangle
+from src.graphics.super_meshes import Rectangle, MeshLevel
 
 import random
 import pygame
@@ -66,29 +66,25 @@ if __name__ == "__main__":
         15
     )
 
-    circle = Circle(
+    logger: Logger = Logger(verbose=verbose, name='Main', color=Color.MAGENTA)
+    config: ConfigManager = ConfigManager('config.jsonc', verbose)
+    game: Game = Game(config.get_config())
+    game._level.generate()
+
+    level: MeshLevel = MeshLevel(
+        game._level,
         Color(255, 255, 255),
-        Position(500, 500),
-        30,
-        thickness=5,
-        filled=False,
-        is_dynamic=True
+        Position(int(width * 0.25) + 50, 150),
+        width - 300,
+        height - 300,
+        wall_thickness = 10,
     )
 
-    circle2 = Circle(
-        Color(255, 255, 0),
-        Position(600, 500),
-        20,
-        thickness=5,
-        filled=True,
-        is_dynamic=True
-    )
 
+    screen.add_mesh(level)
     screen.add_mesh(background)
     screen.add_mesh(game)
     screen.add_mesh(stats)
-    screen.add_mesh(circle)
-    screen.add_mesh(circle2)
     screen.refresh()
     pygame.display.flip()
 
@@ -101,6 +97,3 @@ if __name__ == "__main__":
         screen.refresh()
         pygame.display.flip()
         clock.tick(60)
-
-if __name__ == '__main__':
-    main(True)
