@@ -6,11 +6,11 @@ import random
 import pygame
 from .config import ConfigManager
 from .core import Game
-from .utils import Color, Logger
+from .utils import Color as LoggerColor, Logger
 
 
 def main(verbose: bool) -> None:
-    logger: Logger = Logger(verbose=verbose, name='Main', color=Color.MAGENTA)
+    logger: Logger = Logger(verbose=verbose, name='Main', color=LoggerColor.MAGENTA)
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
     Game(config.get_config())
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         (Position(0, 0), Position(width, height)),
     )
 
-    game = Rectangle(
+    game_rectangle = Rectangle(
         Color(255, 255 ,255),
         Position(int(width * 0.25), 100),
         int(width * 0.75 - 100),
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         15
     )
 
-    stats = Rectangle(
+    stats_rectangle = Rectangle(
         Color(255, 255 ,255),
         Position(100, 100),
         int(width * 0.25 - 150),
@@ -66,25 +66,25 @@ if __name__ == "__main__":
         15
     )
 
-    logger: Logger = Logger(verbose=verbose, name='Main', color=Color.MAGENTA)
+    verbose=False
+
+    logger: Logger = Logger(verbose=verbose, name='Main', color=LoggerColor.MAGENTA)
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
     game: Game = Game(config.get_config())
-    game._level.generate()
 
     level: MeshLevel = MeshLevel(
         game._level,
         Color(255, 255, 255),
         Position(int(width * 0.25) + 50, 150),
-        width - 300,
+        height - 300,
         height - 300,
         wall_thickness = 10,
     )
 
-
-    screen.add_mesh(level)
     screen.add_mesh(background)
-    screen.add_mesh(game)
-    screen.add_mesh(stats)
+    screen.add_mesh(game_rectangle)
+    screen.add_mesh(stats_rectangle)
+    screen.add_mesh(level)
     screen.refresh()
     pygame.display.flip()
 

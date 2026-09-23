@@ -4,7 +4,7 @@ class Plane(Mesh):
     def __init__(
                 self,
                 color: Color,
-                positions: tuple[Position],
+                positions: tuple[Position, Position],
                 operation: OperationEnum = OperationEnum.SET,
                 is_dynamic: bool = False
             ) -> None:
@@ -14,4 +14,4 @@ class Plane(Mesh):
                 is_dynamic
             )
 
-        self.positions: tuple[Position] = positions
+        self.positions: tuple[Position, Position] = positions
