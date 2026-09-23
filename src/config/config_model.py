@@ -8,11 +8,9 @@ class ConfigModel(BaseModel):
     )
     level_width: int = Field(
         default=20,
-        lt=30,
         description='Width of the level'
     )
     level_height: int = Field(
         default=20,
-        lt=30,
         description='Height of the level'
     )

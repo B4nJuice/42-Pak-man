@@ -1,22 +1,18 @@
-from typing import Protocol
-
-from ..utils import Vec2
 from .entity import Entity
 from .tile import Tile
-
-
-class ColliderEntityProtocol(Protocol):
-    tile: Tile
-    pos: Vec2
-
-    def get_radius(self) -> float: ...
 
 
 class Collider:
     _solid: bool
     _radius: float
 
-    def __init__(self, *args, solid: bool = True, radius: float = 0.4, **kwargs) -> None:
+    def __init__(
+                self,
+                *args,
+                solid: bool = True,
+                radius: float = 0.4,
+                **kwargs
+            ) -> None:
         super().__init__(*args, **kwargs)
 
         if not isinstance(self, Entity):
@@ -39,7 +35,10 @@ class Collider:
     def get_radius(self) -> float:
         return self._radius
 
-    def occupied_tile(self: ColliderEntityProtocol) -> set[Tile]:
+    def occupied_tile(self) -> set[Tile]:
+        if not isinstance(self, Entity):
+            return set()
+
         tiles: set[Tile] = {self.tile}
 
         get_target = getattr(self, 'get_target', None)
@@ -49,7 +48,10 @@ class Collider:
 
         return tiles
 
-    def overlaps(self: ColliderEntityProtocol, other: ColliderEntityProtocol) -> bool:
+    def overlaps(self, other: 'Collider') -> bool:
+        if not isinstance(self, Entity) or not isinstance(other, Entity):
+            return False
+
         ax, ay = self.pos
         bx, by = other.pos
         r = self.get_radius() + other.get_radius()
