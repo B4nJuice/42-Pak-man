@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Color(Enum):
+class TColor(Enum):
     '''Enum mapping symbolic names to ANSI escape codes.
 
     The enum values are string sequences that can be used to style

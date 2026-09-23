@@ -5,13 +5,13 @@ FLAKE8	= $(UV_RUN) -m flake8
 ARGS	?=
 
 run: install
-	@$(UV_RUN) -B -m src $(ARGS)
+	@$(UV_RUN) -m src $(ARGS)
 
 install:
 	uv sync
 
 debug: install
-	@$(UV_RUN) -B -m pdb -m src $(ARGS)
+	@$(UV_RUN) -m pdb -m src $(ARGS)
 
 test:
 	uv run pytest $(ARGS)

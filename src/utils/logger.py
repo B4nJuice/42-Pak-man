@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 
 from pydantic import ValidationError
 
-from .color import Color
+from .color import TColor
 
 
 class Logger:
@@ -13,17 +13,17 @@ class Logger:
     Attributes:
         print_log (bool): Whether logging is enabled.
         name (str): Name displayed in log messages.
-        color (Color): Color used for the name tag.
+        color (TColor): TColor used for the name tag.
     '''
 
     verbose: bool
     name: str
-    color: Color
+    color: TColor
 
     def __init__(
         self,
         name: str = 'Logger',
-        color: Color = Color.GRAY,
+        color: TColor = TColor.GRAY,
         verbose: bool = False,
     ) -> None:
         '''Initialize a logger instance.
@@ -31,7 +31,7 @@ class Logger:
         Args:
             verbose: Whether to enable logging output. Defaults to False.
             name: Display name for log messages. Defaults to 'Logger'.
-            color: ANSI color for the name tag. Defaults to Color.GRAY.
+            color: ANSI color for the name tag. Defaults to TColor.GRAY.
         '''
         self.verbose = verbose
         self.name = name
@@ -67,7 +67,7 @@ class Logger:
             end (str | None): End character appended to the message.
         '''
         print(
-            f'{self._get_format()} {Color.RED}[ERROR]{Color.RESET} {message}',
+            f'{self._get_format()} {TColor.RED}[ERROR]{TColor.RESET} {message}',
             end=end
         )
 
@@ -79,7 +79,7 @@ class Logger:
             end (str | None): End character appended to the message.
         '''
         print(
-            f'{self._get_format()} {Color.YELLOW}[WARNING]{Color.RESET} '
+            f'{self._get_format()} {TColor.YELLOW}[WARNING]{TColor.RESET} '
             f'{message}',
             end=end,
         )
@@ -88,7 +88,7 @@ class Logger:
     def warning_static(
         name: str,
         message: str,
-        color: Color = Color.WHITE,
+        color: TColor = TColor.WHITE,
         end: str | None = '\n',
     ) -> None:
         '''Print a warning message from a static context (always shown).
@@ -96,12 +96,12 @@ class Logger:
         Args:
             name (str): Name to include in the log prefix.
             message (str): Warning message to print.
-            color (Color): Color to use for the name tag in the log prefix.
+            color (TColor): TColor to use for the name tag in the log prefix.
             end (str | None): End character appended to the message.
         '''
         print(
-            f'{Logger.get_format_static(color, name)} {Color.YELLOW}[WARNING]'
-            f'{Color.RESET} {message}',
+            f'{Logger.get_format_static(color, name)} {TColor.YELLOW}[WARNING]'
+            f'{TColor.RESET} {message}',
             end=end,
         )
 
@@ -113,7 +113,7 @@ class Logger:
             end (str | None): End character appended to the message.
         '''
         print(
-            f'{self._get_format()} [{Color.BRIGHT_CYAN}INFO{Color.RESET}] '
+            f'{self._get_format()} [{TColor.BRIGHT_CYAN}INFO{TColor.RESET}] '
             f'{message}',
             end=end,
         )
@@ -127,7 +127,7 @@ class Logger:
         return self.get_format_static(self.color, self.name)
 
     @staticmethod
-    def get_format_static(color: Color, name: str) -> str:
+    def get_format_static(color: TColor, name: str) -> str:
         '''Return the formatted prefix for static contexts.
 
         Args:
@@ -136,8 +136,8 @@ class Logger:
             str: Formatted prefix including time and colored name tag.
         '''
         return (
-            f'{Color.GRAY}[{Logger.get_date_time()}] {color}[' +
-            f'{name}]{Color.RESET}'
+            f'{TColor.GRAY}[{Logger.get_date_time()}] {color}[' +
+            f'{name}]{TColor.RESET}'
         )
 
     @staticmethod
