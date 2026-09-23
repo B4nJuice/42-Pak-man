@@ -1,4 +1,4 @@
-UV_RUN	= uv run python3
+UV_RUN	= uv run
 MYPY	= $(UV_RUN) -m mypy
 FLAKE8	= $(UV_RUN) -m flake8
 
