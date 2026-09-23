@@ -29,6 +29,14 @@ def manager() -> ConfigManager:
             ['{"value": 1 /* c\n', 'omment */}\n'],
             ['{"value": 1 ', '}\n']
         ),
+        (
+            ['{"value": 1 /* //c\n', 'omment */}\n'],
+            ['{"value": 1 ', '}\n']
+        ),
+        (
+            ['{"value": 1 /* /* //c\n', 'omment */*/}\n'],
+            ['{"value": 1 ', '*/}\n']
+        ),
     ],
 )
 def test_format_line_removes_comments_outside_strings(

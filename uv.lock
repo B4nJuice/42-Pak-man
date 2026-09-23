@@ -286,6 +286,9 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "mazegenerator" },
+    { name = "moderngl" },
+    { name = "numpy" },
+    { name = "pillow" },
     { name = "pydantic" },
     { name = "pygame-ce" },
 ]
@@ -300,6 +303,9 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "mazegenerator", path = "lib/mazegenerator-2.1.0-py3-none-any.whl" },
+    { name = "moderngl", specifier = ">=5.12.0" },
+    { name = "numpy", specifier = ">=2.5.3" },
+    { name = "pillow", specifier = ">=12.3.0" },
     { name = "pydantic", specifier = ">=2.13.5" },
     { name = "pygame-ce", specifier = ">=2.5.8" },
 ]
