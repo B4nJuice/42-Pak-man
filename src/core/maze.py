@@ -8,7 +8,7 @@ class Maze:
     _seed: int
     _grid: list[list[Tile]]
 
-    def __init__(self, seed: int):
+    def __init__(self, seed: int) -> None:
         self.set_seed(seed)
 
     def generate(self, width: int, height: int) -> None:
@@ -50,7 +50,7 @@ class Maze:
     def get_height(self) -> int:
         return len(self._grid)
 
-    def set_seed(self, seed: int):
+    def set_seed(self, seed: int) -> None:
         self._seed = seed
 
     def get_seed(self) -> int:

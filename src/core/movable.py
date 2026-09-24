@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Any, Protocol
 
 from ..utils import Direction, Vec2, lerp
 from .entity import Entity
@@ -21,7 +21,7 @@ class Movable:
     _progress: float
     _queued: Direction | None
 
-    def __init__(self, *args, speed: float = 4.0, **kwargs) -> None:
+    def __init__(self, *args: Any, speed: float = 4.0, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         if not isinstance(self, Entity):

@@ -21,6 +21,7 @@ class ConfigManager:
 
     def __init__(self, config_path: str, verbose: bool = False) -> None:
         self._init_logger(verbose)
+        self._logger.log('Initializing config manager')
 
         try:
             self._set_config_path(config_path)
@@ -30,6 +31,7 @@ class ConfigManager:
                 'Failed to load config, using default settings'
             )
             self._config = ConfigModel()
+        self._logger.log('Configuration loaded successfully')
 
     def get_config(self) -> ConfigModel:
         return self._config
@@ -57,11 +59,13 @@ class ConfigManager:
         self._in_comment_block = -1
 
     def _load_config(self) -> None:
+        self._logger.log(f'Loading config from {self._config_path}')
         self._init_formater()
 
         with self._config_path.open('r') as f:
             lines: list[str] = [self._format_line(line.strip()) for line in f]
 
+        self._logger.log(f'Formatted {len(lines)} lines for JSON parsing')
         raw_data = json.loads(''.join(lines))
 
         if not isinstance(raw_data, dict):

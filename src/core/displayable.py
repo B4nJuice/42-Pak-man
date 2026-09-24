@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from ..graphics import Mesh
 
@@ -8,8 +9,8 @@ class Displayable(ABC):
 
     def __init__(
                 self,
-                *args,
-                **kwargs
+                *args: Any,
+                **kwargs: Any
             ) -> None:
         super().__init__(*args, **kwargs)
         self.init_mesh()
