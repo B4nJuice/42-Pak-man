@@ -1,6 +1,6 @@
 from .graphics import Screen, Position, Color, OperationEnum
 from src.graphics.meshes import Plane, Polygon, ImageTexture, Circle
-from src.graphics.super_meshes import Rectangle, MeshLevel
+from src.graphics.super_meshes import Bar, Rectangle, MeshLevel
 
 import random
 import pygame
@@ -52,9 +52,9 @@ if __name__ == "__main__":
 
     game_rectangle = Rectangle(
         Color(255, 255 ,255),
-        Position(int(width * 0.25), 100),
+        Position(int(width * 0.25), 250),
         int(width * 0.75 - 100),
-        height - 200,
+        height - 350,
         15,
         smooth_end=True
     )
@@ -77,26 +77,45 @@ if __name__ == "__main__":
     level: MeshLevel = MeshLevel(
         game._level,
         Color(255, 255, 255),
-        Position(int(width * 0.25) + 50, 150),
-        height - 300,
-        height - 300,
+        Position(int(width * 0.25) + 50, 300),
+        min(height - 400, int(width * 0.75) - 150),
+        min(height - 400, int(width * 0.75) - 150),
         wall_thickness=10,
+        smooth_end=True
+    )
+
+    progress_bar: Bar = Bar(
+        Color(50, 220, 100),
+        Color(255, 255, 255),
+        Position(int(width * 0.25) + 100, 150),
+        int(width * 0.75) - 300,
+        50,
+        5,
+        goal=100,
+        is_dynamic=True,
         smooth_end=True
     )
 
     screen.add_mesh(background)
     screen.add_mesh(game_rectangle)
     screen.add_mesh(stats_rectangle)
+    screen.add_mesh(progress_bar)
     screen.add_mesh(level)
     screen.refresh()
     pygame.display.flip()
 
     running = True
+    elapsed = 0.0
     while running:
+        dt = clock.tick(60) / 1000.0
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+        elapsed = (elapsed + dt) % 4.0
+        cycle_progress = elapsed if elapsed <= 2.0 else 4.0 - elapsed
+        progress_bar.set_progression(int(cycle_progress / 2.0 * progress_bar.goal))
+
         screen.refresh()
         pygame.display.flip()
-        clock.tick(60)

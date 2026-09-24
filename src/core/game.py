@@ -14,4 +14,4 @@ class Game:
             self._config.level_height
         )
 
-        self._level.print_grid()
+        # self._level.print_grid()
