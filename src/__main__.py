@@ -1,6 +1,7 @@
 from .graphics import Screen, Position, Color, OperationEnum
 from src.graphics.meshes import Plane, Polygon, ImageTexture, Circle
-from src.graphics.super_meshes import Bar, Rectangle, MeshLevel
+from src.graphics.super_meshes import Bar, Rectangle, MeshLevel, FontSequence
+from src.graphics.font import Font
 
 import random
 import pygame
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     )
 
     progress_bar: Bar = Bar(
-        Color(50, 220, 100),
+        Color(30, 80, 180),
         Color(255, 255, 255),
         Position(int(width * 0.25) + 100, 150),
         int(width * 0.75) - 300,
@@ -96,10 +97,44 @@ if __name__ == "__main__":
         smooth_end=True
     )
 
+    font = Font(
+            'assets/fonts/Barge-Black.otf',
+            screen.moderngl_context,
+            pixel_size=48
+        )
+    progress_text_value = '00%'
+    progress_text_width = sum(
+        font.characters[character]['advance']
+        for character in progress_text_value
+    )
+    progress_text_height = max(
+        font.characters[character]['height']
+        for character in progress_text_value
+    )
+    progress_text_bearing = max(
+        font.characters[character]['bearing_y']
+        for character in progress_text_value
+    )
+    progress_text: FontSequence = FontSequence(
+        progress_text_value,
+        font,
+        Color(255, 255, 255),
+        Position(
+            progress_bar.position.x
+            + (progress_bar.width - progress_text_width) // 2,
+            progress_bar.position.y
+            + (progress_bar.height - progress_text_height) // 2
+            + progress_text_bearing,
+        ),
+        is_dynamic=True,
+        spacing=2
+    )
+
     screen.add_mesh(background)
     screen.add_mesh(game_rectangle)
     screen.add_mesh(stats_rectangle)
     screen.add_mesh(progress_bar)
+    screen.add_mesh(progress_text)
     screen.add_mesh(level)
     screen.refresh()
     pygame.display.flip()
@@ -116,6 +151,7 @@ if __name__ == "__main__":
         elapsed = (elapsed + dt) % 4.0
         cycle_progress = elapsed if elapsed <= 2.0 else 4.0 - elapsed
         progress_bar.set_progression(int(cycle_progress / 2.0 * progress_bar.goal))
+        progress_text.set_sequence_text(f'{progress_bar.progression:02d}%')
 
         screen.refresh()
         pygame.display.flip()
