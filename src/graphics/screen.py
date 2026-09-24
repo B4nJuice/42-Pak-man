@@ -3,11 +3,8 @@ from pygame import Surface
 
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
-
-
-class MeshLayer:
-    def __init__(self) -> None:
-        self.meshes: list[Mesh] = []
+from .mesh_layer import MeshLayer
+from .super_mesh import SuperMesh
 
 
 class Screen:
@@ -34,8 +31,7 @@ class Screen:
             self.add_mesh(mesh)
 
     def add_mesh(self, mesh: Mesh) -> None:
-
-        if hasattr(mesh, "get_layer"):
+        if isinstance(mesh, SuperMesh):
             self.add_layer(mesh.get_layer())
             return
 
@@ -51,12 +47,3 @@ class Screen:
             self.static_mesh_layer.meshes,
             self.dynamic_mesh_layer.meshes
         )
-
-    def release(self) -> None:
-        for layer in (self.static_mesh_layer, self.dynamic_mesh_layer):
-            for mesh in layer.meshes:
-                texture = getattr(mesh, "texture", None)
-                if texture is not None:
-                    texture.release()
-                    mesh.texture = None
-        self.gpu_renderer.release()

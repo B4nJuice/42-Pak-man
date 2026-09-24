@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
-from src.graphics import Mesh, MeshLayer
+from .mesh import Mesh
+from .mesh_layer import MeshLayer
+
 
 class SuperMesh(Mesh, ABC):
     @abstractmethod
