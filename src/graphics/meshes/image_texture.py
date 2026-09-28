@@ -1,6 +1,7 @@
 from PIL import Image
 
-from src.graphics import Mesh, Color, OperationEnum, Position
+from src.graphics import Color, Mesh, OperationEnum, Position
+
 
 class ImageTexture(Mesh):
     def __init__(
@@ -13,14 +14,14 @@ class ImageTexture(Mesh):
                 is_dynamic: bool = False
             ) -> None:
         super().__init__(
-                Color.default(),
-                operation,
-                is_dynamic
-            )
+            Color.default(),
+            operation,
+            is_dynamic
+        )
 
         self.position: Position = position
         self.path: str = path
-        self.image: Image = Image.open(self.path).convert("RGBA")
+        self.image: Image.Image = Image.open(self.path).convert("RGBA")
         self.original_width, self.original_height = self.image.size
         self.width: int = width or self.original_width
         self.height: int = height or self.original_height

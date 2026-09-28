@@ -10,6 +10,9 @@ class Level(Maze):
     def __init__(self, seed: int):
         super().__init__(seed)
 
+        self._entities = []
+        self._contacts = set()
+
     def update(self, dt: float) -> None:
         for entity in list(self._entities):
             entity.update(dt)

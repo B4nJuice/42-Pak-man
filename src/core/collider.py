@@ -1,3 +1,5 @@
+from typing import Any
+
 from .entity import Entity
 from .tile import Tile
 
@@ -8,10 +10,10 @@ class Collider:
 
     def __init__(
                 self,
-                *args,
+                *args: Any,
                 solid: bool = True,
                 radius: float = 0.4,
-                **kwargs
+                **kwargs: Any
             ) -> None:
         super().__init__(*args, **kwargs)
 
