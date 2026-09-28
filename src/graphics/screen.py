@@ -1,4 +1,5 @@
 import pygame
+from moderngl import Context 
 from pygame import Surface
 
 from .gpu_renderer import GPURenderer
@@ -23,6 +24,7 @@ class Screen:
         self.width: int = width
         self.height: int = height
         self.gpu_renderer: GPURenderer = GPURenderer(width, height)
+        self.moderngl_context: Context = self.gpu_renderer.context
         self.static_mesh_layer: MeshLayer = MeshLayer()
         self.dynamic_mesh_layer: MeshLayer = MeshLayer()
 
