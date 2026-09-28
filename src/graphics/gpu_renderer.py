@@ -5,7 +5,9 @@ import numpy as np
 import moderngl
 
 from src.graphics import OperationEnum, Mesh
-from src.graphics.meshes import Line, Plane, Polygon, ImageTexture, Circle
+from src.graphics.meshes import (
+    Line, Plane, Polygon, ImageTexture, Circle, Character
+)
 
 
 @lru_cache(maxsize=None)
@@ -113,11 +115,26 @@ class GPURenderer:
         positions = polygon.positions + [polygon.positions[0]]
         segments = []
         for start, end in zip(positions, positions[1:]):
+            start_x, start_y = start.x, start.y
+            end_x, end_y = end.x, end.y
+
+            if polygon.smooth_end:
+                delta_x = end_x - start_x
+                delta_y = end_y - start_y
+                length = (delta_x * delta_x + delta_y * delta_y) ** 0.5
+
+                if length > 0:
+                    extension = polygon.thickness / (2 * length)
+                    start_x -= delta_x * extension
+                    start_y -= delta_y * extension
+                    end_x += delta_x * extension
+                    end_y += delta_y * extension
+
             vertices, _ = self._thick_segment_vertices(
-                start.x,
-                start.y,
-                end.x,
-                end.y,
+                start_x,
+                start_y,
+                end_x,
+                end_y,
                 polygon.thickness,
             )
             first, second, third, fourth = vertices.reshape(4, 2)
@@ -147,6 +164,21 @@ class GPURenderer:
                 4,
                 image.image.tobytes(),
             )
+
+        return vertices, moderngl.TRIANGLE_STRIP
+
+    @_vertices.register
+    def _(self, character: Character) -> tuple[np.ndarray, int]:
+        x, y = character.position.x, character.position.y
+        width = character.infos["width"]
+        height = character.infos["height"]
+
+        vertices = np.array([
+            x, y, 0, 0,
+            x + width, y, 1, 0,
+            x, y + height, 0, 1,
+            x + width, y + height, 1, 1,
+        ], dtype="f4")
 
         return vertices, moderngl.TRIANGLE_STRIP
 
@@ -293,6 +325,46 @@ class GPURenderer:
         mesh.texture.use(1)
         self.image_program["image_texture"].value = 1
         self.image_program["operation"].value = mesh.operation.value
+        self.image_program["use_tint"].value = False
+        self.image_program["screen_size"].value = (self.width, self.height)
+        target.use()
+        vao.render(mode=mode)
+        vertex_buffer.release()
+        vao.release()
+
+    @_draw_mesh.register
+    def _(
+                self,
+                mesh: Character,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
+        if mesh.hidden or mesh.color.is_default:
+            return
+
+        vertices, mode = self._vertices(mesh)
+        vertex_buffer = self.context.buffer(vertices.tobytes())
+        vao = self.context.vertex_array(
+            self.image_program,
+            [
+                (
+                    vertex_buffer,
+                    "2f 2f",
+                    "in_position",
+                    "in_texcoord",
+                ),
+            ],
+        )
+        mesh.infos["texture"].use(1)
+        self.image_program["image_texture"].value = 1
+        self.image_program["operation"].value = mesh.operation.value
+        self.image_program["use_tint"].value = True
+        self.image_program["tint"].value = (
+            mesh.color.r / 255,
+            mesh.color.g / 255,
+            mesh.color.b / 255,
+            mesh.color.a / 255,
+        )
         self.image_program["screen_size"].value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)

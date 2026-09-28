@@ -3,6 +3,8 @@
 uniform sampler2D image_texture;
 uniform sampler2D previous_frame;
 uniform int operation;
+uniform bool use_tint;
+uniform vec4 tint;
 
 in vec2 texture_coordinate;
 
@@ -10,6 +12,9 @@ out vec4 fragment_color;
 
 void main() {
     vec4 texture_color = texture(image_texture, texture_coordinate);
+    if (use_tint) {
+        texture_color = vec4(tint.rgb, texture_color.r * tint.a);
+    }
     vec4 color = texture_color;
 
     vec4 background = texelFetch(
