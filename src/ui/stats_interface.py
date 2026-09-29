@@ -19,7 +19,7 @@ class StatsInterface(Interface):
             Position(self.x_offset, self.y_offset),
             self.width - self.x_offset,
             self.height - self.y_offset,
-            2,
+            3,
             is_dynamic=True,
             smooth_end=True
         )
