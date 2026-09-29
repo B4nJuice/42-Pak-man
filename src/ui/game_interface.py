@@ -1,4 +1,4 @@
-from src.graphics.super_meshes import Bar, FontSequence, AlignEnum 
+from src.graphics.super_meshes import Bar, FontSequence, AlignEnum, MeshLevel
 from src.graphics import MeshLayer, Position, Color
 from src.ui import Interface
 from src.game import Game
@@ -57,10 +57,46 @@ class GameInterface(Interface):
         )
 
         self.set_timer(600)
+        
+        maze_x = self.x_offset + round(self.width * 0.02)
+        maze_y = self.y_offset + level_bar_height + round(self.height * 0.07)
+
+        available_width = self.width - round(self.width * 0.07)
+        available_height = (
+            self.height
+            - level_bar_height
+            - round(self.height * 0.11)
+        )
+
+        maze_base_width = self.game._level.get_width()
+        maze_base_height = self.game._level.get_height()
+
+        scale = min(
+            available_width / maze_base_width,
+            available_height / maze_base_height,
+        )
+
+        maze_width = round(maze_base_width * scale)
+        maze_height = round(maze_base_height * scale)
+
+        maze_x += (available_width - maze_width) // 2
+        maze_y += (available_height - maze_height) // 2
+
+        self.maze: MeshLevel = MeshLevel(
+            self.game._level,
+            Color(*self.game._config.maze_color),
+            Position(maze_x, maze_y),
+            maze_width,
+            maze_height,
+            wall_thickness=3,
+            is_dynamic=True,
+            smooth_end=True
+        )
 
         self.layer.meshes.append(self.level_bar)
         self.layer.meshes.append(self.level_text)
         self.layer.meshes.append(self.timer)
+        self.layer.meshes.append(self.maze)
 
     @staticmethod
     def sec_to_str(seconds: int) -> str:

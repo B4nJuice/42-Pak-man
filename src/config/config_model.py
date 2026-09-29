@@ -26,6 +26,11 @@ class ConfigModel(BaseModel):
         description='Height of the screen'
     )
 
+    maze_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the maze"
+    )
+
     level_bar_color: tuple[int, int, int] = Field(
         default=(255, 180, 45),
         description="Color of the level's progression bar"
