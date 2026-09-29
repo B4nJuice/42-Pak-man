@@ -5,6 +5,7 @@ from pygame.time import Clock
 from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics import Screen
+from src.graphics.font import Font
 
 
 class Game:
@@ -14,10 +15,17 @@ class Game:
     _running: bool
     _clock: Clock
     _event_handler: EventHandler
+    _font: Font
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
         self._set_config(config)
         self._set_screen(screen)
+
+        self._font = Font(
+                self._config.font_path,
+                self._screen.moderngl_context,
+                pixel_size=self._config.screen_height // 22
+            )
 
         self._init_level()
         self._init_event_handler()
