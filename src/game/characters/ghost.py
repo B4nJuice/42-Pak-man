@@ -34,7 +34,6 @@ class Ghost(Collider, Displayable, Entity):
         )
 
     def update(self, dt: float) -> None:
-        # werwerwe
         pass
 
     def update_mesh(self) -> None:

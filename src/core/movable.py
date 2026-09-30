@@ -7,18 +7,20 @@ from .tile import Tile
 
 class MovableEntityProtocol(Protocol):
     _target: Tile | None
+    _direction: Direction | None
     _speed: float
     _progress: float
 
     def get_tile(self) -> Tile: ...
     def update(self, dt: float) -> None: ...
-    def on_arrive(self, tile: Tile) -> None: ...
+    def on_arrive(self, tile: Tile, direction: Direction) -> None: ...
     def set_tile(self, tile: Pos | Tile) -> None: ...
 
 
 class Movable:
     _speed: float
     _target: Tile | None
+    _direction: Direction | None
     _progress: float
     _queued: Direction | None
 
@@ -67,23 +69,27 @@ class Movable:
         next_tile = self.level.get_next_tile(self.get_tile(), direction)
         if next_tile is None:
             return False
+        if next_tile.has_wall(direction.opposite()):
+            return False
 
         self._target = next_tile
+        self._direction = direction
         self._progress = 0.0
         return True
 
     def update(self: MovableEntityProtocol, dt: float) -> None:
         super().update(dt)
 
-        if self._target is None:
+        if self._target is None or self._direction is None:
             return
 
         self._progress += self._speed * dt
         if self._progress >= 1.0:
             self._progress = 0.0
             self.set_tile(self._target)
-            self.on_arrive(self._target)
+            current_target: Tile = self._target
             self._target = None
+            self.on_arrive(current_target, self._direction)
 
-    def on_arrive(self, tile: Tile) -> None:
+    def on_arrive(self, tile: Tile, direction: Direction) -> None:
         pass

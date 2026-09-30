@@ -14,7 +14,7 @@ class Player(Collider, Movable, Displayable, Entity):
             level=level,
             solid=True,
             radius=0.45,
-            speed=1,
+            speed=6,
             proportion=0.9
         )
 
@@ -30,7 +30,7 @@ class Player(Collider, Movable, Displayable, Entity):
 
     def init_mesh(self) -> None:
         self._mesh = ImageTexture(
-            path='assets/characters/pacman/d0_0.png',
+            path='assets/characters/ghosts/red/east_0.png',
             position=Position(0, 0),
             width=0,
             height=0,
@@ -58,10 +58,15 @@ class Player(Collider, Movable, Displayable, Entity):
         if keys[pygame.K_RIGHT]:
             self.try_move(Direction.EAST)
 
-    def on_arrive(self, tile: Tile) -> None:
+    def on_arrive(self, tile: Tile, direction: Direction) -> None:
         print(f'Arrived at {tile.get_pos()}')
+        if self._queued is not None:
+            self.try_move(self._queued)
+            self._queued = None
+        else:
+            self.try_move(direction)
 
-        return super().on_arrive(tile)
+        return super().on_arrive(tile, direction)
 
     def update_mesh(self) -> None:
         return super().update_mesh()
