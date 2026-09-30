@@ -136,7 +136,22 @@ class MeshLevel(SuperMesh):
     def register_entities_to_screen(self) -> None:
         for entity in self.level.get_entities():
             if isinstance(entity, Displayable):
-                self.get_layer().meshes.append(entity.get_mesh())
+                mesh = entity.get_mesh()
+
+                mesh.get_position = lambda : Position(
+                        entity.pos[0] + self.position.x + self.tile_width // 2,
+                        entity.pos[1] + self.position.y + self.tile_height // 2
+                    )
+
+                mesh.get_height = lambda : round(
+                        self.tile_width * entity.get_proportion()
+                    )
+                
+                mesh.get_width = lambda : round(
+                        self.tile_width * entity.get_proportion()
+                    )
+
+                self.get_layer().meshes.append(mesh)
 
     def refresh(self) -> None:
         ...

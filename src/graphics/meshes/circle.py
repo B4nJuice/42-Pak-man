@@ -24,3 +24,6 @@ class Circle(Mesh):
         self.radius: int = max(radius, 0)
         self.thickness: int = max(thickness, 0)
         self.filled: bool = filled
+
+    def get_position(self) -> Position:
+        return self.position
