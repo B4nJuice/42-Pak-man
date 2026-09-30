@@ -1,5 +1,5 @@
 from src.core import Collider, Displayable, Entity, Level, Tile
-from src.graphics import Color, OperationEnum, Plane, Position
+from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
 
@@ -16,11 +16,13 @@ class PacGum(Collider, Displayable, Entity):
         self.init_mesh()
 
     def init_mesh(self) -> None:
-        self._mesh = Plane(
-            color=Color(255, 255, 255),
-            positions=(Position(40, 3), Position(45, 7)),
+        self._mesh = ImageTexture(
+            path='assets/items/pacgum.png',
+            position=Position(0, 0),
+            width=0,
+            height=0,
             operation=OperationEnum.SET,
-            is_dynamic=True,
+            is_dynamic=False,
         )
 
     def update_mesh(self) -> None:

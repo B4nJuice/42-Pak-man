@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ..graphics.mesh import Mesh
+    from ..graphics.meshes import ImageTexture
 
 
 
 class Displayable(ABC):
-    _mesh: 'Mesh'
+    _mesh: 'ImageTexture'
     _rotation: float
     _proportion: float
 
@@ -27,7 +27,7 @@ class Displayable(ABC):
     def init_mesh(self) -> None:
         pass
 
-    def get_mesh(self) -> 'Mesh':
+    def get_mesh(self) -> 'ImageTexture':
         return self._mesh
 
     def get_rotation(self) -> float:
