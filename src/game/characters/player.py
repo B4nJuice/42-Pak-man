@@ -56,7 +56,7 @@ class Player(Collider, Movable, Displayable, Entity):
         if keys[pygame.K_LEFT]:
             self.try_move(Direction.WEST)
         if keys[pygame.K_RIGHT]:
-            self.try_move(Direction.WEST)
+            self.try_move(Direction.EAST)
 
     def on_arrive(self, tile: Tile) -> None:
         print(f'Arrived at {tile.get_pos()}')
