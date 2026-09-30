@@ -1,4 +1,6 @@
 {
   "level_width": 30,
-  "level_height": 30
+  "level_height": 20,
+  "screen_width": 1920,
+  "screen_height": 1080
 }

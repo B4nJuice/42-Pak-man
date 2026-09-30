@@ -3,6 +3,7 @@ import pygame
 from .config import ConfigManager
 from .game import Game
 from .graphics import Screen
+from .ui import GameInterface, StatsInterface
 from .utils import Logger, TColor
 
 
@@ -24,7 +25,7 @@ def main(verbose: bool) -> None:
     logger.log('Starting Pak-man')
 
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
-    config.display_config()
+    # config.display_config()
 
     init_pygame()
 
@@ -33,7 +34,7 @@ def main(verbose: bool) -> None:
             config.get_config().screen_width,
             config.get_config().screen_height,
         ),
-        pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
+        pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN,
     )
     pygame.display.set_caption("Pak-man")
     screen: Screen = Screen(
@@ -43,6 +44,13 @@ def main(verbose: bool) -> None:
     )
 
     game: Game = Game(config.get_config(), screen)
+    
+    game_interface = GameInterface(game)
+    stats_interface = StatsInterface(game)
+
+    screen.add_mesh(game_interface)
+    screen.add_mesh(stats_interface)
+    
     game.run()
 
 

@@ -25,3 +25,31 @@ class ConfigModel(BaseModel):
         default=600,
         description='Height of the screen'
     )
+
+    maze_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the maze"
+    )
+
+    level_bar_color: tuple[int, int, int] = Field(
+        default=(255, 180, 45),
+        description="Color of the level's progression bar"
+    )
+    level_bar_border_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the border level's progression bar"
+    )
+
+    timer_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="timer font color"
+    )
+
+    stats_border_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the border of the stats"
+    )
+
+    font_path: str = Field(
+        default="assets/fonts/Bold Frame.ttf"
+    )

@@ -33,7 +33,7 @@ class Screen:
             self.add_mesh(mesh)
 
     def add_mesh(self, mesh: Mesh) -> None:
-        if isinstance(mesh, SuperMesh):
+        if hasattr(mesh, "get_layer"):
             self.add_layer(mesh.get_layer())
             return
 
