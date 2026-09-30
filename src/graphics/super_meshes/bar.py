@@ -44,7 +44,7 @@ class Bar(SuperMesh):
             (
                 self.position, Position(
                         self.position.x + self.width * percentage,
-                        self.position.y + self.height * percentage,
+                        self.position.y + self.height,
                 )
             ),
             operation=self.operation,
