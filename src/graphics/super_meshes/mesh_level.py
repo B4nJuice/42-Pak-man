@@ -1,9 +1,9 @@
 from functools import partial
 
-from src.graphics import Position, OperationEnum, Color, SuperMesh, MeshLayer
-from src.graphics.meshes import Line
+from src.core import Displayable
 from src.core.level import Level
-from src.graphics.super_meshes import Rectangle
+from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
+from src.graphics.meshes import Line
 from src.utils.direction import Direction
 
 
@@ -61,8 +61,9 @@ class MeshLevel(SuperMesh):
     def init(self) -> None:
         for row in self.level.get_grid():
             for tile in row:
+                wall: Line
                 if tile.get_y() == 0 or tile.has_wall(Direction.NORTH):
-                    wall: Line = self.create_wall(
+                    wall = self.create_wall(
                         Position(
                                 tile.get_x() * self.tile_width +\
                                     self.position.x,
@@ -80,7 +81,7 @@ class MeshLevel(SuperMesh):
 
                 if tile.get_x() == (self.level.get_width() - 1) or\
                     tile.has_wall(Direction.EAST):
-                    wall: Line = self.create_wall(
+                    wall = self.create_wall(
                         Position(
                                 tile.get_x() * self.tile_width +\
                                     self.position.x + self.tile_width,
@@ -97,7 +98,7 @@ class MeshLevel(SuperMesh):
                     self.layer.meshes.append(wall)
 
                 if tile.get_x() == 0:
-                    wall: Line = self.create_wall(
+                    wall = self.create_wall(
                         Position(
                                 tile.get_x() * self.tile_width +\
                                     self.position.x,
@@ -114,7 +115,7 @@ class MeshLevel(SuperMesh):
                     self.layer.meshes.append(wall)
 
                 if tile.get_y() == (self.level.get_height() - 1):
-                    wall: Line = self.create_wall(
+                    wall = self.create_wall(
                         Position(
                                 tile.get_x() * self.tile_width +\
                                     self.position.x,
@@ -130,7 +131,10 @@ class MeshLevel(SuperMesh):
                     )
                     self.layer.meshes.append(wall)
 
-
+    def register_entities_to_screen(self) -> None:
+        for entity in self.level.get_entities():
+            if isinstance(entity, Displayable):
+                self.get_layer().meshes.append(entity.get_mesh())
 
     def refresh(self) -> None:
         ...

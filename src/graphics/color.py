@@ -1,7 +1,4 @@
 from enum import Enum
-from typing import Any
-
-from src.graphics import ColorOperations
 
 
 class OperationEnum(Enum):
@@ -50,15 +47,7 @@ class Color:
     @property
     def to_tuple(self) -> tuple[int, int, int, int]:
         return (self.r, self.g, self.b, self.a)
-    
+
     @property
     def to_32(self) -> int:
         return ((self.r << 16) | (self.g << 8) | self.b)
-
-    def apply_operation(
-                self,
-                color: 'Color',
-                operation: OperationEnum,
-                **kwargs: Any
-            ) -> 'Color':
-        return Color(*operation(self, color, **kwargs))

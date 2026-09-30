@@ -1,6 +1,8 @@
 from PIL import Image
 
-from src.graphics import Color, Mesh, OperationEnum, Position
+from ..color import Color, OperationEnum
+from ..mesh import Mesh
+from ..position import Position
 
 
 class ImageTexture(Mesh):

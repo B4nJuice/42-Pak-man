@@ -1,16 +1,22 @@
-from .color_operations import ColorOperations
 from .color import Color, OperationEnum
-from .position import Position
 from .mesh import Mesh
-from .screen import Screen, MeshLayer
+from .meshes import Character, Circle, ImageTexture, Line, Plane, Polygon
+from .position import Position
+from .screen import MeshLayer, Screen
 from .super_mesh import SuperMesh
 
-__all__ = [
-        "Color",
-        "OperationEnum",
-        "Position",
-        "Screen",
-        "Mesh",
-        "MeshLayer",
-        "SuperMesh"
-    ]
+__all__: list[str] = [
+    'Character',
+    'Circle',
+    'Color',
+    'ImageTexture',
+    'Line',
+    'Mesh',
+    'MeshLayer',
+    'OperationEnum',
+    'Plane',
+    'Polygon',
+    'Position',
+    'Screen',
+    'SuperMesh',
+]

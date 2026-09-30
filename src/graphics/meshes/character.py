@@ -1,6 +1,9 @@
 from typing import Any
 
-from src.graphics import Mesh, Position, Color, OperationEnum
+from ..color import Color, OperationEnum
+from ..mesh import Mesh
+from ..position import Position
+
 
 class Character(Mesh):
     def __init__(

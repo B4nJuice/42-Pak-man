@@ -1,5 +1,9 @@
-from src.graphics import Mesh, Position, Color, OperationEnum
 from math import hypot
+
+from ..color import Color, OperationEnum
+from ..mesh import Mesh
+from ..position import Position
+
 
 class Line(Mesh):
     def __init__(

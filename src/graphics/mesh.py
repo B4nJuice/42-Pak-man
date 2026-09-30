@@ -1,7 +1,7 @@
-from src.graphics import Position, OperationEnum, Color
+from src.graphics import Color, OperationEnum
 
 
-class Mesh():
+class Mesh:
     def __init__(
                 self,
                 color: Color,

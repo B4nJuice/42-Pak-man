@@ -1,4 +1,7 @@
-from src.graphics import Mesh, Position, Color, OperationEnum
+from ..color import Color, OperationEnum
+from ..mesh import Mesh
+from ..position import Position
+
 
 class Plane(Mesh):
     def __init__(
