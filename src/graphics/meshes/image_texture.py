@@ -28,3 +28,12 @@ class ImageTexture(Mesh):
         self.width: int = width or self.original_width
         self.height: int = height or self.original_height
         self.texture = None
+
+    def get_position(self) -> Position:
+        return self.position
+
+    def get_width(self) -> int:
+        return self.width
+
+    def get_height(self) -> int:
+        return self.height

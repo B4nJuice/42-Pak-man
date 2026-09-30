@@ -18,3 +18,6 @@ class Plane(Mesh):
             )
 
         self.positions: tuple[Position, Position] = positions
+
+    def get_positions(self) -> tuple[Position, Position]:
+        return self.positions

@@ -91,7 +91,7 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, plane: Plane) -> tuple[np.ndarray, int]:
-        first, second = plane.positions
+        first, second = plane.get_positions()
         vertices = np.array(
             [
                 first.x, first.y,
@@ -150,12 +150,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, image: ImageTexture) -> tuple[np.ndarray, int]:
-        x, y = image.position.x, image.position.y
+        x, y = image.get_position().x, image.get_position().y
 
-        left: float = x - image.width / 2
-        right: float = x + image.width / 2
-        top: float = y - image.height / 2
-        bottom: float = y + image.height / 2
+        image_width: int = image.get_width()
+        image_height: int = image.get_height()
+
+        left: float = x - image_width / 2
+        right: float = x + image_width / 2
+        top: float = y - image_height / 2
+        bottom: float = y + image_height / 2
 
         vertices = np.array([
             left,  top,    0, 0,
@@ -190,7 +193,7 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, circle: Circle) -> tuple[np.ndarray, int]:
-        x, y = circle.position.x, circle.position.y
+        x, y = circle.get_position().x, circle.get_position().y
         radius = circle.radius
         vertices = np.array(
             [
