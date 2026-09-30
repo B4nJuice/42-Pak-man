@@ -98,6 +98,8 @@ class GameInterface(Interface):
             smooth_end=True
         )
 
+        self.maze.register_entities_to_screen()
+
         self.layer.meshes.append(self.level_bar)
         self.layer.meshes.append(self.level_text)
         self.layer.meshes.append(self.timer)
