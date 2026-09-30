@@ -1,7 +1,7 @@
-from src.graphics import MeshLayer, Position, Color
+from src.game import Game
+from src.graphics import Color, MeshLayer, Position
 from src.graphics.super_meshes import Rectangle
 from src.ui import Interface
-from src.game import Game
 
 
 class StatsInterface(Interface):

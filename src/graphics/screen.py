@@ -1,11 +1,10 @@
 import pygame
-from moderngl import Context 
+from moderngl import Context
 from pygame import Surface
 
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
 from .mesh_layer import MeshLayer
-from .super_mesh import SuperMesh
 
 
 class Screen:

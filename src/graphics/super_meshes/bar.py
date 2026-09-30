@@ -1,6 +1,7 @@
-from src.graphics import Position, OperationEnum, Color, SuperMesh, MeshLayer
-from src.graphics.super_meshes import Rectangle
+from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
 from src.graphics.meshes import Plane
+from src.graphics.super_meshes import Rectangle
+
 
 class Bar(SuperMesh):
     def __init__(

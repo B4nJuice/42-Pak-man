@@ -1,5 +1,6 @@
-from src.game import Game
 from abc import ABC
+
+from src.game import Game
 
 
 class Interface(ABC):

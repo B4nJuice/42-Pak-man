@@ -1,18 +1,24 @@
-from functools import lru_cache, singledispatchmethod
 from collections.abc import Iterable
+from functools import cache, singledispatchmethod
 from importlib.resources import files
-import numpy as np
-import moderngl
 
-from src.graphics import OperationEnum, Mesh
+import moderngl
+import numpy as np
+
+from src.graphics import Mesh
 from src.graphics.meshes import (
-    Line, Plane, Polygon, ImageTexture, Circle, Character
+    Character,
+    Circle,
+    ImageTexture,
+    Line,
+    Plane,
+    Polygon,
 )
 
 
-@lru_cache(maxsize=None)
+@cache
 def _load_shader(name: str) -> str:
-    return (files("src.graphics.shaders") / name).read_text()
+    return (files('src.graphics.shaders') / name).read_text()
 
 
 class GPURenderer:
@@ -22,24 +28,24 @@ class GPURenderer:
         self.context = moderngl.create_context()
 
         self.mesh_program = self.context.program(
-            vertex_shader=_load_shader("mesh.vert"),
-            fragment_shader=_load_shader("mesh.frag"),
+            vertex_shader=_load_shader('mesh.vert'),
+            fragment_shader=_load_shader('mesh.frag'),
         )
         self.copy_program = self.context.program(
-            vertex_shader=_load_shader("copy.vert"),
-            fragment_shader=_load_shader("copy.frag"),
+            vertex_shader=_load_shader('copy.vert'),
+            fragment_shader=_load_shader('copy.frag'),
         )
         self.blit_program = self.context.program(
-            vertex_shader=_load_shader("copy.vert"),
-            fragment_shader=_load_shader("blit.frag"),
+            vertex_shader=_load_shader('copy.vert'),
+            fragment_shader=_load_shader('blit.frag'),
         )
         self.image_program = self.context.program(
-            vertex_shader=_load_shader("image.vert"),
-            fragment_shader=_load_shader("image.frag"),
+            vertex_shader=_load_shader('image.vert'),
+            fragment_shader=_load_shader('image.frag'),
         )
         self.circle_program = self.context.program(
-            vertex_shader=_load_shader("circle.vert"),
-            fragment_shader=_load_shader("circle.frag"),
+            vertex_shader=_load_shader('circle.vert'),
+            fragment_shader=_load_shader('circle.frag'),
         )
 
         self.copy_quad = self._create_copy_quad()
@@ -58,30 +64,30 @@ class GPURenderer:
     def _create_screen_quad(self) -> moderngl.VertexArray:
         vertices = np.array(
             [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
-            dtype="f4",
+            dtype='f4',
         )
         buffer = self.context.buffer(vertices.tobytes())
         return self.context.simple_vertex_array(
             self.blit_program,
             buffer,
-            "in_position",
+            'in_position',
         )
 
     def _create_copy_quad(self) -> moderngl.VertexArray:
         vertices = np.array(
             [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
-            dtype="f4",
+            dtype='f4',
         )
         buffer = self.context.buffer(vertices.tobytes())
         return self.context.simple_vertex_array(
             self.copy_program,
             buffer,
-            "in_position",
+            'in_position',
         )
 
     @singledispatchmethod
     def _vertices(self, mesh: Mesh) -> tuple[np.ndarray, int]:
-        raise TypeError(f"Unsupported mesh type: {type(mesh).__name__}")
+        raise TypeError(f'Unsupported mesh type: {type(mesh).__name__}')
 
     @_vertices.register
     def _(self, plane: Plane) -> tuple[np.ndarray, int]:
@@ -93,7 +99,7 @@ class GPURenderer:
                 first.x, second.y,
                 second.x, second.y,
             ],
-            dtype="f4",
+            dtype='f4',
         )
         return vertices, moderngl.TRIANGLE_STRIP
 
@@ -110,7 +116,7 @@ class GPURenderer:
     @_vertices.register
     def _(self, polygon: Polygon) -> tuple[np.ndarray, int]:
         if len(polygon.positions) < 2:
-            return np.empty(0, dtype="f4"), moderngl.TRIANGLES
+            return np.empty(0, dtype='f4'), moderngl.TRIANGLES
 
         positions = polygon.positions + [polygon.positions[0]]
         segments = []
@@ -140,7 +146,7 @@ class GPURenderer:
             first, second, third, fourth = vertices.reshape(4, 2)
             segments.extend((first, second, third, third, second, fourth))
 
-        return np.asarray(segments, dtype="f4").reshape(-1), moderngl.TRIANGLES
+        return np.asarray(segments, dtype='f4').reshape(-1), moderngl.TRIANGLES
 
     @_vertices.register
     def _(self, image: ImageTexture) -> tuple[np.ndarray, int]:
@@ -156,7 +162,7 @@ class GPURenderer:
             right, top,    1, 0,
             left,  bottom, 0, 1,
             right, bottom, 1, 1,
-        ], dtype="f4")
+        ], dtype='f4')
 
         if image.texture is None:
             image.texture = self.context.texture(
@@ -170,15 +176,15 @@ class GPURenderer:
     @_vertices.register
     def _(self, character: Character) -> tuple[np.ndarray, int]:
         x, y = character.position.x, character.position.y
-        width = character.infos["width"]
-        height = character.infos["height"]
+        width = character.infos['width']
+        height = character.infos['height']
 
         vertices = np.array([
             x, y, 0, 0,
             x + width, y, 1, 0,
             x, y + height, 0, 1,
             x + width, y + height, 1, 1,
-        ], dtype="f4")
+        ], dtype='f4')
 
         return vertices, moderngl.TRIANGLE_STRIP
 
@@ -193,7 +199,7 @@ class GPURenderer:
                 x - radius, y + radius,
                 x + radius, y + radius,
             ],
-            dtype="f4",
+            dtype='f4',
         )
         return vertices, moderngl.TRIANGLE_STRIP
 
@@ -218,7 +224,7 @@ class GPURenderer:
                 end_x - offset_x, end_y - offset_y,
                 end_x + offset_x, end_y + offset_y,
             ],
-            dtype="f4",
+            dtype='f4',
         )
 
         return vertices, moderngl.TRIANGLE_STRIP
@@ -230,7 +236,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        raise TypeError(f"Unsupported mesh type: {type(mesh).__name__}")
+        raise TypeError(f'Unsupported mesh type: {type(mesh).__name__}')
 
     @_draw_mesh.register
     def _(
@@ -248,16 +254,16 @@ class GPURenderer:
         vao = self.context.simple_vertex_array(
             self.mesh_program,
             vertex_buffer,
-            "in_position",
+            'in_position',
         )
-        self.mesh_program["screen_size"].value = (self.width, self.height)
-        self.mesh_program["mesh_color"].value = (
+        self.mesh_program['screen_size'].value = (self.width, self.height)
+        self.mesh_program['mesh_color'].value = (
             mesh.color.r / 255,
             mesh.color.g / 255,
             mesh.color.b / 255,
             mesh.color.a / 255,
         )
-        self.mesh_program["operation"].value = mesh.operation.value
+        self.mesh_program['operation'].value = mesh.operation.value
         source.use(0)
         target.use()
 
@@ -280,23 +286,23 @@ class GPURenderer:
         vao = self.context.simple_vertex_array(
             self.circle_program,
             vertex_buffer,
-            "in_position",
+            'in_position',
         )
-        self.circle_program["height"].value = self.height
-        self.circle_program["screen_size"].value = (self.width, self.height)
-        self.circle_program["color"].value = (
+        self.circle_program['height'].value = self.height
+        self.circle_program['screen_size'].value = (self.width, self.height)
+        self.circle_program['color'].value = (
             mesh.color.r / 255,
             mesh.color.g / 255,
             mesh.color.b / 255,
             mesh.color.a / 255,
         )
-        self.circle_program["center"].value = (
+        self.circle_program['center'].value = (
             mesh.position.x,
             mesh.position.y,
         )
-        self.circle_program["radius"].value = mesh.radius
-        self.circle_program["thickness"].value = mesh.thickness
-        self.circle_program["filled"].value = mesh.filled
+        self.circle_program['radius'].value = mesh.radius
+        self.circle_program['thickness'].value = mesh.thickness
+        self.circle_program['filled'].value = mesh.filled
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -316,17 +322,17 @@ class GPURenderer:
             [
                 (
                     vertex_buffer,
-                    "2f 2f",
-                    "in_position",
-                    "in_texcoord",
+                    '2f 2f',
+                    'in_position',
+                    'in_texcoord',
                 ),
             ],
         )
         mesh.texture.use(1)
-        self.image_program["image_texture"].value = 1
-        self.image_program["operation"].value = mesh.operation.value
-        self.image_program["use_tint"].value = False
-        self.image_program["screen_size"].value = (self.width, self.height)
+        self.image_program['image_texture'].value = 1
+        self.image_program['operation'].value = mesh.operation.value
+        self.image_program['use_tint'].value = False
+        self.image_program['screen_size'].value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -349,23 +355,23 @@ class GPURenderer:
             [
                 (
                     vertex_buffer,
-                    "2f 2f",
-                    "in_position",
-                    "in_texcoord",
+                    '2f 2f',
+                    'in_position',
+                    'in_texcoord',
                 ),
             ],
         )
-        mesh.infos["texture"].use(1)
-        self.image_program["image_texture"].value = 1
-        self.image_program["operation"].value = mesh.operation.value
-        self.image_program["use_tint"].value = True
-        self.image_program["tint"].value = (
+        mesh.infos['texture'].use(1)
+        self.image_program['image_texture'].value = 1
+        self.image_program['operation'].value = mesh.operation.value
+        self.image_program['use_tint'].value = True
+        self.image_program['tint'].value = (
             mesh.color.r / 255,
             mesh.color.g / 255,
             mesh.color.b / 255,
             mesh.color.a / 255,
         )
-        self.image_program["screen_size"].value = (self.width, self.height)
+        self.image_program['screen_size'].value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -385,14 +391,14 @@ class GPURenderer:
             target = self.framebuffers[target_index]
             target.use()
             source.use(0)
-            self.copy_program["source_texture"].value = 0
+            self.copy_program['source_texture'].value = 0
             self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
             self._draw_mesh(mesh, source, target)
             source_index, target_index = target_index, source_index
 
         self.context.screen.use()
         self.textures[source_index].use(0)
-        self.blit_program["source_texture"].value = 0
+        self.blit_program['source_texture'].value = 0
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
         self.context.finish()
 

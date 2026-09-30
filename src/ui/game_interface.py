@@ -1,7 +1,7 @@
-from src.graphics.super_meshes import Bar, FontSequence, AlignEnum, MeshLevel
-from src.graphics import MeshLayer, Position, Color
-from src.ui import Interface
 from src.game import Game
+from src.graphics import Color, MeshLayer, Position
+from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
+from src.ui import Interface
 
 
 class GameInterface(Interface):
@@ -57,7 +57,7 @@ class GameInterface(Interface):
         )
 
         self.set_timer(600)
-        
+
         maze_x = self.x_offset + round(self.width * 0.02)
         maze_y = self.y_offset + level_bar_height + round(self.height * 0.07)
 
@@ -111,7 +111,7 @@ class GameInterface(Interface):
     def set_timer(self, seconds: int) -> None:
         self.timer_value: int = seconds
         self.refresh_timer()
-    
+
     def refresh_timer(self, dt: int = 0) -> None:
         self.timer_value += dt
         self.timer.set_sequence_text(self.sec_to_str(self.timer_value))

@@ -44,13 +44,13 @@ def main(verbose: bool) -> None:
     )
 
     game: Game = Game(config.get_config(), screen)
-    
+
     game_interface = GameInterface(game)
     stats_interface = StatsInterface(game)
 
     screen.add_mesh(game_interface)
     screen.add_mesh(stats_interface)
-    
+
     game.run()
 
 

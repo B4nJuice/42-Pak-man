@@ -1,8 +1,9 @@
 from enum import Enum
 
-from src.graphics import SuperMesh, Color, OperationEnum, Position, MeshLayer
-from src.graphics.meshes import Character
+from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
 from src.graphics.font import Font
+from src.graphics.meshes import Character
+
 
 class AlignEnum(Enum):
     LEFT="LEFT"

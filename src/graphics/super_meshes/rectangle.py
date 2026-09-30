@@ -1,4 +1,4 @@
-from src.graphics import Position, OperationEnum, Color, SuperMesh, MeshLayer
+from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
 from src.graphics.meshes import Polygon
 
 
