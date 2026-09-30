@@ -4,8 +4,8 @@ from pygame.time import Clock
 
 from src.config import ConfigModel
 from src.core import EventHandler, Level
-from src.graphics import Screen
 from src.graphics.font import Font
+from src.graphics.screen import Screen
 
 from .characters import Player
 from .items import PacGum

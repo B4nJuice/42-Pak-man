@@ -1,9 +1,11 @@
 from functools import partial
 
-from src.core import Displayable
+from src.core.displayable import Displayable
 from src.core.level import Level
-from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
+from src.graphics import Color, OperationEnum, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Line
+from src.graphics.super_mesh import SuperMesh
 from src.utils.direction import Direction
 
 

@@ -1,8 +1,10 @@
 from enum import Enum
 
-from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Character
+from src.graphics.super_mesh import SuperMesh
 
 
 class AlignEnum(Enum):

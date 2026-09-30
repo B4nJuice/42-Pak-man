@@ -1,5 +1,7 @@
-from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
+from src.graphics import Color, OperationEnum, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Polygon
+from src.graphics.super_mesh import SuperMesh
 
 
 class Rectangle(SuperMesh):
@@ -89,7 +91,7 @@ class Rectangle(SuperMesh):
 
     def set_thickness(self, thickness: int) -> None:
         self.thickness = thickness
-        self.refresh
+        self.refresh()
 
     def set_operation(self, operation: OperationEnum) -> None:
         self.operation = operation

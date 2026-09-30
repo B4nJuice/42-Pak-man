@@ -2,9 +2,11 @@ import pygame
 from moderngl import Context
 from pygame import Surface
 
+from ..ui.interface import Interface
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
 from .mesh_layer import MeshLayer
+from .super_mesh import SuperMesh
 
 
 class Screen:
@@ -31,8 +33,8 @@ class Screen:
         for mesh in layer.meshes:
             self.add_mesh(mesh)
 
-    def add_mesh(self, mesh: Mesh) -> None:
-        if hasattr(mesh, "get_layer"):
+    def add_mesh(self, mesh: Mesh | Interface) -> None:
+        if isinstance(mesh, Interface | SuperMesh):
             self.add_layer(mesh.get_layer())
             return
 

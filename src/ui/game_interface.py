@@ -1,11 +1,16 @@
-from src.game import Game
-from src.graphics import Color, MeshLayer, Position
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game import Game
+from src.graphics import Color, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
-from src.ui import Interface
+
+from .interface import Interface
 
 
 class GameInterface(Interface):
-    def __init__(self, game : Game) -> None:
+    def __init__(self, game: 'Game') -> None:
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 

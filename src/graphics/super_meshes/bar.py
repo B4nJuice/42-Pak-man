@@ -1,6 +1,9 @@
-from src.graphics import Color, MeshLayer, OperationEnum, Position, SuperMesh
+from src.graphics.color import Color, OperationEnum
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
-from src.graphics.super_meshes import Rectangle
+from src.graphics.position import Position
+from src.graphics.super_mesh import SuperMesh
+from src.graphics.super_meshes.rectangle import Rectangle
 
 
 class Bar(SuperMesh):
@@ -44,7 +47,7 @@ class Bar(SuperMesh):
             self.color,
             (
                 self.position, Position(
-                        self.position.x + self.width * percentage,
+                        int(self.position.x + self.width * percentage),
                         self.position.y + self.height,
                 )
             ),
