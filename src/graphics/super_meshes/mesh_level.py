@@ -138,17 +138,16 @@ class MeshLevel(SuperMesh):
             if isinstance(entity, Displayable):
                 mesh = entity.get_mesh()
 
-                mesh.get_position = lambda : Position(
-                        entity.pos[0] + self.position.x + self.tile_width // 2,
-                        entity.pos[1] + self.position.y + self.tile_height // 2
-                    )
+                mesh.get_position = lambda e=entity : Position(
+                    e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2,
+                    e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2
+                )
 
-                mesh.get_height = lambda : round(
-                        self.tile_width * entity.get_proportion()
+                mesh.get_height = lambda e=entity : round(
+                        self.tile_width * e.get_proportion()
                     )
-                
-                mesh.get_width = lambda : round(
-                        self.tile_width * entity.get_proportion()
+                mesh.get_width = lambda e=entity : round(
+                        self.tile_height * e.get_proportion()
                     )
 
                 self.get_layer().meshes.append(mesh)
