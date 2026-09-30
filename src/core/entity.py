@@ -20,6 +20,9 @@ class Entity:
 
         self.level.register_entity(self)
 
+    def init(self) -> None:
+        pass
+
     def get_name(self) -> str:
         return self._name
 

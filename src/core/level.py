@@ -13,6 +13,10 @@ class Level(Maze):
         self._entities = []
         self._contacts = set()
 
+    def init(self) -> None:
+        for entity in self._entities:
+            entity.init()
+
     def update(self, dt: float) -> None:
         for entity in list(self._entities):
             entity.update(dt)
@@ -39,3 +43,6 @@ class Level(Maze):
                     self._contacts.discard(key)
                     a.on_collision_exit(b)
                     b.on_collision_exit(a)
+
+    def get_entities(self) -> list[Entity]:
+        return self._entities

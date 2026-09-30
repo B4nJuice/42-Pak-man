@@ -6,6 +6,9 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics import Screen
 
+from .characters import Player
+from .items import PacGum
+
 
 class Game:
     _config: ConfigModel
@@ -24,6 +27,8 @@ class Game:
         self._init_screen()
         self.generate_level()
 
+        self.init_entities()
+
     def generate_level(self) -> None:
         self._level.generate(
             self._config.level_width,
@@ -35,6 +40,12 @@ class Game:
 
         self._screen.refresh()
         pygame.display.flip()
+
+    def init_entities(self) -> None:
+        self._player = Player('player', (0, 0), self._level)
+        PacGum('pacgum', (0, 1), self._level)
+
+        # self._screen.
 
     def run(self) -> None:
         self._running = True
@@ -61,6 +72,11 @@ class Game:
         self._clock = Clock()
         self._running = False
         self._event_handler.register_listener(pygame.QUIT, self._on_exit)
+        self._event_handler.register_listener(pygame.KEYDOWN, self._on_key_down)
+
+    def _on_key_down(self, event: Event, _: int) -> None:
+        if event.key == pygame.K_ESCAPE:
+            self.exit()
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()

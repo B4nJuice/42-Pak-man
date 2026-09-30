@@ -1,6 +1,6 @@
 from typing import Any, Protocol
 
-from ..utils import Direction, Vec2, lerp
+from ..utils import Direction, Pos, Vec2, lerp
 from .entity import Entity
 from .tile import Tile
 
@@ -13,6 +13,7 @@ class MovableEntityProtocol(Protocol):
     def get_tile(self) -> Tile: ...
     def update(self, dt: float) -> None: ...
     def on_arrive(self, tile: Tile) -> None: ...
+    def set_tile(self, tile: Pos | Tile) -> None: ...
 
 
 class Movable:
@@ -80,6 +81,7 @@ class Movable:
         self._progress += self._speed * dt
         if self._progress >= 1.0:
             self._progress = 0.0
+            self.set_tile(self._target)
             self.on_arrive(self._target)
             self._target = None
 
