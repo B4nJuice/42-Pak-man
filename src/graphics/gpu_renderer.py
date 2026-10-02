@@ -171,8 +171,9 @@ class GPURenderer:
             image.texture = self.context.texture(
                 image.image.size,
                 4,
-                image.image.tobytes(),
+                image.image.tobytes()
             )
+            image.texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
 
         return vertices, moderngl.TRIANGLE_STRIP
 
