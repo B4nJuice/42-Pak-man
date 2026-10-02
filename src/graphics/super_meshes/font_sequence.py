@@ -2,9 +2,8 @@ from enum import Enum
 
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Character
-from src.graphics.super_mesh import SuperMesh
+from src.graphics.super_mesh import SuperMesh, MeshLayer
 
 
 class AlignEnum(Enum):
@@ -46,9 +45,9 @@ class FontSequence(SuperMesh):
 
     def set_sequence_text(self, text: str) -> None:
         self.text: str = text
-        if len(self.characters) != len(text):
-            self.characters = []
-            self.layer.meshes.clear()
+        # if len(self.characters) != len(text):
+        self.characters = []
+        self.layer.meshes.clear()
 
         total_width = 0
         for index, character in enumerate(self.text):

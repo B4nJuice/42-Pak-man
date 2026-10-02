@@ -24,6 +24,8 @@ class GameInterface(Interface):
         level_bar_width: int = round(self.width*0.88)
         level_bar_height: int = round(self.height*0.03)
 
+        self.game._player.set_level_text = self.set_level_text
+
         self.level_bar: Bar = Bar(
             Color(*self.game._config.level_bar_color),
             Color(*self.game._config.level_bar_border_color),
@@ -110,6 +112,9 @@ class GameInterface(Interface):
     @staticmethod
     def sec_to_str(seconds: int) -> str:
         return f"{seconds//60:02}:{seconds%60:02}"
+
+    def set_level_text(self, level: int) -> None:
+        self.level_text.set_sequence_text(f"Lvl .{level}")
 
     def set_level_bar_progression(self, progression: int) -> None:
         self.level_bar.set_progression(progression)
