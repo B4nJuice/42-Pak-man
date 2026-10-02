@@ -14,6 +14,7 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
+from src.graphics.mesh_layer import MeshLayer
 
 
 @cache
@@ -380,6 +381,18 @@ class GPURenderer:
         vao.render(mode=mode)
         vertex_buffer.release()
         vao.release()
+
+    @_draw_mesh.register
+    def _(
+                self,
+                layer: MeshLayer,
+                source: moderngl.Texture,
+                target: moderngl.Framebuffer
+            ) -> None:
+        for mesh in layer.meshes:
+            if hasattr(mesh, "get_layer"):
+                mesh = mesh.get_layer()
+            self._draw_mesh(mesh, source, target)
 
     def render(
                 self,

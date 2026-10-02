@@ -1,5 +1,8 @@
+from bisect import bisect_right
 import pygame
 
+
+from src.graphics.super_meshes import Bar
 from src.core import Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture, OperationEnum, Position
@@ -7,7 +10,20 @@ from src.utils import Direction, Pos
 
 
 class Player(Collider, Movable, Displayable, Entity):
-    def __init__(self, id: str, tile: Pos | Tile, level: Level):
+    _level_exp_multiplier: float
+    _next_level_exp: float
+    _exp_per_second: float
+    _level_bar: Bar | None
+    _actual_level: int
+    _exp_points: float
+    _level_exp: float
+
+    def __init__(
+                self,
+                id: str,
+                tile: Pos | Tile,
+                level: Level
+            ) -> None:
         super().__init__(
             name=id,
             tile=tile,
@@ -17,6 +33,16 @@ class Player(Collider, Movable, Displayable, Entity):
             speed=6,
             proportion=0.9
         )
+
+        # TODO link params to the config
+
+        self._level_exp_multiplier = 1.1
+        self._next_level_exp = 100
+        self._exp_per_second = 0.5
+        self._level_bar = None
+        self._actual_level = 0
+        self._exp_points = 0
+        self._level_exp = 0
 
     def on_collision(self, other: 'Collider') -> None:
         super().on_collision(other)
@@ -48,6 +74,8 @@ class Player(Collider, Movable, Displayable, Entity):
     def update(self, dt: float) -> None:
         super().update(dt)
 
+        self.add_exp(dt * self._exp_per_second)
+
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.try_move(Direction.NORTH)
@@ -70,3 +98,32 @@ class Player(Collider, Movable, Displayable, Entity):
 
     def update_mesh(self) -> None:
         return super().update_mesh()
+
+    def refresh_bar_progression(self) -> None:
+        if not self._level_bar:
+            return
+        self._level_bar.set_progression(
+                self._exp_points - self._level_exp
+            )
+
+    def refresh_level_text(self) -> None:
+        self.set_level_text(self._actual_level)
+
+    def set_bar_goal(self) -> None:
+        if not self._level_bar:
+            return
+        self._level_bar.set_goal(
+                self._next_level_exp - self._level_exp
+            )
+
+    def add_exp(self, amount: int) -> None:
+        self._exp_points += amount
+        self.refresh_bar_progression()
+        if self._exp_points >= self._next_level_exp:
+            temp = self._next_level_exp
+            self._next_level_exp +=\
+                (self._next_level_exp - self._level_exp) * self._level_exp_multiplier
+            self._level_exp = temp
+            self._actual_level += 1
+            self.refresh_level_text()
+            self.set_bar_goal()
