@@ -34,6 +34,7 @@ class Movable:
         self._target = None
         self._progress = 0.0
         self._queued = None
+        self._direction = None
 
     def get_speed(self) -> float:
         return self._speed
@@ -62,7 +63,17 @@ class Movable:
         if not isinstance(self, Entity):
             raise TypeError('Entity does not have a pos property')
 
+        if self._direction == direction:
+            return False
+
         if self._target is not None:
+            if direction.opposite() == self._direction:
+                temp = self.get_tile()
+                self.tile = self._target
+                self._target = temp
+                self._direction = direction
+                self._progress = 1 - self._progress
+                return True
             self._queued = direction
             return False
 
@@ -74,7 +85,7 @@ class Movable:
 
         self._target = next_tile
         self._direction = direction
-        self._progress = 0.0
+        self._progress = 0
         return True
 
     def update(self: MovableEntityProtocol, dt: float) -> None:
