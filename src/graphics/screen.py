@@ -1,6 +1,7 @@
 import pygame
-from moderngl import Context
+import moderngl
 from pygame import Surface
+from moderngl import Context
 
 from ..ui.interface import Interface
 from .gpu_renderer import GPURenderer
@@ -25,6 +26,9 @@ class Screen:
         self.moderngl_context: Context = self.gpu_renderer.context
         self.static_mesh_layer: MeshLayer = MeshLayer()
         self.dynamic_mesh_layer: MeshLayer = MeshLayer()
+
+
+        # self.moderngl_context.disable(0x809D)
 
     def add_layer(
                 self,

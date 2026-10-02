@@ -139,8 +139,8 @@ class MeshLevel(SuperMesh):
                 mesh = entity.get_mesh()
 
                 mesh.get_position = lambda e=entity : Position(
-                    e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2,
-                    e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2
+                    round(e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2),
+                    round(e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2)
                 )
 
                 mesh.get_height = lambda e=entity : round(
