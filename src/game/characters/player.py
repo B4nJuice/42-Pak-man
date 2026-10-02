@@ -38,7 +38,7 @@ class Player(Collider, Movable, Displayable, Entity):
 
         self._level_exp_multiplier = 1.1
         self._next_level_exp = 100
-        self._exp_per_second = 1000
+        self._exp_per_second = 0.5
         self._level_bar = None
         self._actual_level = 0
         self._exp_points = 0
@@ -124,7 +124,6 @@ class Player(Collider, Movable, Displayable, Entity):
             self._next_level_exp +=\
                 (self._next_level_exp - self._level_exp) * self._level_exp_multiplier
             self._level_exp = temp
-            print(self._next_level_exp)
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
