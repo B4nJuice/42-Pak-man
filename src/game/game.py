@@ -50,8 +50,10 @@ class Game:
         pygame.display.flip()
 
     def init_entities(self) -> None:
+        for x in range(self._level.get_width()):
+            for y in range(self._level.get_height()):
+                PacGum('pacgum', (x, y), self._level)
         self._player = Player('player', (0, 0), self._level)
-        PacGum('pacgum', (0, 1), self._level)
 
         # self._screen.
 

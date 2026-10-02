@@ -10,7 +10,7 @@ class PacGum(Collider, Displayable, Entity):
             tile=pos,
             level=level,
             solid=False,
-            radius=0.1,
+            proportion=0.1
         )
 
         self.init_mesh()
