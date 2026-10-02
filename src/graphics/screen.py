@@ -34,8 +34,7 @@ class Screen:
                 self,
                 layer: MeshLayer
             ) -> None:
-        for mesh in layer.meshes:
-            self.add_mesh(mesh)
+        self.dynamic_mesh_layer.meshes.append(layer)
 
     def add_mesh(self, mesh: Mesh | Interface) -> None:
         if isinstance(mesh, Interface | SuperMesh):
