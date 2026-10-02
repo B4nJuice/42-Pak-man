@@ -15,8 +15,8 @@ class Bar(SuperMesh):
                 width: int,
                 height: int,
                 border_thickness: int,
-                goal: int,
-                progression: int = 0,
+                goal: float,
+                progression: float = 0,
                 operation: OperationEnum = OperationEnum.SET,
                 is_dynamic: bool = False,
                 smooth_end: bool = False,
@@ -33,8 +33,8 @@ class Bar(SuperMesh):
         self.border_color: Color = border_color
         self.smooth_end: bool = smooth_end
         self.position = position
-        self.goal: int = goal
-        self.progression: int = progression
+        self.goal: float = goal
+        self.progression: float = progression
 
         self.layer: MeshLayer = MeshLayer()
 
@@ -93,11 +93,11 @@ class Bar(SuperMesh):
     def get_layer(self) -> MeshLayer:
         return self.layer
 
-    def set_progression(self, progression: int) -> None:
+    def set_progression(self, progression: float) -> None:
         self.progression = max(0, progression)
         self.refresh()
 
-    def set_goal(self, goal: int) -> None:
+    def set_goal(self, goal: float) -> None:
         self.goal = max(0, goal)
         self.refresh()
 

@@ -32,10 +32,12 @@ class GameInterface(Interface):
             level_bar_height,
             1,
             100,
-            progression=50,
+            progression=0,
             is_dynamic=True,
             smooth_end=True,
         )
+
+        self.game._player._level_bar = self.level_bar
 
         self.level_text: FontSequence = FontSequence(
             "Null",
