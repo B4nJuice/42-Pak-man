@@ -10,7 +10,7 @@ class Ghost(Collider, Displayable, Entity):
             tile=tile,
             level=level,
             solid=True,
-            radius=0.45,
+            proportion=0.9,
         )
 
     def on_collision(self, other: 'Collider') -> None:
