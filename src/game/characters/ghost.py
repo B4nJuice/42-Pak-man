@@ -25,7 +25,7 @@ class Ghost(Collider, Displayable, Entity):
 
     def init_mesh(self) -> None:
         self._mesh = ImageTexture(
-            path='assets/characters/pacman/d0_0.png',
+            path='assets/characters/ghosts/red/east_0.png',
             position=Position(0, 0),
             width=0,
             height=0,
@@ -35,6 +35,3 @@ class Ghost(Collider, Displayable, Entity):
 
     def update(self, dt: float) -> None:
         pass
-
-    def update_mesh(self) -> None:
-        return super().update_mesh()

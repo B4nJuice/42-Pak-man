@@ -10,6 +10,8 @@ from src.utils import Direction, Pos
 
 
 class Player(Collider, Movable, Displayable, Entity):
+    _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
+    _mesh_by_direction: dict[Direction | None, ImageTexture]
     _level_exp_multiplier: float
     _next_level_exp: float
     _exp_per_second: float
@@ -55,18 +57,40 @@ class Player(Collider, Movable, Displayable, Entity):
         super().on_collision_exit(other)
 
     def init_mesh(self) -> None:
-        self._mesh = ImageTexture(
-            path='assets/characters/ghosts/red/east_0.png',
-            position=Position(0, 0),
-            width=0,
-            height=0,
-            operation=OperationEnum.SET,
-            is_dynamic=False,
-        )
+        self._mesh_by_direction = {
+            Direction.NORTH: ImageTexture.create_blank(
+                    "assets/characters/pacman/d1_0.png"
+                ),
+            Direction.EAST: ImageTexture.create_blank(
+                    "assets/characters/pacman/d2_0.png"
+                ),
+            Direction.SOUTH: ImageTexture.create_blank(
+                    "assets/characters/pacman/d4_0.png"
+                ),
+            Direction.WEST: ImageTexture.create_blank(
+                    "assets/characters/pacman/d8_0.png"
+                ),
+            None: ImageTexture.create_blank(
+                    "assets/characters/pacman/closed.png"
+                )
+        }
+
+        self._inverse_mesh_by_direction = {
+            mesh: direction
+            for direction, mesh in self._mesh_by_direction.items()
+        }
+
+        self._mesh = self._mesh_by_direction[None]
+
+    def get_texture(self) -> ImageTexture:
+        return self._mesh_by_direction[self._direction]
 
     def try_move(self, direction: Direction) -> bool:
+        same = direction == self._direction
         if super().try_move(direction):
             print(f'Moving to {direction}')
+            if not same:
+                self.update_mesh()
             return True
         print(f'Cannot move to {direction}')
         return False
@@ -86,6 +110,16 @@ class Player(Collider, Movable, Displayable, Entity):
         if keys[pygame.K_RIGHT]:
             self.try_move(Direction.EAST)
 
+    def update_mesh(self) -> None:
+        actual_texture = self._mesh.texture
+        actual_mesh = self._mesh_by_direction[
+                self._inverse_mesh_by_direction[self._mesh]
+            ]
+        if not actual_mesh.texture:
+            actual_mesh.texture = actual_texture
+
+        return super().update_mesh()
+
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         print(f'Arrived at {tile.get_pos()}')
         self._direction = None
@@ -97,9 +131,6 @@ class Player(Collider, Movable, Displayable, Entity):
             self.try_move(direction)
 
         return super().on_arrive(tile, direction)
-
-    def update_mesh(self) -> None:
-        return super().update_mesh()
 
     def refresh_bar_progression(self) -> None:
         if not self._level_bar:

@@ -37,3 +37,14 @@ class ImageTexture(Mesh):
 
     def get_height(self) -> int:
         return self.height
+
+    @classmethod
+    def create_blank(cls, path: str) -> 'ImageTexture':
+        return cls(
+            path=path,
+            position=Position(0, 0),
+            width=0,
+            height=0,
+            operation=OperationEnum.SET,
+            is_dynamic=False,
+        )
