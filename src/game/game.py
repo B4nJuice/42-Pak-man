@@ -16,6 +16,7 @@ class Game:
     _level: Level
     _screen: Screen
     _running: bool
+    _paused: bool
     _clock: Clock
     _event_handler: EventHandler
     _font: Font
@@ -64,12 +65,16 @@ class Game:
 
     def run(self) -> None:
         self._running = True
+        self._paused = False
         dt: float = 0.0
 
         self.update(dt)
         while self._running:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
+
+            if self._paused:
+                continue
 
             self.update(dt)
             dt = self._clock.tick(60.0) / 1000
@@ -91,7 +96,8 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self.exit()
+            self._paused = not self._paused
+            # self.exit()
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()
