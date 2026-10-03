@@ -7,7 +7,7 @@ from src.core import EventHandler, Level
 from src.graphics.font import Font
 from src.graphics.screen import Screen
 
-from .characters import Player
+from .characters import Player, Ghost
 from .items import PacGum
 
 
@@ -50,7 +50,14 @@ class Game:
         pygame.display.flip()
 
     def init_entities(self) -> None:
-        self._player = Player('player', (0, 0), self._level)
+        self._player = Player('player', (
+                self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
+            ), self._level)
+        self._ghost_1 = Ghost(
+            'test',
+            (0, 0),
+            self._level,
+        )
         PacGum('pacgum', (0, 1), self._level)
 
         # self._screen.
