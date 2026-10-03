@@ -320,6 +320,9 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        if mesh.hidden:
+            return
+
         vertices, mode = self._vertices(mesh)
         vertex_buffer = self.context.buffer(vertices.tobytes())
         vao = self.context.vertex_array(
