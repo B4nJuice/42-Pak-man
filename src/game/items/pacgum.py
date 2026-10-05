@@ -32,5 +32,4 @@ class PacGum(Collider, Displayable, Entity):
         if not isinstance(other, Entity):
             return
 
-        print(f'Pacgum {self.get_name()!r} collided with {other.get_name()!r}')
         return super().on_collision(other)

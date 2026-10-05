@@ -7,6 +7,7 @@ from src.core import Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Direction, Pos
+from src.game.items import PacGum
 
 
 class Player(Collider, Movable, Displayable, Entity):
@@ -16,6 +17,7 @@ class Player(Collider, Movable, Displayable, Entity):
     _level_bar: Bar | None
     _actual_level: int
     _exp_points: float
+    _pacgum_exp: float
     _level_exp: float
 
     def __init__(
@@ -31,7 +33,8 @@ class Player(Collider, Movable, Displayable, Entity):
             solid=True,
             radius=0.45,
             speed=6,
-            proportion=0.9
+            proportion=0.9,
+            primary=True
         )
 
         # TODO link params to the config
@@ -42,14 +45,19 @@ class Player(Collider, Movable, Displayable, Entity):
         self._level_bar = None
         self._actual_level = 0
         self._exp_points = 0
+        self._pacgum_exp = 5
         self._level_exp = 0
 
     def on_collision(self, other: 'Collider') -> None:
-        super().on_collision(other)
         if not isinstance(other, Entity):
             return
 
-        print(f'Collision with {other.get_name()!r}')
+        match other.__class__:
+            case PacGum:
+                self.level.unregister_entity(other)
+                self.add_exp(self._pacgum_exp)
+
+        super().on_collision(other)
 
     def on_collision_exit(self, other: 'Collider') -> None:
         super().on_collision_exit(other)

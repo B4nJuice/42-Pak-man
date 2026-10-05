@@ -53,6 +53,7 @@ class Game:
         for x in range(self._level.get_width()):
             for y in range(self._level.get_height()):
                 PacGum('pacgum', (x, y), self._level)
+                pass
         self._player = Player('player', (0, 0), self._level)
 
         # self._screen.
