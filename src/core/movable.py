@@ -54,7 +54,7 @@ class Movable:
         if not isinstance(self, Entity):
             raise TypeError('Entity does not have a pos property')
 
-        if self._direction == direction:
+        if self._target and self._direction == direction:
             return False
 
         if self._target is not None:

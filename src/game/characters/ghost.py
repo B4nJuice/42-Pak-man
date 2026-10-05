@@ -1,10 +1,16 @@
-from src.core import Collider, Displayable, Entity, Level, Tile
-from src.graphics import ImageTexture, OperationEnum, Position
-from src.utils import Pos
+from pathlib import Path
+
+from src.core import AI, Collider, Displayable, Entity, Level, Tile
+from src.core.movable import Movable
+from src.graphics import ImageTexture
+from src.utils import Direction, Pos
 
 
-class Ghost(Collider, Displayable, Entity):
-    def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
+class Ghost(Collider, AI, Movable, Displayable, Entity):
+    _texture_path: str
+    _meshs: dict[Direction, list[ImageTexture]]
+
+    def __init__(self, name: str, tile: Pos | Tile, level: Level) -> None:
         super().__init__(
             name=id,
             tile=tile,
@@ -13,25 +19,19 @@ class Ghost(Collider, Displayable, Entity):
             proportion=0.9,
         )
 
-    def on_collision(self, other: 'Collider') -> None:
-        super().on_collision(other)
-        if not isinstance(other, Entity):
-            return
-
-        print(f'Collision with {other.get_name()!r}')
-
-    def on_collision_exit(self, other: 'Collider') -> None:
-        super().on_collision_exit(other)
-
     def init_mesh(self) -> None:
-        self._mesh = ImageTexture(
-            path='assets/characters/ghosts/red/east_0.png',
-            position=Position(0, 0),
-            width=0,
-            height=0,
-            operation=OperationEnum.SET,
-            is_dynamic=False,
-        )
+        self._meshs = {
+            direction: [
+                ImageTexture.create_blank(Path(
+                    self._texture_path, f'{direction.to_string()}_{i}.png'
+                ).as_posix())
+                for i in range(1)
+            ]
+            for direction in Direction
+        }
 
-    def update(self, dt: float) -> None:
-        pass
+    def get_mesh(self) -> ImageTexture:
+        if not self._direction:
+            return self._meshs[Direction.EAST][0]
+
+        return self._meshs[self._direction][0]
