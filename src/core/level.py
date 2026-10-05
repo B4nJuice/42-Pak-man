@@ -5,14 +5,12 @@ from .maze import Maze
 
 class Level(Maze):
     _entities: list[Entity]
-    _contacts: set[frozenset[int]]
     _colliders: list[Entity]
 
     def __init__(self, seed: int):
         super().__init__(seed)
 
         self._entities = []
-        self._contacts = set()
         self._colliders = []
 
     def init(self) -> None:
@@ -35,10 +33,9 @@ class Level(Maze):
             self._colliders.remove(entity)
 
     def _check_collisions(self) -> None:
-        colliders = [e for e in self._entities if isinstance(e, Collider)]
-        for a in colliders:
+        for a in self._colliders:
             if a._primary:
-                for b in colliders:
+                for b in self._colliders:
                     if a is b:
                         continue
                     if a.overlaps(b):

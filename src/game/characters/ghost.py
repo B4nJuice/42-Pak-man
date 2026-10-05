@@ -14,11 +14,10 @@ class Ghost(Collider, Displayable, Entity):
         )
 
     def on_collision(self, other: 'Collider') -> None:
-        super().on_collision(other)
         if not isinstance(other, Entity):
             return
 
-        print(f'Collision with {other.get_name()!r}')
+        super().on_collision(other)
 
     def on_collision_exit(self, other: 'Collider') -> None:
         super().on_collision_exit(other)
