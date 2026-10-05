@@ -1,20 +1,8 @@
-from typing import Any, Protocol
+from typing import Any
 
-from ..utils import Direction, Pos, Vec2, lerp
+from ..utils import Direction, Vec2, lerp
 from .entity import Entity
 from .tile import Tile
-
-
-class MovableEntityProtocol(Protocol):
-    _target: Tile | None
-    _direction: Direction | None
-    _speed: float
-    _progress: float
-
-    def get_tile(self) -> Tile: ...
-    def update(self, dt: float) -> None: ...
-    def on_arrive(self, tile: Tile, direction: Direction) -> None: ...
-    def set_tile(self, tile: Pos | Tile) -> None: ...
 
 
 class Movable:
@@ -49,7 +37,10 @@ class Movable:
         return self._target
 
     @property
-    def pos(self: MovableEntityProtocol) -> Vec2:
+    def pos(self) -> Vec2:
+        if not isinstance(self, Entity):
+            return 0.0, 0.0
+
         if self._target is None:
             return self.get_tile().get_vec()
 
@@ -88,8 +79,9 @@ class Movable:
         self._progress = 0
         return True
 
-    def update(self: MovableEntityProtocol, dt: float) -> None:
-        super().update(dt)
+    def update(self, dt: float) -> None:
+        if not isinstance(self, Entity):
+            return
 
         if self._target is None or self._direction is None:
             return

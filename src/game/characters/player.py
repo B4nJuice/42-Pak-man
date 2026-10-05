@@ -1,17 +1,18 @@
-from bisect import bisect_right
+from collections.abc import Callable
+
 import pygame
 
-
-from src.graphics.super_meshes import Bar
 from src.core import Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
-from src.graphics import ImageTexture, OperationEnum, Position
+from src.graphics import ImageTexture
+from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 
 
 class Player(Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
+    set_level_text: Callable[[int], None]
     _level_exp_multiplier: float
     _next_level_exp: float
     _exp_per_second: float
@@ -59,19 +60,19 @@ class Player(Collider, Movable, Displayable, Entity):
     def init_mesh(self) -> None:
         self._mesh_by_direction = {
             Direction.NORTH: ImageTexture.create_blank(
-                    "assets/characters/pacman/d1_0.png"
+                    "assets/characters/pacman/north_0.png"
                 ),
             Direction.EAST: ImageTexture.create_blank(
-                    "assets/characters/pacman/d2_0.png"
+                    "assets/characters/pacman/east_0.png"
                 ),
             Direction.SOUTH: ImageTexture.create_blank(
-                    "assets/characters/pacman/d4_0.png"
+                    "assets/characters/pacman/south_0.png"
                 ),
             Direction.WEST: ImageTexture.create_blank(
-                    "assets/characters/pacman/d8_0.png"
+                    "assets/characters/pacman/west_0.png"
                 ),
             None: ImageTexture.create_blank(
-                    "assets/characters/pacman/closed.png"
+                    "assets/characters/pacman/west_full.png"
                 )
         }
 
@@ -141,6 +142,7 @@ class Player(Collider, Movable, Displayable, Entity):
 
     def refresh_level_text(self) -> None:
         self.set_level_text(self._actual_level)
+        # pass
 
     def set_bar_goal(self) -> None:
         if not self._level_bar:
@@ -149,7 +151,7 @@ class Player(Collider, Movable, Displayable, Entity):
                 self._next_level_exp - self._level_exp
             )
 
-    def add_exp(self, amount: int) -> None:
+    def add_exp(self, amount: float) -> None:
         self._exp_points += amount
         self.refresh_bar_progression()
         if self._exp_points >= self._next_level_exp:
