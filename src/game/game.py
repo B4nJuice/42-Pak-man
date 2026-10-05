@@ -6,6 +6,7 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics.font import Font
 from src.graphics.screen import Screen
+from src.ui import GameInterface, StatsInterface, EscapeInterface
 
 from .characters import Player, Ghost
 from .items import PacGum
@@ -16,9 +17,13 @@ class Game:
     _level: Level
     _screen: Screen
     _running: bool
+    _paused: bool
     _clock: Clock
     _event_handler: EventHandler
     _font: Font
+    _game_interface: GameInterface
+    _stats_interface: StatsInterface
+    _escape_interface: EscapeInterface
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
         self._set_config(config)
@@ -36,6 +41,7 @@ class Game:
         self.generate_level()
 
         self.init_entities()
+        self.init_interfaces()
 
     def generate_level(self) -> None:
         self._level.generate(
@@ -65,14 +71,27 @@ class Game:
 
         # self._screen.
 
+    def init_interfaces(self) -> None:
+        self._game_interface = GameInterface(self)
+        self._stats_interface = StatsInterface(self)
+        self._escape_interface = EscapeInterface(self)
+    
+        self._screen.add_mesh(self._game_interface)
+        self._screen.add_mesh(self._stats_interface)
+        self._screen.add_mesh(self._escape_interface)
+
     def run(self) -> None:
         self._running = True
+        self._paused = False
         dt: float = 0.0
 
         self.update(dt)
         while self._running:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
+
+            if self._paused:
+                dt = 0
 
             self.update(dt)
             dt = self._clock.tick(60.0) / 1000
@@ -94,7 +113,12 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self.exit()
+            self._paused = not self._paused
+            if self._paused:
+                self._escape_interface.display()
+            else:
+                self._escape_interface.hide()
+            # self.exit()
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()
