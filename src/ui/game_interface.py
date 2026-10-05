@@ -42,7 +42,7 @@ class GameInterface(Interface):
         self.game._player._level_bar = self.level_bar
 
         self.level_text: FontSequence = FontSequence(
-            "Null",
+            "Lvl .0",
             self.game._font,
             Color(*self.game._config.level_bar_color),
             Position(level_bar_x - round(self.width * 0.01), level_bar_y + level_bar_height),

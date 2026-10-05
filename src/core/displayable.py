@@ -42,6 +42,9 @@ class Displayable(ABC):
     def set_proportion(self, proportion: float) -> None:
         self._proportion = proportion
 
-    @abstractmethod
+    def get_texture(self) -> 'ImageTexture':
+        return self._mesh.texture
+
     def update_mesh(self) -> None:
-        pass
+        self._mesh.image = self.get_texture().image
+        self._mesh.texture = self.get_texture().texture
