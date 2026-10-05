@@ -10,7 +10,7 @@ class PacGum(Collider, Displayable, Entity):
             tile=pos,
             level=level,
             solid=False,
-            radius=0.1,
+            proportion=0.1
         )
 
         self.init_mesh()
@@ -32,5 +32,4 @@ class PacGum(Collider, Displayable, Entity):
         if not isinstance(other, Entity):
             return
 
-        print(f'Pacgum {self.get_name()!r} collided with {other.get_name()!r}')
         return super().on_collision(other)

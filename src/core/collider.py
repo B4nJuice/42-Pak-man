@@ -7,12 +7,14 @@ from .tile import Tile
 class Collider:
     _solid: bool
     _radius: float
+    _primary: float
 
     def __init__(
                 self,
                 *args: Any,
                 solid: bool = True,
                 radius: float = 0.4,
+                primary: bool = False,
                 **kwargs: Any
             ) -> None:
         super().__init__(*args, **kwargs)
@@ -24,12 +26,16 @@ class Collider:
 
         self.set_solid(solid)
         self.set_radius(radius)
+        self.set_primary(primary)
 
     def set_solid(self, solid: bool) -> None:
         self._solid = solid
 
     def set_radius(self, radius: float) -> None:
         self._radius = radius
+
+    def set_primary(self, primary: bool) -> None:
+        self._primary = primary
 
     def is_solid(self) -> bool:
         return self._solid
@@ -60,7 +66,7 @@ class Collider:
         return (ax - bx) ** 2 + (ay - by) ** 2 < r * r
 
     def on_collision(self, other: 'Collider') -> None:
-        pass
+        print(f'Collision with {other.get_name()!r}')
 
     def on_collision_exit(self, other: 'Collider') -> None:
         pass

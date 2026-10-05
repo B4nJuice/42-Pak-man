@@ -5,13 +5,13 @@ from .maze import Maze
 
 class Level(Maze):
     _entities: list[Entity]
-    _contacts: set[frozenset[int]]
+    _colliders: list[Entity]
 
     def __init__(self, seed: int):
         super().__init__(seed)
 
         self._entities = []
-        self._contacts = set()
+        self._colliders = []
 
     def init(self) -> None:
         for entity in self._entities:
@@ -24,25 +24,23 @@ class Level(Maze):
 
     def register_entity(self, entity: Entity) -> None:
         self._entities.append(entity)
+        if isinstance(entity, Collider):
+            self._colliders.append(entity)
 
     def unregister_entity(self, entity: Entity) -> None:
         self._entities.remove(entity)
+        if entity in self._colliders:
+            self._colliders.remove(entity)
 
     def _check_collisions(self) -> None:
-        colliders = [e for e in self._entities if isinstance(e, Collider)]
-        for i, a in enumerate(colliders):
-            for b in colliders[i + 1:]:
-                key = frozenset((id(a), id(b)))
-                hit = a.overlaps(b)
-
-                if hit and key not in self._contacts:
-                    self._contacts.add(key)
-                    a.on_collision(b)
-                    b.on_collision(a)
-                elif not hit and key in self._contacts:
-                    self._contacts.discard(key)
-                    a.on_collision_exit(b)
-                    b.on_collision_exit(a)
+        for a in self._colliders:
+            if a._primary:
+                for b in self._colliders:
+                    if a is b:
+                        continue
+                    if a.overlaps(b):
+                        a.on_collision(b)
+                        b.on_collision(a)
 
     def get_entities(self) -> list[Entity]:
         return self._entities
