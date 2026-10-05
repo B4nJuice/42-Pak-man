@@ -123,7 +123,6 @@ class Player(Collider, Movable, Displayable, Entity):
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         print(f'Arrived at {tile.get_pos()}')
-        self._direction = None
         if self._queued is not None:
             if not self.try_move(self._queued):
                 self.try_move(direction)
