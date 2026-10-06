@@ -9,7 +9,7 @@ from src.graphics.font import Font
 from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
 from src.game.characters import Ghost, Player
-from src.game.items import PacGum
+from src.game.items import PacGum, SuperPacGum
 
 
 class Game:
@@ -65,10 +65,22 @@ class Game:
         self._level._to_unregister = []
 
     def init_entities(self) -> None:
+        super_pacgum_positions: list[tuple[int, int]] = [
+            (0, 0),
+            (self._level.get_width() - 1, 0),
+            (self._level.get_width() - 1, self._level.get_height() - 1),
+            (0, self._level.get_height() - 1)
+        ]
+
         for x in range(self._level.get_width()):
             for y in range(self._level.get_height()):
+                if (x, y) in super_pacgum_positions:
+                    continue
                 PacGum('pacgum', (x, y), self._level)
-                pass
+
+        for pos in super_pacgum_positions:
+            SuperPacGum('super_pacgum', pos, self._level)
+
         self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
             )
@@ -77,6 +89,7 @@ class Game:
                 self._player_start_position,
                 self._level
             )
+
         self._ghost_1 = Ghost(
             'test',
             (0, 0),
