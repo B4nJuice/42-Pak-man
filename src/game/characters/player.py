@@ -5,10 +5,10 @@ import pygame
 from src.core import Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
+
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 from src.game.items import PacGum
-from src.game.characters import Ghost
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -38,7 +38,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             radius=0.45,
             speed=6,
             proportion=0.9,
-            primary=True
+            primary=True,
+            lives=3
         )
 
         # TODO link params to the config
@@ -53,6 +54,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._level_exp = 0
 
     def on_collision(self, other: 'Collider') -> None:
+        from src.game.characters import Ghost
         if not isinstance(other, Entity):
             return
 
@@ -65,7 +67,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 ...
             else:
                 self.set_health(0)
-                self.add_lives(-1)
 
         super().on_collision(other)
 

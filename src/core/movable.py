@@ -1,6 +1,6 @@
 from typing import Any
 
-from ..utils import Direction, Vec2, lerp
+from ..utils import Direction, Vec2, lerp, Pos
 from .entity import Entity
 from .tile import Tile
 
@@ -35,6 +35,16 @@ class Movable:
 
     def get_target(self) -> Tile | None:
         return self._target
+
+    def set_tile(self, tile: Pos | Tile) -> None:
+        self._target = None
+        self._progress = 0.0
+        if not isinstance(self, Entity):
+            return
+        if isinstance(tile, Tile):
+            self.tile = tile
+        else:
+            self.tile = self.level.get_tile(*tile)
 
     @property
     def pos(self) -> Vec2:
@@ -88,9 +98,8 @@ class Movable:
 
         self._progress += self._speed * dt
         if self._progress >= 1.0:
-            self._progress = 0.0
-            self.set_tile(self._target)
             current_target: Tile = self._target
+            self.set_tile(self._target)
             self._target = None
             self.on_arrive(current_target, self._direction)
 
