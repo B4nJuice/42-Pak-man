@@ -67,34 +67,34 @@ class MeshLevel(SuperMesh):
                 if tile.get_y() == 0 or tile.has_wall(Direction.NORTH):
                     wall = self.create_wall(
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y
+                                tile.get_x() * self.tile_width +
+                                self.position.x,
+                                tile.get_y() * self.tile_height +
+                                self.position.y
                             ),
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x + self.tile_width,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y
+                                tile.get_x() * self.tile_width +
+                                self.position.x + self.tile_width,
+                                tile.get_y() * self.tile_height +
+                                self.position.y
                             )
                     )
                     self.layer.meshes.append(wall)
 
                 if tile.get_x() == (self.level.get_width() - 1) or\
-                    tile.has_wall(Direction.EAST):
+                        tile.has_wall(Direction.EAST):
                     wall = self.create_wall(
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x + self.tile_width,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y
+                                tile.get_x() * self.tile_width +
+                                self.position.x + self.tile_width,
+                                tile.get_y() * self.tile_height +
+                                self.position.y
                             ),
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x + self.tile_width,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y + self.tile_height
+                                tile.get_x() * self.tile_width +
+                                self.position.x + self.tile_width,
+                                tile.get_y() * self.tile_height +
+                                self.position.y + self.tile_height
                             )
                     )
                     self.layer.meshes.append(wall)
@@ -102,16 +102,16 @@ class MeshLevel(SuperMesh):
                 if tile.get_x() == 0:
                     wall = self.create_wall(
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y
+                                tile.get_x() * self.tile_width +
+                                self.position.x,
+                                tile.get_y() * self.tile_height +
+                                self.position.y
                             ),
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y + self.tile_height
+                                tile.get_x() * self.tile_width +
+                                self.position.x,
+                                tile.get_y() * self.tile_height +
+                                self.position.y + self.tile_height
                             )
                     )
                     self.layer.meshes.append(wall)
@@ -119,16 +119,16 @@ class MeshLevel(SuperMesh):
                 if tile.get_y() == (self.level.get_height() - 1):
                     wall = self.create_wall(
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y + self.tile_height
+                                tile.get_x() * self.tile_width +
+                                self.position.x,
+                                tile.get_y() * self.tile_height +
+                                self.position.y + self.tile_height
                             ),
                         Position(
-                                tile.get_x() * self.tile_width +\
-                                    self.position.x + self.tile_width,
-                                tile.get_y() * self.tile_height +\
-                                    self.position.y + self.tile_height
+                                tile.get_x() * self.tile_width +
+                                self.position.x + self.tile_width,
+                                tile.get_y() * self.tile_height +
+                                self.position.y + self.tile_height
                             )
                     )
                     self.layer.meshes.append(wall)
@@ -141,15 +141,17 @@ class MeshLevel(SuperMesh):
     def register_entity(self, entity: Displayable) -> None:
         mesh = entity.get_mesh()
 
-        mesh.get_position = lambda e=entity : Position(
-            round(e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2),
-            round(e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2)
+        mesh.get_position = lambda e=entity: Position(
+            round(e.pos[0] * self.tile_width + self.position.x +
+                  self.tile_width // 2),
+            round(e.pos[1] * self.tile_height + self.position.y +
+                  self.tile_height // 2)
         )
 
-        mesh.get_height = lambda e=entity : round(
+        mesh.get_height = lambda e=entity: round(
                 self.tile_width * e.get_proportion()
             )
-        mesh.get_width = lambda e=entity : round(
+        mesh.get_width = lambda e=entity: round(
                 self.tile_height * e.get_proportion()
             )
 
