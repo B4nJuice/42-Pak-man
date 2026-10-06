@@ -10,6 +10,7 @@ class PacGum(Collider, Displayable, Entity):
             tile=pos,
             level=level,
             solid=False,
+            radius=0.05,
             proportion=0.1
         )
 

@@ -2,15 +2,16 @@ from collections.abc import Callable
 
 import pygame
 
-from src.core import Collider, Displayable, Entity, Level, Tile
+from src.core import Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
+
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 from src.game.items import PacGum
 
 
-class Player(Collider, Movable, Displayable, Entity):
+class Player(Alive, Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
     set_level_text: Callable[[int], None]
@@ -37,7 +38,8 @@ class Player(Collider, Movable, Displayable, Entity):
             radius=0.45,
             speed=6,
             proportion=0.9,
-            primary=True
+            primary=True,
+            lives=3
         )
 
         # TODO link params to the config
@@ -52,12 +54,19 @@ class Player(Collider, Movable, Displayable, Entity):
         self._level_exp = 0
 
     def on_collision(self, other: 'Collider') -> None:
+        from src.game.characters import Ghost
         if not isinstance(other, Entity):
             return
 
         if isinstance(other, PacGum):
             self.level.unregister_entity(other)
             self.add_exp(self._pacgum_exp)
+
+        if isinstance(other, Ghost):
+            if other._edible:
+                ...
+            else:
+                self.set_health(0)
 
         super().on_collision(other)
 

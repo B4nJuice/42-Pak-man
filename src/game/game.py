@@ -5,11 +5,11 @@ from pygame.time import Clock
 from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics.font import Font
+
 from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
-
-from .characters import Player, Ghost
-from .items import PacGum
+from src.game.characters import Ghost, Player
+from src.game.items import PacGum
 
 
 class Game:
@@ -24,6 +24,7 @@ class Game:
     _game_interface: GameInterface
     _stats_interface: StatsInterface
     _escape_interface: EscapeInterface
+    _player_start_position: tuple[int, int]
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
         self._set_config(config)
@@ -68,9 +69,14 @@ class Game:
             for y in range(self._level.get_height()):
                 PacGum('pacgum', (x, y), self._level)
                 pass
-        self._player = Player('player', (
+        self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
-            ), self._level)
+            )
+        self._player = Player(
+                'player',
+                self._player_start_position,
+                self._level
+            )
         self._ghost_1 = Ghost(
             'test',
             (0, 0),
@@ -81,7 +87,7 @@ class Game:
         self._game_interface = GameInterface(self)
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)
-    
+
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
@@ -98,6 +104,15 @@ class Game:
 
             if self._paused:
                 dt = 0
+
+            if self._player.over:
+                break
+                # TODO: game over screen with name
+
+            if not self._player.alive:
+                self._player.on_death()
+                self._player.set_tile(self._player_start_position)
+                # TODO: clean ghost and put it at the start
 
             self.update(dt)
             dt = self._clock.tick(60.0) / 1000
