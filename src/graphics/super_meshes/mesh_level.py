@@ -153,12 +153,13 @@ class MeshLevel(SuperMesh):
                 self.tile_height * e.get_proportion()
             )
 
-        self.get_layer().meshes.append(mesh)
+        if mesh not in self.get_layer().meshes:
+            self.get_layer().meshes.append(mesh)
 
     def unregister_entity(self, entity: Displayable) -> None:
-        if entity.get_mesh() in self.layer.meshes:
-            self.layer.meshes.remove(entity.get_mesh())
-            print(len(self.layer.meshes))
+        mesh = entity.get_mesh()
+        if mesh in self.layer.meshes:
+            self.layer.meshes.remove(mesh)
 
     def refresh(self) -> None:
         ...
