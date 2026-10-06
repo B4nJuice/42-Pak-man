@@ -4,6 +4,8 @@ from src.utils import Pos
 
 
 class Ghost(Collider, Displayable, Entity):
+    _edible: bool
+
     def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
         super().__init__(
             name=id,
@@ -12,6 +14,8 @@ class Ghost(Collider, Displayable, Entity):
             solid=True,
             proportion=0.9,
         )
+
+        self._edible = False
 
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):

@@ -8,6 +8,7 @@ from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 from src.game.items import PacGum
+from src.game.characters import Ghost
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -58,6 +59,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         if isinstance(other, PacGum):
             self.level.unregister_entity(other)
             self.add_exp(self._pacgum_exp)
+
+        if isinstance(other, Ghost):
+            if other._edible:
+                ...
+            else:
+                self.set_health(0)
+                self.add_lives(-1)
 
         super().on_collision(other)
 
