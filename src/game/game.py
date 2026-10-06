@@ -19,6 +19,7 @@ class Game:
     _clock: Clock
     _event_handler: EventHandler
     _font: Font
+    _player: Player
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
         self._set_config(config)
@@ -57,7 +58,7 @@ class Game:
 
         PacGum('pacgum', (0, 1), self._level)
 
-        # self._screen.
+        self._level.entities.print()
 
     def run(self) -> None:
         self._running = True

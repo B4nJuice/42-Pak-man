@@ -15,7 +15,7 @@ class AI:
     def get_next_move(self) -> Direction:
         return self._next_move.pop(0)
 
-    def set_next_move(self, next_move: list[Direction]) -> None:
+    def set_next_moves(self, next_move: list[Direction]) -> None:
         self._next_move = next_move
 
     def add_next_move(self, direction: Direction) -> None:
@@ -30,7 +30,7 @@ class AI:
     def has_next_move(self) -> bool:
         return len(self._next_move) > 0
 
-    def clear_next_move(self) -> None:
+    def clear_next_moves(self) -> None:
         self._next_move = []
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
