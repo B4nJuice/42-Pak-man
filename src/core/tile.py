@@ -29,6 +29,10 @@ class Tile:
     def has_wall(self, direction: Direction) -> bool:
         return (self._walls & int(direction.value)) != 0
 
+    @property
+    def is_full(self) -> bool:
+        return self.get_walls() == 15
+
     def __str__(self) -> str:
         n = self.has_wall(Direction.NORTH)
         e = self.has_wall(Direction.EAST)

@@ -76,6 +76,8 @@ class Game:
             for y in range(self._level.get_height()):
                 if (x, y) in super_pacgum_positions:
                     continue
+                if self._level.get_tile(x, y).is_full:
+                    continue
                 PacGum('pacgum', (x, y), self._level)
 
         for pos in super_pacgum_positions:
