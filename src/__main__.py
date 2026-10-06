@@ -33,7 +33,7 @@ def main(verbose: bool) -> None:
             config.get_config().screen_width,
             config.get_config().screen_height,
         ),
-        pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN,
+        pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
     )
     pygame.display.set_caption("Pak-man")
     screen: Screen = Screen(

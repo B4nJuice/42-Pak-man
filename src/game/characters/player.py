@@ -192,3 +192,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def set_super_state(self, time: float) -> None:
         self._state = PlayerState.SUPER
         self._super_time = time
+
+    def on_death(self) -> None:
+        self._direction = None
+        super().on_death()
