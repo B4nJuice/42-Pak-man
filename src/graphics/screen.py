@@ -27,9 +27,6 @@ class Screen:
         self.static_mesh_layer: MeshLayer = MeshLayer()
         self.dynamic_mesh_layer: MeshLayer = MeshLayer()
 
-
-        # self.moderngl_context.disable(0x809D)
-
     def add_layer(
                 self,
                 layer: MeshLayer

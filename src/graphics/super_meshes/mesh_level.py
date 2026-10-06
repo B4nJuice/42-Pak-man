@@ -136,21 +136,29 @@ class MeshLevel(SuperMesh):
     def register_entities_to_screen(self) -> None:
         for entity in self.level.get_entities():
             if isinstance(entity, Displayable):
-                mesh = entity.get_mesh()
+                self.register_entity(entity)
 
-                mesh.get_position = lambda e=entity : Position(
-                    round(e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2),
-                    round(e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2)
-                )
+    def register_entity(self, entity: Displayable) -> None:
+        mesh = entity.get_mesh()
 
-                mesh.get_height = lambda e=entity : round(
-                        self.tile_width * e.get_proportion()
-                    )
-                mesh.get_width = lambda e=entity : round(
-                        self.tile_height * e.get_proportion()
-                    )
+        mesh.get_position = lambda e=entity : Position(
+            round(e.pos[0] * self.tile_width + self.position.x + self.tile_width // 2),
+            round(e.pos[1] * self.tile_height + self.position.y + self.tile_height // 2)
+        )
 
-                self.get_layer().meshes.append(mesh)
+        mesh.get_height = lambda e=entity : round(
+                self.tile_width * e.get_proportion()
+            )
+        mesh.get_width = lambda e=entity : round(
+                self.tile_height * e.get_proportion()
+            )
+
+        self.get_layer().meshes.append(mesh)
+
+    def unregister_entity(self, entity: Displayable) -> None:
+        if entity.get_mesh() in self.layer.meshes:
+            self.layer.meshes.remove(entity.get_mesh())
+            print(len(self.layer.meshes))
 
     def refresh(self) -> None:
         ...
