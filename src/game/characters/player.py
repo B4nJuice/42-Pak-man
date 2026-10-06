@@ -1,5 +1,5 @@
 from collections.abc import Callable
-
+from enum import Enum
 import pygame
 
 from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
@@ -7,6 +7,11 @@ from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
+
+
+class PlayerState(Enum):
+    NORMAL = 1
+    SUPER = 2
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -20,6 +25,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _actual_level: int
     _exp_points: float
     _level_exp: float
+    _state: PlayerState
+    _super_time: float
 
     def __init__(
                 self,
@@ -49,6 +56,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._exp_points = 0
         self._pacgum_exp = 5
         self._level_exp = 0
+        self._state = PlayerState.NORMAL
 
     def on_collision(self, other: 'Collider') -> None:
         from src.game.characters import Ghost
@@ -113,6 +121,11 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
+        if self._state == PlayerState.SUPER:
+            self._super_time -= dt
+            if self._super_time <= 0:
+                self._state = PlayerState.NORMAL
+
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.try_move(Direction.NORTH)
@@ -168,9 +181,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self.refresh_bar_progression()
         if self._exp_points >= self._next_level_exp:
             temp = self._next_level_exp
-            self._next_level_exp +=\
-                (self._next_level_exp - self._level_exp) * self._level_exp_multiplier
+            self._next_level_exp += (
+                    self._next_level_exp - self._level_exp
+                ) * self._level_exp_multiplier
             self._level_exp = temp
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
+
+    def set_super_state(self, time: float) -> None:
+        self._state = PlayerState.SUPER
+        self._super_time = time
