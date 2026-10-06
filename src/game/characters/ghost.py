@@ -12,7 +12,7 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
 
     def __init__(self, name: str, tile: Pos | Tile, level: Level) -> None:
         super().__init__(
-            name=id,
+            name=name,
             tile=tile,
             level=level,
             solid=True,
