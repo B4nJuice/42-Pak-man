@@ -5,6 +5,7 @@ from pygame.time import Clock
 from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics.font import Font
+
 from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
 from src.game.characters import Ghost, Player
