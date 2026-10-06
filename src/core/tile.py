@@ -30,28 +30,7 @@ class Tile:
         return (self._walls & int(direction.value)) != 0
 
     def __str__(self) -> str:
-        n = self.has_wall(Direction.NORTH)
-        e = self.has_wall(Direction.EAST)
-        s = self.has_wall(Direction.SOUTH)
-        w = self.has_wall(Direction.WEST)
+        return f'{self.get_pos()}'
 
-        chars = {
-            (False, False, False, False): ' ',
-            (True, False, False, False): '╵',
-            (False, True, False, False): '╴',
-            (False, False, True, False): '╷',
-            (False, False, False, True): '╶',
-            (True, True, False, False): '└',
-            (True, False, True, False): '│',
-            (True, False, False, True): '┘',
-            (False, True, True, False): '┌',
-            (False, True, False, True): '─',
-            (False, False, True, True): '┐',
-            (True, True, True, False): '├',
-            (True, True, False, True): '┴',
-            (True, False, True, True): '┤',
-            (False, True, True, True): '┬',
-            (True, True, True, True): '┼',
-        }
-
-        return chars[(n, e, s, w)]
+    def __lt__(self, other: 'Tile') -> bool:
+        return (self.get_x(), self.get_y()) < (other.get_x(), other.get_y())
