@@ -44,6 +44,14 @@ class Maze:
             0 <= pos[1] < self.get_height()
         ])
 
+    def get_possible_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
+        return [
+            (next_tile, direction)
+            for direction in Direction
+            if tile.has_wall(direction) and
+            (next_tile := self.get_next_tile(tile, direction)) is not None
+        ]
+
     def get_width(self) -> int:
         return len(self._grid[0])
 

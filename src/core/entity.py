@@ -18,7 +18,7 @@ class Entity:
         self.level = level
         self.set_tile(tile)
 
-        self.level.register_entity(self)
+        self.level.entities.add(self)
 
     def init(self) -> None:
         pass
@@ -43,7 +43,7 @@ class Entity:
         pass
 
     def destroy(self) -> None:
-        self.level.unregister_entity(self)
+        self.level.entities.remove(self)
 
     def __repr__(self) -> str:
         return f'<{self.get_name()} tile={self.get_tile()}>'

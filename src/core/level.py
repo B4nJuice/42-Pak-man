@@ -1,35 +1,32 @@
+from src.core.entity_store import EntityStore
+
 from .collider import Collider
 from .entity import Entity
 from .maze import Maze
 
 
 class Level(Maze):
-    _entities: list[Entity]
+    entities: EntityStore
     _contacts: set[frozenset[int]]
 
     def __init__(self, seed: int):
         super().__init__(seed)
 
-        self._entities = []
         self._contacts = set()
+        self.entities = EntityStore()
 
     def init(self) -> None:
-        for entity in self._entities:
+        for entity in self.entities.all():
             entity.init()
 
     def update(self, dt: float) -> None:
-        for entity in list(self._entities):
+        for entity in self.entities.all():
             entity.update(dt)
         self._check_collisions()
 
-    def register_entity(self, entity: Entity) -> None:
-        self._entities.append(entity)
-
-    def unregister_entity(self, entity: Entity) -> None:
-        self._entities.remove(entity)
-
     def _check_collisions(self) -> None:
-        colliders = [e for e in self._entities if isinstance(e, Collider)]
+        colliders = [e for e in self.get_entities() if isinstance(e, Collider)]
+
         for i, a in enumerate(colliders):
             for b in colliders[i + 1:]:
                 key = frozenset((id(a), id(b)))
@@ -45,4 +42,4 @@ class Level(Maze):
                     b.on_collision_exit(a)
 
     def get_entities(self) -> list[Entity]:
-        return self._entities
+        return self.entities.all()
