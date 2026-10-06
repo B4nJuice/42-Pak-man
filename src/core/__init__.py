@@ -1,3 +1,4 @@
+from .a_star import AStar
 from .ai import AI
 from .collider import Collider
 from .displayable import Displayable
@@ -8,6 +9,7 @@ from .tile import Tile
 
 __all__: list[str] = [
     'AI',
+    'AStar',
     'Collider',
     'Displayable',
     'Entity',
