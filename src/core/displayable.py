@@ -5,7 +5,6 @@ if TYPE_CHECKING:
     from ..graphics.meshes import ImageTexture
 
 
-
 class Displayable(ABC):
     _mesh: 'ImageTexture'
     _rotation: float

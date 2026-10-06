@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 import pygame
 
-from src.core import Collider, Displayable, Entity, Level, Tile
+from src.core import Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
@@ -10,7 +10,7 @@ from src.utils import Direction, Pos
 from src.game.items import PacGum
 
 
-class Player(Collider, Movable, Displayable, Entity):
+class Player(Alive, Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
     set_level_text: Callable[[int], None]
