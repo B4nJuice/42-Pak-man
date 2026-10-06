@@ -2,6 +2,7 @@ from .event_handler import EventHandler
 from .displayable import Displayable
 from .collider import Collider
 from .entity import Entity
+from .edible import Edible
 from .alive import Alive
 from .level import Level
 from .tile import Tile
@@ -13,5 +14,6 @@ __all__: list[str] = [
     'EventHandler',
     'Level',
     'Tile',
-    'Alive'
+    'Alive',
+    'Edible'
 ]

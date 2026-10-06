@@ -1,11 +1,9 @@
-from src.core import Collider, Displayable, Entity, Level, Tile
+from src.core import Collider, Displayable, Entity, Level, Tile, Edible
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
 
-class Ghost(Collider, Displayable, Entity):
-    _edible: bool
-
+class Ghost(Edible, Collider, Displayable, Entity):
     def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
         super().__init__(
             name=id,
@@ -13,9 +11,9 @@ class Ghost(Collider, Displayable, Entity):
             level=level,
             solid=True,
             proportion=0.9,
+            edible=False,
+            reward=100
         )
-
-        self._edible = False
 
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):

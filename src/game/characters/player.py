@@ -2,13 +2,11 @@ from collections.abc import Callable
 
 import pygame
 
-from src.core import Alive, Collider, Displayable, Entity, Level, Tile
+from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
-
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-from src.game.items import PacGum
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -21,7 +19,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _level_bar: Bar | None
     _actual_level: int
     _exp_points: float
-    _pacgum_exp: float
     _level_exp: float
 
     def __init__(
@@ -58,15 +55,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         if not isinstance(other, Entity):
             return
 
-        if isinstance(other, PacGum):
-            self.level.unregister_entity(other)
-            self.add_exp(self._pacgum_exp)
+        if isinstance(other, Edible):
+            eat_result: bool = other.eat(self)
 
-        if isinstance(other, Ghost):
-            if other._edible:
-                ...
-            else:
-                self.set_health(0)
+            if isinstance(other, Ghost):
+                if eat_result:
+                    ...
+                else:
+                    self.set_health(0)
 
         super().on_collision(other)
 

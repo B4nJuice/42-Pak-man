@@ -1,9 +1,9 @@
-from src.core import Collider, Displayable, Entity, Level, Tile
+from src.core import Collider, Displayable, Entity, Level, Tile, Edible
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
 
-class SuperPacGum(Collider, Displayable, Entity):
+class SuperPacGum(Edible, Collider, Displayable, Entity):
     def __init__(self, id: str, pos: Pos | Tile, level: Level) -> None:
         super().__init__(
             name=id,
@@ -11,7 +11,8 @@ class SuperPacGum(Collider, Displayable, Entity):
             level=level,
             solid=False,
             radius=0.15,
-            proportion=0.3
+            proportion=0.3,
+            reward=50,
         )
 
         self.init_mesh()
