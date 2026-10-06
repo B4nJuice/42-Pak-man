@@ -55,10 +55,9 @@ class Player(Collider, Movable, Displayable, Entity):
         if not isinstance(other, Entity):
             return
 
-        match other.__class__:
-            case PacGum:
-                self.level.unregister_entity(other)
-                self.add_exp(self._pacgum_exp)
+        if isinstance(other, PacGum):
+            self.level.unregister_entity(other)
+            self.add_exp(self._pacgum_exp)
 
         super().on_collision(other)
 

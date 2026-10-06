@@ -51,9 +51,17 @@ class Game:
 
     def update(self, dt: float) -> None:
         self._level.update(dt)
-
+        self.refresh_maze()
         self._screen.refresh()
         pygame.display.flip()
+
+    def refresh_maze(self) -> None:
+        for e in self._level._to_register:
+            self._game_interface.maze.register_entity(e)
+        self._level._to_register = []
+        for e in self._level._to_unregister:
+            self._game_interface.maze.unregister_entity(e)
+        self._level._to_unregister = []
 
     def init_entities(self) -> None:
         for x in range(self._level.get_width()):
@@ -68,8 +76,6 @@ class Game:
             (0, 0),
             self._level,
         )
-
-        # self._screen.
 
     def init_interfaces(self) -> None:
         self._game_interface = GameInterface(self)
