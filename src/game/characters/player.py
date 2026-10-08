@@ -22,10 +22,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _next_level_exp: float
     _exp_per_second: float
     _level_bar: Bar | None
+    _state: PlayerState
     _actual_level: int
     _exp_points: float
     _level_exp: float
-    _state: PlayerState
     _super_time: float
 
     def __init__(
