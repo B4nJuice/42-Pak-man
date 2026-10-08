@@ -48,8 +48,8 @@ class Maze:
         return [
             (next_tile, direction)
             for direction in Direction
-            if tile.has_wall(direction) and
-            (next_tile := self.get_next_tile(tile, direction)) is not None
+            if not tile.has_wall(direction)
+            if (next_tile := self.get_next_tile(tile, direction)) is not None
         ]
 
     def get_width(self) -> int:
