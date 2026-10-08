@@ -49,7 +49,7 @@ class AStar:
             (heuristic(start, end), next(tie), start)
         ]
 
-        while open:
+        while open_heap:
             _, _, current_tile = heapq.heappop(open_heap)
 
             if current_tile in closed:

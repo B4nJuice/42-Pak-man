@@ -16,6 +16,7 @@ class Maze:
         self._moves_cache = {}
 
     def generate(self, width: int, height: int) -> None:
+        self.invalidate_moves_cache()
         self._grid = []
         generator: MazeGenerator = MazeGenerator(
             size=(width, height),
