@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from enum import Enum
 import pygame
 
 from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
@@ -7,11 +6,7 @@ from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-
-
-class PlayerState(Enum):
-    NORMAL = 1
-    SUPER = 2
+from src.game.characters.player_state import PlayerState
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):

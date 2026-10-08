@@ -1,6 +1,12 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game.characters import Player
+
 from src.core import Collider, Displayable, Entity, Level, Tile, Edible
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
+from src.game.characters.player_state import PlayerState
 
 
 class Ghost(Edible, Collider, Displayable, Entity):
@@ -33,6 +39,16 @@ class Ghost(Edible, Collider, Displayable, Entity):
             operation=OperationEnum.SET,
             is_dynamic=False,
         )
+
+    def eat(self, eater: 'Player') -> bool:
+        if eater.get_state() == PlayerState.SUPER:
+            self.set_edible(True)
+
+        return_state: bool = super().eat(eater)
+
+        self.set_edible(False)
+
+        return return_state
 
     def update(self, dt: float) -> None:
         pass

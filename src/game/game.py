@@ -108,7 +108,7 @@ class Game:
 
         self._ghost_1 = Ghost(
             'test',
-            (0, 0),
+            (0, 1),
             self._level,
         )
 
