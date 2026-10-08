@@ -41,8 +41,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             lives=3
         )
 
-        # TODO link params to the config
-
         self._level_exp_multiplier = 1.1
         self._next_level_exp = 100
         self._exp_per_second = 0.5

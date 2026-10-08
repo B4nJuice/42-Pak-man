@@ -66,7 +66,6 @@ class Game:
         if not self._player.alive:
             self._player.on_death()
             self._player.set_tile(self._player_start_position)
-            # TODO: clean ghost and put it at the start
 
         pygame.display.flip()
 
@@ -135,7 +134,6 @@ class Game:
 
             if self._player.over:
                 break
-                # TODO: game over screen with name
 
             self.update(dt)
             dt = self._clock.tick(60.0) / 1000

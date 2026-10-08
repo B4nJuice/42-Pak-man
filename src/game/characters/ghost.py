@@ -48,8 +48,6 @@ class Ghost(Edible, Collider, Displayable, Entity):
 
         self.set_edible(False)
 
-        # TODO: transport eyes to a random point
-
         return return_state
 
     def update(self, dt: float) -> None:

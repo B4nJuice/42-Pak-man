@@ -39,8 +39,6 @@ class GameInterface(Interface):
             smooth_end=True,
         )
 
-        # TODO animated level bar
-
         self.game._player._level_bar = self.level_bar
 
         self.level_text: FontSequence = FontSequence(
