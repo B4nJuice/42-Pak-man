@@ -66,7 +66,7 @@ class Collider:
         return (ax - bx) ** 2 + (ay - by) ** 2 < r * r
 
     def on_collision(self, other: 'Collider') -> None:
-        print(f'Collision with {other.get_name()!r}')
+        ...
 
     def on_collision_exit(self, other: 'Collider') -> None:
         pass

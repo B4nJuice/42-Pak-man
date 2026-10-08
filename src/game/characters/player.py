@@ -108,11 +108,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def try_move(self, direction: Direction) -> bool:
         same = direction == self._direction
         if super().try_move(direction):
-            print(f'Moving to {direction}')
             if not same:
                 self.update_mesh()
             return True
-        print(f'Cannot move to {direction}')
         return False
 
     def update(self, dt: float) -> None:
@@ -146,7 +144,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         return super().update_mesh()
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
-        print(f'Arrived at {tile.get_pos()}')
         self._direction = None
         if self._queued is not None:
             if not self.try_move(self._queued):
