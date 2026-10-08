@@ -1,11 +1,15 @@
-from src.core import Collider, Displayable, Entity, Level, Tile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game.characters import Player
+
+from src.core import Collider, Displayable, Entity, Level, Tile, Edible
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
+from src.game.characters.player_state import PlayerState
 
 
-class Ghost(Collider, Displayable, Entity):
-    _edible: bool
-
+class Ghost(Edible, Collider, Displayable, Entity):
     def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
         super().__init__(
             name=id,
@@ -13,9 +17,9 @@ class Ghost(Collider, Displayable, Entity):
             level=level,
             solid=True,
             proportion=0.9,
+            edible=False,
+            reward=100
         )
-
-        self._edible = False
 
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):
@@ -35,6 +39,18 @@ class Ghost(Collider, Displayable, Entity):
             operation=OperationEnum.SET,
             is_dynamic=False,
         )
+
+    def eat(self, eater: 'Player') -> bool:
+        if eater.get_state() == PlayerState.SUPER:
+            self.set_edible(True)
+
+        return_state: bool = super().eat(eater)
+
+        self.set_edible(False)
+
+        # TODO: transport eyes to a random point
+
+        return return_state
 
     def update(self, dt: float) -> None:
         pass

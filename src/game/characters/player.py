@@ -1,14 +1,12 @@
 from collections.abc import Callable
-
 import pygame
 
-from src.core import Alive, Collider, Displayable, Entity, Level, Tile
+from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
-
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-from src.game.items import PacGum
+from src.game.characters.player_state import PlayerState
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -19,10 +17,11 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _next_level_exp: float
     _exp_per_second: float
     _level_bar: Bar | None
+    _state: PlayerState
     _actual_level: int
     _exp_points: float
-    _pacgum_exp: float
     _level_exp: float
+    _super_time: float
 
     def __init__(
                 self,
@@ -52,21 +51,27 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._exp_points = 0
         self._pacgum_exp = 5
         self._level_exp = 0
+        self.set_state(PlayerState.NORMAL)
+
+    def set_state(self, state: PlayerState) -> None:
+        self._state = state
+
+    def get_state(self) -> PlayerState:
+        return self._state
 
     def on_collision(self, other: 'Collider') -> None:
         from src.game.characters import Ghost
         if not isinstance(other, Entity):
             return
 
-        if isinstance(other, PacGum):
-            self.level.unregister_entity(other)
-            self.add_exp(self._pacgum_exp)
+        if isinstance(other, Edible):
+            eat_result: bool = other.eat(self)
 
-        if isinstance(other, Ghost):
-            if other._edible:
-                ...
-            else:
-                self.set_health(0)
+            if isinstance(other, Ghost):
+                if eat_result:
+                    ...
+                else:
+                    self.set_health(0)
 
         super().on_collision(other)
 
@@ -116,6 +121,11 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         super().update(dt)
 
         self.add_exp(dt * self._exp_per_second)
+
+        if self.get_state() == PlayerState.SUPER:
+            self._super_time -= dt
+            if self._super_time <= 0:
+                self.set_state(PlayerState.NORMAL)
 
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
@@ -172,9 +182,18 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self.refresh_bar_progression()
         if self._exp_points >= self._next_level_exp:
             temp = self._next_level_exp
-            self._next_level_exp +=\
-                (self._next_level_exp - self._level_exp) * self._level_exp_multiplier
+            self._next_level_exp += (
+                    self._next_level_exp - self._level_exp
+                ) * self._level_exp_multiplier
             self._level_exp = temp
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
+
+    def set_super_state(self, time: float) -> None:
+        self.set_state(PlayerState.SUPER)
+        self._super_time = time
+
+    def on_death(self) -> None:
+        self._direction = None
+        super().on_death()
