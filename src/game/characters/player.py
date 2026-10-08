@@ -22,10 +22,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _next_level_exp: float
     _exp_per_second: float
     _level_bar: Bar | None
+    _state: PlayerState
     _actual_level: int
     _exp_points: float
     _level_exp: float
-    _state: PlayerState
     _super_time: float
 
     def __init__(
@@ -56,7 +56,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._exp_points = 0
         self._pacgum_exp = 5
         self._level_exp = 0
-        self._state = PlayerState.NORMAL
+        self.set_state(PlayerState.NORMAL)
+
+    def set_state(self, state: PlayerState) -> None:
+        self._state = state
+
+    def get_state(self) -> PlayerState:
+        return self._state
 
     def on_collision(self, other: 'Collider') -> None:
         from src.game.characters import Ghost
@@ -121,10 +127,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
-        if self._state == PlayerState.SUPER:
+        if self.get_state() == PlayerState.SUPER:
             self._super_time -= dt
             if self._super_time <= 0:
-                self._state = PlayerState.NORMAL
+                self.set_state(PlayerState.NORMAL)
 
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
@@ -190,7 +196,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self.set_bar_goal()
 
     def set_super_state(self, time: float) -> None:
-        self._state = PlayerState.SUPER
+        self.set_state(PlayerState.SUPER)
         self._super_time = time
 
     def on_death(self) -> None:

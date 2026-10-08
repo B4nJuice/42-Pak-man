@@ -10,23 +10,25 @@ from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
 from src.game.characters import Ghost, Player
 from src.game.items import PacGum, SuperPacGum
+from src.game.game_state import GameState
 
 
 class Game:
-    _config: ConfigModel
-    _level: Level
-    _screen: Screen
-    _running: bool
-    _paused: bool
-    _clock: Clock
-    _event_handler: EventHandler
-    _font: Font
-    _game_interface: GameInterface
-    _stats_interface: StatsInterface
-    _escape_interface: EscapeInterface
     _player_start_position: tuple[int, int]
+    _escape_interface: EscapeInterface
+    _stats_interface: StatsInterface
+    _game_interface: GameInterface
+    _event_handler: EventHandler
+    _config: ConfigModel
+    _state: GameState
+    _screen: Screen
+    _level: Level
+    _clock: Clock
+    _font: Font
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
+        self.set_state(GameState.INITIALIZING)
+
         self._set_config(config)
         self._set_screen(screen)
 
@@ -43,6 +45,12 @@ class Game:
 
         self.init_entities()
         self.init_interfaces()
+
+    def set_state(self, state: GameState) -> None:
+        self._state = state
+
+    def get_state(self) -> GameState:
+        return self._state
 
     def generate_level(self) -> None:
         self._level.generate(
@@ -108,16 +116,15 @@ class Game:
         self._screen.add_mesh(self._escape_interface)
 
     def run(self) -> None:
-        self._running = True
-        self._paused = False
+        self.set_state(GameState.RUNNING)
         dt: float = 0.0
 
         self.update(dt)
-        while self._running:
+        while self.get_state() != GameState.EXIT:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
-            if self._paused:
+            if self.get_state() == GameState.PAUSED:
                 dt = 0
 
             if self._player.over:
@@ -133,7 +140,7 @@ class Game:
             dt = self._clock.tick(60.0) / 1000
 
     def exit(self) -> None:
-        self._running = False
+        self.set_state(GameState.EXIT)
 
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()
@@ -145,12 +152,17 @@ class Game:
         self._clock = Clock()
         self._running = False
         self._event_handler.register_listener(pygame.QUIT, self._on_exit)
-        self._event_handler.register_listener(pygame.KEYDOWN, self._on_key_down)
+        self._event_handler.register_listener(
+            pygame.KEYDOWN, self._on_key_down
+        )
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self._paused = not self._paused
-            if self._paused:
+            self.set_state(
+                GameState.RUNNING if self.get_state() ==
+                GameState.PAUSED else GameState.PAUSED
+            )
+            if self.get_state() == GameState.PAUSED:
                 self._escape_interface.display()
             else:
                 self._escape_interface.hide()
