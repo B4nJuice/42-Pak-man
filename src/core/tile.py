@@ -31,6 +31,3 @@ class Tile:
 
     def __str__(self) -> str:
         return f'{self.get_pos()}'
-
-    def __lt__(self, other: 'Tile') -> bool:
-        return (self.get_x(), self.get_y()) < (other.get_x(), other.get_y())
