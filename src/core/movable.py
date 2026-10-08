@@ -50,6 +50,11 @@ class Movable:
             lerp(self.get_tile().get_y(), self._target.get_y(), p)
         )
 
+    def get_target_tile(self) -> Tile:
+        if self._target:
+            return self._target
+        return self.tile
+
     def try_move(self, direction: Direction) -> bool:
         if not isinstance(self, Entity):
             raise TypeError('Entity does not have a pos property')
@@ -79,6 +84,11 @@ class Movable:
         self._progress = 0
         return True
 
+    def try_move_forward(self) -> bool:
+        if self._direction:
+            return self.try_move(self._direction)
+        return False
+
     def update(self, dt: float) -> None:
         if not isinstance(self, Entity):
             return
@@ -93,6 +103,8 @@ class Movable:
             current_target: Tile = self._target
             self._target = None
             self.on_arrive(current_target, self._direction)
+
+        super().update(dt)
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         pass

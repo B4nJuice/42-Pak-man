@@ -1,5 +1,6 @@
 from typing import Any
 
+from src.core.entity import Entity
 from src.core.movable import Movable
 from src.core.tile import Tile
 from src.utils import Direction
@@ -31,14 +32,20 @@ class AI:
         return len(self._next_move) > 0
 
     def clear_next_moves(self) -> None:
-        self._next_move = []
+        self._next_move.clear()
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         if not isinstance(self, Movable):
             return
 
-        if not self.move_next():
-            self.try_move(direction)
+    def update(self, dt: float) -> None:
+        if not isinstance(self, Movable) or not isinstance(self, Entity):
+            return
+
+        if not self.is_moving() and not self.move_next():
+            self.try_move_forward()
+
+        super().update(dt)
 
     def move_next(self) -> bool:
         if not isinstance(self, Movable) or not self.has_next_move():
@@ -46,3 +53,6 @@ class AI:
 
         self.try_move(self.get_next_move())
         return True
+
+    def on_arrive_ai(self) -> None:
+        pass
