@@ -23,7 +23,7 @@ dev = [
 
 [tool.uv]
 cache-dir = "/tmp/.uv_cache"
-link-mode = "symlink"
+link-mode="copy"
 
 [tool.uv.sources]
 mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
