@@ -62,6 +62,7 @@ class Game:
         self._level.update(dt)
         self.refresh_maze()
         self._screen.refresh()
+        self._game_interface.refresh(dt)
 
         if not self._player.alive:
             self._player.on_death()
