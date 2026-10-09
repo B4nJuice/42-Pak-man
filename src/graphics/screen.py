@@ -1,5 +1,4 @@
 import pygame
-import moderngl
 from pygame import Surface
 from moderngl import Context
 
