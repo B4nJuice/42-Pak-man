@@ -125,10 +125,11 @@ class Player(Collider, Movable, Displayable, Entity):
         print(f'Arrived at {tile.get_pos()}')
         if self._queued is not None:
             if not self.try_move(self._queued):
-                self.try_move(direction)
-            self._queued = None
+                self.try_move_forward()
+            else:
+                self._queued = None
         else:
-            self.try_move(direction)
+            self.try_move_forward()
 
         return super().on_arrive(tile, direction)
 

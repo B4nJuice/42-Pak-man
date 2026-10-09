@@ -85,9 +85,25 @@ class Movable:
         return True
 
     def try_move_forward(self) -> bool:
-        if self._direction:
-            return self.try_move(self._direction)
-        return False
+        if self._direction is None:
+            return False
+
+        if not isinstance(self, Entity):
+            raise TypeError(f'Entity {self}, need to have Entity class !')
+
+        if self._target is not None:
+            return False
+
+        next_tile = self.level.get_next_tile(self.get_tile(), self._direction)
+        if next_tile is None:
+            return False
+        if next_tile.has_wall(self._direction.opposite()):
+            return False
+
+        self._target = next_tile
+        self._progress = 0
+        return True
+
 
     def update(self, dt: float) -> None:
         if not isinstance(self, Entity):
