@@ -18,13 +18,13 @@ class Bar(SuperMesh):
                 goal: float,
                 progression: float = 0,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False,
+                dynamic: bool = False,
                 smooth_end: bool = False,
             ) -> None:
         super().__init__(
             color,
             operation=operation,
-            is_dynamic=is_dynamic
+            dynamic=dynamic
         )
 
         self.width: int = width
@@ -44,15 +44,15 @@ class Bar(SuperMesh):
         percentage: float = self._percentage()
 
         self.inner: Plane = Plane(
-            self.color,
+            self.get_color(),
             (
                 self.position, Position(
                         int(self.position.x + self.width * percentage),
                         self.position.y + self.height,
                 )
             ),
-            operation=self.operation,
-            is_dynamic=self.is_dynamic
+            operation=self.get_operation(),
+            dynamic=self.is_dynamic()
         )
 
         self.layer.meshes.append(self.inner)
@@ -63,8 +63,8 @@ class Bar(SuperMesh):
             self.width,
             self.height,
             self.border_thickness,
-            operation=self.operation,
-            is_dynamic=self.is_dynamic,
+            operation=self.get_operation(),
+            dynamic=self.is_dynamic(),
             smooth_end=self.smooth_end
         )
 
@@ -79,15 +79,15 @@ class Bar(SuperMesh):
         percentage = self._percentage()
         self.inner.positions[1].x = self.position.x + round(self.width * percentage)
         self.inner.positions[1].y = self.position.y + self.height
-        self.inner.color = self.color
-        self.inner.operation = self.operation
+        self.inner.set_color(self.get_color())
+        self.inner.set_operation(self.get_operation())
 
         self.border.position = self.position
         self.border.width = self.width
         self.border.height = self.height
         self.border.thickness = self.border_thickness
-        self.border.color = self.border_color
-        self.border.operation = self.operation
+        self.border.set_color(self.border_color)
+        self.border.set_operation(self.get_operation())
         self.border.refresh()
 
     def get_layer(self) -> MeshLayer:
@@ -102,7 +102,7 @@ class Bar(SuperMesh):
         self.refresh()
 
     def set_color(self, color: Color) -> None:
-        self.color = color
+        super().set_color(color)
         self.refresh()
 
     def set_border_color(self, color: Color) -> None:

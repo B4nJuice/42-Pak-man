@@ -22,12 +22,12 @@ class FontSequence(SuperMesh):
                 spacing: int = 0,
                 align: AlignEnum = AlignEnum.CENTER,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
         self.font: Font = font
@@ -74,16 +74,16 @@ class FontSequence(SuperMesh):
                 mesh.character = character
                 mesh.infos = infos
                 mesh.position = character_position
-                mesh.color = self.color
-                mesh.operation = self.operation
+                mesh.set_color(self.get_color())
+                mesh.set_operation(self.get_operation())
             else:
                 mesh = Character(
                     character,
                     infos,
-                    self.color,
+                    self.get_color(),
                     character_position,
-                    operation=self.operation,
-                    is_dynamic=self.is_dynamic,
+                    operation=self.get_operation(),
+                    dynamic=self.is_dynamic(),
                 )
                 self.characters.append(mesh)
                 self.layer.meshes.append(mesh)

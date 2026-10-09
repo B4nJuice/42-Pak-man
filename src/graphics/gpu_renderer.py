@@ -250,7 +250,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.hidden or mesh.color.is_default:
+        if mesh.is_hidden() or mesh.get_color().is_default:
             return
 
         vertices, mode = self._vertices(mesh)
@@ -263,12 +263,12 @@ class GPURenderer:
         )
         self.mesh_program['screen_size'].value = (self.width, self.height)
         self.mesh_program['mesh_color'].value = (
-            mesh.color.r / 255,
-            mesh.color.g / 255,
-            mesh.color.b / 255,
-            mesh.color.a / 255,
+            mesh.get_color().r / 255,
+            mesh.get_color().g / 255,
+            mesh.get_color().b / 255,
+            mesh.get_color().a / 255,
         )
-        self.mesh_program['operation'].value = mesh.operation.value
+        self.mesh_program['operation'].value = mesh.get_operation().value
         source.use(0)
         target.use()
 
@@ -283,7 +283,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.hidden or mesh.color.is_default:
+        if mesh.is_hidden() or mesh.get_color().is_default:
             return
 
         vertices, mode = self._vertices(mesh)
@@ -296,10 +296,10 @@ class GPURenderer:
         self.circle_program['height'].value = self.height
         self.circle_program['screen_size'].value = (self.width, self.height)
         self.circle_program['color'].value = (
-            mesh.color.r / 255,
-            mesh.color.g / 255,
-            mesh.color.b / 255,
-            mesh.color.a / 255,
+            mesh.get_color().r / 255,
+            mesh.get_color().g / 255,
+            mesh.get_color().b / 255,
+            mesh.get_color().a / 255,
         )
         self.circle_program['center'].value = (
             mesh.position.x,
@@ -320,7 +320,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.hidden:
+        if mesh.is_hidden():
             return
 
         vertices, mode = self._vertices(mesh)
@@ -338,7 +338,7 @@ class GPURenderer:
         )
         mesh.texture.use(1)
         self.image_program['image_texture'].value = 1
-        self.image_program['operation'].value = mesh.operation.value
+        self.image_program['operation'].value = mesh.get_operation().value
         self.image_program['use_tint'].value = False
         self.image_program['screen_size'].value = (self.width, self.height)
         target.use()
@@ -353,7 +353,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.hidden or mesh.color.is_default:
+        if mesh.is_hidden() or mesh.get_color().is_default:
             return
 
         vertices, mode = self._vertices(mesh)
@@ -371,13 +371,13 @@ class GPURenderer:
         )
         mesh.infos['texture'].use(1)
         self.image_program['image_texture'].value = 1
-        self.image_program['operation'].value = mesh.operation.value
+        self.image_program['operation'].value = mesh.get_operation().value
         self.image_program['use_tint'].value = True
         self.image_program['tint'].value = (
-            mesh.color.r / 255,
-            mesh.color.g / 255,
-            mesh.color.b / 255,
-            mesh.color.a / 255,
+            mesh.get_color().r / 255,
+            mesh.get_color().g / 255,
+            mesh.get_color().b / 255,
+            mesh.get_color().a / 255,
         )
         self.image_program['screen_size'].value = (self.width, self.height)
         target.use()

@@ -13,12 +13,12 @@ class ImageTexture(Mesh):
                 width: int = 0,
                 height: int = 0,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
             Color.default(),
             operation,
-            is_dynamic
+            dynamic
         )
 
         self.position: Position = position
@@ -46,5 +46,5 @@ class ImageTexture(Mesh):
             width=0,
             height=0,
             operation=OperationEnum.SET,
-            is_dynamic=False,
+            dynamic=False,
         )

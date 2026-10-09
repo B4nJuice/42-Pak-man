@@ -13,13 +13,13 @@ class Line(Mesh):
                 end_position: Position,
                 operation: OperationEnum = OperationEnum.SET,
                 thickness: int = 1,
-                is_dynamic: bool = False,
+                dynamic: bool = False,
                 smooth_end: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
         if smooth_end:

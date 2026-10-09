@@ -40,7 +40,7 @@ class Screen:
 
         layer = (
             self.dynamic_mesh_layer
-            if mesh.is_dynamic
+            if mesh.is_dynamic()
             else self.static_mesh_layer
         )
         layer.meshes.append(mesh)

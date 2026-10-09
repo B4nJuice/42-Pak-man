@@ -19,13 +19,13 @@ class MeshLevel(SuperMesh):
                 height: int,
                 wall_thickness: int,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False,
+                dynamic: bool = False,
                 smooth_end: bool = False,
             ) -> None:
         super().__init__(
             color,
             operation=operation,
-            is_dynamic=is_dynamic
+            dynamic=dynamic
         )
 
         self.width: int = width
@@ -51,10 +51,10 @@ class MeshLevel(SuperMesh):
 
         self.create_wall = partial(
             Line,
-            self.color,
-            operation=self.operation,
+            self.get_color(),
+            operation=self.get_operation(),
             thickness=self.wall_thickness,
-            is_dynamic=self.is_dynamic,
+            dynamic=self.is_dynamic(),
             smooth_end=smooth_end
         )
 

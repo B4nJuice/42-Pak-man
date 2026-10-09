@@ -9,12 +9,12 @@ class Plane(Mesh):
                 color: Color,
                 positions: tuple[Position, Position],
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
         self.positions: tuple[Position, Position] = positions

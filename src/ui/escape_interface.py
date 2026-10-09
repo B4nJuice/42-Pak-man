@@ -23,7 +23,7 @@ class EscapeInterface(Interface):
                 Position(self.game._screen.width, self.game._screen.height)
             ),
             OperationEnum.ALPHA,
-            is_dynamic=True
+            dynamic=True
         )
 
         self.layer.meshes.append(self.background)
@@ -32,12 +32,12 @@ class EscapeInterface(Interface):
     def hide(self) -> None:
         self.hidden = True
         for mesh in self.get_layer().meshes:
-            mesh.hidden = True
+            mesh.set_hidden(True)
 
     def display(self) -> None:
         self.hidden = False
         for mesh in self.get_layer().meshes:
-            mesh.hidden = False
+            mesh.set_hidden(False)
 
     def get_layer(self) -> MeshLayer:
         return self.layer
