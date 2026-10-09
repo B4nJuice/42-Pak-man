@@ -13,6 +13,14 @@ class AlignEnum(Enum):
 
 
 class FontSequence(SuperMesh):
+    font: Font
+    position: Position
+    spacing: int
+    layer: MeshLayer
+    characters: list[Character]
+    align: AlignEnum
+    text: str
+
     def __init__(
                 self,
                 text: str,
@@ -30,12 +38,12 @@ class FontSequence(SuperMesh):
                 dynamic
             )
 
-        self.font: Font = font
-        self.position: Position = position
-        self.spacing: int = spacing
-        self.layer: MeshLayer = MeshLayer()
-        self.characters: list[Character] = []
-        self.align: AlignEnum = align if isinstance(align, AlignEnum) else\
+        self.font = font
+        self.position = position
+        self.spacing = spacing
+        self.layer = MeshLayer()
+        self.characters = []
+        self.align = align if isinstance(align, AlignEnum) else\
             AlignEnum.CENTER
         self.init()
         self.set_sequence_text(text)
@@ -44,7 +52,7 @@ class FontSequence(SuperMesh):
         pass
 
     def set_sequence_text(self, text: str) -> None:
-        self.text: str = text
+        self.text = text
         self.characters = []
         self.layer.meshes.clear()
 

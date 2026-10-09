@@ -6,6 +6,10 @@ from ..position import Position
 
 
 class Character(Mesh):
+    position: Position
+    character: str
+    infos: dict[str, Any]
+
     def __init__(
                 self,
                 character: str,
@@ -21,6 +25,6 @@ class Character(Mesh):
                 dynamic
             )
 
-        self.position: Position = position
-        self.character: str = character
-        self.infos: dict[str, Any] = infos
+        self.position = position
+        self.character = character
+        self.infos = infos

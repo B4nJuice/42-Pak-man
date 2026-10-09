@@ -7,6 +7,18 @@ from src.graphics.super_meshes.rectangle import Rectangle
 
 
 class Bar(SuperMesh):
+    width: int
+    height: int
+    border_thickness: int
+    border_color: Color
+    smooth_end: bool
+    position: Position
+    goal: float
+    progression: float
+    layer: MeshLayer
+    inner: Plane
+    border: Rectangle
+
     def __init__(
                 self,
                 color: Color,
@@ -27,23 +39,23 @@ class Bar(SuperMesh):
             dynamic=dynamic
         )
 
-        self.width: int = width
-        self.height: int = height
-        self.border_thickness: int = border_thickness
-        self.border_color: Color = border_color
-        self.smooth_end: bool = smooth_end
+        self.width = width
+        self.height = height
+        self.border_thickness = border_thickness
+        self.border_color = border_color
+        self.smooth_end = smooth_end
         self.position = position
-        self.goal: float = goal
-        self.progression: float = progression
+        self.goal = goal
+        self.progression = progression
 
-        self.layer: MeshLayer = MeshLayer()
+        self.layer = MeshLayer()
 
         self.init()
 
     def init(self) -> None:
         percentage: float = self._percentage()
 
-        self.inner: Plane = Plane(
+        self.inner = Plane(
             self.get_color(),
             (
                 self.position, Position(
@@ -57,7 +69,7 @@ class Bar(SuperMesh):
 
         self.layer.meshes.append(self.inner)
 
-        self.border: Rectangle = Rectangle(
+        self.border = Rectangle(
             self.border_color,
             self.position,
             self.width,

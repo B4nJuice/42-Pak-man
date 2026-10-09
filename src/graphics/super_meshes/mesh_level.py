@@ -10,6 +10,17 @@ from src.utils.direction import Direction
 
 
 class MeshLevel(SuperMesh):
+    width: int
+    height: int
+    wall_thickness: int
+    level: Level
+    layer: MeshLayer
+    tile_width: int
+    tile_height: int
+    width_offset: int
+    height_offset: int
+    position: Position
+
     def __init__(
                 self,
                 level: Level,
@@ -28,24 +39,24 @@ class MeshLevel(SuperMesh):
             dynamic=dynamic
         )
 
-        self.width: int = width
-        self.height: int = height
-        self.wall_thickness: int = wall_thickness
-        self.level: Level = level
+        self.width = width
+        self.height = height
+        self.wall_thickness = wall_thickness
+        self.level = level
 
-        self.layer: MeshLayer = MeshLayer()
+        self.layer = MeshLayer()
 
-        self.tile_width: int = self.width // self.level.get_width()
-        self.tile_height: int = self.height // self.level.get_height()
+        self.tile_width = self.width // self.level.get_width()
+        self.tile_height = self.height // self.level.get_height()
 
-        self.width_offset: int = (self.width - (
+        self.width_offset = (self.width - (
                 self.tile_width * self.level.get_width()
             )) // 2
-        self.height_offset: int = (self.height - (
+        self.height_offset = (self.height - (
                 self.tile_height * self.level.get_height()
             )) // 2
 
-        self.position: Position = position
+        self.position = position
         self.position.x += self.width_offset
         self.position.y += self.height_offset
 

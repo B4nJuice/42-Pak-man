@@ -5,6 +5,17 @@ from src.graphics.super_mesh import SuperMesh
 
 
 class Rectangle(SuperMesh):
+    position: Position
+    width: int
+    height: int
+    thickness: int
+    smooth_end: bool
+    layer: MeshLayer
+    position2: Position
+    position3: Position
+    position4: Position
+    rectangle: Polygon
+
     def __init__(
                 self,
                 color: Color,
@@ -22,28 +33,28 @@ class Rectangle(SuperMesh):
             dynamic=dynamic
         )
 
-        self.position: Position = position
-        self.width: int = width
-        self.height: int = height
-        self.thickness: int = thickness
-        self.smooth_end: bool = smooth_end
+        self.position = position
+        self.width = width
+        self.height = height
+        self.thickness = thickness
+        self.smooth_end = smooth_end
 
-        self.layer: MeshLayer = MeshLayer()
+        self.layer = MeshLayer()
 
         self.init()
 
     def init(self) -> None:
-        self.position2: Position = Position(
+        self.position2 = Position(
             self.position.x + self.width, self.position.y
         )
-        self.position3: Position = Position(
+        self.position3 = Position(
                 self.position.x + self.width, self.position.y + self.height
             )
-        self.position4: Position = Position(
+        self.position4 = Position(
                 self.position.x, self.position.y + self.height
             )
 
-        self.rectangle: Polygon = Polygon(
+        self.rectangle = Polygon(
                 self.get_color(),
                 [
                     self.position,

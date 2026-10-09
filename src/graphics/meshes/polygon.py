@@ -4,6 +4,10 @@ from ..position import Position
 
 
 class Polygon(Mesh):
+    positions: list[Position]
+    thickness: int
+    smooth_end: bool
+
     def __init__(
                 self,
                 color: Color,
@@ -19,6 +23,6 @@ class Polygon(Mesh):
                 dynamic
             )
 
-        self.positions: list[Position] = positions
-        self.thickness: int = thickness
-        self.smooth_end: bool = smooth_end
+        self.positions = positions
+        self.thickness = thickness
+        self.smooth_end = smooth_end

@@ -5,8 +5,10 @@ if TYPE_CHECKING:
 
 
 class MeshLayer:
+    meshes: list['Mesh | MeshLayer']
+
     def __init__(self) -> None:
-        self.meshes: list[Mesh | 'MeshLayer'] = []
+        self.meshes = []
 
     def get_layer(self) -> 'MeshLayer':
         return self

@@ -4,6 +4,11 @@ from ..position import Position
 
 
 class Circle(Mesh):
+    position: Position
+    radius: int
+    thickness: int
+    filled: bool
+
     def __init__(
                 self,
                 color: Color,
@@ -20,10 +25,10 @@ class Circle(Mesh):
                 dynamic
             )
 
-        self.position: Position = position
-        self.radius: int = max(radius, 0)
-        self.thickness: int = max(thickness, 0)
-        self.filled: bool = filled
+        self.position = position
+        self.radius = max(radius, 0)
+        self.thickness = max(thickness, 0)
+        self.filled = filled
 
     def get_position(self) -> Position:
         return self.position

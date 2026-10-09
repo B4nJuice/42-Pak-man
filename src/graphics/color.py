@@ -17,6 +17,12 @@ class OperationEnum(Enum):
 
 
 class Color:
+    r: int
+    g: int
+    b: int
+    a: int
+    is_default: bool
+
     def __init__(
                 self,
                 r: int,
@@ -25,12 +31,12 @@ class Color:
                 a: int = 255,
                 default: bool = False
             ) -> None:
-        self.r: int = self._min_max(r)
-        self.g: int = self._min_max(g)
-        self.b: int = self._min_max(b)
+        self.r = self._min_max(r)
+        self.g = self._min_max(g)
+        self.b = self._min_max(b)
 
-        self.a: int = self._min_max(a)
-        self.is_default: bool = default
+        self.a = self._min_max(a)
+        self.is_default = default
 
     @staticmethod
     def _min_max(

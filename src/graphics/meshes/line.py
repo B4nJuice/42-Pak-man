@@ -6,6 +6,10 @@ from ..position import Position
 
 
 class Line(Mesh):
+    start_position: Position
+    end_position: Position
+    thickness: int
+
     def __init__(
                 self,
                 color: Color,
@@ -38,6 +42,6 @@ class Line(Mesh):
                     end_position.y + delta_y * extension
                 )
 
-        self.start_position: Position = start_position
-        self.end_position: Position = end_position
-        self.thickness: int = thickness
+        self.start_position = start_position
+        self.end_position = end_position
+        self.thickness = thickness

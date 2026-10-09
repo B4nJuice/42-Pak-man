@@ -4,6 +4,8 @@ from ..position import Position
 
 
 class Plane(Mesh):
+    positions: tuple[Position, Position]
+
     def __init__(
                 self,
                 color: Color,
@@ -17,7 +19,7 @@ class Plane(Mesh):
                 dynamic
             )
 
-        self.positions: tuple[Position, Position] = positions
+        self.positions = positions
 
     def get_positions(self) -> tuple[Position, Position]:
         return self.positions
