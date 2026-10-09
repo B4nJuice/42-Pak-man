@@ -8,9 +8,19 @@ from src.utils import Direction
 
 class AI:
     _next_move: list[Direction]
+    _tracking_tile: Tile | None
+    _elapsed_traking_update: float
+    _tile_has_change: bool
+    _invalid_tracinkg_time: float | None
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, update_tracking_interval: float | None, **kwargs: Any) -> None:
         self._next_move = []
+
+        self._tracking_tile = None
+        self._elapsed_traking_update = float('inf')
+        self._tile_has_change = False
+        self._invalid_tracinkg_time = update_tracking_interval
+
         super().__init__(*args, **kwargs)
 
     def get_next_move(self) -> Direction:
@@ -28,6 +38,10 @@ class AI:
         if self._direction is None:
             self.move_next()
 
+    def apply_path(self, path: list[tuple[Tile, Direction]]) -> None:
+        for _, direction in path:
+            self.add_next_move(direction)
+
     def has_next_move(self) -> bool:
         return len(self._next_move) > 0
 
@@ -38,15 +52,6 @@ class AI:
         if not isinstance(self, Movable):
             return
 
-    def update(self, dt: float) -> None:
-        if not isinstance(self, Movable) or not isinstance(self, Entity):
-            return
-
-        if not self.is_moving() and not self.move_next():
-            self.try_move_forward()
-
-        super().update(dt)
-
     def move_next(self) -> bool:
         if not isinstance(self, Movable) or not self.has_next_move():
             return False
@@ -56,3 +61,37 @@ class AI:
 
     def on_arrive_ai(self) -> None:
         pass
+
+    def update_ai(self, dt: float) -> None:
+        if not isinstance(self, Movable) or not isinstance(self, Entity):
+            return
+
+        if self.need_to_update(dt):
+            self.update_tracking()
+
+        if not self.is_moving():
+            self.move_next()
+
+    def update_tracking(self) -> None:
+        self._elapsed_traking_update = 0.0
+        self._tile_has_change = False
+        self._need_update_tracking = False
+
+    def force_update_tracking(self) -> None:
+        self.update_tracking()
+
+    def set_tracking_tile(self, tile: Tile) -> None:
+        if self._tracking_tile != tile:
+            self._tracking_tile = tile
+            self._tile_has_change = True
+
+    def need_to_update(self, dt: float) -> bool:
+        self._elapsed_traking_update += dt
+
+        return self._tile_has_change and \
+        (
+            self._invalid_tracinkg_time is None or
+            (self._elapsed_traking_update >= self._invalid_tracinkg_time
+                or (isinstance(self, Movable) and not self.is_moving())
+            )
+        )
