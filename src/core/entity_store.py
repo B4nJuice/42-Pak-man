@@ -1,6 +1,8 @@
 from collections import defaultdict
 from typing import TypeVar, cast
 
+from src.errors import EntityStoreNotFound
+
 from .entity import Entity
 
 E = TypeVar("E", bound=Entity)
@@ -24,11 +26,18 @@ class EntityStore:
         for cls in self._classes(entity):
             self._entities[cls].discard(entity)
 
-    def get(self, cls: type[E]) -> list[E]:
+    def gets(self, cls: type[E]) -> list[E]:
         return cast(list[E], list(self._entities.get(cls, ())))
 
+    def get(self, cls: type[E]) -> E:
+        entities: list[E] = self.gets(cls)
+        if (len(entities) <= 0):
+            raise EntityStoreNotFound(str(cls))
+
+        return cast(E, list(self._entities.get(cls, ())).pop())
+
     def all(self) -> list[Entity]:
-        return self.get(Entity)
+        return self.gets(Entity)
 
     def print(self) -> None:
         for key, value in self._entities.items():
