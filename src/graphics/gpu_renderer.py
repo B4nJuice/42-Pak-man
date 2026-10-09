@@ -6,6 +6,7 @@ import moderngl
 import numpy as np
 
 from src.graphics import Mesh
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
     Character,
     Circle,
@@ -14,7 +15,6 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
-from src.graphics.mesh_layer import MeshLayer
 
 
 @cache
