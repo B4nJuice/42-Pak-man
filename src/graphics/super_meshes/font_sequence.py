@@ -45,7 +45,6 @@ class FontSequence(SuperMesh):
 
     def set_sequence_text(self, text: str) -> None:
         self.text: str = text
-        # if len(self.characters) != len(text):
         self.characters = []
         self.layer.meshes.clear()
 
