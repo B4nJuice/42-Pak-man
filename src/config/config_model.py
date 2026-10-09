@@ -54,7 +54,9 @@ class ConfigModel(BaseModel):
         default="assets/fonts/Bold Frame.ttf"
     )
 
-    # Exp params
+    #           Exp params
+
+    # rewards
 
     pacgum_reward: float = Field(
         default=3
@@ -64,4 +66,16 @@ class ConfigModel(BaseModel):
     )
     ghost_reward: float = Field(
         default=50
+    )
+
+    # player
+
+    player_level_exp_multiplier: float = Field(
+         default=1.1
+     )
+    player_first_level_exp: float = Field(
+        default=100
+    )
+    player_exp_per_second: float = Field(
+        default=0.5
     )

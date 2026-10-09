@@ -112,7 +112,10 @@ class Game:
         self._player = Player(
                 'player',
                 self._player_start_position,
-                self._level
+                self._level,
+                self._config.player_level_exp_multiplier,
+                self._config.player_first_level_exp,
+                self._config.player_exp_per_second,
             )
 
         self._ghost_1 = Ghost(

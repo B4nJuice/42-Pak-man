@@ -27,7 +27,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 self,
                 id: str,
                 tile: Pos | Tile,
-                level: Level
+                level: Level,
+                level_exp_multiplier: float,
+                first_level_exp: float,
+                exp_per_second: float,
             ) -> None:
         super().__init__(
             name=id,
@@ -41,9 +44,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             lives=3
         )
 
-        self._level_exp_multiplier = 1.1
-        self._next_level_exp = 100
-        self._exp_per_second = 0.5
+        self._level_exp_multiplier = level_exp_multiplier
+        self._next_level_exp = first_level_exp
+        self._exp_per_second = exp_per_second
         self._level_bar = None
         self._actual_level = 0
         self._exp_points = 0
