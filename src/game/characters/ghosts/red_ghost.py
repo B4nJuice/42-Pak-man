@@ -24,6 +24,10 @@ class RedGhost(Ghost):
     def get_tracking_tile(self) -> Tile:
         return self._tracking_entity.get_tile()
 
+    def on_arrive_ai(self) -> None:
+        print('Red Ghost has reach his Goal')
+        return super().on_arrive_ai()
+
     def update_tracking(self) -> None:
         print('Generate New Tracking')
 

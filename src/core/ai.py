@@ -13,6 +13,7 @@ class AI:
     _elapsed_traking_update: float
     _tile_has_change: bool
     _invalid_tracinkg_time: float | None
+    _has_arrive: bool
 
     def __init__(self, *args: Any, update_tracking_interval: float | None, **kwargs: Any) -> None:
         self._next_move = []
@@ -21,6 +22,7 @@ class AI:
         self._elapsed_traking_update = float('inf')
         self._tile_has_change = False
         self._invalid_tracinkg_time = update_tracking_interval
+        self._has_arrive = True
 
         super().__init__(*args, **kwargs)
 
@@ -49,12 +51,14 @@ class AI:
     def clear_next_moves(self) -> None:
         self._next_move.clear()
 
-    def on_arrive(self, tile: Tile, direction: Direction) -> None:
-        if not isinstance(self, Movable):
-            return
-
     def move_next(self) -> bool:
-        if not isinstance(self, Movable) or not self.has_next_move():
+        if not isinstance(self, Movable) or not isinstance(self, Entity):
+            return False
+
+        if not self.has_next_move():
+            if self.get_tile() == self._tracking_tile and not self._has_arrive:
+                self._has_arrive = True
+                self.on_arrive_ai()
             return False
 
         self.try_move(self.get_next_move())
@@ -87,6 +91,7 @@ class AI:
         if self._tracking_tile != tile:
             self._tracking_tile = tile
             self._tile_has_change = True
+            self._has_arrive = False
 
     def need_to_update(self, dt: float) -> bool:
         self._elapsed_traking_update += dt
