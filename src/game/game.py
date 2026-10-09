@@ -54,11 +54,9 @@ class Game:
         self._player = Player('player', (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
             ), self._level)
-        self._ghost_1 = RedGhost(0, self._level)
+        self._ghost_1 = RedGhost(0, (0, 0), self._level)
 
         PacGum('pacgum', (0, 1), self._level)
-
-        self._level.entities.print()
 
     def run(self) -> None:
         self._running = True
