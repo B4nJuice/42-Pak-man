@@ -43,6 +43,17 @@ class Maze:
 
         return self._grid[y][x]
 
+    def get_tile_ahead(self, tile: Tile, direction: Direction, distance: int) -> Tile:
+        x: int = tile.get_x() + direction.vector[0] * distance
+        y: int = tile.get_y() + direction.vector[1] * distance
+
+        while not self.is_within_bounds((x, y)):
+            distance -= 1
+            x = tile.get_x() + direction.vector[0] * distance
+            y = tile.get_y() + direction.vector[1] * distance
+
+        return self._grid[y][x]
+
     def is_within_bounds(self, pos: Pos) -> bool:
         return 0 <= pos[0] < self.get_width() \
             and 0 <= pos[1] < self.get_height()
