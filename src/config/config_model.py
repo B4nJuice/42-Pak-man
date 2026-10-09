@@ -62,10 +62,10 @@ class ConfigModel(BaseModel):
         default=3
     )
     super_pacgum_reward: float = Field(
-        default=20
+        default=30
     )
     ghost_reward: float = Field(
-        default=50
+        default=60
     )
 
     # player

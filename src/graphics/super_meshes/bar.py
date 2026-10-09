@@ -15,6 +15,7 @@ class Bar(SuperMesh):
     position: Position
     goal: float
     progression: float
+    displayed_progression: float
     layer: MeshLayer
     inner: Plane
     border: Rectangle
@@ -47,6 +48,7 @@ class Bar(SuperMesh):
         self.position = position
         self.goal = goal
         self.progression = progression
+        self.displayed_progression = progression
 
         self.layer = MeshLayer()
 
@@ -87,13 +89,21 @@ class Bar(SuperMesh):
             return 0.0
         return min(1, self.progression / self.goal)
 
+    def _displayed_percentage(self) -> float:
+        if self.goal <= 0:
+            return 0.0
+        return min(1, self.displayed_progression / self.goal)
+
     def refresh(self) -> None:
-        percentage = self._percentage()
-        self.inner.positions[1].x = self.position.x + round(self.width * percentage)
+        percentage = self._displayed_percentage()
+        self.inner.positions[1].x = self.position.x + round(
+            self.width * percentage
+        )
         self.inner.positions[1].y = self.position.y + self.height
         self.inner.set_color(self.get_color())
         self.inner.set_operation(self.get_operation())
 
+    def refresh_border(self) -> None:
         self.border.position = self.position
         self.border.width = self.width
         self.border.height = self.height
@@ -107,6 +117,22 @@ class Bar(SuperMesh):
 
     def set_progression(self, progression: float) -> None:
         self.progression = max(0, progression)
+
+        progression_diff: float = self.progression - self.displayed_progression
+
+        if self.progression > self.displayed_progression:
+
+            min_progression: float = min(
+                self.goal * 0.02,
+                progression_diff
+            )
+
+            self.displayed_progression += max((
+                progression_diff
+            ) * 0.09, min_progression)
+        elif self.progression < self.displayed_progression:
+            self.displayed_progression = 0
+
         self.refresh()
 
     def set_goal(self, goal: float) -> None:
