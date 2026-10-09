@@ -6,6 +6,10 @@ from ..position import Position
 
 
 class Line(Mesh):
+    start_position: Position
+    end_position: Position
+    thickness: int
+
     def __init__(
                 self,
                 color: Color,
@@ -13,13 +17,13 @@ class Line(Mesh):
                 end_position: Position,
                 operation: OperationEnum = OperationEnum.SET,
                 thickness: int = 1,
-                is_dynamic: bool = False,
+                dynamic: bool = False,
                 smooth_end: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
         if smooth_end:
@@ -38,6 +42,6 @@ class Line(Mesh):
                     end_position.y + delta_y * extension
                 )
 
-        self.start_position: Position = start_position
-        self.end_position: Position = end_position
-        self.thickness: int = thickness
+        self.start_position = start_position
+        self.end_position = end_position
+        self.thickness = thickness

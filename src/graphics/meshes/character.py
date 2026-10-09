@@ -6,6 +6,10 @@ from ..position import Position
 
 
 class Character(Mesh):
+    position: Position
+    character: str
+    infos: dict[str, Any]
+
     def __init__(
                 self,
                 character: str,
@@ -13,14 +17,14 @@ class Character(Mesh):
                 color: Color,
                 position: Position,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
-        self.position: Position = position
-        self.character: str = character
-        self.infos: dict[str, Any] = infos
+        self.position = position
+        self.character = character
+        self.infos = infos

@@ -24,7 +24,7 @@ class StatsInterface(Interface):
             self.width - self.x_offset,
             self.height - self.y_offset,
             3,
-            is_dynamic=True,
+            dynamic=True,
             smooth_end=True
         )
 

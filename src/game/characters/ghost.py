@@ -37,7 +37,7 @@ class Ghost(Edible, Collider, Displayable, Entity):
             width=0,
             height=0,
             operation=OperationEnum.SET,
-            is_dynamic=False,
+            dynamic=False,
         )
 
     def eat(self, eater: 'Player') -> bool:

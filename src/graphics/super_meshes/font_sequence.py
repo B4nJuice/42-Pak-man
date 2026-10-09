@@ -13,6 +13,14 @@ class AlignEnum(Enum):
 
 
 class FontSequence(SuperMesh):
+    font: Font
+    position: Position
+    spacing: int
+    layer: MeshLayer
+    characters: list[Character]
+    align: AlignEnum
+    text: str
+
     def __init__(
                 self,
                 text: str,
@@ -22,20 +30,20 @@ class FontSequence(SuperMesh):
                 spacing: int = 0,
                 align: AlignEnum = AlignEnum.CENTER,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
-        self.font: Font = font
-        self.position: Position = position
-        self.spacing: int = spacing
-        self.layer: MeshLayer = MeshLayer()
-        self.characters: list[Character] = []
-        self.align: AlignEnum = align if isinstance(align, AlignEnum) else\
+        self.font = font
+        self.position = position
+        self.spacing = spacing
+        self.layer = MeshLayer()
+        self.characters = []
+        self.align = align if isinstance(align, AlignEnum) else\
             AlignEnum.CENTER
         self.init()
         self.set_sequence_text(text)
@@ -44,14 +52,13 @@ class FontSequence(SuperMesh):
         pass
 
     def set_sequence_text(self, text: str) -> None:
-        self.text: str = text
-        # if len(self.characters) != len(text):
+        self.text = text
         self.characters = []
         self.layer.meshes.clear()
 
         total_width = 0
         for index, character in enumerate(self.text):
-            infos = self.font.characters[character]
+            infos = self.font.get_characters()[character]
             total_width += infos["advance"]
             if index < len(self.text) - 1:
                 total_width += self.spacing
@@ -64,7 +71,7 @@ class FontSequence(SuperMesh):
             case _:
                 cursor_x = self.position.x - total_width / 2
         for index, character in enumerate(self.text):
-            infos = self.font.characters[character]
+            infos = self.font.get_characters()[character]
             character_position = Position(
                 cursor_x + infos["bearing_x"],
                 self.position.y - infos["bearing_y"],
@@ -75,16 +82,16 @@ class FontSequence(SuperMesh):
                 mesh.character = character
                 mesh.infos = infos
                 mesh.position = character_position
-                mesh.color = self.color
-                mesh.operation = self.operation
+                mesh.set_color(self.get_color())
+                mesh.set_operation(self.get_operation())
             else:
                 mesh = Character(
                     character,
                     infos,
-                    self.color,
+                    self.get_color(),
                     character_position,
-                    operation=self.operation,
-                    is_dynamic=self.is_dynamic,
+                    operation=self.get_operation(),
+                    dynamic=self.is_dynamic(),
                 )
                 self.characters.append(mesh)
                 self.layer.meshes.append(mesh)

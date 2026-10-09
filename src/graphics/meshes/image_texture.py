@@ -1,4 +1,5 @@
 from PIL import Image
+from typing import Any
 
 from ..color import Color, OperationEnum
 from ..mesh import Mesh
@@ -6,6 +7,15 @@ from ..position import Position
 
 
 class ImageTexture(Mesh):
+    position: Position
+    path: str
+    image: Image.Image
+    original_width: int
+    original_height: int
+    width: int
+    height: int
+    texture: Any
+
     def __init__(
                 self,
                 path: str,
@@ -13,20 +23,20 @@ class ImageTexture(Mesh):
                 width: int = 0,
                 height: int = 0,
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
             Color.default(),
             operation,
-            is_dynamic
+            dynamic
         )
 
-        self.position: Position = position
-        self.path: str = path
-        self.image: Image.Image = Image.open(self.path).convert("RGBA")
+        self.position = position
+        self.path = path
+        self.image = Image.open(self.path).convert("RGBA")
         self.original_width, self.original_height = self.image.size
-        self.width: int = width or self.original_width
-        self.height: int = height or self.original_height
+        self.width = width or self.original_width
+        self.height = height or self.original_height
         self.texture = None
 
     def get_position(self) -> Position:
@@ -46,5 +56,5 @@ class ImageTexture(Mesh):
             width=0,
             height=0,
             operation=OperationEnum.SET,
-            is_dynamic=False,
+            dynamic=False,
         )
