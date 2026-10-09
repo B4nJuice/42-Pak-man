@@ -36,6 +36,9 @@ class Movable:
     def get_target(self) -> Tile | None:
         return self._target
 
+    def get_direction(self) -> Direction | None:
+        return self._direction
+
     @property
     def pos(self) -> Vec2:
         if not isinstance(self, Entity):

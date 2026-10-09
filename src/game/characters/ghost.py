@@ -34,6 +34,9 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             for direction in Direction
         }
 
+        self._mesh = self._meshs[Direction.EAST][0]
+
+
     def go_to(self, tile: Tile) -> None:
         path = self.a_star.find_path(
             start=self.get_target_tile(),
@@ -45,6 +48,7 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
 
     def update(self, dt: float) -> None:
         self.update_ai(dt)
+        self.update_mesh()
 
         super().update(dt)
 

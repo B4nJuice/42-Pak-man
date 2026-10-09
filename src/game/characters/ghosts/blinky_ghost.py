@@ -1,21 +1,19 @@
-from src.core import AStar, Entity, Level, Tile
+from src.core import Entity, Level, Tile
 from src.utils import Pos
 
 from ..ghost import Ghost
 from ..player import Player
 
 
-class RedGhost(Ghost):
-    a_star: AStar
+class BlinkyGhost(Ghost):
     _tracking_entity: Entity
 
     def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
         self._texture_path = 'assets/characters/ghosts/red'
-        self.a_star = AStar(level)
         self._tracking_entity = level.entities.get(Player)
 
         super().__init__(
-            name=f'red_ghost_{id}',
+            name=f'blinky_ghost_{id}',
             tile=tile,
             level=level,
             update_tracking_interval=None
@@ -25,7 +23,7 @@ class RedGhost(Ghost):
         return self._tracking_entity.get_tile()
 
     def on_arrive_ai(self) -> None:
-        print('Red Ghost has reach his Goal')
+        print(f'{self} has reach his Goal')
         return super().on_arrive_ai()
 
     def update_tracking(self) -> None:

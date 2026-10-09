@@ -7,7 +7,7 @@ from src.core import EventHandler, Level
 from src.graphics.font import Font
 from src.graphics.screen import Screen
 
-from .characters import Player, RedGhost
+from .characters import BlinkyGhost, PinkyGhost, Player
 from .items import PacGum
 
 
@@ -54,7 +54,10 @@ class Game:
         self._player = Player('player', (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
             ), self._level)
-        self._ghost_1 = RedGhost(0, (0, 0), self._level)
+        self._ghost_1 = BlinkyGhost(0, (0, 0), self._level)
+        self._ghost_1 = PinkyGhost(0, (
+            self._level.get_width() -1, 0
+        ), self._level)
 
         PacGum('pacgum', (0, 1), self._level)
 
