@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import Any
 
 from src.core.entity import Entity
@@ -66,6 +67,8 @@ class AI:
         if not isinstance(self, Movable) or not isinstance(self, Entity):
             return
 
+        self.set_tracking_tile(self.get_tracking_tile())
+
         if self.need_to_update(dt):
             self.update_tracking()
 
@@ -95,3 +98,7 @@ class AI:
                 or (isinstance(self, Movable) and not self.is_moving())
             )
         )
+
+    @abstractmethod
+    def get_tracking_tile(self) -> Tile:
+        pass

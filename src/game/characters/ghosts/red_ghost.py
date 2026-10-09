@@ -12,9 +12,7 @@ class RedGhost(Ghost):
     def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
         self._texture_path = 'assets/characters/ghosts/red'
         self.a_star = AStar(level)
-        self._tracking_entity = level.entities.get(Player)[0]
-        if not self._tracking_entity:
-            raise ValueError('Error can not reach player')
+        self._tracking_entity = level.entities.get(Player)
 
         super().__init__(
             name=f'red_ghost_{id}',
@@ -23,19 +21,8 @@ class RedGhost(Ghost):
             update_tracking_interval=None
         )
 
-    def go_to(self, tile: Tile) -> None:
-        path = self.a_star.find_path(
-            start=self.get_target_tile(),
-            end=tile
-        )
-
-        self.clear_next_moves()
-        self.apply_path(path)
-
-    def update(self, dt: float) -> None:
-        self.set_tracking_tile(self._tracking_entity.get_tile())
-
-        return super().update(dt)
+    def get_tracking_tile(self) -> Tile:
+        return self._tracking_entity.get_tile()
 
     def update_tracking(self) -> None:
         print('Generate New Tracking')

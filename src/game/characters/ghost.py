@@ -1,12 +1,13 @@
 from pathlib import Path
 
-from src.core import AI, Collider, Displayable, Entity, Level, Tile
+from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.utils import Direction, Pos
 
 
 class Ghost(Collider, AI, Movable, Displayable, Entity):
+    a_star: AStar
     _texture_path: str
     _meshs: dict[Direction, list[ImageTexture]]
 
@@ -20,6 +21,8 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             update_tracking_interval=update_tracking_interval
         )
 
+        self.a_star = AStar(level)
+
     def init_mesh(self) -> None:
         self._meshs = {
             direction: [
@@ -30,6 +33,15 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             ]
             for direction in Direction
         }
+
+    def go_to(self, tile: Tile) -> None:
+        path = self.a_star.find_path(
+            start=self.get_target_tile(),
+            end=tile
+        )
+
+        self.clear_next_moves()
+        self.apply_path(path)
 
     def update(self, dt: float) -> None:
         self.update_ai(dt)
