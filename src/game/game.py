@@ -91,10 +91,20 @@ class Game:
                     continue
                 if self._level.get_tile(x, y).is_full:
                     continue
-                PacGum('pacgum', (x, y), self._level)
+                PacGum(
+                    'pacgum',
+                    (x, y),
+                    self._level,
+                    self._config.pacgum_reward
+                )
 
         for pos in super_pacgum_positions:
-            SuperPacGum('super_pacgum', pos, self._level)
+            SuperPacGum(
+                'super_pacgum',
+                pos,
+                self._level,
+                self._config.super_pacgum_reward
+            )
 
         self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
@@ -102,13 +112,17 @@ class Game:
         self._player = Player(
                 'player',
                 self._player_start_position,
-                self._level
+                self._level,
+                self._config.player_level_exp_multiplier,
+                self._config.player_first_level_exp,
+                self._config.player_exp_per_second,
             )
 
         self._ghost_1 = Ghost(
             'test',
             (0, 1),
             self._level,
+            self._config.ghost_reward
         )
 
     def init_interfaces(self) -> None:

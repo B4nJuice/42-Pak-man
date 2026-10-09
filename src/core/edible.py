@@ -7,13 +7,13 @@ from .entity import Entity
 
 
 class Edible:
-    _reward: int
+    _reward: float
     _edible: bool
 
     def __init__(
                 self,
                 *args: Any,
-                reward: int = 0,
+                reward: float = 0,
                 edible: bool = True,
                 **kwargs: Any
             ) -> None:
@@ -27,7 +27,7 @@ class Edible:
         self._reward = reward
         self.set_edible(edible)
 
-    def get_reward(self) -> int:
+    def get_reward(self) -> float:
         return self._reward
 
     def set_edible(self, value: bool) -> None:
