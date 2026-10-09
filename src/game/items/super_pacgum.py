@@ -9,7 +9,13 @@ from src.utils import Pos
 
 
 class SuperPacGum(Edible, Collider, Displayable, Entity):
-    def __init__(self, id: str, pos: Pos | Tile, level: Level) -> None:
+    def __init__(
+                self,
+                id: str,
+                pos: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         super().__init__(
             name=id,
             tile=pos,
@@ -17,7 +23,7 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
             solid=False,
             radius=0.15,
             proportion=0.3,
-            reward=50,
+            reward=reward,
         )
 
         self.init_mesh()

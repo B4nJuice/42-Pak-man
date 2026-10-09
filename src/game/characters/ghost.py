@@ -10,7 +10,13 @@ from src.game.characters.player_state import PlayerState
 
 
 class Ghost(Edible, Collider, Displayable, Entity):
-    def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
+    def __init__(
+                self,
+                name: str,
+                tile: Pos | Tile,
+                level: 'Level',
+                reward: float
+            ) -> None:
         super().__init__(
             name=id,
             tile=tile,
@@ -18,7 +24,7 @@ class Ghost(Edible, Collider, Displayable, Entity):
             solid=True,
             proportion=0.9,
             edible=False,
-            reward=100
+            reward=reward
         )
 
     def on_collision(self, other: 'Collider') -> None:
