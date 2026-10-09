@@ -51,7 +51,7 @@ class FontSequence(SuperMesh):
 
         total_width = 0
         for index, character in enumerate(self.text):
-            infos = self.font.characters[character]
+            infos = self.font.get_characters()[character]
             total_width += infos["advance"]
             if index < len(self.text) - 1:
                 total_width += self.spacing
@@ -64,7 +64,7 @@ class FontSequence(SuperMesh):
             case _:
                 cursor_x = self.position.x - total_width / 2
         for index, character in enumerate(self.text):
-            infos = self.font.characters[character]
+            infos = self.font.get_characters()[character]
             character_position = Position(
                 cursor_x + infos["bearing_x"],
                 self.position.y - infos["bearing_y"],
