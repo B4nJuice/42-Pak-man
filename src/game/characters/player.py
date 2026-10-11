@@ -1,15 +1,15 @@
 from collections.abc import Callable
-
 import pygame
 
-from src.core import Collider, Displayable, Entity, Level, Tile
+from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
 from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
+from src.game.characters.player_state import PlayerState
 
 
-class Player(Collider, Movable, Displayable, Entity):
+class Player(Alive, Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
     set_level_text: Callable[[int], None]
@@ -17,15 +17,20 @@ class Player(Collider, Movable, Displayable, Entity):
     _next_level_exp: float
     _exp_per_second: float
     _level_bar: Bar | None
+    _state: PlayerState
     _actual_level: int
     _exp_points: float
     _level_exp: float
+    _super_time: float
 
     def __init__(
                 self,
                 id: str,
                 tile: Pos | Tile,
-                level: Level
+                level: Level,
+                level_exp_multiplier: float,
+                first_level_exp: float,
+                exp_per_second: float,
             ) -> None:
         super().__init__(
             name=id,
@@ -34,25 +39,42 @@ class Player(Collider, Movable, Displayable, Entity):
             solid=True,
             radius=0.45,
             speed=6,
-            proportion=0.9
+            proportion=0.9,
+            primary=True,
+            lives=3
         )
 
-        # TODO link params to the config
-
-        self._level_exp_multiplier = 1.1
-        self._next_level_exp = 100
-        self._exp_per_second = 0.5
+        self._level_exp_multiplier = level_exp_multiplier
+        self._next_level_exp = first_level_exp
+        self._exp_per_second = exp_per_second
         self._level_bar = None
         self._actual_level = 0
         self._exp_points = 0
+        self._pacgum_exp = 5
         self._level_exp = 0
+        self.set_state(PlayerState.NORMAL)
+
+    def set_state(self, state: PlayerState) -> None:
+        self._state = state
+
+    def get_state(self) -> PlayerState:
+        return self._state
 
     def on_collision(self, other: 'Collider') -> None:
-        super().on_collision(other)
+        from src.game.characters import Ghost
         if not isinstance(other, Entity):
             return
 
-        print(f'Collision with {other.get_name()!r}')
+        if isinstance(other, Edible):
+            eat_result: bool = other.eat(self)
+
+            if isinstance(other, Ghost):
+                if eat_result:
+                    ...
+                else:
+                    self.set_health(0)
+
+        super().on_collision(other)
 
     def on_collision_exit(self, other: 'Collider') -> None:
         super().on_collision_exit(other)
@@ -89,17 +111,20 @@ class Player(Collider, Movable, Displayable, Entity):
     def try_move(self, direction: Direction) -> bool:
         same = direction == self._direction
         if super().try_move(direction):
-            print(f'Moving to {direction}')
             if not same:
                 self.update_mesh()
             return True
-        print(f'Cannot move to {direction}')
         return False
 
     def update(self, dt: float) -> None:
         super().update(dt)
 
         self.add_exp(dt * self._exp_per_second)
+
+        if self.get_state() == PlayerState.SUPER:
+            self._super_time -= dt
+            if self._super_time <= 0:
+                self.set_state(PlayerState.NORMAL)
 
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
@@ -122,7 +147,7 @@ class Player(Collider, Movable, Displayable, Entity):
         return super().update_mesh()
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
-        print(f'Arrived at {tile.get_pos()}')
+        self._direction = None
         if self._queued is not None:
             if not self.try_move(self._queued):
                 self.try_move_forward()
@@ -156,9 +181,18 @@ class Player(Collider, Movable, Displayable, Entity):
         self.refresh_bar_progression()
         if self._exp_points >= self._next_level_exp:
             temp = self._next_level_exp
-            self._next_level_exp +=\
-                (self._next_level_exp - self._level_exp) * self._level_exp_multiplier
+            self._next_level_exp += (
+                    self._next_level_exp - self._level_exp
+                ) * self._level_exp_multiplier
             self._level_exp = temp
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
+
+    def set_super_state(self, time: float) -> None:
+        self.set_state(PlayerState.SUPER)
+        self._super_time = time
+
+    def on_death(self) -> None:
+        self._direction = None
+        super().on_death()

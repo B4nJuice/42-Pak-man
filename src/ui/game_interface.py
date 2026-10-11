@@ -35,7 +35,7 @@ class GameInterface(Interface):
             1,
             100,
             progression=0,
-            is_dynamic=True,
+            dynamic=True,
             smooth_end=True,
         )
 
@@ -48,10 +48,8 @@ class GameInterface(Interface):
             Position(level_bar_x - round(self.width * 0.01), level_bar_y + level_bar_height),
             spacing=1,
             align=AlignEnum.RIGHT,
-            is_dynamic=True
+            dynamic=True
         )
-
-        # TODO connect level_text with player level
 
         self.timer: FontSequence = FontSequence(
             "Null",
@@ -62,7 +60,7 @@ class GameInterface(Interface):
                     self.y_offset + round(self.height*0.07)
                 ),
             spacing=1,
-            is_dynamic=True
+            dynamic=True
         )
 
         self.set_timer(600)
@@ -98,7 +96,7 @@ class GameInterface(Interface):
             maze_width,
             maze_height,
             wall_thickness=3,
-            is_dynamic=True,
+            dynamic=True,
             smooth_end=True
         )
 
@@ -110,25 +108,28 @@ class GameInterface(Interface):
         self.layer.meshes.append(self.maze)
 
     @staticmethod
-    def sec_to_str(seconds: int) -> str:
-        return f"{seconds//60:02}:{seconds%60:02}"
+    def sec_to_str(seconds: float) -> str:
+        return f"{int(seconds//60):02}:{int(seconds) % 60:02}"
 
     def set_level_text(self, level: int) -> None:
         self.level_text.set_sequence_text(f"Lvl .{level}")
 
-    def set_level_bar_progression(self, progression: int) -> None:
+    def set_level_bar_progression(self, progression: float) -> None:
         self.level_bar.set_progression(progression)
 
-    def set_level_bar_goal(self, goal: int) -> None:
+    def set_level_bar_goal(self, goal: float) -> None:
         self.level_bar.set_goal(goal)
 
-    def set_timer(self, seconds: int) -> None:
-        self.timer_value: int = seconds
+    def set_timer(self, seconds: float) -> None:
+        self.timer_value: float = seconds
         self.refresh_timer()
 
-    def refresh_timer(self, dt: int = 0) -> None:
-        self.timer_value += dt
+    def refresh_timer(self, dt: float = 0) -> None:
+        self.timer_value -= dt
         self.timer.set_sequence_text(self.sec_to_str(self.timer_value))
+
+    def refresh(self, dt: float) -> None:
+        self.refresh_timer(dt)
 
     def get_layer(self) -> MeshLayer:
         return self.layer

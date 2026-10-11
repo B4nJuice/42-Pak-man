@@ -53,3 +53,29 @@ class ConfigModel(BaseModel):
     font_path: str = Field(
         default="assets/fonts/Bold Frame.ttf"
     )
+
+    #           Exp params
+
+    # rewards
+
+    pacgum_reward: float = Field(
+        default=3
+    )
+    super_pacgum_reward: float = Field(
+        default=30
+    )
+    ghost_reward: float = Field(
+        default=60
+    )
+
+    # player
+
+    player_level_exp_multiplier: float = Field(
+         default=1.1
+     )
+    player_first_level_exp: float = Field(
+        default=100
+    )
+    player_exp_per_second: float = Field(
+        default=0.5
+    )

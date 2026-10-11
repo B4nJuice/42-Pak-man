@@ -4,20 +4,22 @@ from ..position import Position
 
 
 class Plane(Mesh):
+    positions: tuple[Position, Position]
+
     def __init__(
                 self,
                 color: Color,
                 positions: tuple[Position, Position],
                 operation: OperationEnum = OperationEnum.SET,
-                is_dynamic: bool = False
+                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                is_dynamic
+                dynamic
             )
 
-        self.positions: tuple[Position, Position] = positions
+        self.positions = positions
 
     def get_positions(self) -> tuple[Position, Position]:
         return self.positions

@@ -1,6 +1,11 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile
+if TYPE_CHECKING:
+    from src.game.characters import Player
+
+from src.game.characters.player_state import PlayerState
+from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile, Edible
 from src.core.movable import Movable
 from src.graphics import ImageTexture
 from src.utils import Direction, Pos
@@ -15,6 +20,7 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
                 self, name: str,
                 tile: Pos | Tile,
                 level: Level,
+                reward: float,
                 update_tracking_interval: float | None = 0.6
             ) -> None:
         super().__init__(
@@ -23,6 +29,8 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             level=level,
             solid=True,
             proportion=0.9,
+            reward=reward,
+            edible=false
             update_tracking_interval=update_tracking_interval
         )
 
@@ -39,6 +47,12 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             for direction in Direction
         }
 
+    def on_collision(self, other: 'Collider') -> None:
+        if not isinstance(other, Entity):
+            return
+
+        super().on_collision(other)
+
         self._mesh = self._meshs[Direction.EAST][0]
 
     def go_to(self, tile: Tile) -> None:
@@ -49,6 +63,16 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
 
         self.clear_next_moves()
         self.apply_path(path)
+
+    def eat(self, eater: 'Player') -> bool:
+        if eater.get_state() == PlayerState.SUPER:
+            self.set_edible(True)
+
+        return_state: bool = super().eat(eater)
+
+        self.set_edible(False)
+
+        return return_state
 
     def update(self, dt: float) -> None:
         super().update(dt)

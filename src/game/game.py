@@ -5,23 +5,31 @@ from pygame.time import Clock
 from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.graphics.font import Font
-from src.graphics.screen import Screen
 
-from .characters import BlinkyGhost, PinkyGhost, InkyGhost, ClydeGhost, Player
-from .items import PacGum
+from src.graphics.screen import Screen
+from src.ui import GameInterface, StatsInterface, EscapeInterface
+from src.game.characters import Ghost, Player, linkyGhost, PinkyGhost, InkyGhost, ClydeGhost
+from src.game.items import PacGum, SuperPacGum
+from src.game.game_state import GameState
 
 
 class Game:
-    _config: ConfigModel
-    _level: Level
-    _screen: Screen
-    _running: bool
-    _clock: Clock
+    _player_start_position: tuple[int, int]
+    _escape_interface: EscapeInterface
+    _stats_interface: StatsInterface
+    _game_interface: GameInterface
     _event_handler: EventHandler
+    _config: ConfigModel
+    _state: GameState
+    _screen: Screen
+    _level: Level
+    _clock: Clock
     _font: Font
     _player: Player
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
+        self.set_state(GameState.INITIALIZING)
+
         self._set_config(config)
         self._set_screen(screen)
 
@@ -37,6 +45,13 @@ class Game:
         self.generate_level()
 
         self.init_entities()
+        self.init_interfaces()
+
+    def set_state(self, state: GameState) -> None:
+        self._state = state
+
+    def get_state(self) -> GameState:
+        return self._state
 
     def generate_level(self) -> None:
         self._level.generate(
@@ -46,14 +61,66 @@ class Game:
 
     def update(self, dt: float) -> None:
         self._level.update(dt)
-
+        self.refresh_maze()
         self._screen.refresh()
+        self._game_interface.refresh(dt)
+
+        if not self._player.alive:
+            self._player.on_death()
+            self._player.set_tile(self._player_start_position)
+
         pygame.display.flip()
 
+    def refresh_maze(self) -> None:
+        for e in self._level._to_register:
+            self._game_interface.maze.register_entity(e)
+        self._level._to_register = []
+        for e in self._level._to_unregister:
+            self._game_interface.maze.unregister_entity(e)
+        self._level._to_unregister = []
+
     def init_entities(self) -> None:
-        self._player = Player('player', (
+        super_pacgum_positions: list[tuple[int, int]] = [
+            (0, 0),
+            (self._level.get_width() - 1, 0),
+            (self._level.get_width() - 1, self._level.get_height() - 1),
+            (0, self._level.get_height() - 1)
+        ]
+
+        for x in range(self._level.get_width()):
+            for y in range(self._level.get_height()):
+                if (x, y) in super_pacgum_positions:
+                    continue
+                if self._level.get_tile(x, y).is_full:
+                    continue
+                PacGum(
+                    'pacgum',
+                    (x, y),
+                    self._level,
+                    self._config.pacgum_reward
+                )
+
+        for pos in super_pacgum_positions:
+            SuperPacGum(
+                'super_pacgum',
+                pos,
+                self._level,
+                self._config.super_pacgum_reward
+            )
+
+        self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
             ), self._level)
+
+        self._player = Player(
+            'player',
+            self._player_start_position,
+            self._level,
+            self._config.player_level_exp_multiplier,
+            self._config.player_first_level_exp,
+            self._config.player_exp_per_second,
+        )
+
         self._ghost_1 = BlinkyGhost(0, (0, 0), self._level)
         self._ghost_2 = PinkyGhost(0, (
             self._level.get_width() - 1, 0
@@ -65,22 +132,35 @@ class Game:
             0, self._level.get_height() - 1
         ), self._level)
 
-        PacGum('pacgum', (0, 1), self._level)
+    def init_interfaces(self) -> None:
+        self._game_interface = GameInterface(self)
+        self._stats_interface = StatsInterface(self)
+        self._escape_interface = EscapeInterface(self)
+
+        self._screen.add_mesh(self._game_interface)
+        self._screen.add_mesh(self._stats_interface)
+        self._screen.add_mesh(self._escape_interface)
 
     def run(self) -> None:
-        self._running = True
+        self.set_state(GameState.RUNNING)
         dt: float = 0.0
 
         self.update(dt)
-        while self._running:
+        while self.get_state() != GameState.EXIT:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
+
+            if self.get_state() == GameState.PAUSED:
+                dt = 0
+
+            if self._player.over:
+                break
 
             self.update(dt)
             dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
-        self._running = False
+        self.set_state(GameState.EXIT)
 
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()
@@ -98,7 +178,15 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self.exit()
+            self.set_state(
+                GameState.RUNNING if self.get_state() ==
+                GameState.PAUSED else GameState.PAUSED
+            )
+            if self.get_state() == GameState.PAUSED:
+                self._escape_interface.display()
+            else:
+                self._escape_interface.hide()
+            # self.exit()
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()

@@ -1,24 +1,36 @@
-from src.core import Collider, Displayable, Entity, Level, Tile
-from src.graphics import ImageTexture
+from src.core import Collider, Displayable, Entity, Level, Tile, Edible
+from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
 
-class PacGum(Collider, Displayable, Entity):
-    def __init__(self, id: str, pos: Pos | Tile, level: Level) -> None:
+class PacGum(Edible, Collider, Displayable, Entity):
+    def __init__(
+                self,
+                id: str,
+                pos: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         super().__init__(
             name=id,
             tile=pos,
             level=level,
             solid=False,
-            radius=0.1,
-            proportion=0.2
+            radius=0.05,
+            proportion=0.1,
+            reward=reward,
         )
 
         self.init_mesh()
 
     def init_mesh(self) -> None:
-        self._mesh = ImageTexture.create_blank(
-            'assets/items/pacgum.png',
+        self._mesh = ImageTexture(
+            path='assets/items/pacgum.png',
+            position=Position(0, 0),
+            width=0,
+            height=0,
+            operation=OperationEnum.SET,
+            dynamic=False,
         )
 
     def update_mesh(self) -> None:
@@ -28,5 +40,4 @@ class PacGum(Collider, Displayable, Entity):
         if not isinstance(other, Entity):
             return
 
-        print(f'Pacgum {self.get_name()!r} collided with {other.get_name()!r}')
         return super().on_collision(other)
