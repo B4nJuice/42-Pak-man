@@ -1,4 +1,4 @@
-from src.core import Entity, Level, Tile
+from src.core import Level, Tile
 from src.utils import Direction, Pos
 
 from ..ghost import Ghost
@@ -6,7 +6,7 @@ from ..player import Player
 
 
 class PinkyGhost(Ghost):
-    _tracking_entity: Entity
+    _tracking_entity: Player
 
     def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
         self._texture_path = 'assets/characters/ghosts/pink'
@@ -20,12 +20,13 @@ class PinkyGhost(Ghost):
         )
 
     def get_tracking_tile(self) -> Tile:
-        my_direction: Direction | None = self.get_direction()
+        player_direction: Direction | None =\
+                self._tracking_entity.get_direction()
         player_tile: Tile = self._tracking_entity.get_tile()
 
-        if my_direction is None:
+        if player_direction is None:
             return player_tile
-        return self.level.get_tile_ahead(player_tile, my_direction, 4)
+        return self.level.get_tile_ahead(player_tile, player_direction, 4)
 
     def on_arrive_ai(self) -> None:
         print(f'{self} has reach his Goal')
