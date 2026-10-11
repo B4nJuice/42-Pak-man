@@ -39,10 +39,6 @@ class InkyGhost(Ghost):
                 self.level.get_height() - 1, player_y - diff_y
             ))
 
-        print(player_tile)
-        print(blinky_tile)
-        print(tracking_x, tracking_y)
-
         return self.level.get_grid()[tracking_y][tracking_x]
 
     def on_arrive_ai(self) -> None:
