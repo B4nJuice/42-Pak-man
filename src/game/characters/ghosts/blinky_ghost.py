@@ -16,7 +16,7 @@ class BlinkyGhost(Ghost):
             name=f'blinky_ghost_{id}',
             tile=tile,
             level=level,
-            update_tracking_interval=100000000000
+            update_tracking_interval=-1
         )
 
     def get_tracking_tile(self) -> Tile:

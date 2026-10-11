@@ -16,7 +16,7 @@ class InkyGhost(Ghost):
         self._mirror_ghost = level.entities.get(BlinkyGhost)
 
         super().__init__(
-            name=f'pinky_ghost_{id}',
+            name=f'inky_ghost_{id}',
             tile=tile,
             level=level,
             update_tracking_interval=None
