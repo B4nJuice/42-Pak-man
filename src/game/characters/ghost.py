@@ -11,7 +11,12 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
     _texture_path: str
     _meshs: dict[Direction, list[ImageTexture]]
 
-    def __init__(self, name: str, tile: Pos | Tile, level: Level, update_tracking_interval: float | None = 0.6) -> None:
+    def __init__(
+                self, name: str,
+                tile: Pos | Tile,
+                level: Level,
+                update_tracking_interval: float | None = 0.6
+            ) -> None:
         super().__init__(
             name=name,
             tile=tile,
@@ -35,7 +40,6 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
         }
 
         self._mesh = self._meshs[Direction.EAST][0]
-
 
     def go_to(self, tile: Tile) -> None:
         path = self.a_star.find_path(

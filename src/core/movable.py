@@ -11,6 +11,7 @@ class Movable:
     _direction: Direction | None
     _progress: float
     _queued: Direction | None
+    tile: Tile
 
     def __init__(self, *args: Any, speed: float = 4.0, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)

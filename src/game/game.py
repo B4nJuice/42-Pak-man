@@ -55,8 +55,8 @@ class Game:
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
             ), self._level)
         self._ghost_1 = BlinkyGhost(0, (0, 0), self._level)
-        self._ghost_1 = PinkyGhost(0, (
-            self._level.get_width() -1, 0
+        self._ghost_2 = PinkyGhost(0, (
+            self._level.get_width() - 1, 0
         ), self._level)
 
         PacGum('pacgum', (0, 1), self._level)

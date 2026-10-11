@@ -24,7 +24,7 @@ class PinkyGhost(Ghost):
         player_tile: Tile = self._tracking_entity.get_tile()
 
         if my_direction is None:
-             return player_tile
+            return player_tile
         return self.level.get_tile_ahead(player_tile, my_direction, 4)
 
     def on_arrive_ai(self) -> None:
