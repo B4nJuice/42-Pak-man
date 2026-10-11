@@ -147,7 +147,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         return super().update_mesh()
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
-        self._direction = None
         if self._queued is not None:
             if not self.try_move(self._queued):
                 self.try_move_forward()

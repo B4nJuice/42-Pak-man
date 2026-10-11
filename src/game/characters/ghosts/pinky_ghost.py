@@ -8,15 +8,22 @@ from ..player import Player
 class PinkyGhost(Ghost):
     _tracking_entity: Player
 
-    def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
+    def __init__(
+                self,
+                id: int,
+                tile: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         self._texture_path = 'assets/characters/ghosts/pink'
-        self._tracking_entity = level.entities.get(Player)
+        self._tracking_entity = level._entities.get(Player)
 
         super().__init__(
             name=f'pinky_ghost_{id}',
             tile=tile,
             level=level,
-            update_tracking_interval=0
+            update_tracking_interval=0,
+            reward=reward
         )
 
     def get_tracking_tile(self) -> Tile:
@@ -29,13 +36,9 @@ class PinkyGhost(Ghost):
         return self.level.get_tile_ahead(player_tile, player_direction, 4)
 
     def on_arrive_ai(self) -> None:
-        print(f'{self} has reach his Goal')
-
         return super().on_arrive_ai()
 
     def update_tracking(self) -> None:
-        print('Generate New Tracking')
-
         if self._tracking_tile is None:
             return
 

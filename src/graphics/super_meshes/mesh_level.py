@@ -4,7 +4,7 @@ from src.core.displayable import Displayable
 from src.core.level import Level
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
-from src.graphics.meshes import Line
+from src.graphics.meshes import ImageTexture, Line
 from src.graphics.super_mesh import SuperMesh
 from src.utils.direction import Direction
 
@@ -20,6 +20,7 @@ class MeshLevel(SuperMesh):
     width_offset: int
     height_offset: int
     position: Position
+    entity_meshes: dict[Displayable, ImageTexture]
 
     def __init__(
                 self,
@@ -45,6 +46,7 @@ class MeshLevel(SuperMesh):
         self.level = level
 
         self.layer = MeshLayer()
+        self.entity_meshes = {}
 
         self.tile_width = self.width // self.level.get_width()
         self.tile_height = self.height // self.level.get_height()
@@ -151,6 +153,10 @@ class MeshLevel(SuperMesh):
 
     def register_entity(self, entity: Displayable) -> None:
         mesh = entity.get_mesh()
+        previous_mesh = self.entity_meshes.get(entity)
+        if previous_mesh is not None and previous_mesh is not mesh:
+            if previous_mesh in self.layer.meshes:
+                self.layer.meshes.remove(previous_mesh)
 
         mesh.get_position = lambda e=entity: Position(
             round(e.pos[0] * self.tile_width + self.position.x +
@@ -168,10 +174,11 @@ class MeshLevel(SuperMesh):
 
         if mesh not in self.get_layer().meshes:
             self.get_layer().meshes.append(mesh)
+        self.entity_meshes[entity] = mesh
 
     def unregister_entity(self, entity: Displayable) -> None:
-        mesh = entity.get_mesh()
-        if mesh in self.layer.meshes:
+        mesh = self.entity_meshes.pop(entity, None)
+        if mesh is not None and mesh in self.layer.meshes:
             self.layer.meshes.remove(mesh)
 
     def refresh(self) -> None:

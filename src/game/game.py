@@ -8,7 +8,7 @@ from src.graphics.font import Font
 
 from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
-from src.game.characters import Ghost, Player, linkyGhost, PinkyGhost, InkyGhost, ClydeGhost
+from src.game.characters import Player, BlinkyGhost, PinkyGhost, InkyGhost, ClydeGhost
 from src.game.items import PacGum, SuperPacGum
 from src.game.game_state import GameState
 
@@ -67,6 +67,10 @@ class Game:
 
         if not self._player.alive:
             self._player.on_death()
+            self._player._direction = None
+            self._player._progress = 0
+            self._player._target = None
+            self._player._queued = None
             self._player.set_tile(self._player_start_position)
 
         pygame.display.flip()
@@ -110,7 +114,7 @@ class Game:
 
         self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
-            ), self._level)
+            )
 
         self._player = Player(
             'player',
@@ -121,16 +125,18 @@ class Game:
             self._config.player_exp_per_second,
         )
 
-        self._ghost_1 = BlinkyGhost(0, (0, 0), self._level)
+        ghost_reward: float = self._config.ghost_reward
+
+        self._ghost_1 = BlinkyGhost(0, (0, 0), self._level, ghost_reward)
         self._ghost_2 = PinkyGhost(0, (
             self._level.get_width() - 1, 0
-        ), self._level)
+        ), self._level, ghost_reward)
         self._ghost_3 = InkyGhost(0, (
             self._level.get_width() - 1, self._level.get_height() - 1
-        ), self._level)
-        self._ghost_3 = ClydeGhost(0, (
+        ), self._level, ghost_reward)
+        self._ghost_4 = ClydeGhost(0, (
             0, self._level.get_height() - 1
-        ), self._level)
+        ), self._level, ghost_reward)
 
     def init_interfaces(self) -> None:
         self._game_interface = GameInterface(self)

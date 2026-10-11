@@ -10,16 +10,23 @@ class InkyGhost(Ghost):
     _tracking_entity: Player
     _mirror_ghost: Ghost
 
-    def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
+    def __init__(
+                self,
+                id: int,
+                tile: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         self._texture_path = 'assets/characters/ghosts/cyan'
-        self._tracking_entity = level.entities.get(Player)
-        self._mirror_ghost = level.entities.get(BlinkyGhost)
+        self._tracking_entity = level._entities.get(Player)
+        self._mirror_ghost = level._entities.get(BlinkyGhost)
 
         super().__init__(
             name=f'inky_ghost_{id}',
             tile=tile,
             level=level,
-            update_tracking_interval=None
+            update_tracking_interval=None,
+            reward=reward
         )
 
     def get_tracking_tile(self) -> Tile:
@@ -42,13 +49,9 @@ class InkyGhost(Ghost):
         return self.level.get_grid()[tracking_y][tracking_x]
 
     def on_arrive_ai(self) -> None:
-        print(f'{self} has reach his Goal')
-
         return super().on_arrive_ai()
 
     def update_tracking(self) -> None:
-        print('Generate New Tracking')
-
         if self._tracking_tile is None:
             return
 

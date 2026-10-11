@@ -11,7 +11,7 @@ from src.graphics import ImageTexture
 from src.utils import Direction, Pos
 
 
-class Ghost(Collider, AI, Movable, Displayable, Entity):
+class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
     a_star: AStar
     _texture_path: str
     _meshs: dict[Direction, list[ImageTexture]]
@@ -21,7 +21,7 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
                 tile: Pos | Tile,
                 level: Level,
                 reward: float,
-                update_tracking_interval: float | None = 0.6
+                update_tracking_interval: float | None = 0.6,
             ) -> None:
         super().__init__(
             name=name,
@@ -30,7 +30,7 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
             solid=True,
             proportion=0.9,
             reward=reward,
-            edible=false
+            edible=False,
             update_tracking_interval=update_tracking_interval
         )
 

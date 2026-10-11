@@ -45,5 +45,5 @@ class Displayable(ABC):
         return self._mesh.texture
 
     def update_mesh(self) -> None:
-        self._mesh.image = self.get_texture().image
-        self._mesh.texture = self.get_texture().texture
+        self.get_mesh().image = self.get_texture().image
+        self.get_mesh().texture = self.get_texture().texture

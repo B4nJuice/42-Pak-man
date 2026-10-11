@@ -8,7 +8,7 @@ from .maze import Maze
 
 class Level(Maze):
     _entities: EntityStore
-    _colliders: list[Entity]
+    _colliders: list[Collider]
     _to_register: list[Displayable]
     _to_unregister: list[Displayable]
 
@@ -21,11 +21,11 @@ class Level(Maze):
         self._to_unregister = []
 
     def init(self) -> None:
-        for entity in self.entities.all():
+        for entity in self._entities.all():
             entity.init()
 
     def update(self, dt: float) -> None:
-        for entity in self.entities.all():
+        for entity in self._entities.all():
             entity.update(dt)
         self._check_collisions()
 
@@ -54,4 +54,4 @@ class Level(Maze):
                         b.on_collision(a)
 
     def get_entities(self) -> list[Entity]:
-        return self.entities.all()
+        return self._entities.all()

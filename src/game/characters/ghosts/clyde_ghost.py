@@ -6,15 +6,21 @@ from ..ghost import Ghost
 
 
 class ClydeGhost(Ghost):
-
-    def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
+    def __init__(
+                self,
+                id: int,
+                tile: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         self._texture_path = 'assets/characters/ghosts/orange'
 
         super().__init__(
             name=f'clyde_ghost_{id}',
             tile=tile,
             level=level,
-            update_tracking_interval=-1
+            update_tracking_interval=-1,
+            reward=reward
         )
 
     def get_tracking_tile(self) -> Tile:
@@ -35,13 +41,9 @@ class ClydeGhost(Ghost):
         return self.level.get_grid()[y][x]
 
     def on_arrive_ai(self) -> None:
-        print(f'{self} has reach his Goal')
-
         return super().on_arrive_ai()
 
     def update_tracking(self) -> None:
-        print('Generate New Tracking')
-
         if self._tracking_tile is None:
             return
 

@@ -8,27 +8,31 @@ from ..player import Player
 class BlinkyGhost(Ghost):
     _tracking_entity: Entity
 
-    def __init__(self, id: int, tile: Pos | Tile, level: Level) -> None:
+    def __init__(
+                self,
+                id: int,
+                tile: Pos | Tile,
+                level: Level,
+                reward: float
+            ) -> None:
         self._texture_path = 'assets/characters/ghosts/red'
-        self._tracking_entity = level.entities.get(Player)
+        self._tracking_entity = level._entities.get(Player)
 
         super().__init__(
             name=f'blinky_ghost_{id}',
             tile=tile,
             level=level,
-            update_tracking_interval=-1
+            update_tracking_interval=-1,
+            reward=reward
         )
 
     def get_tracking_tile(self) -> Tile:
         return self._tracking_entity.get_tile()
 
     def on_arrive_ai(self) -> None:
-        print(f'{self} has reach his Goal')
         return super().on_arrive_ai()
 
     def update_tracking(self) -> None:
-        print('Generate New Tracking')
-
         if self._tracking_tile is None:
             return
 
