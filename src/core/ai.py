@@ -103,7 +103,8 @@ class AI:
         return self._tile_has_change and \
             (
                 self._invalid_tracking_time is None or
-                self._elapsed_tracking_update >= self._invalid_tracking_time or
+                (self._elapsed_tracking_update >= self._invalid_tracking_time
+                    and self._invalid_tracking_time >= 0) or
                 not self.has_next_move()
             )
 
