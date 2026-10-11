@@ -51,10 +51,9 @@ class Ghost(Collider, AI, Movable, Displayable, Entity):
         self.apply_path(path)
 
     def update(self, dt: float) -> None:
+        super().update(dt)
         self.update_ai(dt)
         self.update_mesh()
-
-        super().update(dt)
 
     def get_mesh(self) -> ImageTexture:
         if not self._direction:

@@ -108,7 +108,6 @@ class Movable:
         self._progress = 0
         return True
 
-
     def update(self, dt: float) -> None:
         if not isinstance(self, Entity):
             return
@@ -118,13 +117,11 @@ class Movable:
 
         self._progress += self._speed * dt
         if self._progress >= 1.0:
-            self._progress = 0.0
+            self._progress -= 1.0
             self.set_tile(self._target)
             current_target: Tile = self._target
             self._target = None
             self.on_arrive(current_target, self._direction)
-
-        super().update(dt)
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         pass
