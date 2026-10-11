@@ -74,7 +74,7 @@ class Game:
                 self._event_handler.dispatch_event(event, event.type)
 
             self.update(dt)
-            dt = self._clock.tick(60.0) / 1000
+            dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
         self._running = False
@@ -89,7 +89,9 @@ class Game:
         self._clock = Clock()
         self._running = False
         self._event_handler.register_listener(pygame.QUIT, self._on_exit)
-        self._event_handler.register_listener(pygame.KEYDOWN, self._on_key_down)
+        self._event_handler.register_listener(
+            pygame.KEYDOWN, self._on_key_down
+        )
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
