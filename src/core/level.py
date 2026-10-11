@@ -1,3 +1,5 @@
+from src.core.entity_store import EntityStore
+
 from .collider import Collider
 from .displayable import Displayable
 from .entity import Entity
@@ -5,7 +7,7 @@ from .maze import Maze
 
 
 class Level(Maze):
-    _entities: list[Entity]
+    _entities: EntityStore
     _colliders: list[Entity]
     _to_register: list[Displayable]
     _to_unregister: list[Displayable]
@@ -13,22 +15,22 @@ class Level(Maze):
     def __init__(self, seed: int):
         super().__init__(seed)
 
-        self._entities = []
+        self._entities = EntityStore()
         self._colliders = []
         self._to_register = []
         self._to_unregister = []
 
     def init(self) -> None:
-        for entity in self._entities:
+        for entity in self.entities.all():
             entity.init()
 
     def update(self, dt: float) -> None:
-        for entity in list(self._entities):
+        for entity in self.entities.all():
             entity.update(dt)
         self._check_collisions()
 
     def register_entity(self, entity: Entity) -> None:
-        self._entities.append(entity)
+        self._entities.add(entity)
         if isinstance(entity, Collider):
             self._colliders.append(entity)
         if isinstance(entity, Displayable):
@@ -52,4 +54,4 @@ class Level(Maze):
                         b.on_collision(a)
 
     def get_entities(self) -> list[Entity]:
-        return self._entities
+        return self.entities.all()

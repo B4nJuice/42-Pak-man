@@ -3,15 +3,20 @@ from mazegenerator import MazeGenerator
 from ..utils import Direction, Pos
 from .tile import Tile
 
+_DIRECTIONS: tuple[Direction, ...] = tuple(Direction)
+
 
 class Maze:
     _seed: int
     _grid: list[list[Tile]]
+    _moves_cache: dict[Tile, list[tuple[Tile, Direction]]]
 
     def __init__(self, seed: int) -> None:
         self.set_seed(seed)
+        self._moves_cache = {}
 
     def generate(self, width: int, height: int) -> None:
+        self.invalidate_moves_cache()
         self._grid = []
         generator: MazeGenerator = MazeGenerator(
             size=(width, height),
@@ -38,11 +43,45 @@ class Maze:
 
         return self._grid[y][x]
 
+    def get_tile_ahead(self, tile: Tile, direction: Direction, distance: int) -> Tile:
+        x: int = tile.get_x() + direction.vector[0] * distance
+        y: int = tile.get_y() + direction.vector[1] * distance
+
+        while not self.is_within_bounds((x, y)):
+            distance -= 1
+            x = tile.get_x() + direction.vector[0] * distance
+            y = tile.get_y() + direction.vector[1] * distance
+
+        return self._grid[y][x]
+
     def is_within_bounds(self, pos: Pos) -> bool:
-        return all([
-            0 <= pos[0] < self.get_width(),
-            0 <= pos[1] < self.get_height()
-        ])
+        return 0 <= pos[0] < self.get_width() \
+            and 0 <= pos[1] < self.get_height()
+
+    def get_possible_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
+        moves = self._moves_cache.get(tile)
+        if moves is None:
+            moves = self._compute_moves(tile)
+            self._moves_cache[tile] = moves
+        return moves
+
+    def _compute_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
+        x0, y0 = tile.get_x(), tile.get_y()
+        width, height = self.get_width(), self.get_height()
+        moves: list[tuple[Tile, Direction]] = []
+
+        for direction in _DIRECTIONS:
+            if tile.has_wall(direction):
+                continue
+            dx, dy = direction.vector
+            x, y = x0 + dx, y0 + dy
+            if 0 <= x < width and 0 <= y < height:
+                moves.append((self._grid[y][x], direction))
+
+        return moves
+
+    def invalidate_moves_cache(self) -> None:
+        self._moves_cache.clear()
 
     def get_width(self) -> int:
         return len(self._grid[0])

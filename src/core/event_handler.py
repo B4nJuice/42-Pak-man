@@ -8,7 +8,7 @@ listener = Callable[[Event, int], None]
 class EventHandler:
     _listeners: dict[int, list[listener]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._listeners = {}
 
     def dispatch_event(self, event: Event, event_type: int) -> None:

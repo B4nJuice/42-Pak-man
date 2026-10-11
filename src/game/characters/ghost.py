@@ -1,31 +1,51 @@
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.game.characters import Player
 
-from src.core import Collider, Displayable, Entity, Level, Tile, Edible
-from src.graphics import ImageTexture, OperationEnum, Position
-from src.utils import Pos
 from src.game.characters.player_state import PlayerState
+from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile, Edible
+from src.core.movable import Movable
+from src.graphics import ImageTexture
+from src.utils import Direction, Pos
 
 
-class Ghost(Edible, Collider, Displayable, Entity):
+class Ghost(Collider, AI, Movable, Displayable, Entity):
+    a_star: AStar
+    _texture_path: str
+    _meshs: dict[Direction, list[ImageTexture]]
+
     def __init__(
-                self,
-                name: str,
+                self, name: str,
                 tile: Pos | Tile,
-                level: 'Level',
-                reward: float
+                level: Level,
+                reward: float,
+                update_tracking_interval: float | None = 0.6
             ) -> None:
         super().__init__(
-            name=id,
+            name=name,
             tile=tile,
             level=level,
             solid=True,
             proportion=0.9,
-            edible=False,
-            reward=reward
+            reward=reward,
+            edible=false
+            update_tracking_interval=update_tracking_interval
         )
+
+        self.a_star = AStar(level)
+
+    def init_mesh(self) -> None:
+        self._meshs = {
+            direction: [
+                ImageTexture.create_blank(Path(
+                    self._texture_path, f'{direction.to_string()}_{i}.png'
+                ).as_posix())
+                for i in range(1)
+            ]
+            for direction in Direction
+        }
 
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):
@@ -33,18 +53,16 @@ class Ghost(Edible, Collider, Displayable, Entity):
 
         super().on_collision(other)
 
-    def on_collision_exit(self, other: 'Collider') -> None:
-        super().on_collision_exit(other)
+        self._mesh = self._meshs[Direction.EAST][0]
 
-    def init_mesh(self) -> None:
-        self._mesh = ImageTexture(
-            path='assets/characters/ghosts/red/east_0.png',
-            position=Position(0, 0),
-            width=0,
-            height=0,
-            operation=OperationEnum.SET,
-            dynamic=False,
+    def go_to(self, tile: Tile) -> None:
+        path = self.a_star.find_path(
+            start=self.get_target_tile(),
+            end=tile
         )
+
+        self.clear_next_moves()
+        self.apply_path(path)
 
     def eat(self, eater: 'Player') -> bool:
         if eater.get_state() == PlayerState.SUPER:
@@ -57,4 +75,18 @@ class Ghost(Edible, Collider, Displayable, Entity):
         return return_state
 
     def update(self, dt: float) -> None:
-        pass
+        super().update(dt)
+        self.update_ai(dt)
+        self.update_mesh()
+
+    def get_mesh(self) -> ImageTexture:
+        if not self._direction:
+            return self._meshs[Direction.EAST][0]
+
+        return self._meshs[self._direction][0]
+
+    def get_texture(self) -> ImageTexture:
+        if self._direction is None:
+            return self._meshs[Direction.EAST][0]
+
+        return self._meshs[self._direction][0]

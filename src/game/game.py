@@ -8,7 +8,7 @@ from src.graphics.font import Font
 
 from src.graphics.screen import Screen
 from src.ui import GameInterface, StatsInterface, EscapeInterface
-from src.game.characters import Ghost, Player
+from src.game.characters import Ghost, Player, linkyGhost, PinkyGhost, InkyGhost, ClydeGhost
 from src.game.items import PacGum, SuperPacGum
 from src.game.game_state import GameState
 
@@ -25,6 +25,7 @@ class Game:
     _level: Level
     _clock: Clock
     _font: Font
+    _player: Player
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
         self.set_state(GameState.INITIALIZING)
@@ -109,22 +110,27 @@ class Game:
 
         self._player_start_position = (
                 self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
-            )
-        self._player = Player(
-                'player',
-                self._player_start_position,
-                self._level,
-                self._config.player_level_exp_multiplier,
-                self._config.player_first_level_exp,
-                self._config.player_exp_per_second,
-            )
+            ), self._level)
 
-        self._ghost_1 = Ghost(
-            'test',
-            (0, 1),
+        self._player = Player(
+            'player',
+            self._player_start_position,
             self._level,
-            self._config.ghost_reward
+            self._config.player_level_exp_multiplier,
+            self._config.player_first_level_exp,
+            self._config.player_exp_per_second,
         )
+
+        self._ghost_1 = BlinkyGhost(0, (0, 0), self._level)
+        self._ghost_2 = PinkyGhost(0, (
+            self._level.get_width() - 1, 0
+        ), self._level)
+        self._ghost_3 = InkyGhost(0, (
+            self._level.get_width() - 1, self._level.get_height() - 1
+        ), self._level)
+        self._ghost_3 = ClydeGhost(0, (
+            0, self._level.get_height() - 1
+        ), self._level)
 
     def init_interfaces(self) -> None:
         self._game_interface = GameInterface(self)
@@ -151,7 +157,7 @@ class Game:
                 break
 
             self.update(dt)
-            dt = self._clock.tick(60.0) / 1000
+            dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
         self.set_state(GameState.EXIT)

@@ -21,10 +21,6 @@ dev = [
     "pytest>=9.1.1",
 ]
 
-[tool.uv]
-cache-dir = "/tmp/.uv_cache"
-link-mode = "symlink"
-
 [tool.uv.sources]
 mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
 
