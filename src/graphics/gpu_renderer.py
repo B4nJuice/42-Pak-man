@@ -250,7 +250,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.is_hidden() or mesh.get_color().is_default:
+        if mesh.is_hidden():
             return
 
         vertices, mode = self._vertices(mesh)
@@ -283,7 +283,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.is_hidden() or mesh.get_color().is_default:
+        if mesh.is_hidden():
             return
 
         vertices, mode = self._vertices(mesh)
@@ -353,7 +353,7 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
-        if mesh.is_hidden() or mesh.get_color().is_default:
+        if mesh.is_hidden():
             return
 
         vertices, mode = self._vertices(mesh)

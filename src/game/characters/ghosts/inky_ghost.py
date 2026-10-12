@@ -1,5 +1,6 @@
 from src.core import Level, Tile
 from src.utils import Pos
+from src.graphics import Color
 
 from ..ghost import Ghost
 from ..player import Player
@@ -26,7 +27,8 @@ class InkyGhost(Ghost):
             tile=tile,
             level=level,
             update_tracking_interval=None,
-            reward=reward
+            reward=reward,
+            path_color=Color(0, 110, 127, 100)
         )
 
     def get_tracking_tile(self) -> Tile:
