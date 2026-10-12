@@ -23,7 +23,6 @@ class Maze:
             perfect=False,
             seed=self._seed
         )
-        generator.generate()
         for y, row in enumerate(generator.maze):
             self._grid.append([])
             for x, col in enumerate(row):
