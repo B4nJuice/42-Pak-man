@@ -4,13 +4,18 @@ from pygame.time import Clock
 
 from src.config import ConfigModel
 from src.core import EventHandler, Level
-from src.graphics.font import Font
-
-from src.graphics.screen import Screen
-from src.ui import GameInterface, StatsInterface, EscapeInterface
-from src.game.characters import Player, BlinkyGhost, PinkyGhost, InkyGhost, ClydeGhost
-from src.game.items import PacGum, SuperPacGum
+from src.game.characters import (
+    BlinkyGhost,
+    ClydeGhost,
+    InkyGhost,
+    PinkyGhost,
+    Player,
+)
 from src.game.game_state import GameState
+from src.game.items import PacGum, SuperPacGum
+from src.graphics.font import Font
+from src.graphics.screen import Screen
+from src.ui import EscapeInterface, GameInterface, StatsInterface
 
 
 class Game:
