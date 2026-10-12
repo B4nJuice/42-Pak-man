@@ -40,10 +40,10 @@ class InkyGhost(Ghost):
         diff_y = player_y - blinky_y
 
         tracking_x: int = max(0, min(
-                self.level.get_width() - 1, player_x - diff_x
+                self.level.get_width() - 1, player_x + diff_x
             ))
         tracking_y: int = max(0, min(
-                self.level.get_height() - 1, player_y - diff_y
+                self.level.get_height() - 1, player_y + diff_y
             ))
 
         return self.level.get_grid()[tracking_y][tracking_x]
