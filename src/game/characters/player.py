@@ -1,12 +1,13 @@
 from collections.abc import Callable
+
 import pygame
 
-from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
+from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
+from src.game.characters.player_state import PlayerState
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-from src.game.characters.player_state import PlayerState
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):

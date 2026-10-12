@@ -1,17 +1,17 @@
+from .ghost import Ghost
 from .ghosts.blinky_ghost import BlinkyGhost
-from .ghosts.pinky_ghost import PinkyGhost
 from .ghosts.clyde_ghost import ClydeGhost
 from .ghosts.inky_ghost import InkyGhost
-from .player_state import PlayerState
+from .ghosts.pinky_ghost import PinkyGhost
 from .player import Player
-from .ghost import Ghost
+from .player_state import PlayerState
 
 __all__: list[str] = [
-    'PlayerState',
     'BlinkyGhost',
-    'PinkyGhost',
-    'ClydeGhost'
+    'ClydeGhost',
+    'Ghost',
     'InkyGhost',
+    'PinkyGhost',
     'Player',
-    'Ghost'
+    'PlayerState'
 ]

@@ -1,6 +1,7 @@
+from random import randint
+
 from src.core import Level, Tile
 from src.utils import Pos
-from random import randint
 
 from ..ghost import Ghost
 
@@ -38,7 +39,7 @@ class ClydeGhost(Ghost):
         else:
             x, y = 0, perimeter - tile_number - 1
 
-        return self.level.get_grid()[y][x]
+        return self.level.get_tile(x, y)
 
     def on_arrive_ai(self) -> None:
         return super().on_arrive_ai()

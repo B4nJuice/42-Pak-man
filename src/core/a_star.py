@@ -2,7 +2,7 @@ import heapq
 from dataclasses import dataclass
 from itertools import count
 
-from src.utils import Direction
+from src.utils import Direction, Path
 
 from .level import Level
 from .tile import Tile
@@ -20,8 +20,8 @@ class Node:
     direction: Direction | None = None
 
 
-def reconstruct_path(goal_node: Node) -> list[tuple[Tile, Direction]]:
-    path: list[tuple[Tile, Direction]] = []
+def reconstruct_path(goal_node: Node) -> Path:
+    path: Path = []
     current: Node | None = goal_node
 
     while current is not None and current.direction is not None:
@@ -30,7 +30,6 @@ def reconstruct_path(goal_node: Node) -> list[tuple[Tile, Direction]]:
 
     path.reverse()
     return path
-    return path[::-1]
 
 
 class AStar:
@@ -39,7 +38,7 @@ class AStar:
     def __init__(self, level: Level):
         self._level = level
 
-    def find_path(self, start: Tile, end: Tile) -> list[tuple[Tile, Direction]]:
+    def find_path(self, start: Tile, end: Tile) -> Path:
         start_node: Node = Node(start, 0.0)
         nodes: dict[Tile, Node] = {start: start_node}
         closed: set[Tile] = set()

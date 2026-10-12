@@ -1,12 +1,18 @@
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from src.game.characters import Player
-
-from src.game.characters.player_state import PlayerState
-from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile, Edible
+from src.core import (
+    AI,
+    AStar,
+    Collider,
+    Displayable,
+    Edible,
+    Entity,
+    Level,
+    Tile,
+)
 from src.core.movable import Movable
+from src.game.characters.player import Player
+from src.game.characters.player_state import PlayerState
 from src.graphics import ImageTexture
 from src.utils import Direction, Pos
 
