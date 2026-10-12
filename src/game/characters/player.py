@@ -45,7 +45,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             lives=3
         )
 
-        self.cheat = False
+        self.cheat = True
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
         self._exp_per_second = exp_per_second

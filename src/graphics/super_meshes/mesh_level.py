@@ -17,6 +17,7 @@ class MeshLevel(SuperMesh):
     height_offset: int
     tiles: list[Plane]
     width_offset: int
+    walls: list[Line]
     tile_height: int
     layer: MeshLayer
     tile_width: int
@@ -65,6 +66,7 @@ class MeshLevel(SuperMesh):
         self.position.x += self.width_offset
         self.position.y += self.height_offset
 
+        self.walls = []
         self.tiles = []
 
         self.create_wall = partial(
@@ -116,7 +118,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_x() == (self.level.get_width() - 1) or\
                         tile.has_wall(Direction.EAST):
@@ -134,7 +136,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_x() == 0:
                     wall = self.create_wall(
@@ -151,7 +153,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_y() == (self.level.get_height() - 1):
                     wall = self.create_wall(
@@ -168,8 +170,9 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
+        self.layer.meshes += self.walls
         self.player = self.level._entities.get(Player)
 
     def register_entities_to_screen(self) -> None:
