@@ -41,5 +41,4 @@ class Edible:
             return False
 
         eater.add_exp(self.get_reward())
-        self.level.unregister_entity(self)
         return True
