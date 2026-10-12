@@ -1,6 +1,8 @@
+from random import randint
+
 from src.core import Level, Tile
 from src.utils import Pos
-from random import randint
+from src.graphics import Color
 
 from ..ghost import Ghost
 
@@ -20,7 +22,8 @@ class ClydeGhost(Ghost):
             tile=tile,
             level=level,
             update_tracking_interval=-1,
-            reward=reward
+            reward=reward,
+            path_color=Color(127, 90, 0, 100)
         )
 
     def get_tracking_tile(self) -> Tile:

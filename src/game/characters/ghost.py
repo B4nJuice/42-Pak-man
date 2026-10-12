@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 from src.game.characters.player_state import PlayerState
 from src.core import AI, AStar, Collider, Displayable, Entity, Level, Tile, Edible
 from src.core.movable import Movable
-from src.graphics import ImageTexture
+from src.graphics import ImageTexture, Color
 from src.utils import Direction, Pos
 
 
@@ -15,6 +15,7 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
     a_star: AStar
     _texture_path: str
     _meshs: dict[Direction, list[ImageTexture]]
+    _path_color: Color
 
     def __init__(
                 self, name: str,
@@ -22,6 +23,7 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
                 level: Level,
                 reward: float,
                 update_tracking_interval: float | None = 0.6,
+                path_color: Color = Color(255, 0, 0, 100)
             ) -> None:
         super().__init__(
             name=name,
@@ -34,6 +36,7 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
             update_tracking_interval=update_tracking_interval
         )
 
+        self._path_color = path_color
         self.a_star = AStar(level)
 
     def init_mesh(self) -> None:
