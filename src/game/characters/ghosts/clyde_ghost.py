@@ -24,7 +24,7 @@ class ClydeGhost(Ghost):
             reward=reward
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         width = self.level.get_width()
         height = self.level.get_height()
         perimeter = 2 * width + 2 * height - 4

@@ -26,7 +26,7 @@ class PinkyGhost(Ghost):
             reward=reward
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         player_direction: Direction | None =\
                 self._tracking_entity.get_direction()
         player_tile: Tile = self._tracking_entity.get_tile()

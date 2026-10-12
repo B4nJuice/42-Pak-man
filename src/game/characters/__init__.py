@@ -1,4 +1,5 @@
 from .ghost import Ghost
+from .ghost_state import GhostState
 from .ghosts.blinky_ghost import BlinkyGhost
 from .ghosts.clyde_ghost import ClydeGhost
 from .ghosts.inky_ghost import InkyGhost
@@ -10,6 +11,7 @@ __all__: list[str] = [
     'BlinkyGhost',
     'ClydeGhost',
     'Ghost',
+    'GhostState',
     'InkyGhost',
     'PinkyGhost',
     'Player',

@@ -29,7 +29,7 @@ class InkyGhost(Ghost):
             reward=reward
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         player_tile: Tile = self._tracking_entity.get_tile()
         blinky_tile: Tile = self._mirror_ghost.get_tile()
 

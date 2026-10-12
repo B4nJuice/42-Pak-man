@@ -26,7 +26,7 @@ class BlinkyGhost(Ghost):
             reward=reward
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         return self._tracking_entity.get_tile()
 
     def on_arrive_ai(self) -> None:
