@@ -1,7 +1,7 @@
 from .game import Game
-from .game_state import GameState
+from .game_status import GameStatus
 
 __all__: list[str] = [
     'Game',
-    'GameState'
+    'GameStatus'
 ]

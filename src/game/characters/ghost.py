@@ -26,6 +26,9 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
     _texture_path: str
     _meshs: dict[Direction, list[ImageTexture]]
     _spawn_tile: Tile
+    _frightened_tile: Tile | None
+    _base_speed: float
+    _dead_speed: float
 
     def __init__(
                 self, name: str,
@@ -44,22 +47,40 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
             edible=False,
             update_tracking_interval=update_tracking_interval
         )
+        self._base_speed = 4.0
+        self._dead_speed = 5.0
 
         self.a_star = AStar(level)
         self.set_state(GhostState.CHASE)
         self.set_spawn_tile(self.get_tile())
         self._state_cooldown = -1
+        self._frightened_tile = None
 
     def get_state(self) -> GhostState:
         return self._state
 
     def set_state(self, state: GhostState) -> None:
+        self._state_cooldown = None
+
         match state:
-            case GhostState.CHASE | GhostState.EATEN | GhostState.FRIGHTENED:
-                self._state_cooldown = None
+            case GhostState.CHASE:
+                self.set_speed(self._base_speed)
+            case GhostState.FRIGHTENED:
+                self.set_speed(self._base_speed)
+            case GhostState.EATEN:
+                self.set_speed(self._dead_speed)
             case GhostState.WAITING_RESPAWN:
                 self._state_cooldown = 2.0
         self._state = state
+
+    def on_arrive_ai(self) -> None:
+        match self._state:
+            case GhostState.FRIGHTENED:
+                self._frightened_tile = None
+            case GhostState.EATEN:
+                self.set_state(GhostState.WAITING_RESPAWN)
+
+        return super().on_arrive_ai()
 
     def get_spawn_tile(self) -> Tile:
         return self._spawn_tile
@@ -71,9 +92,14 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
     def get_chase_tracking_tile(self) -> Tile:
         pass
 
-    @abstractmethod
     def get_frightened_tracking_tile(self) -> Tile:
-        pass
+        if self._frightened_tile is None:
+            self._frightened_tile = self.generate_new_frightened_tile()
+
+        return self._frightened_tile
+
+    def generate_new_frightened_tile(self) -> Tile:
+        return self.level.get_random_valid_tile()
 
     def get_tracking_tile(self) -> Tile:
         match self.get_state():
@@ -132,6 +158,8 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
         self._state_cooldown -= dt
         if self._state_cooldown <= 0:
             self.set_state(GhostState.CHASE)
+
+        # TODO : check if player still in EATABLE STATE
 
     def get_mesh(self) -> ImageTexture:
         if not self._direction:
