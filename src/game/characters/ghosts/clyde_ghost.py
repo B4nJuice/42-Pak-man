@@ -2,7 +2,6 @@ from random import randint
 
 from src.core import Level, Tile
 from src.utils import Pos
-from src.graphics import Color
 
 from ..ghost import Ghost
 
@@ -26,7 +25,7 @@ class ClydeGhost(Ghost):
             path_color=Color(127, 90, 0, 100)
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         width = self.level.get_width()
         height = self.level.get_height()
         perimeter = 2 * width + 2 * height - 4
@@ -41,14 +40,7 @@ class ClydeGhost(Ghost):
         else:
             x, y = 0, perimeter - tile_number - 1
 
-        return self.level.get_grid()[y][x]
+        return self.level.get_tile(x, y)
 
     def on_arrive_ai(self) -> None:
         return super().on_arrive_ai()
-
-    def update_tracking(self) -> None:
-        if self._tracking_tile is None:
-            return
-
-        self.go_to(self._tracking_tile)
-        super().update_tracking()

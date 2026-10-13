@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from src.game.characters import Player
@@ -41,5 +41,4 @@ class Edible:
             return False
 
         eater.add_exp(self.get_reward())
-        self.level.unregister_entity(self)
         return True

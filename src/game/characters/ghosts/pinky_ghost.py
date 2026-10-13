@@ -28,7 +28,7 @@ class PinkyGhost(Ghost):
             path_color=Color(127, 0, 110, 100)
         )
 
-    def get_tracking_tile(self) -> Tile:
+    def get_chase_tracking_tile(self) -> Tile:
         player_direction: Direction | None =\
                 self._tracking_entity.get_direction()
         player_tile: Tile = self._tracking_entity.get_tile()
@@ -39,10 +39,3 @@ class PinkyGhost(Ghost):
 
     def on_arrive_ai(self) -> None:
         return super().on_arrive_ai()
-
-    def update_tracking(self) -> None:
-        if self._tracking_tile is None:
-            return
-
-        self.go_to(self._tracking_tile)
-        super().update_tracking()

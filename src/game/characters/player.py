@@ -1,12 +1,14 @@
 from collections.abc import Callable
+
 import pygame
 
-from src.core import Edible, Alive, Collider, Displayable, Entity, Level, Tile
+from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
+from src.game.characters.ghost_state import GhostState
+from src.game.characters.player_state import PlayerState
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-from src.game.characters.player_state import PlayerState
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -67,13 +69,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             return
 
         if isinstance(other, Edible):
-            eat_result: bool = other.eat(self)
+            other.eat(self)
 
-            if isinstance(other, Ghost):
-                if eat_result:
-                    ...
-                else:
+        if isinstance(other, Ghost):
+            match other.get_state():
+                case GhostState.CHASE:
                     self.set_health(0)
+                case GhostState.FRIGHTENED:
+                    other.set_state(GhostState.EATEN)
 
         super().on_collision(other)
 
@@ -122,11 +125,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
-        if self.get_state() == PlayerState.SUPER:
-            self._super_time -= dt
-            if self._super_time <= 0:
-                self.set_state(PlayerState.NORMAL)
-
         keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.try_move(Direction.NORTH)
@@ -167,7 +165,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def refresh_level_text(self) -> None:
         self.set_level_text(self._actual_level)
-        # pass
 
     def set_bar_goal(self) -> None:
         if not self._level_bar:
@@ -188,10 +185,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
-
-    def set_super_state(self, time: float) -> None:
-        self.set_state(PlayerState.SUPER)
-        self._super_time = time
 
     def on_death(self) -> None:
         self._direction = None

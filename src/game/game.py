@@ -4,13 +4,18 @@ from pygame.time import Clock
 
 from src.config import ConfigModel
 from src.core import EventHandler, Level
-from src.graphics.font import Font
-
-from src.graphics.screen import Screen
-from src.ui import GameInterface, StatsInterface, EscapeInterface
-from src.game.characters import Player, BlinkyGhost, PinkyGhost, InkyGhost, ClydeGhost
+from src.game.characters import (
+    BlinkyGhost,
+    ClydeGhost,
+    InkyGhost,
+    PinkyGhost,
+    Player,
+)
+from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
-from src.game.game_state import GameState
+from src.graphics.font import Font
+from src.graphics.screen import Screen
+from src.ui import EscapeInterface, GameInterface, StatsInterface
 
 
 class Game:
@@ -20,7 +25,7 @@ class Game:
     _game_interface: GameInterface
     _event_handler: EventHandler
     _config: ConfigModel
-    _state: GameState
+    _status: GameStatus
     _screen: Screen
     _level: Level
     _clock: Clock
@@ -28,7 +33,7 @@ class Game:
     _player: Player
 
     def __init__(self, config: ConfigModel, screen: Screen) -> None:
-        self.set_state(GameState.INITIALIZING)
+        self.set_status(GameStatus.INITIALIZING)
 
         self._set_config(config)
         self._set_screen(screen)
@@ -47,11 +52,11 @@ class Game:
         self.init_entities()
         self.init_interfaces()
 
-    def set_state(self, state: GameState) -> None:
-        self._state = state
+    def set_status(self, status: GameStatus) -> None:
+        self._status = status
 
-    def get_state(self) -> GameState:
-        return self._state
+    def get_status(self) -> GameStatus:
+        return self._status
 
     def generate_level(self) -> None:
         self._level.generate(
@@ -148,15 +153,15 @@ class Game:
         self._screen.add_mesh(self._escape_interface)
 
     def run(self) -> None:
-        self.set_state(GameState.RUNNING)
+        self.set_status(GameStatus.RUNNING)
         dt: float = 0.0
 
         self.update(dt)
-        while self.get_state() != GameState.EXIT:
+        while self.get_status() != GameStatus.EXIT:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
-            if self.get_state() == GameState.PAUSED:
+            if self.get_status() == GameStatus.PAUSED:
                 dt = 0
 
             if self._player.over:
@@ -166,7 +171,7 @@ class Game:
             dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
-        self.set_state(GameState.EXIT)
+        self.set_status(GameStatus.EXIT)
 
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()
@@ -184,11 +189,11 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self.set_state(
-                GameState.RUNNING if self.get_state() ==
-                GameState.PAUSED else GameState.PAUSED
+            self.set_status(
+                GameStatus.RUNNING if self.get_status() ==
+                GameStatus.PAUSED else GameStatus.PAUSED
             )
-            if self.get_state() == GameState.PAUSED:
+            if self.get_status() == GameStatus.PAUSED:
                 self._escape_interface.display()
             else:
                 self._escape_interface.hide()

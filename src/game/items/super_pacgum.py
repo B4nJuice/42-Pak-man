@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.game.characters import Player
 
-from src.core import Collider, Displayable, Entity, Level, Tile, Edible
+from src.core import Collider, Displayable, Edible, Entity, Level, Tile
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
@@ -48,5 +48,8 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
         return super().on_collision(other)
 
     def eat(self, eater: 'Player') -> bool:
-        super().eat(eater)
-        eater.set_super_state(10)
+        if super().eat(eater):
+            self.level.unregister_entity(self)
+            self.level.state.set_frightened_phase()
+            return True
+        return False
