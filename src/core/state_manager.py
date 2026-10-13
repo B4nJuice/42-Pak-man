@@ -49,5 +49,5 @@ class StateManager:
         self.level.store.get(Player).set_state(PlayerState.NORMAL)
 
     def update(self, dt: float) -> None:
-       for element in self._to_update:
-           element.update(dt)
+        for element in self._to_update:
+            element.update(dt)
