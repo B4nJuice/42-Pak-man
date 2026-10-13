@@ -146,11 +146,6 @@ class MeshLevel(SuperMesh):
                     )
                     self.layer.meshes.append(wall)
 
-    def register_entities_to_screen(self) -> None:
-        for entity in self.level.get_entities():
-            if isinstance(entity, Displayable):
-                self.register_entity(entity)
-
     def register_entity(self, entity: Displayable) -> None:
         mesh = entity.get_mesh()
         previous_mesh = self.entity_meshes.get(entity)
