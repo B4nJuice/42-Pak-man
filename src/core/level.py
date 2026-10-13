@@ -33,6 +33,8 @@ class Level(Maze):
             entity.update(dt)
         self._check_collisions()
 
+        self.state.update(dt)
+
     def register_entity(self, entity: Entity) -> None:
         self._entities.add(entity)
         if isinstance(entity, Collider):
