@@ -2,25 +2,29 @@ from functools import partial
 
 from src.core.displayable import Displayable
 from src.core.level import Level
+from src.game.characters import Player
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
-from src.graphics.meshes import ImageTexture, Line
+from src.graphics.meshes import ImageTexture, Line, Plane
 from src.graphics.super_mesh import SuperMesh
 from src.utils.direction import Direction
 
 
 class MeshLevel(SuperMesh):
-    width: int
-    height: int
+    entity_meshes: dict[Displayable, ImageTexture]
     wall_thickness: int
-    level: Level
+    position: Position
+    height_offset: int
+    tiles: list[Plane]
+    width_offset: int
+    walls: list[Line]
+    tile_height: int
     layer: MeshLayer
     tile_width: int
-    tile_height: int
-    width_offset: int
-    height_offset: int
-    position: Position
-    entity_meshes: dict[Displayable, ImageTexture]
+    player: Player
+    level: Level
+    height: int
+    width: int
 
     def __init__(
                 self,
@@ -62,6 +66,9 @@ class MeshLevel(SuperMesh):
         self.position.x += self.width_offset
         self.position.y += self.height_offset
 
+        self.walls = []
+        self.tiles = []
+
         self.create_wall = partial(
             Line,
             self.get_color(),
@@ -76,6 +83,25 @@ class MeshLevel(SuperMesh):
     def init(self) -> None:
         for row in self.level.get_grid():
             for tile in row:
+                tile_mesh = Plane(
+                    Color.default(),
+                    (
+                        Position(
+                            tile.get_x() * self.tile_width + self.position.x,
+                            tile.get_y() * self.tile_height + self.position.y
+                        ),
+                        Position(
+                            (tile.get_x() + 1) * self.tile_width +
+                            self.position.x,
+                            (tile.get_y() + 1) * self.tile_height +
+                            self.position.y
+                        )
+                    ),
+                    operation=OperationEnum.ALPHA
+                )
+                self.tiles.append(tile_mesh)
+                self.layer.meshes.append(tile_mesh)
+
                 wall: Line
                 if tile.get_y() == 0 or tile.has_wall(Direction.NORTH):
                     wall = self.create_wall(
@@ -92,7 +118,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_x() == (self.level.get_width() - 1) or\
                         tile.has_wall(Direction.EAST):
@@ -110,7 +136,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_x() == 0:
                     wall = self.create_wall(
@@ -127,7 +153,7 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
 
                 if tile.get_y() == (self.level.get_height() - 1):
                     wall = self.create_wall(
@@ -144,7 +170,10 @@ class MeshLevel(SuperMesh):
                                 self.position.y + self.tile_height
                             )
                     )
-                    self.layer.meshes.append(wall)
+                    self.walls.append(wall)
+
+        self.layer.meshes += self.walls
+        self.player = self.level._entities.get(Player)
 
     def register_entity(self, entity: Displayable) -> None:
         mesh = entity.get_mesh()
@@ -177,7 +206,31 @@ class MeshLevel(SuperMesh):
             self.layer.meshes.remove(mesh)
 
     def refresh(self) -> None:
-        ...
+        for tile_mesh in self.tiles:
+            tile_mesh.set_color(Color.default())
+
+        if not self.player.cheat:
+            return
+
+        from src.game.characters import Ghost
+
+        for ghost in self.level._entities.gets(Ghost):
+            tile = ghost.get_target_tile()
+            path_tiles = [tile]
+
+            for direction in ghost.get_next_moves():
+                next_tile = self.level.get_next_tile(tile, direction)
+                if next_tile is None:
+                    break
+                path_tiles.append(next_tile)
+                tile = next_tile
+
+            for path_tile in path_tiles:
+                index = (
+                    path_tile.get_y() * self.level.get_width()
+                    + path_tile.get_x()
+                )
+                self.tiles[index].set_color(ghost._path_color)
 
     def get_layer(self) -> MeshLayer:
         return self.layer

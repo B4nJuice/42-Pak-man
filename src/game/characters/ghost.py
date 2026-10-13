@@ -13,7 +13,7 @@ from src.core import (
 )
 from src.core.movable import Movable
 from src.game.characters.ghost_state import GhostState
-from src.graphics import ImageTexture
+from src.graphics import ImageTexture, Color
 from src.utils import Direction, Pos
 
 
@@ -27,6 +27,7 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
     _frightened_tile: Tile | None
     _base_speed: float
     _dead_speed: float
+    _path_color: Color
 
     def __init__(
                 self, name: str,
@@ -34,6 +35,7 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 level: Level,
                 reward: float,
                 update_tracking_interval: float | None = 0.6,
+                path_color: Color = Color(255, 0, 0, 100)
             ) -> None:
         super().__init__(
             name=name,
@@ -48,6 +50,7 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         self._base_speed = 4.0
         self._dead_speed = 10.0
 
+        self._path_color = path_color
         self.a_star = AStar(level)
         self.set_state(GhostState.CHASE)
         self.set_spawn_tile(self.get_tile())

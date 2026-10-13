@@ -1,5 +1,6 @@
 from src.core import Level, Tile
 from src.utils import Pos
+from src.graphics import Color
 
 from ..ghost import Ghost
 from ..player import Player
@@ -26,7 +27,8 @@ class InkyGhost(Ghost):
             tile=tile,
             level=level,
             update_tracking_interval=None,
-            reward=reward
+            reward=reward,
+            path_color=Color(0, 110, 127, 100)
         )
 
     def get_chase_tracking_tile(self) -> Tile:
@@ -40,10 +42,10 @@ class InkyGhost(Ghost):
         diff_y = player_y - blinky_y
 
         tracking_x: int = max(0, min(
-                self.level.get_width() - 1, player_x - diff_x
+                self.level.get_width() - 1, player_x + diff_x
             ))
         tracking_y: int = max(0, min(
-                self.level.get_height() - 1, player_y - diff_y
+                self.level.get_height() - 1, player_y + diff_y
             ))
 
         return self.level.get_grid()[tracking_y][tracking_x]

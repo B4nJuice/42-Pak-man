@@ -21,7 +21,8 @@ class ClydeGhost(Ghost):
             tile=tile,
             level=level,
             update_tracking_interval=-1,
-            reward=reward
+            reward=reward,
+            path_color=Color(127, 90, 0, 100)
         )
 
     def get_chase_tracking_tile(self) -> Tile:

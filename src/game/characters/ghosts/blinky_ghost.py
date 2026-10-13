@@ -1,5 +1,6 @@
 from src.core import Entity, Level, Tile
 from src.utils import Pos
+from src.graphics import Color
 
 from ..ghost import Ghost
 from ..player import Player
@@ -23,7 +24,8 @@ class BlinkyGhost(Ghost):
             tile=tile,
             level=level,
             update_tracking_interval=-1,
-            reward=reward
+            reward=reward,
+            path_color=Color(127, 0, 0, 100)
         )
 
     def get_chase_tracking_tile(self) -> Tile:

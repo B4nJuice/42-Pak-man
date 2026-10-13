@@ -128,6 +128,7 @@ class GameInterface(Interface):
 
     def refresh(self, dt: float) -> None:
         self.refresh_timer(dt)
+        self.maze.refresh()
 
     def get_layer(self) -> MeshLayer:
         return self.layer

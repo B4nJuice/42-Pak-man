@@ -52,6 +52,9 @@ class AI:
     def has_next_move(self) -> bool:
         return len(self._next_moves) > 0
 
+    def get_next_moves(self) -> list[Direction]:
+        return self._next_moves.copy()
+
     def clear_next_moves(self) -> None:
         self._next_moves.clear()
 

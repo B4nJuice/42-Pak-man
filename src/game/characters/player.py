@@ -24,6 +24,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _exp_points: float
     _level_exp: float
     _super_time: float
+    _cheat: bool
 
     def __init__(
                 self,
@@ -46,13 +47,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             lives=3
         )
 
+        self.cheat = True
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
         self._exp_per_second = exp_per_second
         self._level_bar = None
         self._actual_level = 0
         self._exp_points = 0
-        self._pacgum_exp = 5
         self._level_exp = 0
         self.set_state(PlayerState.NORMAL)
 
