@@ -27,19 +27,26 @@ class StateManager:
     def set_frightened_phase(self) -> None:
         from src.game.characters.ghost import Ghost
         from src.game.characters.ghost_state import GhostState
+        from src.game.characters.player import Player
+        from src.game.characters.player_state import PlayerState
 
         self.frightened_phase.set_default()
 
         for ghost in self.level.store.gets(Ghost):
             ghost.set_state(GhostState.FRIGHTENED)
+        self.level.store.get(Player).set_state(PlayerState.SUPER)
 
     def _set_ghost_to_chase(self) -> None:
         from src.game.characters.ghost import Ghost
         from src.game.characters.ghost_state import GhostState
+        from src.game.characters.player import Player
+        from src.game.characters.player_state import PlayerState
 
         for ghost in self.level.store.gets(Ghost):
             if ghost.get_state() == GhostState.FRIGHTENED:
                 ghost.set_state(GhostState.CHASE)
+
+        self.level.store.get(Player).set_state(PlayerState.NORMAL)
 
     def update(self, dt: float) -> None:
        for element in self._to_update:

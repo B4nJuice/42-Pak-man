@@ -43,10 +43,3 @@ class ClydeGhost(Ghost):
 
     def on_arrive_ai(self) -> None:
         return super().on_arrive_ai()
-
-    def update_tracking(self) -> None:
-        if self._tracking_tile is None:
-            return
-
-        self.go_to(self._tracking_tile)
-        super().update_tracking()

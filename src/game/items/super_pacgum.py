@@ -50,6 +50,6 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
     def eat(self, eater: 'Player') -> bool:
         if super().eat(eater):
             self.level.unregister_entity(self)
-            eater.set_super_state(10)
+            self.level.state.set_frightened_phase()
             return True
         return False

@@ -13,13 +13,11 @@ from src.core import (
 )
 from src.core.movable import Movable
 from src.game.characters.ghost_state import GhostState
-from src.game.characters.player import Player
-from src.game.characters.player_state import PlayerState
 from src.graphics import ImageTexture
 from src.utils import Direction, Pos
 
 
-class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
+class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
     _state: GhostState
     _state_cooldown: float | None
     a_star: AStar
@@ -48,7 +46,7 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
             update_tracking_interval=update_tracking_interval
         )
         self._base_speed = 4.0
-        self._dead_speed = 5.0
+        self._dead_speed = 10.0
 
         self.a_star = AStar(level)
         self.set_state(GhostState.CHASE)
@@ -59,19 +57,26 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
     def get_state(self) -> GhostState:
         return self._state
 
+    def is_edible(self) -> bool:
+        return self._state == GhostState.FRIGHTENED
+
     def set_state(self, state: GhostState) -> None:
         self._state_cooldown = None
+        self.set_edible(False)
 
         match state:
             case GhostState.CHASE:
                 self.set_speed(self._base_speed)
             case GhostState.FRIGHTENED:
+                self.set_edible(True)
                 self.set_speed(self._base_speed)
             case GhostState.EATEN:
                 self.set_speed(self._dead_speed)
             case GhostState.WAITING_RESPAWN:
                 self._state_cooldown = 2.0
+
         self._state = state
+        self.force_update_tracking()
 
     def on_arrive_ai(self) -> None:
         match self._state:
@@ -138,18 +143,12 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
         self.clear_next_moves()
         self.apply_path(path)
 
-    def eat(self, eater: 'Player') -> bool:
-        if eater.get_state() == PlayerState.SUPER:
-            self.set_edible(True)
-
-        return_state: bool = super().eat(eater)
-        self.set_edible(False)
-        return return_state
-
     def update(self, dt: float) -> None:
         super().update(dt)
         self.update_ai(dt)
         self.update_mesh()
+
+        self.update_state(dt)
 
     def update_state(self, dt: float) -> None:
         if self._state_cooldown is None:
@@ -157,9 +156,10 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
 
         self._state_cooldown -= dt
         if self._state_cooldown <= 0:
-            self.set_state(GhostState.CHASE)
-
-        # TODO : check if player still in EATABLE STATE
+            if self.level.state.frightened_phase.is_active():
+                self.set_state(GhostState.FRIGHTENED)
+            else:
+                self.set_state(GhostState.CHASE)
 
     def get_mesh(self) -> ImageTexture:
         if not self._direction:
@@ -172,3 +172,10 @@ class Ghost(Edible, Collider, AI, Movable, Displayable, Entity):
             return self._meshs[Direction.EAST][0]
 
         return self._meshs[self._direction][0]
+
+    def update_tracking(self) -> None:
+        if self._tracking_tile is None:
+            return
+
+        self.go_to(self._tracking_tile)
+        super().update_tracking()

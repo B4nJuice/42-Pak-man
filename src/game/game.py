@@ -168,7 +168,7 @@ class Game:
                 break
 
             self.update(dt)
-            dt = self._clock.tick(60.0) / 1000
+            dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
         self.set_status(GameStatus.EXIT)

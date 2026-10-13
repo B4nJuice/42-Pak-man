@@ -1,5 +1,6 @@
-from PIL import Image
 from typing import Any
+
+from PIL import Image
 
 from ..color import Color, OperationEnum
 from ..mesh import Mesh
