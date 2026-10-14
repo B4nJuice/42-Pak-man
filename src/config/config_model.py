@@ -50,6 +50,27 @@ class ConfigModel(BaseModel):
         description="Color of the border of the stats"
     )
 
+    menu_overlay_color: tuple[int, int, int] = Field(
+        default=(0, 0, 0),
+        description="Color of the pause menu overlay"
+    )
+    menu_panel_color: tuple[int, int, int] = Field(
+        default=(20, 20, 20),
+        description="Color of the pause menu panel"
+    )
+    menu_border_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the pause menu border"
+    )
+    menu_button_color: tuple[int, int, int] = Field(
+        default=(35, 35, 35),
+        description="Color of the pause menu buttons"
+    )
+    menu_text_color: tuple[int, int, int] = Field(
+        default=(255, 255, 255),
+        description="Color of the pause menu text"
+    )
+
     font_path: str = Field(
         default="assets/fonts/Bold Frame.ttf"
     )
