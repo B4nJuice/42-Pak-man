@@ -3,9 +3,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.graphics import Color, Position, OperationEnum
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
-from src.graphics.super_meshes import Rectangle
 from src.graphics.meshes import Plane
 from src.ui import Interface
 
@@ -23,7 +22,7 @@ class EscapeInterface(Interface):
                 Position(self.game._screen.width, self.game._screen.height)
             ),
             OperationEnum.ALPHA,
-            dynamic=True
+            dynamic=True,
         )
 
         self.layer.meshes.append(self.background)
@@ -32,11 +31,15 @@ class EscapeInterface(Interface):
     def hide(self) -> None:
         self.hidden = True
         for mesh in self.get_layer().meshes:
+            if isinstance(mesh, MeshLayer):
+                return
             mesh.set_hidden(True)
 
     def display(self) -> None:
         self.hidden = False
         for mesh in self.get_layer().meshes:
+            if isinstance(mesh, MeshLayer):
+                return
             mesh.set_hidden(False)
 
     def get_layer(self) -> MeshLayer:
