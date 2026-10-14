@@ -10,7 +10,6 @@ from src.game.characters.player_state import PlayerState
 from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
-from src.game.characters.player_state import PlayerState
 from src.game.ameliorations import (
     AmeliorationStore,
     ExpSkill,
