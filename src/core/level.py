@@ -4,9 +4,11 @@ from .collider import Collider
 from .displayable import Displayable
 from .entity import Entity
 from .maze import Maze
+from .state_manager import StateManager
 
 
 class Level(Maze):
+    state: StateManager
     _entities: EntityStore
     _colliders: list[Collider]
     _to_register: list[Displayable]
@@ -20,6 +22,8 @@ class Level(Maze):
         self._to_register = []
         self._to_unregister = []
 
+        self.state = StateManager(self)
+
     def init(self) -> None:
         for entity in self._entities.all():
             entity.init()
@@ -28,6 +32,8 @@ class Level(Maze):
         for entity in self._entities.all():
             entity.update(dt)
         self._check_collisions()
+
+        self.state.update(dt)
 
     def register_entity(self, entity: Entity) -> None:
         self._entities.add(entity)
@@ -42,6 +48,10 @@ class Level(Maze):
             self._colliders.remove(entity)
         if isinstance(entity, Displayable):
             self._to_unregister.append(entity)
+
+    @property
+    def store(self) -> EntityStore:
+        return self._entities
 
     def _check_collisions(self) -> None:
         for a in self._colliders:

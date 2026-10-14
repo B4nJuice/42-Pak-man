@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class GameState(Enum):
+class GameStatus(Enum):
     EXIT = -1
     RUNNING = 0
     PAUSED = 1

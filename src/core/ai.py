@@ -4,7 +4,7 @@ from typing import Any
 from src.core.entity import Entity
 from src.core.movable import Movable
 from src.core.tile import Tile
-from src.utils import Direction
+from src.utils import Direction, Path
 
 
 class AI:
@@ -45,7 +45,7 @@ class AI:
         if self._direction is None:
             self.move_next()
 
-    def apply_path(self, path: list[tuple[Tile, Direction]]) -> None:
+    def apply_path(self, path: Path) -> None:
         for _, direction in path:
             self.add_next_move(direction)
 

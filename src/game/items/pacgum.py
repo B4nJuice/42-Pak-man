@@ -1,4 +1,5 @@
-from src.core import Collider, Displayable, Entity, Level, Tile, Edible
+from src.core import Collider, Displayable, Edible, Entity, Level, Tile
+from src.game.characters.player import Player
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
@@ -41,3 +42,9 @@ class PacGum(Edible, Collider, Displayable, Entity):
             return
 
         return super().on_collision(other)
+
+    def eat(self, eater: Player) -> bool:
+        if super().eat(eater):
+            self.level.unregister_entity(self)
+            return True
+        return False

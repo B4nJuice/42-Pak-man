@@ -1,3 +1,5 @@
+from random import randint
+
 from mazegenerator import MazeGenerator
 
 from ..utils import Direction, Pos
@@ -23,7 +25,6 @@ class Maze:
             perfect=False,
             seed=self._seed
         )
-        generator.generate()
         for y, row in enumerate(generator.maze):
             self._grid.append([])
             for x, col in enumerate(row):
@@ -64,6 +65,22 @@ class Maze:
             moves = self._compute_moves(tile)
             self._moves_cache[tile] = moves
         return moves
+
+    def get_random_tile(self) -> Tile:
+        x: int = randint(0, self.get_width() - 1)
+        y: int = randint(0, self.get_height() - 1)
+
+        return self.get_tile(x, y)
+
+    def get_random_valid_tile(self) -> Tile:
+        tile: Tile | None = None
+
+        while tile is None:
+            tile = self.get_random_tile()
+            if tile.is_full:
+                tile = None
+
+        return tile
 
     def _compute_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
         x0, y0 = tile.get_x(), tile.get_y()
