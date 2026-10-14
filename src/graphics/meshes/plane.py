@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from ..color import Color, OperationEnum
 from ..mesh import Mesh
 from ..position import Position
@@ -5,13 +7,15 @@ from ..position import Position
 
 class Plane(Mesh):
     positions: tuple[Position, Position]
+    _on_click: Callable | None
 
     def __init__(
                 self,
                 color: Color,
                 positions: tuple[Position, Position],
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False
+                dynamic: bool = False,
+                on_click: Callable | None = None
             ) -> None:
         super().__init__(
                 color,
@@ -20,6 +24,17 @@ class Plane(Mesh):
             )
 
         self.positions = positions
+        self._on_click = on_click
 
     def get_positions(self) -> tuple[Position, Position]:
         return self.positions
+
+    def contains(self, x: float, y: float) -> bool:
+        if self.is_hidden():
+            return False
+        first, second = self.get_positions()
+
+        return (
+            min(first.x, second.x) <= x <= max(first.x, second.x)
+            and min(first.y, second.y) <= y <= max(first.y, second.y)
+        )

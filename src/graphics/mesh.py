@@ -1,4 +1,3 @@
-from collections.abc import Callable
 from abc import ABC
 
 from src.graphics import Color, OperationEnum
@@ -9,20 +8,17 @@ class Mesh(ABC):
     _operation: OperationEnum
     _hidden: bool
     _dynamic: bool
-    _on_click: Callable | None
 
     def __init__(
                 self,
                 color: Color,
                 operation: OperationEnum = OperationEnum.SET,
                 dynamic: bool = False,
-                on_click: Callable | None = None
             ) -> None:
         self._color = color
         self._operation = operation
         self._hidden = False
         self._dynamic = dynamic
-        self._on_click = on_click
 
     def get_color(self) -> Color:
         return self._color
@@ -44,11 +40,3 @@ class Mesh(ABC):
 
     def set_hidden(self, hidden: bool) -> None:
         self._hidden = hidden
-
-    def contains(self, x: float, y: float) -> bool:
-        first, second = self.get_positions()
-
-        return (
-            min(first.x, second.x) <= x <= max(first.x, second.x)
-            and min(first.y, second.y) <= y <= max(first.y, second.y)
-        )
