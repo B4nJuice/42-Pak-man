@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.game.ameliorations.skills import SkillType
+from src.game.ameliorations import SkillType
 from src.game.ameliorations import AmeliorationRarity
 
 
