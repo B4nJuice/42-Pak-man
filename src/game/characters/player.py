@@ -10,7 +10,9 @@ from src.utils import Direction, Pos
 from src.game.characters.player_state import PlayerState
 from src.game.ameliorations import (
     AmeliorationStore,
+    ExpSkill,
     SpeedSkill,
+    SuperTimeSkill,
 )
 
 
@@ -71,7 +73,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             [s.get_skill(SpeedSkill).get_value() for s in self._ameliorations.gets(SpeedSkill)]
         )
 
-        return initial_speed + initial_speed * multiplier // 100
+        return initial_speed + initial_speed * multiplier / 100
+
+    def get_super_time(self) -> float:
+        return sum(
+            [s.get_skill(SuperTimeSkill).get_value()
+             for s in self._ameliorations.gets(SuperTimeSkill)]
+        )
 
     def set_state(self, state: PlayerState) -> None:
         self._state = state
@@ -195,7 +203,11 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             )
 
     def add_exp(self, amount: float) -> None:
-        self._exp_points += amount
+        multiplier: float = sum(
+            [s.get_skill(ExpSkill).get_value()
+             for s in self._ameliorations.gets(ExpSkill)]
+        )
+        self._exp_points += amount + amount * multiplier / 100
         self.refresh_bar_progression()
         if self._exp_points >= self._next_level_exp:
             temp = self._next_level_exp
@@ -209,7 +221,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def set_super_state(self, time: float) -> None:
         self.set_state(PlayerState.SUPER)
-        self._super_time = time
+        self._super_time = time + self.get_super_time()
 
     def on_death(self) -> None:
         self._direction = None
