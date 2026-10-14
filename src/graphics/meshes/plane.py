@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Any
 
 from ..color import Color, OperationEnum
 from ..mesh import Mesh
@@ -29,7 +30,11 @@ class Plane(Mesh):
     def get_positions(self) -> tuple[Position, Position]:
         return self.positions
 
-    def contains(self, x: float, y: float) -> bool:
+    def click(self, x: int, y: int, *args: Any, **kwargs: Any) -> Any:
+        if self._on_click and self.contains(x, y):
+            self._on_click(*args, **kwargs)
+
+    def contains(self, x: int, y: int) -> bool:
         if self.is_hidden():
             return False
         first, second = self.get_positions()
