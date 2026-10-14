@@ -1,9 +1,10 @@
 from collections.abc import Callable
+from abc import ABC
 
 from src.graphics import Color, OperationEnum
 
 
-class Mesh:
+class Mesh(ABC):
     _color: Color
     _operation: OperationEnum
     _hidden: bool
@@ -43,3 +44,11 @@ class Mesh:
 
     def set_hidden(self, hidden: bool) -> None:
         self._hidden = hidden
+
+    def contains(self, x: float, y: float) -> bool:
+        first, second = self.get_positions()
+
+        return (
+            min(first.x, second.x) <= x <= max(first.x, second.x)
+            and min(first.y, second.y) <= y <= max(first.y, second.y)
+        )
