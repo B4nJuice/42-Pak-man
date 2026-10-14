@@ -1,5 +1,7 @@
 import pygame
 
+from src.texture. import TexturePack
+
 from .config import ConfigManager
 from .game import Game
 from .graphics import Screen
@@ -49,3 +51,4 @@ def main(verbose: bool) -> None:
 
 if __name__ == '__main__':
     main(verbose=True)
+    # pack = TexturePack.from_directory('assets/textures')

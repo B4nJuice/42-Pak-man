@@ -1,0 +1,201 @@
+{
+  "name": "Pak-Man",
+  "version": 1,
+  "textures": {
+    "pacgum": "items/pacgum.png",
+    "super-pacgum": "items/super_pacgum.png",
+    "pacman": {
+      "frame_time": 0.1,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/pacman/north_0.png",
+            "characters/pacman/north_1.png"
+          ],
+          "static": "characters/pacman/north_full.png"
+        },
+        "east": {
+          "frames": [
+            "characters/pacman/east_0.png",
+            "characters/pacman/east_1.png"
+          ],
+          "static": "characters/pacman/east_full.png"
+        },
+        "south": {
+          "frames": [
+            "characters/pacman/south_0.png",
+            "characters/pacman/south_1.png"
+          ],
+          "static": "characters/pacman/south_full.png"
+        },
+        "west": {
+          "frames": [
+            "characters/pacman/west_0.png",
+            "characters/pacman/west_1.png"
+          ],
+          "static": "characters/pacman/west_full.png"
+        }
+      }
+    },
+
+    "ghost-blinky": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/red/north_0.png",
+            "characters/ghosts/red/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/red/east_0.png",
+            "characters/ghosts/red/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/red/south_0.png",
+            "characters/ghosts/red/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/red/west_0.png",
+            "characters/ghosts/red/west_1.png"
+          ]
+        }
+      }
+    },
+
+    "ghost-pink": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/pink/north_0.png",
+            "characters/ghosts/pink/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/pink/east_0.png",
+            "characters/ghosts/pink/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/pink/south_0.png",
+            "characters/ghosts/pink/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/pink/west_0.png",
+            "characters/ghosts/pink/west_1.png"
+          ]
+        }
+      }
+    },
+
+    "ghost-cyan": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/cyan/north_0.png",
+            "characters/ghosts/cyan/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/cyan/east_0.png",
+            "characters/ghosts/cyan/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/cyan/south_0.png",
+            "characters/ghosts/cyan/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/cyan/west_0.png",
+            "characters/ghosts/cyan/west_1.png"
+          ]
+        }
+      }
+    },
+
+    "ghost-orange": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/orange/north_0.png",
+            "characters/ghosts/orange/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/orange/east_0.png",
+            "characters/ghosts/orange/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/orange/south_0.png",
+            "characters/ghosts/orange/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/orange/west_0.png",
+            "characters/ghosts/orange/west_1.png"
+          ]
+        }
+      }
+    },
+    "ghost-dead": {
+      "variants": {
+        "north": {
+          "frames": ["characters/ghosts/dead/north.png"]
+        },
+        "east": {
+          "frames": ["characters/ghosts/dead/east.png"]
+        },
+        "south": {
+          "frames": ["characters/ghosts/dead/south.png"]
+        },
+        "west": {
+          "frames": ["characters/ghosts/dead/west.png"]
+        }
+      }
+    },
+    "ghost-frightened": {
+      "frame_time": 0.2,
+      "frames": [
+        {
+          "frames": [
+            "characters/ghosts/frightened/0_0.png",
+            "characters/ghosts/frightened/0_1.png"
+          ],
+          "frame_time": 1.0
+        },
+        {
+          "frames": [
+            "characters/ghosts/frightened/1_0.png",
+            "characters/ghosts/frightened/1_1.png"
+          ],
+          "frame_time": 1.0
+        }
+      ]
+    }
+  }
+}
