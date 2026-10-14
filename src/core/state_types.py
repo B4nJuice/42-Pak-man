@@ -31,6 +31,9 @@ class CooldownState(Updatable):
     def set_default(self) -> None:
         self.set(self._default_value)
 
+    def get_default(self) -> float:
+        return self._default_value
+
     def set_default_value(self, value: float) -> None:
         self._default_value = value
 

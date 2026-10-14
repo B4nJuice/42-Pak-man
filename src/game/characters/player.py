@@ -31,7 +31,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _actual_level: int
     _exp_points: float
     _level_exp: float
-    _super_time: float
     _cheat: bool
 
     def __init__(
@@ -78,7 +77,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         return initial_speed + initial_speed * multiplier / 100
 
-    def get_super_time(self) -> float:
+    def get_additional_super_time(self) -> float:
         return sum(
             [s.get_skill(SuperTimeSkill).get_value()
              for s in self._ameliorations.gets(SuperTimeSkill)]
@@ -216,10 +215,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self._actual_level += 1
             self.refresh_level_text()
             self.set_bar_goal()
-
-    def set_super_state(self, time: float) -> None:
-        self.set_state(PlayerState.SUPER)
-        self._super_time = time + self.get_super_time()
 
     def on_death(self) -> None:
         self._direction = None

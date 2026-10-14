@@ -32,7 +32,10 @@ class StateManager:
 
         player: Player = self.level.store.get(Player)
 
-        self.frightened_phase.set(player.get_super_time())
+        self.frightened_phase.set(
+            self.frightened_phase.get_default() +
+            player.get_additional_super_time()
+        )
 
         for ghost in self.level.store.gets(Ghost):
             ghost.set_state(GhostState.FRIGHTENED)
