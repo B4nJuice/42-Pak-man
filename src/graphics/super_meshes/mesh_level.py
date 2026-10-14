@@ -1,8 +1,11 @@
 from functools import partial
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game.characters import Player
 
 from src.core.displayable import Displayable
 from src.core.level import Level
-from src.game.characters import Player
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import ImageTexture, Line, Plane
@@ -21,7 +24,7 @@ class MeshLevel(SuperMesh):
     tile_height: int
     layer: MeshLayer
     tile_width: int
-    player: Player
+    player: 'Player'
     level: Level
     height: int
     width: int
@@ -81,6 +84,7 @@ class MeshLevel(SuperMesh):
         self.init()
 
     def init(self) -> None:
+        from src.game.characters import Player
         for row in self.level.get_grid():
             for tile in row:
                 tile_mesh = Plane(
