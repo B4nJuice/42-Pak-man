@@ -115,7 +115,7 @@ class Movable:
         if self._target is None or self._direction is None:
             return
 
-        self._progress += self._speed * dt
+        self._progress += self.get_speed() * dt
         if self._progress >= 1.0:
             self._progress -= 1.0
             self.set_tile(self._target)
