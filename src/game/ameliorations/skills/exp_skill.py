@@ -1,8 +1,8 @@
 from random import randint
 
-from src.game.ameliorations import Skill
-from src.game.ameliorations import SkillType
-from src.game.ameliorations import AmeliorationRarity
+from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
+from src.game.ameliorations.skills.skill import Skill
+from src.game.ameliorations.skills.skill_type import SkillType
 
 
 class ExpSkill(Skill):

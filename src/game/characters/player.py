@@ -1,21 +1,21 @@
-from src.game.ameliorations.amelioration import Amelioration
 from collections.abc import Callable
 
 import pygame
 
 from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
-from src.game.characters.ghost_state import GhostState
-from src.game.characters.player_state import PlayerState
-from src.graphics import ImageTexture
-from src.graphics.super_meshes import Bar
-from src.utils import Direction, Pos
 from src.game.ameliorations import (
     AmeliorationStore,
     ExpSkill,
     SpeedSkill,
     SuperTimeSkill,
 )
+from src.game.ameliorations.amelioration import Amelioration
+from src.game.characters.ghost_state import GhostState
+from src.game.characters.player_state import PlayerState
+from src.graphics import ImageTexture
+from src.graphics.super_meshes import Bar
+from src.utils import Direction, Pos
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -71,9 +71,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def get_speed(self) -> float:
         initial_speed: float = super().get_speed()
-        multiplier: float = sum(
-            [s.get_skill(SpeedSkill).get_value() for s in self._ameliorations.gets(SpeedSkill)]
-        )
+        multiplier: float = sum([
+            s.get_skill(SpeedSkill).get_value()
+            for s in self._ameliorations.gets(SpeedSkill)
+        ])
 
         return initial_speed + initial_speed * multiplier / 100
 

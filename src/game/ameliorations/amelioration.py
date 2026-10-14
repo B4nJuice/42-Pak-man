@@ -1,10 +1,9 @@
+import random
 from abc import ABC
 from typing import TYPE_CHECKING
-import random
 
 if TYPE_CHECKING:
-    from src.game.ameliorations import Skill
-    from src.game.ameliorations import SkillStore
+    from src.game.ameliorations import Skill, SkillStore
 
 
 class Amelioration(ABC):
@@ -26,7 +25,7 @@ class Amelioration(ABC):
         value: float = random.random()
         rarity: AmeliorationRarity = AmeliorationRarity.get_rarity(value)
 
-        skills_upgrades: list[tuple['Skill', float]] = []
+        skills_upgrades: list[tuple[Skill, float]] = []
 
         for skill in self.get_skills():
             skills_upgrades.append((skill, skill.next_upgrade(rarity)))

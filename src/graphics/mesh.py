@@ -1,9 +1,5 @@
-<<<<<<< Updated upstream
-=======
-from collections.abc import Callable
 from abc import ABC
 
->>>>>>> Stashed changes
 from src.graphics import Color, OperationEnum
 
 

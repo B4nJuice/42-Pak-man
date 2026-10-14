@@ -2,15 +2,15 @@ from collections import defaultdict
 from typing import TypeVar, cast
 
 from src.errors import AmeliorationStoreNotFound
-from src.game.ameliorations import Amelioration
-from src.game.ameliorations import Skill
+from src.game.ameliorations.amelioration import Amelioration
+from src.game.ameliorations.skills.skill import Skill
 
 A = TypeVar("A", bound=Amelioration)
 S = TypeVar("S", bound=Skill)
 
 
 class AmeliorationStore:
-    _ameliorations: defaultdict[type[Amelioration], set[Amelioration]]
+    _ameliorations: defaultdict[type[Skill], set[Amelioration]]
 
     def __init__(self) -> None:
         self._ameliorations = defaultdict(set)
@@ -32,12 +32,12 @@ class AmeliorationStore:
     def gets(self, cls: type[S]) -> list[A]:
         return cast(list[A], list(self._ameliorations.get(cls, ())))
 
-    def get(self, cls: type[S]) -> A:
-        ameliorations: list[A] = self.gets(cls)
+    def get(self, cls: type[S]) -> Amelioration:
+        ameliorations: list[Amelioration] = self.gets(cls)
         if (len(ameliorations) <= 0):
             raise AmeliorationStoreNotFound(str(cls))
 
-        return cast(A, list(self._ameliorations.get(cls, ())).pop())
+        return cast(Amelioration, list(self._ameliorations.get(cls, ())).pop())
 
     def all(self) -> list[Amelioration]:
         return self.gets(Skill)

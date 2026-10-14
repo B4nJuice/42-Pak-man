@@ -1,5 +1,5 @@
-from src.game.ameliorations import Amelioration
-from src.game.ameliorations import ExpSkill
+from src.game.ameliorations.amelioration import Amelioration
+from src.game.ameliorations.skills.exp_skill import ExpSkill
 
 
 class ExpAmelioration(Amelioration):
