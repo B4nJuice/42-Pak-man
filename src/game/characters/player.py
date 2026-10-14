@@ -1,3 +1,4 @@
+from src.errors import AmeliorationStoreNotFound
 from collections.abc import Callable
 import pygame
 
@@ -7,14 +8,15 @@ from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 from src.game.characters.player_state import PlayerState
-from src.game.ameliorations import Amelioration
+from src.game.ameliorations import AmeliorationStore
+from src.game.ameliorations import SpeedSkill
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
     set_level_text: Callable[[int], None]
-    _ameliorations: list[Amelioration]
+    _ameliorations: AmeliorationStore
     _level_exp_multiplier: float
     _next_level_exp: float
     _exp_per_second: float
@@ -48,6 +50,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         )
 
         self.cheat = True
+        self._ameliorations = AmeliorationStore()
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
         self._exp_per_second = exp_per_second
@@ -56,6 +59,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._exp_points = 0
         self._level_exp = 0
         self.set_state(PlayerState.NORMAL)
+
+    def get_speed(self) -> float:
+        initial_speed: float = super().get_speed()
+        multiplier: float = sum(
+            [s.get(SpeedSkill).get_value() for s in self._ameliorations.gets(SpeedSkill)]
+        )
+
+        return initial_speed + initial_speed * multiplier
 
     def set_state(self, state: PlayerState) -> None:
         self._state = state
