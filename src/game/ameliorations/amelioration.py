@@ -34,5 +34,8 @@ class Amelioration(ABC):
     def level_up(self, value: float, rarity: AmeliorationRarity) -> None:
         self._level += 1
 
-    def get_skill(self, _type: type) -> type:
+    def get_skills(self) -> list[Skill]:
+        return self._skills.all()
+
+    def get_skill(self, _type: type) -> Skill:
         return self._skills.get(_type)
