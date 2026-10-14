@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 import random
 
 if TYPE_CHECKING:
-    from src.game.ameliorations import AmeliorationRarity
     from src.game.ameliorations import Skill
     from src.game.ameliorations import SkillStore
 
@@ -29,13 +28,15 @@ class Amelioration(ABC):
 
         skills_upgrades: list[tuple['Skill', float]] = []
 
-        for skill in self._skills:
+        for skill in self.get_skills():
             skills_upgrades.append((skill, skill.next_upgrade(rarity)))
 
         return skills_upgrades
 
-    def level_up(self, value: float, rarity: 'AmeliorationRarity') -> None:
+    def level_up(self, skill_upgrades: list[tuple['Skill', float]]) -> None:
         self._level += 1
+        for skill, value in skill_upgrades:
+            skill.upgrade(value)
 
     def get_skills(self) -> list['Skill']:
         return self._skills.all()
