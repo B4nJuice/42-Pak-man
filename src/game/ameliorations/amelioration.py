@@ -1,0 +1,38 @@
+from abc import ABC
+import random
+
+from src.game.ameliorations import AmeliorationRarity
+from src.game.ameliorations import Skill
+from src.game.ameliorations import SkillStore
+
+
+
+class Amelioration(ABC):
+    _level: int
+    _skills: SkillStore
+
+    def __init__(self, skills: list[Skill]) -> None:
+        self._skills = SkillStore()
+        for skill in skills:
+            self._skills.add(skill)
+        self._level = 0
+
+    def get_level(self) -> int:
+        return self._level
+
+    def next_upgrade(self) -> list[tuple[Skill, float]]:
+        value: float = random.random()
+        rarity: AmeliorationRarity = AmeliorationRarity.get_rarity(value)
+
+        skills_upgrades: list[tuple[Skill, float]] = []
+
+        for skill in self._skills:
+            skills_upgrades.append((skill, skill.next_upgrade(rarity)))
+
+        return skills_upgrades
+
+    def level_up(self, value: float, rarity: AmeliorationRarity) -> None:
+        self._level += 1
+
+    def get_skill(self, _type: type) -> type:
+        return self._skills.get(_type)

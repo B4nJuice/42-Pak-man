@@ -7,12 +7,14 @@ from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
 from src.utils import Direction, Pos
 from src.game.characters.player_state import PlayerState
+from src.game.ameliorations import Amelioration
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
     _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
     _mesh_by_direction: dict[Direction | None, ImageTexture]
     set_level_text: Callable[[int], None]
+    _ameliorations: list[Amelioration]
     _level_exp_multiplier: float
     _next_level_exp: float
     _exp_per_second: float
