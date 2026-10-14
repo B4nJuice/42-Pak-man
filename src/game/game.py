@@ -186,6 +186,9 @@ class Game:
         self._event_handler.register_listener(
             pygame.KEYDOWN, self._on_key_down
         )
+        self._event_handler.register_listener(
+            pygame.MOUSEBUTTONUP, self._screen.click
+        )
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
