@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from src.game.game import Game
 
+from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
@@ -71,7 +72,7 @@ class EscapeInterface(Interface):
             },
             {
                 "label": "Continue",
-                "on_click": None
+                "on_click": self.unpause
             },
         ]
 
@@ -138,6 +139,14 @@ class EscapeInterface(Interface):
         mesh.set_hidden(hidden)
         if hasattr(mesh, "get_layer"):
             EscapeInterface._set_hidden(mesh.get_layer(), hidden)
+
+    def pause(self) -> None:
+        self.display()
+        self.game.set_status(GameStatus.PAUSED)
+
+    def unpause(self) -> None:
+        self.hide()
+        self.game.set_status(GameStatus.RUNNING)
 
     def get_layer(self) -> MeshLayer:
         return self.layer
