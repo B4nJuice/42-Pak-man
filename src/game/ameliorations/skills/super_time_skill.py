@@ -8,4 +8,4 @@ class SuperTimeSkill(Skill):
         super().__init__(SkillType.STATIC, default_value=0)
 
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:
-        return randint(0, 2) * rarity.value
+        return min(0.5, randint(0, 2)) * rarity.value
