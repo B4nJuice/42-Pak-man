@@ -72,7 +72,7 @@ class EscapeInterface(Interface):
             },
             {
                 "label": "Continue",
-                "on_click": self.unpause
+                "on_click": self.end
             },
         ]
 
@@ -140,11 +140,11 @@ class EscapeInterface(Interface):
         if hasattr(mesh, "get_layer"):
             EscapeInterface._set_hidden(mesh.get_layer(), hidden)
 
-    def pause(self) -> None:
+    def start(self) -> None:
         self.display()
         self.game.set_status(GameStatus.PAUSED)
 
-    def unpause(self) -> None:
+    def end(self) -> None:
         self.hide()
         self.game.set_status(GameStatus.RUNNING)
 

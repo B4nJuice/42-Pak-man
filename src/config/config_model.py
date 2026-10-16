@@ -70,6 +70,45 @@ class ConfigModel(BaseModel):
         default=(255, 255, 255),
         description="Color of the pause menu text"
     )
+    amelioration_common_color: tuple[int, int, int] = Field(
+        default=(120, 120, 120),
+        description="Color of common ameliorations"
+    )
+    amelioration_uncommon_color: tuple[int, int, int] = Field(
+        default=(70, 180, 90),
+        description="Color of uncommon ameliorations"
+    )
+    amelioration_rare_color: tuple[int, int, int] = Field(
+        default=(70, 130, 220),
+        description="Color of rare ameliorations"
+    )
+    amelioration_epic_color: tuple[int, int, int] = Field(
+        default=(155, 80, 210),
+        description="Color of epic ameliorations"
+    )
+    amelioration_legendary_color: tuple[int, int, int] = Field(
+        default=(230, 150, 35),
+        description="Color of legendary ameliorations"
+    )
+    amelioration_mythic_color: tuple[int, int, int] = Field(
+        default=(220, 50, 70),
+        description="Color of mythic ameliorations"
+    )
+    amelioration_title_font_size: int = Field(
+        default=28,
+        gt=0,
+        description="Title font size of amelioration buttons"
+    )
+    amelioration_rarity_font_size: int = Field(
+        default=18,
+        gt=0,
+        description="Rarity font size of amelioration buttons"
+    )
+    amelioration_skill_font_size: int = Field(
+        default=16,
+        gt=0,
+        description="Skill font size of amelioration buttons"
+    )
 
     font_path: str = Field(
         default="assets/fonts/Bold Frame.ttf"

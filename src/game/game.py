@@ -15,11 +15,17 @@ from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
 from src.graphics.screen import Screen
-from src.ui import EscapeInterface, GameInterface, StatsInterface
+from src.ui import (
+    AmeliorationInterface,
+    EscapeInterface,
+    GameInterface,
+    StatsInterface,
+)
 
 
 class Game:
     _player_start_position: tuple[int, int]
+    _amelioration_interface: AmeliorationInterface
     _escape_interface: EscapeInterface
     _stats_interface: StatsInterface
     _game_interface: GameInterface
@@ -128,6 +134,7 @@ class Game:
             self._config.player_level_exp_multiplier,
             self._config.player_first_level_exp,
             self._config.player_exp_per_second,
+            self
         )
 
         ghost_reward: float = self._config.ghost_reward
@@ -147,10 +154,12 @@ class Game:
         self._game_interface = GameInterface(self)
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)
+        self._amelioration_interface = AmeliorationInterface(self)
 
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
+        self._screen.add_mesh(self._amelioration_interface)
 
     def run(self) -> None:
         self.set_status(GameStatus.RUNNING)
@@ -161,7 +170,9 @@ class Game:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
-            if self.get_status() == GameStatus.PAUSED:
+            if self.get_status() in [
+                        GameStatus.PAUSED, GameStatus.AMELIORATION
+                    ]:
                 dt = 0
 
             if self._player.over:
@@ -193,9 +204,9 @@ class Game:
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
             if self.get_status() == GameStatus.PAUSED:
-                self._escape_interface.unpause()
+                self._escape_interface.end()
             else:
-                self._escape_interface.pause()
+                self._escape_interface.start()
             # self.exit()
 
     def _init_event_handler(self) -> None:

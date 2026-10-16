@@ -1,4 +1,9 @@
 from collections.abc import Callable
+from random import choices
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game.game import Game
 
 import pygame
 
@@ -32,6 +37,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _exp_points: float
     _level_exp: float
     _cheat: bool
+    _game: 'Game'
 
     def __init__(
                 self,
@@ -41,6 +47,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 level_exp_multiplier: float,
                 first_level_exp: float,
                 exp_per_second: float,
+                game: 'Game'
             ) -> None:
         super().__init__(
             name=id,
@@ -63,6 +70,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._actual_level = 0
         self._exp_points = 0
         self._level_exp = 0
+        self._game = game
         self.set_state(PlayerState.NORMAL)
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
@@ -213,9 +221,18 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 ) * self._level_exp_multiplier
             self._level_exp = temp
             self._actual_level += 1
+            self.on_level_up()
             self.refresh_level_text()
             self.set_bar_goal()
 
     def on_death(self) -> None:
         self._direction = None
         super().on_death()
+
+    def on_level_up(self) -> None:
+        self._game._amelioration_interface.start()
+
+    def get_next_ameliorations(self) -> tuple[
+                type[Amelioration], ...
+            ]:
+        return tuple(choices(Amelioration.__subclasses__(), k = 3))
