@@ -1,8 +1,7 @@
 from random import randint
 
-from src.game.ameliorations import Skill
-from src.game.ameliorations import SkillType
-from src.game.ameliorations import AmeliorationRarity
+from src.game.ameliorations import AmeliorationRarity, Skill, SkillType
+
 
 class SpeedSkill(Skill):
     def __init__(self) -> None:

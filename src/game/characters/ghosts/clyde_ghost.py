@@ -1,5 +1,6 @@
 from random import randint
 
+from src.graphics import Color
 from src.core import Level, Tile
 from src.utils import Pos
 

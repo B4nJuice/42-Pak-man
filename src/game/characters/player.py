@@ -1,22 +1,26 @@
-from src.game.ameliorations.amelioration import Amelioration
 from collections.abc import Callable
+from random import choices
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.game.game import Game
 
 import pygame
 
 from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
-from src.game.characters.ghost_state import GhostState
-from src.game.characters.player_state import PlayerState
-from src.graphics import ImageTexture
-from src.graphics.super_meshes import Bar
-from src.utils import Direction, Pos
-from src.game.characters.player_state import PlayerState
 from src.game.ameliorations import (
     AmeliorationStore,
     ExpSkill,
     SpeedSkill,
     SuperTimeSkill,
 )
+from src.game.ameliorations.amelioration import Amelioration
+from src.game.characters.ghost_state import GhostState
+from src.game.characters.player_state import PlayerState
+from src.graphics import ImageTexture
+from src.graphics.super_meshes import Bar
+from src.utils import Direction, Pos
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
@@ -32,8 +36,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _actual_level: int
     _exp_points: float
     _level_exp: float
-    _super_time: float
     _cheat: bool
+    _game: 'Game'
 
     def __init__(
                 self,
@@ -43,6 +47,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 level_exp_multiplier: float,
                 first_level_exp: float,
                 exp_per_second: float,
+                game: 'Game'
             ) -> None:
         super().__init__(
             name=id,
@@ -65,6 +70,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._actual_level = 0
         self._exp_points = 0
         self._level_exp = 0
+        self._game = game
         self.set_state(PlayerState.NORMAL)
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
@@ -72,13 +78,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def get_speed(self) -> float:
         initial_speed: float = super().get_speed()
-        multiplier: float = sum(
-            [s.get_skill(SpeedSkill).get_value() for s in self._ameliorations.gets(SpeedSkill)]
-        )
+        multiplier: float = sum([
+            s.get_skill(SpeedSkill).get_value()
+            for s in self._ameliorations.gets(SpeedSkill)
+        ])
 
         return initial_speed + initial_speed * multiplier / 100
 
-    def get_super_time(self) -> float:
+    def get_additional_super_time(self) -> float:
         return sum(
             [s.get_skill(SuperTimeSkill).get_value()
              for s in self._ameliorations.gets(SuperTimeSkill)]
@@ -214,13 +221,18 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 ) * self._level_exp_multiplier
             self._level_exp = temp
             self._actual_level += 1
+            self.on_level_up()
             self.refresh_level_text()
             self.set_bar_goal()
-
-    def set_super_state(self, time: float) -> None:
-        self.set_state(PlayerState.SUPER)
-        self._super_time = time + self.get_super_time()
 
     def on_death(self) -> None:
         self._direction = None
         super().on_death()
+
+    def on_level_up(self) -> None:
+        self._game._amelioration_interface.start()
+
+    def get_next_ameliorations(self) -> tuple[
+                type[Amelioration], ...
+            ]:
+        return tuple(choices(Amelioration.__subclasses__(), k = 3))

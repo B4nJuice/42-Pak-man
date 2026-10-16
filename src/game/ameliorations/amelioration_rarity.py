@@ -14,3 +14,4 @@ class AmeliorationRarity(Enum):
         for rarity in cls:
             if value <= rarity.value:
                 return rarity
+        return cls.COMMON

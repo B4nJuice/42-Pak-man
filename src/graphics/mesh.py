@@ -1,7 +1,9 @@
+from abc import ABC
+
 from src.graphics import Color, OperationEnum
 
 
-class Mesh:
+class Mesh(ABC):
     _color: Color
     _operation: OperationEnum
     _hidden: bool
@@ -11,7 +13,7 @@ class Mesh:
                 self,
                 color: Color,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False
+                dynamic: bool = False,
             ) -> None:
         self._color = color
         self._operation = operation

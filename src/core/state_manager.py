@@ -30,11 +30,16 @@ class StateManager:
         from src.game.characters.player import Player
         from src.game.characters.player_state import PlayerState
 
-        self.frightened_phase.set_default()
+        player: Player = self.level.store.get(Player)
+
+        self.frightened_phase.set(
+            self.frightened_phase.get_default() +
+            player.get_additional_super_time()
+        )
 
         for ghost in self.level.store.gets(Ghost):
             ghost.set_state(GhostState.FRIGHTENED)
-        self.level.store.get(Player).set_state(PlayerState.SUPER)
+        player.set_state(PlayerState.SUPER)
 
     def _set_ghost_to_chase(self) -> None:
         from src.game.characters.ghost import Ghost

@@ -6,3 +6,4 @@ class GameStatus(Enum):
     RUNNING = 0
     PAUSED = 1
     INITIALIZING = 2
+    AMELIORATION = 3

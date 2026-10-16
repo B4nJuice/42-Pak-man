@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.game.ameliorations import SkillType
-from src.game.ameliorations import AmeliorationRarity
+from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
+from src.game.ameliorations.skills.skill_type import SkillType
 
 
 class Skill(ABC):
@@ -10,11 +10,11 @@ class Skill(ABC):
 
     def __init__(
                 self,
-                type: SkillType,
+                skill_type: SkillType,
                 default_value: float = 0
             ) -> None:
-        self._type = type,
-        self._value = 0
+        self._type = skill_type
+        self._value = default_value
 
     @abstractmethod
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:

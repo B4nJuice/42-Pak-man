@@ -1,5 +1,5 @@
-from src.game.ameliorations import Amelioration
-from src.game.ameliorations import SpeedSkill
+from src.game.ameliorations import Amelioration, SpeedSkill
+
 
 class SpeedAmelioration(Amelioration):
     def __init__(self) -> None:
