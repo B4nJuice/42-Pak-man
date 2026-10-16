@@ -192,14 +192,10 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if event.key == pygame.K_ESCAPE:
-            self.set_status(
-                GameStatus.RUNNING if self.get_status() ==
-                GameStatus.PAUSED else GameStatus.PAUSED
-            )
             if self.get_status() == GameStatus.PAUSED:
-                self._escape_interface.display()
+                self._escape_interface.unpause()
             else:
-                self._escape_interface.hide()
+                self._escape_interface.pause()
             # self.exit()
 
     def _init_event_handler(self) -> None:
