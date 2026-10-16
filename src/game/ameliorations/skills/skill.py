@@ -13,8 +13,8 @@ class Skill(ABC):
                 skill_type: SkillType,
                 default_value: float = 0
             ) -> None:
-        self._type = skill_type,
-        self._value = 0
+        self._type = skill_type
+        self._value = default_value
 
     @abstractmethod
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:

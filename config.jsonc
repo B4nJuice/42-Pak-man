@@ -1,6 +1,15 @@
 {
   "level_width": 30,
   "level_height": 20,
-  "screen_width": 1920,
-  "screen_height": 1080
+  "screen_width": 1080,
+  "screen_height": 720,
+  "amelioration_common_color": [120, 120, 120],
+  "amelioration_uncommon_color": [70, 180, 90],
+  "amelioration_rare_color": [70, 130, 220],
+  "amelioration_epic_color": [155, 80, 210],
+  "amelioration_legendary_color": [230, 150, 35],
+  "amelioration_mythic_color": [220, 50, 70],
+  "amelioration_title_font_size": 28,
+  "amelioration_rarity_font_size": 18,
+  "amelioration_skill_font_size": 16
 }

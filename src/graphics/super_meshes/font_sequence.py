@@ -69,12 +69,12 @@ class FontSequence(SuperMesh):
             case AlignEnum.RIGHT:
                 cursor_x = self.position.x - total_width
             case _:
-                cursor_x = self.position.x - total_width / 2
+                cursor_x = round(self.position.x - total_width / 2)
         for index, character in enumerate(self.text):
             infos = self.font.get_characters()[character]
             character_position = Position(
-                cursor_x + infos["bearing_x"],
-                self.position.y - infos["bearing_y"],
+                round(cursor_x + infos["bearing_x"]),
+                round(self.position.y - infos["bearing_y"]),
             )
 
             if index < len(self.characters):
