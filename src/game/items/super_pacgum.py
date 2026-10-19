@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.game.characters import Player
 
+from src.app import App
 from src.core import Collider, Displayable, Edible, Entity, Level, Tile
 from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
@@ -14,7 +15,8 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
                 id: str,
                 pos: Pos | Tile,
                 level: Level,
-                reward: float
+                reward: float,
+                app: App
             ) -> None:
         super().__init__(
             name=id,
@@ -24,6 +26,7 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
             radius=0.15,
             proportion=0.3,
             reward=reward,
+            app=app
         )
 
         self.init_mesh()

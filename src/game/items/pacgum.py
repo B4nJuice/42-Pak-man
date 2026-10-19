@@ -1,3 +1,4 @@
+from src.app import App
 from src.core import Collider, Displayable, Edible, Entity, Level, Tile
 from src.game.characters.player import Player
 from src.graphics import ImageTexture, OperationEnum, Position
@@ -10,7 +11,8 @@ class PacGum(Edible, Collider, Displayable, Entity):
                 id: str,
                 pos: Pos | Tile,
                 level: Level,
-                reward: float
+                reward: float,
+                app: App
             ) -> None:
         super().__init__(
             name=id,
@@ -20,6 +22,7 @@ class PacGum(Edible, Collider, Displayable, Entity):
             radius=0.05,
             proportion=0.1,
             reward=reward,
+            app=app
         )
 
         self.init_mesh()

@@ -1,7 +1,8 @@
 from random import randint
 
-from src.graphics import Color
+from src.app import App
 from src.core import Level, Tile
+from src.graphics import Color
 from src.utils import Pos
 
 from ..ghost import Ghost
@@ -13,7 +14,8 @@ class ClydeGhost(Ghost):
                 id: int,
                 tile: Pos | Tile,
                 level: Level,
-                reward: float
+                reward: float,
+                app: App
             ) -> None:
         self._texture_path = 'assets/characters/ghosts/orange'
 
@@ -23,7 +25,8 @@ class ClydeGhost(Ghost):
             level=level,
             update_tracking_interval=-1,
             reward=reward,
-            path_color=Color(127, 90, 0, 100)
+            path_color=Color(127, 90, 0, 100),
+            app=app
         )
 
     def get_chase_tracking_tile(self) -> Tile:

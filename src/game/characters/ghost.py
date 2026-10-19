@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from pathlib import Path
 
+from src.app import App
 from src.core import (
     AI,
     AStar,
@@ -13,7 +14,7 @@ from src.core import (
 )
 from src.core.movable import Movable
 from src.game.characters.ghost_state import GhostState
-from src.graphics import ImageTexture, Color
+from src.graphics import Color, ImageTexture
 from src.utils import Direction, Pos
 
 
@@ -34,6 +35,7 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 tile: Pos | Tile,
                 level: Level,
                 reward: float,
+                app: App,
                 update_tracking_interval: float | None = 0.6,
                 path_color: Color = Color(255, 0, 0, 100)
             ) -> None:
@@ -45,7 +47,8 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
             proportion=0.9,
             reward=reward,
             edible=False,
-            update_tracking_interval=update_tracking_interval
+            update_tracking_interval=update_tracking_interval,
+            app=app
         )
         self._base_speed = 4.0
         self._dead_speed = 10.0

@@ -1,6 +1,7 @@
+from src.app import App
 from src.core import Level, Tile
-from src.utils import Direction, Pos
 from src.graphics import Color
+from src.utils import Direction, Pos
 
 from ..ghost import Ghost
 from ..player import Player
@@ -14,7 +15,8 @@ class PinkyGhost(Ghost):
                 id: int,
                 tile: Pos | Tile,
                 level: Level,
-                reward: float
+                reward: float,
+                app: App
             ) -> None:
         self._texture_path = 'assets/characters/ghosts/pink'
         self._tracking_entity = level._entities.get(Player)
@@ -25,7 +27,8 @@ class PinkyGhost(Ghost):
             level=level,
             update_tracking_interval=0,
             reward=reward,
-            path_color=Color(127, 0, 110, 100)
+            path_color=Color(127, 0, 110, 100),
+            app=app
         )
 
     def get_chase_tracking_tile(self) -> Tile:

@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from src.app import App
+
 from ..utils import Pos, Vec2
 
 if TYPE_CHECKING:
@@ -12,10 +14,12 @@ class Entity:
     _name: str
     tile: Tile
     level: 'Level'
+    app: App
 
-    def __init__(self, name: str, tile: Pos | Tile, level: 'Level') -> None:
+    def __init__(self, name: str, tile: Pos | Tile, level: 'Level', app: App) -> None:
         self._name = name
         self.level = level
+        self.app = app
         self.set_tile(tile)
 
         self.level.register_entity(self)

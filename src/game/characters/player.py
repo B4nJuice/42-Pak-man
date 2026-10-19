@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 import pygame
 
+from src.app import App
 from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
 from src.game.ameliorations import (
@@ -42,6 +43,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 level_exp_multiplier: float,
                 first_level_exp: float,
                 exp_per_second: float,
+                app: App
             ) -> None:
         super().__init__(
             name=id,
@@ -52,7 +54,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             speed=6,
             proportion=0.9,
             primary=True,
-            lives=3
+            lives=3,
+            app=app
         )
 
         self.cheat = True
