@@ -3,7 +3,7 @@ from moderngl import Context
 from pygame import Surface
 from pygame.event import Event
 
-from src.graphics import Clickable
+from src.graphics import Clickable, Plane
 from src.ui.interface import Interface
 
 from .gpu_renderer import GPURenderer
@@ -20,6 +20,7 @@ class Screen:
     static_mesh_layer: MeshLayer
     dynamic_mesh_layer: MeshLayer
     clickables: list[Clickable]
+    background: Plane
 
     def __init__(
                 self,

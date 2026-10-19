@@ -48,6 +48,8 @@ class GPURenderer:
             vertex_shader=_load_shader('circle.vert'),
             fragment_shader=_load_shader('circle.frag'),
         )
+        self.mesh_program['previous_frame'].value = 0
+        self.image_program['previous_frame'].value = 0
 
         self.copy_quad = self._create_copy_quad()
         self.screen_quad = self._create_screen_quad()
@@ -55,8 +57,6 @@ class GPURenderer:
             self.context.texture((width, height), 4),
             self.context.texture((width, height), 4),
         ]
-        for texture in self.textures:
-            texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
         self.framebuffers = [
             self.context.framebuffer(color_attachments=texture)
             for texture in self.textures
