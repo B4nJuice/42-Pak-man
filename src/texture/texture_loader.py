@@ -1,8 +1,7 @@
-from abc import ABC
 from pathlib import Path
 
 import moderngl
-from moderngl import Context, create_context
+from moderngl import Context, get_context
 from PIL import Image
 
 from .texture_data import TextureData
@@ -10,11 +9,11 @@ from .texture_data import TextureData
 MAX_DIM = 4096
 
 
-class TextureLoader(ABC):
+class TextureLoader:
     _ctx: Context
 
-    def __init__(self) -> None:
-        self._ctx = create_context()
+    def __init__(self, ctx: Context) -> None:
+        self._ctx = ctx
         self._textures = {}
 
     def load(self, path: Path) -> TextureData:
