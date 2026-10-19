@@ -3,10 +3,13 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ImageData:
-    width: int
-    height: int
+    size: tuple[int, int]
     pixels: bytes
 
     @property
-    def size(self) -> tuple[int, int]:
-        return (self.width, self.height)
+    def width(self) -> int:
+        return self.size[0]
+
+    @property
+    def height(self) -> int:
+        return self.size[1]

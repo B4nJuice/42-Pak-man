@@ -53,12 +53,8 @@ class TexturePack:
                 LOGGER.warning(f'Texture {texture_key!r} in {root.name} ignored: {e}')
         return cls(root, data.get('name', root.name), textures)
 
-    def get(self, key: TextureKeys) -> TextureDef:
-        texture = self._textures.get(key)
-        if texture is None:
-            raise ValueError()
-
-        return texture
+    def get(self, key: TextureKeys) -> TextureDef | None:
+        return self._textures.get(key)
 
     @staticmethod
     def _parse_texture(root: Path, raw: TRAW) -> TextureDef:
