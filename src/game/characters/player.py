@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from random import choices
+from random import sample
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,6 +13,7 @@ from src.game.ameliorations import (
     AmeliorationStore,
     ExpSkill,
     LuckSkill,
+    PowerSkill,
     SpeedSkill,
     SuperTimeSkill,
 )
@@ -93,6 +94,15 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         ])
 
         return initial_speed + initial_speed * multiplier / 100
+
+    def get_upgrade_power(self) -> float:
+        return sum(
+            skill.get_value()
+            for skill in (
+                amelioration.get_skill(PowerSkill)
+                for amelioration in self._ameliorations.gets(PowerSkill)
+            )
+        )
 
     def get_additional_super_time(self) -> float:
         return sum(
@@ -244,4 +254,5 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def get_next_ameliorations(self) -> tuple[
                 type[Amelioration], ...
             ]:
-        return tuple(choices(Amelioration.__subclasses__(), k = 3))
+        ameliorations = Amelioration.__subclasses__()
+        return tuple(sample(ameliorations, min(3, len(ameliorations))))

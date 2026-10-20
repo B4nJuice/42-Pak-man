@@ -14,7 +14,7 @@ class AmeliorationRarity(Enum):
         for rarity in cls:
             if value <= rarity.value:
                 return rarity
-        return cls.COMMON
+        return cls.MYTHIC
 
     def get_rarity_power(self) -> float:
         return (self.value + 0.5)**3
