@@ -6,9 +6,10 @@ if TYPE_CHECKING:
 
 from src.core.displayable import DisplayableEntity
 from src.core.level import Level
-from src.graphics import Color, OperationEnum, Position
+from src.graphics.color import Color, OperationEnum
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Line, Plane
+from src.graphics.position import Position
 from src.graphics.super_mesh import SuperMesh
 from src.utils.direction import Direction
 

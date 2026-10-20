@@ -1,7 +1,7 @@
 from typing import Any
 
 import freetype
-from moderngl import Context
+from moderngl import Context, Texture
 
 
 class Font:
@@ -30,7 +30,7 @@ class Font:
             glyph = self._face.glyph
             bitmap = glyph.bitmap
 
-            texture: Context.texture = self._context.texture(
+            texture: Texture = self._context.texture(
                 (bitmap.width, bitmap.rows),
                 1,
                 bytes(bitmap.buffer),
