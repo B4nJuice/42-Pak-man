@@ -29,7 +29,7 @@ class FontSequence(SuperMesh):
                 position: Position,
                 spacing: int = 0,
                 align: AlignEnum = AlignEnum.CENTER,
-                operation: OperationEnum = OperationEnum.SET,
+                operation: OperationEnum = OperationEnum.ALPHA,
                 dynamic: bool = False
             ) -> None:
         super().__init__(
