@@ -53,7 +53,7 @@ void main() {
         }
     }
 
-    if (color.a <= 0.0 || texture_color.a == 0) {
+    if (color.a <= 0.0) {
         discard;
     }
 

@@ -1,6 +1,7 @@
 from typing import Any
 
 import freetype
+import moderngl
 from moderngl import Context
 
 
@@ -35,6 +36,10 @@ class Font:
                 1,
                 bytes(bitmap.buffer),
             )
+
+            texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+            texture.repeat_x = False
+            texture.repeat_y = False
 
             self._characters[chr(char)] = {
                 "texture": texture,
