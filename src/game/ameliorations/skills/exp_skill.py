@@ -1,4 +1,4 @@
-from random import randint
+from random import uniform
 
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
 from src.game.ameliorations.skills.skill import Skill
@@ -10,4 +10,4 @@ class ExpSkill(Skill):
         super().__init__(SkillType.PERCENTAGE, default_value=0)
 
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:
-        return randint(2, 3) * rarity.get_rarity_power()
+        return 2.5 * rarity.get_rarity_power() * uniform(0.75, 1)
