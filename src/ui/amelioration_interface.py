@@ -226,7 +226,10 @@ class AmeliorationInterface(Interface):
                 self.game._player.get_next_ameliorations()
         ):
             amelioration = amelioration_type()
-            rarity, upgrades = amelioration.next_upgrade()
+            rarity, upgrades = amelioration.next_upgrade(
+                luck=self.game._player.get_luck(),
+                power=self.game._player.get_upgrade_power(),
+            )
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
             )
@@ -235,7 +238,7 @@ class AmeliorationInterface(Interface):
             button.set_color(color)
             border.set_color(color)
             texts[0].set_sequence_text(
-                amelioration.__class__.__name__.removesuffix("Amelioration")
+                amelioration.get_name()
             )
             texts[1].set_sequence_text(rarity.name)
             for skill_index, text in enumerate(texts[2:]):

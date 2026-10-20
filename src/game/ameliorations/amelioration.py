@@ -1,5 +1,5 @@
-import random
 from abc import ABC
+from random import random
 from typing import TYPE_CHECKING
 
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
@@ -19,20 +19,29 @@ class Amelioration(ABC):
             self._skills.add(skill)
         self._level = 0
 
+    def get_name(self) -> str:
+        return self.__class__.__name__.removesuffix("Amelioration")
+
     def get_level(self) -> int:
         return self._level
 
-    def next_upgrade(self) -> tuple[
+    def next_upgrade(
+                self,
+                luck: float = 1,
+                power: float = 0
+            ) -> tuple[
                 AmeliorationRarity, list[tuple['Skill', float]]
             ]:
         from src.game.ameliorations import AmeliorationRarity
-        value: float = random.random()
+        luck = max(luck, 1)
+        value: float = random() ** (1 / luck)
         rarity: AmeliorationRarity = AmeliorationRarity.get_rarity(value)
 
         skills_upgrades: list[tuple[Skill, float]] = []
 
         for skill in self.get_skills():
-            skills_upgrades.append((skill, skill.next_upgrade(rarity)))
+            upgrade = skill.next_upgrade(rarity)
+            skills_upgrades.append((skill, upgrade * (1 + power / 100)))
 
         return (rarity, skills_upgrades)
 
