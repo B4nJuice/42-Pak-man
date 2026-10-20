@@ -5,6 +5,8 @@ from pygame.time import Clock
 from src.app import App
 from src.config import ConfigModel
 from src.core import EventHandler, Level
+from src.core.displayable import Displayable
+from src.errors import PackError
 from src.game.characters import (
     BlinkyGhost,
     ClydeGhost,
@@ -23,10 +25,12 @@ from src.ui import (
     GameInterface,
     StatsInterface,
 )
+from src.utils import Logger, TColor
 
 
 class Game:
     _app: App
+    _logger: Logger
     _player_start_position: tuple[int, int]
     _amelioration_interface: AmeliorationInterface
     _escape_interface: EscapeInterface
@@ -43,6 +47,7 @@ class Game:
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
+        self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
         self.set_status(GameStatus.INITIALIZING)
 
         self._set_config(config)
@@ -236,6 +241,19 @@ class Game:
 
             case pygame.K_F1:
                 self._player._cheat = not self._player._cheat
+            case pygame.K_F9:
+                try:
+                    self.load_pack('textures/reverse-textures')
+                except PackError as e:
+                    self._logger.warning(f'Cannot load ressource pack: {str(e)!r}')
+
+    def load_pack(self, path: str) -> None:
+        self._app.texture.load_pack(path)
+
+        for e in self._level.store.all():
+            if not isinstance(e, Displayable):
+                continue
+            e.init_displayable()
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()

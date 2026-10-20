@@ -30,7 +30,11 @@ class TextureManager:
         self.load_textures(self._default)
 
     def load_pack(self, path: str) -> None:
-        raise ValueError('TODO: to implement')
+        self._user = TexturePack.from_directory(path)
+        self.load_textures(self._user)
+
+    def unload_pack(self) -> None:
+        self.load_textures(self._default)
 
     def get(self, key: TextureKeys, variant: str | None = None) -> Animation:
         texture: Texture = self._textures[key]
