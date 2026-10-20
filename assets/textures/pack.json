@@ -11,25 +11,25 @@
         "north": {
           "frames": [
             "characters/pacman/north_0.png",
-            {"file": "characters/pacman/north_1.png", "duration": 0.1}
+            { "file": "characters/pacman/north_1.png", "duration": 0.1 }
           ]
         },
         "east": {
           "frames": [
             "characters/pacman/east_0.png",
-            {"file": "characters/pacman/east_1.png", "duration": 0.1}
+            { "file": "characters/pacman/east_1.png", "duration": 0.1 }
           ]
         },
         "south": {
           "frames": [
             "characters/pacman/south_0.png",
-            {"file": "characters/pacman/south_1.png", "duration": 0.1}
+            { "file": "characters/pacman/south_1.png", "duration": 0.1 }
           ]
         },
         "west": {
           "frames": [
             "characters/pacman/west_0.png",
-            {"file": "characters/pacman/west_1.png", "duration": 0.1}
+            { "file": "characters/pacman/west_1.png", "duration": 0.1 }
           ]
         },
         "static": "characters/pacman/north_full.png"
