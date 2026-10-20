@@ -408,7 +408,7 @@ class GPURenderer:
         self.target_index = 1
         self.framebuffers[self.source_index].clear(0.0, 0.0, 0.0, 0.0)
 
-        for mesh in [*static_meshes, *dynamic_meshes]:
+        for mesh in self._iter_meshes([*static_meshes, *dynamic_meshes]):
             source = self.textures[self.source_index]
             target = self.framebuffers[self.target_index]
             target.use()
@@ -436,3 +436,16 @@ class GPURenderer:
         self.blit_program.release()
         self.image_program.release()
         self.circle_program.release()
+
+    def _iter_meshes(self, meshes):
+        for mesh in meshes:
+            if isinstance(mesh, MeshLayer):
+                yield from self._iter_meshes(mesh.meshes)
+            else:
+                if hasattr(mesh, "get_layer"):
+                    mesh = mesh.get_layer()
+
+                if isinstance(mesh, MeshLayer):
+                    yield from self._iter_meshes([mesh])
+                else:
+                    yield mesh
