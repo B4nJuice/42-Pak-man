@@ -3,7 +3,7 @@ from enum import Enum
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
 from src.graphics.meshes import Character
-from src.graphics.super_mesh import SuperMesh, MeshLayer
+from src.graphics.super_mesh import MeshLayer, SuperMesh
 
 
 class AlignEnum(Enum):
@@ -29,7 +29,7 @@ class FontSequence(SuperMesh):
                 position: Position,
                 spacing: int = 0,
                 align: AlignEnum = AlignEnum.CENTER,
-                operation: OperationEnum = OperationEnum.SET,
+                operation: OperationEnum = OperationEnum.ALPHA,
                 dynamic: bool = False
             ) -> None:
         super().__init__(

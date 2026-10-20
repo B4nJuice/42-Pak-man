@@ -48,6 +48,8 @@ class GPURenderer:
             vertex_shader=_load_shader('circle.vert'),
             fragment_shader=_load_shader('circle.frag'),
         )
+        self.mesh_program['previous_frame'].value = 0
+        self.image_program['previous_frame'].value = 0
 
         self.copy_quad = self._create_copy_quad()
         self.screen_quad = self._create_screen_quad()
@@ -55,8 +57,6 @@ class GPURenderer:
             self.context.texture((width, height), 4),
             self.context.texture((width, height), 4),
         ]
-        for texture in self.textures:
-            texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
         self.framebuffers = [
             self.context.framebuffer(color_attachments=texture)
             for texture in self.textures
@@ -337,6 +337,8 @@ class GPURenderer:
             ],
         )
         mesh.texture.use(1)
+        source.use(0)
+        self.image_program["previous_frame"].value = 0
         self.image_program['image_texture'].value = 1
         self.image_program['operation'].value = mesh.get_operation().value
         self.image_program['use_tint'].value = False
@@ -402,22 +404,22 @@ class GPURenderer:
                 static_meshes: Iterable[Mesh],
                 dynamic_meshes: Iterable[Mesh]
             ) -> None:
-        source_index = 0
-        target_index = 1
-        self.framebuffers[source_index].clear(0.0, 0.0, 0.0, 0.0)
+        self.source_index = 0
+        self.target_index = 1
+        self.framebuffers[self.source_index].clear(0.0, 0.0, 0.0, 0.0)
 
         for mesh in [*static_meshes, *dynamic_meshes]:
-            source = self.textures[source_index]
-            target = self.framebuffers[target_index]
+            source = self.textures[self.source_index]
+            target = self.framebuffers[self.target_index]
             target.use()
             source.use(0)
             self.copy_program['source_texture'].value = 0
             self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
             self._draw_mesh(mesh, source, target)
-            source_index, target_index = target_index, source_index
+            self.source_index, self.target_index = self.target_index, self.source_index
 
         self.context.screen.use()
-        self.textures[source_index].use(0)
+        self.textures[self.source_index].use(0)
         self.blit_program['source_texture'].value = 0
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
         self.context.finish()
