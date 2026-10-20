@@ -11,6 +11,7 @@ MAX_DIM = 4096
 
 class TextureLoader:
     _ctx: Context
+    _textures: dict[Path, TextureData]
 
     def __init__(self, ctx: Context) -> None:
         self._ctx = ctx
@@ -24,13 +25,13 @@ class TextureLoader:
             im.load()
             if max(im.size) > MAX_DIM:
                 raise ValueError(f'image too large: {im.size}')
-            im = im.convert('RGBA')
+            image = im.convert('RGBA')
 
-            texture = self._ctx.texture(im.size, 4, im.tobytes())
+            texture = self._ctx.texture(image.size, 4, image.tobytes())
             texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
             texture.use(location=0)
 
-            self._textures[path] = TextureData(texture, im.size)
+            self._textures[path] = TextureData(texture, image.size)
             return self._textures[path]
 
     def unload(self, path: Path) -> None:

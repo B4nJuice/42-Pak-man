@@ -5,38 +5,38 @@
     "pacgum": "items/pacgum.png",
     "super-pacgum": "items/super_pacgum.png",
     "pacman": {
-      "frame_time": 0.1,
+      "frame_time": 0.2,
       "default_variant": "static",
       "variants": {
         "north": {
           "frames": [
             "characters/pacman/north_0.png",
-            "characters/pacman/north_1.png"
+            {"file": "characters/pacman/north_1.png", "duration": 0.1}
           ]
         },
         "east": {
           "frames": [
             "characters/pacman/east_0.png",
-            "characters/pacman/east_1.png"
+            {"file": "characters/pacman/east_1.png", "duration": 0.1}
           ]
         },
         "south": {
           "frames": [
             "characters/pacman/south_0.png",
-            "characters/pacman/south_1.png"
+            {"file": "characters/pacman/south_1.png", "duration": 0.1}
           ]
         },
         "west": {
           "frames": [
             "characters/pacman/west_0.png",
-            "characters/pacman/west_1.png"
+            {"file": "characters/pacman/west_1.png", "duration": 0.1}
           ]
         },
         "static": "characters/pacman/north_full.png"
       }
     },
     "ghost-blinky": {
-      "frame_time": 0.12,
+      "frame_time": 0.25,
       "default_variant": "south",
       "variants": {
         "north": {
@@ -66,7 +66,7 @@
       }
     },
     "ghost-pinky": {
-      "frame_time": 0.12,
+      "frame_time": 0.25,
       "default_variant": "south",
       "variants": {
         "north": {
@@ -96,7 +96,7 @@
       }
     },
     "ghost-inky": {
-      "frame_time": 0.12,
+      "frame_time": 0.25,
       "default_variant": "south",
       "variants": {
         "north": {
@@ -126,7 +126,7 @@
       }
     },
     "ghost-clyde": {
-      "frame_time": 0.12,
+      "frame_time": 0.25,
       "default_variant": "south",
       "variants": {
         "north": {
@@ -158,18 +158,10 @@
     "ghost-eaten": {
       "default_variant": "south",
       "variants": {
-        "north": {
-          "frames": ["characters/ghosts/dead/north.png"]
-        },
-        "east": {
-          "frames": ["characters/ghosts/dead/east.png"]
-        },
-        "south": {
-          "frames": ["characters/ghosts/dead/south.png"]
-        },
-        "west": {
-          "frames": ["characters/ghosts/dead/west.png"]
-        }
+        "north": "characters/ghosts/dead/north.png",
+        "east": "characters/ghosts/dead/east.png",
+        "south": "characters/ghosts/dead/south.png",
+        "west": "characters/ghosts/dead/west.png"
       }
     },
     "ghost-frightened": {

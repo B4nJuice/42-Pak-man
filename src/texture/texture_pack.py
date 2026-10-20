@@ -59,7 +59,7 @@ class TexturePack:
     @staticmethod
     def _parse_texture(root: Path, raw: TRAW) -> TextureDef:
         if isinstance(raw, dict) and 'variants' in raw:
-            inherit = {k: raw[k] for k in ('frame_loop', 'loop') if k in raw}
+            inherit = {k: raw[k] for k in ('frame_time', 'loop') if k in raw}
             variants = {
                 key: TexturePack._parse_animation_raw(root, v_raw, inherit)
                 for key, v_raw in raw['variants'].items()
@@ -84,26 +84,23 @@ class TexturePack:
         loop: bool
 
         if isinstance(raw, dict):
-            frame_time = float(
-                raw.get('frame_time',
-                        inherit.get('frame_time', DEFAULT_FRAME_TIME))
+            frame_time = float(raw.get(
+                'frame_time',
+                inherit.get('frame_time', DEFAULT_FRAME_TIME))
             )
             loop = bool(raw.get('loop', inherit.get('loop', True)))
         else:
-            frame_time = float(
-                inherit.get('frame_time', DEFAULT_FRAME_TIME)
-            )
+            frame_time = float(inherit.get('frame_time', DEFAULT_FRAME_TIME))
             loop = bool(inherit.get('loop', True))
+
+        print(raw)
 
         if isinstance(raw, str):
             return TexturePack._parse_animation(root, [raw], frame_time, loop)
-        elif isinstance(raw, list) and is_list_of(raw, str):
+        elif isinstance(raw, list):
             return TexturePack._parse_animation(root, raw, frame_time, loop)
         elif isinstance(raw, dict) and 'frames' in raw \
-                and isinstance(raw['frames'], list) \
-                and (is_list_of(raw['frames'], str) \
-                    or is_list_of(raw['frames'], dict)
-                ):
+                and isinstance(raw['frames'], list):
             if is_list_of(raw['frames'], str):
                 return TexturePack._parse_animation(root, raw['frames'], frame_time, loop)
             else:
@@ -111,11 +108,13 @@ class TexturePack:
                 for item in raw['frames']:
                     frames.append(TexturePack._parse_animation_raw(root, item, {'frame_time': frame_time, 'loop': loop}))
                 return AnimationDef(frames=tuple(frames), loop=loop, duration=frame_time)
+        elif isinstance(raw, dict) and 'file' in raw:
+            return TexturePack._parse_animation(root, [raw], frame_time, loop)
         else:
             raise PackError('animation must be a string, list or object')
 
     @staticmethod
-    def _parse_animation(root: Path, items: list[str], frame_time: float, loop: bool) -> AnimationDef:
+    def _parse_animation(root: Path, items: list[str] | list[dict[str, str]], frame_time: float, loop: bool) -> AnimationDef:
         if not isinstance(items, list) or not 0 < len(items) <= MAX_FRAMES:
             raise PackError(f'\'frames\' must be a list of 1..{MAX_FRAMES} entries')
 
