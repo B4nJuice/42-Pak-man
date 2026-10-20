@@ -276,28 +276,28 @@ class GPURenderer:
                  source: moderngl.Texture,
                  target: moderngl.Framebuffer
              ) -> None:
-         vertices, mode = self._vertices(entity)
-         vertex_buffer = self.context.buffer(vertices.tobytes())
-         vao = self.context.vertex_array(
-             self.image_program,
-             [
-                 (
-                     vertex_buffer,
-                     '2f 2f',
-                     'in_position',
-                     'in_texcoord',
-                 ),
-             ],
-         )
-         entity.get_texture().texture.use(1)
-         self.image_program['image_texture'].value = 1
-         self.image_program['operation'].value = OperationEnum.SET.value
-         self.image_program['use_tint'].value = False
-         self.image_program['screen_size'].value = (self.width, self.height)
-         target.use()
-         vao.render(mode=mode)
-         vertex_buffer.release()
-         vao.release()
+        vertices, mode = self._vertices(entity)
+        vertex_buffer = self.context.buffer(vertices.tobytes())
+        vao = self.context.vertex_array(
+            self.image_program,
+            [
+                (
+                    vertex_buffer,
+                    '2f 2f',
+                    'in_position',
+                    'in_texcoord',
+                ),
+            ],
+        )
+        entity.get_texture().texture.use(1)
+        self.image_program['image_texture'].value = 1
+        self.image_program['operation'].value = OperationEnum.SET.value
+        self.image_program['use_tint'].value = False
+        self.image_program['screen_size'].value = (self.width, self.height)
+        target.use()
+        vao.render(mode=mode)
+        vertex_buffer.release()
+        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -472,7 +472,9 @@ class GPURenderer:
             self.copy_program['source_texture'].value = 0
             self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
             self._draw_mesh(mesh, source, target)
-            self.source_index, self.target_index = self.target_index, self.source_index
+            self.source_index, self.target_index = (
+                self.target_index, self.source_index
+            )
 
         self.context.screen.use()
         self.textures[self.source_index].use(0)

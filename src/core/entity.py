@@ -16,7 +16,13 @@ class Entity:
     level: 'Level'
     app: App
 
-    def __init__(self, name: str, tile: Pos | Tile, level: 'Level', app: App) -> None:
+    def __init__(
+                self,
+                name: str,
+                tile: Pos | Tile,
+                level: 'Level',
+                app: App
+            ) -> None:
         self._name = name
         self.level = level
         self.app = app

@@ -1,5 +1,3 @@
-import os
-import re
 from datetime import UTC, datetime
 
 from pydantic import ValidationError
@@ -198,84 +196,10 @@ class Logger:
             elif msg := error.get('msg'):
                 if field:
                     self.warning(
-                        f'{prefix + ' ' if prefix else ''}{field}: {msg}'
+                        f"{prefix + ' ' if prefix else ''}{field}: {msg}"
                     )
                 else:
-                    self.warning(f'{prefix + ' ' if prefix else ''}{msg}')
-
-    def _generate_box(
-        self,
-        content: list[str],
-        title: str,
-        width: int | None = None,
-        max_width: int | None = None,
-    ) -> list[str]:
-        '''Generate a box around the given content.
-
-        Args:
-            content (str): The content to place inside the box.
-            width (int): The total width of the box.
-            title (str): The title to display in the top border of the box.
-
-        Returns:
-            list[str]: A list of strings representing the lines of the box.
-        '''
-        cleaned_content: list[str] = [
-            part for item in content for part in item.split('\n')
-        ]
-
-        splited_content: list[str]
-        if not max_width:
-            splited_content = cleaned_content
-        else:
-            splited_content = self._max_width(cleaned_content, max_width)
-
-        if width is None:
-            width = max(len(line) for line in splited_content) + 4
-        width = max(width, len(title) + 4)
-
-        result: list[str] = []
-        title_line = f'┌─ {title} ' + f'{'─' * (width - len(title) - 3)}┐'
-        result.append(title_line)
-
-        for line in splited_content:
-            line_len: int = len(self._strip_ansi(line))
-            result.append(f'│ {line} ' + f'{' ' * (width - line_len - 2)}│')
-        result.append(f'└{'─' * width}┘')
-        return result
-
-    def box_info(
-        self,
-        content: list[str],
-        title: str,
-        width: int | None = None,
-        max_width: int | None = (os.get_terminal_size().columns - 39),
-    ) -> None:
-        '''Print a box with the given content and title.
-
-        Args:
-            content (str): The content to place inside the box.
-            width (int): The total width of the box.
-            title (str): The title to display in the top border of the box.
-        '''
-        box_lines = self._generate_box(content, title, width, max_width)
-        for line in box_lines:
-            self.info(line)
-
-    def _strip_ansi(self, text: str) -> str:
-        '''Remove ANSI escape codes for accurate length measurement.'''
-        return re.sub(r'\x1b\[[0-9;]*m', '', text)
-
-    def _max_width(self, texts: list[str], width: int) -> list[str]:
-        return [
-            chunk
-            for s in texts
-            for chunk in (
-                [s]
-                if len(s) <= width
-                else [s[i: i + width] for i in range(0, len(s), width)]
-            )
-        ]
+                    self.warning(f"{prefix + ' ' if prefix else ''}{msg}")
 
     def _generate_table(
         self,

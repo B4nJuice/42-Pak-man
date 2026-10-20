@@ -7,6 +7,7 @@ from src.graphics import Mesh
 
 class Clickable(ABC):
     _on_click: Callable | None = None
+
     def __init__(
                 self,
                 on_click: Callable | None = None,
