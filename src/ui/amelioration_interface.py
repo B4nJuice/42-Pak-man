@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
+from src.texture.font_keys import FontKeys
+
 if TYPE_CHECKING:
     from src.game.game import Game
 
@@ -30,13 +32,19 @@ class AmeliorationInterface(Interface):
         config = self.game._config
         context = self.game._screen.moderngl_context
         self._title_font = Font(
-            config.font_path, context, config.amelioration_title_font_size
+            game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
+            context,
+            config.amelioration_title_font_size
         )
         self._rarity_font = Font(
-            config.font_path, context, config.amelioration_rarity_font_size
+            game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
+            context,
+            config.amelioration_rarity_font_size
         )
         self._skill_font = Font(
-            config.font_path, context, config.amelioration_skill_font_size
+            game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
+            context,
+            config.amelioration_skill_font_size
         )
         self._skill_line_count = max(
             1,

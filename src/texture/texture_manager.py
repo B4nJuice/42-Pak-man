@@ -1,6 +1,9 @@
-from src.errors import MissingTextureError
+from pathlib import Path
+
+from src.errors import MissingTextureError, PackError
 from src.texture.animation import Animation
 from src.texture.animation_definition import AnimationDef
+from src.texture.font_keys import FontKeys
 from src.texture.frame import Frame
 from src.texture.texture_definition import Texture
 from src.texture.texture_frame import TextureFrame
@@ -36,6 +39,22 @@ class TextureManager:
             return texture.variants[texture.default_variant]
         else:
             return self._textures[key].variants[variant]
+
+    def get_pack(self) -> TexturePack:
+        if self._user is None:
+            return self._default
+        return self._user
+
+    def get_font(self, key: FontKeys) -> Path:
+        if self._user and (path := self._user.get_font(key)):
+            return path
+
+        if path := self._default.get_font(key):
+            return path
+
+        raise PackError(
+            f'Fallback failed for font {key!r}! Restore assets folder.'
+        )
 
     def load_textures(self, pack: TexturePack) -> None:
         _missing_textures: list[TextureKeys] = []

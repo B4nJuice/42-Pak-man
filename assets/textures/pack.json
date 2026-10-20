@@ -1,6 +1,9 @@
 {
   "name": "Pak-Man",
   "version": 1,
+  "fonts": {
+    "default": "fonts/Bold Frame.ttf"
+  },
   "textures": {
     "pacgum": "items/pacgum.png",
     "super-pacgum": "items/super_pacgum.png",

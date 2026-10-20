@@ -16,6 +16,7 @@ from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
 from src.graphics.screen import Screen
+from src.texture.font_keys import FontKeys
 from src.ui import (
     AmeliorationInterface,
     EscapeInterface,
@@ -48,7 +49,7 @@ class Game:
         self._set_screen(screen)
 
         self._font = Font(
-            self._config.font_path,
+            self._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
             self._screen.moderngl_context,
             pixel_size=self._config.screen_height // 22
         )

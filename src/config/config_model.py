@@ -109,11 +109,6 @@ class ConfigModel(BaseModel):
         gt=0,
         description="Skill font size of amelioration buttons"
     )
-
-    font_path: str = Field(
-        default="assets/fonts/Bold Frame.ttf"
-    )
-
     #           Exp params
 
     # rewards
