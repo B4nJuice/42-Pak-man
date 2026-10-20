@@ -5,6 +5,7 @@ from importlib.resources import files
 import moderngl
 import numpy as np
 
+from src.core.displayable import Displayable, DisplayableEntity
 from src.graphics import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
@@ -15,6 +16,7 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
+from src.texture.texture_frame import TextureFrame
 
 
 @cache
@@ -175,6 +177,12 @@ class GPURenderer:
                 image.image.tobytes()
             )
             image.texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+
+        return vertices, moderngl.TRIANGLE_STRIP
+
+    @_vertices.register
+    def _(self, entity: DisplayableEntity) -> tuple[np.ndarray, int]:
+        # Todo
 
         return vertices, moderngl.TRIANGLE_STRIP
 
