@@ -49,7 +49,9 @@ void main() {
         } else if (operation == 10) {
             color = 1.0 - texture_color;
         } else if (operation == 11) {
-            color = mix(background, texture_color, texture_color.a);
+            float alpha = texture_color.a;
+            color.rgb = mix(background.rgb, texture_color.rgb, alpha);
+            color.a = alpha + background.a * (1.0 - alpha);
         }
     }
 
