@@ -1,6 +1,8 @@
 from src.app import App
 from src.core import Level, Tile
+from src.game.characters.ghost_type import GhostType
 from src.graphics import Color
+from src.texture.texture_keys import TextureKeys
 from src.utils import Pos
 
 from ..ghost import Ghost
@@ -31,7 +33,9 @@ class InkyGhost(Ghost):
             update_tracking_interval=None,
             reward=reward,
             path_color=Color(0, 110, 127, 100),
-            app=app
+            app=app,
+            ghost_type=GhostType.Inky,
+            texture_key=TextureKeys.GHOST_INKY
         )
 
     def get_chase_tracking_tile(self) -> Tile:

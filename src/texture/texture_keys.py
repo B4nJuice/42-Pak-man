@@ -14,7 +14,7 @@ class TextureKeys(Enum):
     GHOST_INKY = 'ghost-inky'
     GHOST_CLYDE = 'ghost-clyde'
 
-    GHOST_DEAD = 'ghost-dead'
+    GHOST_EATEN = 'ghost-eaten'
     GHOST_FRIGHTENED = 'ghost-frightened'
 
     @classmethod

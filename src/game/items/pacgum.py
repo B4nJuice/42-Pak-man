@@ -1,11 +1,14 @@
 from src.app import App
 from src.core import Collider, Displayable, Edible, Entity, Level, Tile
 from src.game.characters.player import Player
-from src.graphics import ImageTexture, OperationEnum, Position
+from src.texture.animation_player import AnimationPlayer
+from src.texture.texture_keys import TextureKeys
 from src.utils import Pos
 
 
 class PacGum(Edible, Collider, Displayable, Entity):
+    _animation: AnimationPlayer
+
     def __init__(
                 self,
                 id: str,
@@ -25,20 +28,8 @@ class PacGum(Edible, Collider, Displayable, Entity):
             app=app
         )
 
-        self.init_mesh()
-
-    def init_mesh(self) -> None:
-        self._mesh = ImageTexture(
-            path='assets/items/pacgum.png',
-            position=Position(0, 0),
-            width=0,
-            height=0,
-            operation=OperationEnum.SET,
-            dynamic=False,
-        )
-
-    def update_mesh(self) -> None:
-        pass
+    def update(self, dt: float) -> None:
+        return super().update(dt)
 
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):
@@ -51,3 +42,11 @@ class PacGum(Edible, Collider, Displayable, Entity):
             self.level.unregister_entity(self)
             return True
         return False
+
+    def init_displayable(self) -> None:
+        self._animation = AnimationPlayer(
+            self.app.texture.get(TextureKeys.PACGUM)
+        )
+
+    def get_animation(self) -> AnimationPlayer:
+        return self._animation

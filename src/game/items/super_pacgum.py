@@ -1,15 +1,19 @@
 from typing import TYPE_CHECKING
 
+from src.texture.animation_player import AnimationPlayer
+from src.texture.texture_keys import TextureKeys
+
 if TYPE_CHECKING:
     from src.game.characters import Player
 
 from src.app import App
 from src.core import Collider, Displayable, Edible, Entity, Level, Tile
-from src.graphics import ImageTexture, OperationEnum, Position
 from src.utils import Pos
 
 
 class SuperPacGum(Edible, Collider, Displayable, Entity):
+    _animation: AnimationPlayer
+
     def __init__(
                 self,
                 id: str,
@@ -29,21 +33,6 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
             app=app
         )
 
-        self.init_mesh()
-
-    def init_mesh(self) -> None:
-        self._mesh = ImageTexture(
-            path='assets/items/super_pacgum.png',
-            position=Position(0, 0),
-            width=0,
-            height=0,
-            operation=OperationEnum.SET,
-            dynamic=False,
-        )
-
-    def update_mesh(self) -> None:
-        pass
-
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):
             return
@@ -56,3 +45,11 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
             self.level.state.set_frightened_phase()
             return True
         return False
+
+    def init_displayable(self) -> None:
+        self._animation = AnimationPlayer(
+            self.app.texture.get(TextureKeys.SUPER_PACGUM)
+        )
+
+    def get_animation(self) -> AnimationPlayer:
+        return self._animation

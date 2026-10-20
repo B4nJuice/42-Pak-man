@@ -1,5 +1,7 @@
 from bisect import bisect_right
 
+from moderngl import Texture
+
 from .animation import Animation
 from .texture_frame import TextureFrame
 
@@ -99,13 +101,10 @@ class AnimationPlayer:
         return not self.anim.loop and self.time >= self._total
 
     @property
-    def frame(self) -> TextureFrame | None:
-        if not self._frames:
-            return None
+    def frame(self) -> TextureFrame:
         idx = bisect_right(self._ends, self.time)
         return self._frames[min(idx, len(self._frames) - 1)]
 
     @property
-    def texture(self):
-        f = self.frame
-        return f.texture if f else None
+    def texture(self) -> Texture:
+        return self.frame.texture
