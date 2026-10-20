@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
-from src.core.displayable import DisplayableEntity
-
 if TYPE_CHECKING:
+    from src.core.displayable import DisplayableEntity
+
     from ..graphics import Mesh
 
 
