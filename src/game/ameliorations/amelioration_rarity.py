@@ -15,3 +15,6 @@ class AmeliorationRarity(Enum):
             if value <= rarity.value:
                 return rarity
         return cls.COMMON
+
+    def get_rarity_power(self) -> float:
+        return (self.value + 0.5)**3
