@@ -61,7 +61,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             lives=3
         )
 
-        self.cheat = True
+        self._cheat = False
         self._ameliorations = AmeliorationStore()
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
