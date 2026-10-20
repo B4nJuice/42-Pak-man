@@ -1,6 +1,8 @@
 from random import uniform
 
-from src.game.ameliorations import AmeliorationRarity, Skill, SkillType
+from ..amelioration_rarity import AmeliorationRarity
+from .skill import Skill
+from .skill_type import SkillType
 
 
 class SpeedSkill(Skill):

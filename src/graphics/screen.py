@@ -2,10 +2,13 @@ import pygame
 from moderngl import Context
 from pygame import Surface
 from pygame.event import Event
+from typing import TYPE_CHECKING
 
-from src.graphics import Clickable, Plane
-from src.ui.interface import Interface
+if TYPE_CHECKING:
+    from src.ui.interface import Interface
 
+from .clickable import Clickable
+from .meshes.plane import Plane
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
 from .mesh_layer import MeshLayer

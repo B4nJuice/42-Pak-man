@@ -1,4 +1,5 @@
-from src.game.ameliorations import Amelioration, SuperTimeSkill
+from .amelioration import Amelioration
+from .skills.super_time_skill import SuperTimeSkill
 
 
 class SuperTimeAmelioration(Amelioration):

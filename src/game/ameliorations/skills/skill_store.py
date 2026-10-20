@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import TypeVar, cast
 
 from src.errors import SkillStoreNotFound
-from src.game.ameliorations import Skill
+from .skill import Skill
 
 A = TypeVar("A", bound=Skill)
 

@@ -6,7 +6,7 @@ import moderngl
 import numpy as np
 
 from src.core.displayable import Displayable
-from src.graphics import OperationEnum
+from src.graphics.color import OperationEnum
 from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (

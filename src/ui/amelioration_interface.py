@@ -11,7 +11,7 @@ from src.graphics.font import Font
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
-from src.ui import Interface
+from .interface import Interface
 
 
 class AmeliorationInterface(Interface):

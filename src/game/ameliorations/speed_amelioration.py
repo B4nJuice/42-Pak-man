@@ -1,4 +1,5 @@
-from src.game.ameliorations import Amelioration, SpeedSkill
+from .amelioration import Amelioration
+from .skills.speed_skill import SpeedSkill
 
 
 class SpeedAmelioration(Amelioration):

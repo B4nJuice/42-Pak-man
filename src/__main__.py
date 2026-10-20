@@ -5,7 +5,7 @@ from src.texture import TextureLoader
 from .app import App, TextureManager
 from .config import ConfigManager
 from .game import Game
-from .graphics import Screen
+from .graphics.screen import Screen
 from .utils import Logger, TColor
 
 

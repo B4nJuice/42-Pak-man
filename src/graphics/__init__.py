@@ -4,7 +4,6 @@ from .mesh import Mesh
 from .mesh_layer import MeshLayer
 from .meshes import Character, Circle, ImageTexture, Line, Plane, Polygon
 from .position import Position
-from .screen import Screen
 from .super_mesh import SuperMesh
 
 __all__: list[str] = [
@@ -20,6 +19,5 @@ __all__: list[str] = [
     'Plane',
     'Polygon',
     'Position',
-    'Screen',
     'SuperMesh'
 ]
