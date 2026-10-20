@@ -53,7 +53,7 @@ class MeshLevel(SuperMesh):
         self.level = level
 
         self.layer = MeshLayer()
-        self.entity_meshes = {}
+        self.entity_meshes = set()
 
         self.tile_width = self.width // self.level.get_width()
         self.tile_height = self.height // self.level.get_height()

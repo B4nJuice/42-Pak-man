@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import moderngl
-from moderngl import Context, get_context
+from moderngl import Context
 from PIL import Image
 
 from .texture_data import TextureData
@@ -25,7 +25,6 @@ class TextureLoader:
             if max(im.size) > MAX_DIM:
                 raise ValueError(f'image too large: {im.size}')
             im = im.convert('RGBA')
-            im = im.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
 
             texture = self._ctx.texture(im.size, 4, im.tobytes())
             texture.filter = (moderngl.NEAREST, moderngl.NEAREST)

@@ -2,7 +2,6 @@ import pygame
 from pygame import Surface
 from moderngl import Context
 
-from ..ui.interface import Interface
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
 from .mesh_layer import MeshLayer
@@ -39,7 +38,9 @@ class Screen:
             ) -> None:
         self.dynamic_mesh_layer.meshes.append(layer)
 
-    def add_mesh(self, mesh: Mesh | Interface) -> None:
+    def add_mesh(self, mesh: 'Mesh | Interface') -> None:
+        from src.ui.interface import Interface
+
         if isinstance(mesh, Interface | SuperMesh):
             self.add_layer(mesh.get_layer())
             return

@@ -26,6 +26,7 @@ class Displayable(ABC):
 
         self._proportion = proportion
         self._rotation = rotation
+        self.init_displayable()
 
     def set_tile_size(self, height: int, width: int) -> None:
         self._tile_height = height

@@ -5,8 +5,8 @@ from importlib.resources import files
 import moderngl
 import numpy as np
 
-from src.core.displayable import Displayable, DisplayableEntity
-from src.graphics import Mesh
+from src.core.displayable import Displayable
+from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
     Character,
@@ -16,7 +16,6 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
-from src.texture.texture_frame import TextureFrame
 
 
 @cache
@@ -181,7 +180,7 @@ class GPURenderer:
         return vertices, moderngl.TRIANGLE_STRIP
 
     @_vertices.register
-    def _(self, entity: DisplayableEntity) -> tuple[np.ndarray, int]:
+    def _(self, entity: Displayable) -> tuple[np.ndarray, int]:
 
         pos = entity.get_position_on_screen()
 
@@ -272,7 +271,7 @@ class GPURenderer:
     @_draw_mesh.register
     def _(
                  self,
-                 entity: DisplayableEntity,
+                 entity: Displayable,
                  source: moderngl.Texture,
                  target: moderngl.Framebuffer
              ) -> None:
