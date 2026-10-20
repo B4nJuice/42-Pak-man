@@ -6,6 +6,7 @@ import moderngl
 import numpy as np
 
 from src.core.displayable import Displayable
+from src.graphics import OperationEnum
 from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
@@ -290,7 +291,7 @@ class GPURenderer:
          )
          entity.get_texture().texture.use(1)
          self.image_program['image_texture'].value = 1
-         self.image_program['operation'].value = 1
+         self.image_program['operation'].value = OperationEnum.SET.value
          self.image_program['use_tint'].value = False
          self.image_program['screen_size'].value = (self.width, self.height)
          target.use()

@@ -14,7 +14,7 @@ from src.utils.direction import Direction
 
 
 class MeshLevel(SuperMesh):
-    entity_meshes: set[DisplayableEntity]
+    entity_meshes: list[DisplayableEntity]
     wall_thickness: int
     position: Position
     height_offset: int
@@ -53,7 +53,7 @@ class MeshLevel(SuperMesh):
         self.level = level
 
         self.layer = MeshLayer()
-        self.entity_meshes = set()
+        self.entity_meshes = []
 
         self.tile_width = self.width // self.level.get_width()
         self.tile_height = self.height // self.level.get_height()
@@ -183,14 +183,12 @@ class MeshLevel(SuperMesh):
         entity.set_mesh_level_position(self.position)
         entity.set_tile_size(self.tile_height, self.tile_width)
 
-        self.entity_meshes.add(entity)
+        self.entity_meshes.append(entity)
         self.layer.meshes.append(entity)
 
     def unregister_entity(self, entity: DisplayableEntity) -> None:
-        self.entity_meshes.discard(entity)
-
-        if entity in self.layer.meshes:
-            self.layer.meshes.remove(entity)
+        self.entity_meshes.remove(entity)
+        self.layer.meshes.remove(entity)
 
     def refresh(self) -> None:
         for tile_mesh in self.tiles:
