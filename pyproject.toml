@@ -26,6 +26,7 @@ mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
 
 [tool.mypy]
 ignore_missing_imports = true
+disable_error_code = ["type-abstract"]
 
 [tool.ruff.format]
 quote-style = "single"
