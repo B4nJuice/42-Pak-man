@@ -3,7 +3,7 @@ from .mesh import Mesh
 from .clickable import Clickable
 from .meshes import Character, Circle, ImageTexture, Line, Plane, Polygon
 from .position import Position
-from .screen import MeshLayer, Screen
+from .mesh_layer import MeshLayer
 from .super_mesh import SuperMesh
 
 __all__: list[str] = [
@@ -22,3 +22,11 @@ __all__: list[str] = [
     'SuperMesh',
     'Clickable'
 ]
+
+
+def __getattr__(name: str) -> object:
+    if name == 'Screen':
+        from src.graphics.screen import Screen
+
+        return Screen
+    raise AttributeError(f"module 'src.graphics' has no attribute {name!r}")

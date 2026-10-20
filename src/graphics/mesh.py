@@ -1,6 +1,6 @@
 from abc import ABC
 
-from src.graphics import Color, OperationEnum
+from src.graphics.color import Color, OperationEnum
 
 
 class Mesh(ABC):

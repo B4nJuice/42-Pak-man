@@ -4,17 +4,17 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.game.characters import Player
 
-from src.core.displayable import Displayable
+from src.core.displayable import DisplayableEntity
 from src.core.level import Level
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
-from src.graphics.meshes import ImageTexture, Line, Plane
+from src.graphics.meshes import Line, Plane
 from src.graphics.super_mesh import SuperMesh
 from src.utils.direction import Direction
 
 
 class MeshLevel(SuperMesh):
-    entity_meshes: dict[Displayable, ImageTexture]
+    entity_meshes: set[DisplayableEntity]
     wall_thickness: int
     position: Position
     height_offset: int
@@ -53,7 +53,7 @@ class MeshLevel(SuperMesh):
         self.level = level
 
         self.layer = MeshLayer()
-        self.entity_meshes = {}
+        self.entity_meshes = set()
 
         self.tile_width = self.width // self.level.get_width()
         self.tile_height = self.height // self.level.get_height()
@@ -179,35 +179,18 @@ class MeshLevel(SuperMesh):
         self.layer.meshes += self.walls
         self.player = self.level._entities.get(Player)
 
-    def register_entity(self, entity: Displayable) -> None:
-        mesh = entity.get_mesh()
-        previous_mesh = self.entity_meshes.get(entity)
-        if previous_mesh is not None and previous_mesh is not mesh:
-            if previous_mesh in self.layer.meshes:
-                self.layer.meshes.remove(previous_mesh)
+    def register_entity(self, entity: DisplayableEntity) -> None:
+        entity.set_mesh_level_position(self.position)
+        entity.set_tile_size(self.tile_height, self.tile_width)
 
-        mesh.get_position = lambda e=entity: Position(
-            round(e.pos[0] * self.tile_width + self.position.x +
-                  self.tile_width // 2),
-            round(e.pos[1] * self.tile_height + self.position.y +
-                  self.tile_height // 2)
-        )
+        self.entity_meshes.add(entity)
+        self.layer.meshes.append(entity)
 
-        mesh.get_height = lambda e=entity: round(
-                self.tile_width * e.get_proportion()
-            )
-        mesh.get_width = lambda e=entity: round(
-                self.tile_height * e.get_proportion()
-            )
+    def unregister_entity(self, entity: DisplayableEntity) -> None:
+        self.entity_meshes.discard(entity)
 
-        if mesh not in self.get_layer().meshes:
-            self.get_layer().meshes.append(mesh)
-        self.entity_meshes[entity] = mesh
-
-    def unregister_entity(self, entity: Displayable) -> None:
-        mesh = self.entity_meshes.pop(entity, None)
-        if mesh is not None and mesh in self.layer.meshes:
-            self.layer.meshes.remove(mesh)
+        if entity in self.layer.meshes:
+            self.layer.meshes.remove(entity)
 
     def refresh(self) -> None:
         for tile_mesh in self.tiles:

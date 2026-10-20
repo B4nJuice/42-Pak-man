@@ -1,5 +1,8 @@
 import pygame
 
+from src.texture import TextureLoader
+
+from .app import App, TextureManager
 from .config import ConfigManager
 from .game import Game
 from .graphics import Screen
@@ -42,10 +45,20 @@ def main(verbose: bool) -> None:
         pygame_screen,
     )
 
-    game: Game = Game(config.get_config(), screen)
+    app: App = App(
+        config=config,
+        ctx=screen.moderngl_context,
+        texture=TextureManager(
+            TextureLoader(screen.moderngl_context),
+            default_path='assets/textures'
+        )
+    )
+
+    game: Game = Game(config.get_config(), screen, app)
 
     game.run()
 
 
 if __name__ == '__main__':
     main(verbose=True)
+    # pack = TexturePack.from_directory('assets/textures')

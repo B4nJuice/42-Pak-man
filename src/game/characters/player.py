@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 import pygame
 
+from src.app import App
 from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
 from src.core.movable import Movable
 from src.game.ameliorations import (
@@ -18,14 +19,15 @@ from src.game.ameliorations import (
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters.ghost_state import GhostState
 from src.game.characters.player_state import PlayerState
-from src.graphics import ImageTexture
 from src.graphics.super_meshes import Bar
+from src.texture.animation_player import AnimationPlayer
+from src.texture.texture_keys import TextureKeys
 from src.utils import Direction, Pos
 
 
 class Player(Alive, Collider, Movable, Displayable, Entity):
-    _inverse_mesh_by_direction: dict[ImageTexture, Direction | None]
-    _mesh_by_direction: dict[Direction | None, ImageTexture]
+    _animations: dict[Direction | None, AnimationPlayer]
+
     set_level_text: Callable[[int], None]
     _ameliorations: AmeliorationStore
     _level_exp_multiplier: float
@@ -47,6 +49,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 level_exp_multiplier: float,
                 first_level_exp: float,
                 exp_per_second: float,
+                app: App,
                 game: 'Game'
             ) -> None:
         super().__init__(
@@ -58,7 +61,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             speed=6,
             proportion=0.9,
             primary=True,
-            lives=3
+            lives=3,
+            app=app
         )
 
         self._cheat = False
@@ -117,45 +121,17 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def on_collision_exit(self, other: 'Collider') -> None:
         super().on_collision_exit(other)
 
-    def init_mesh(self) -> None:
-        self._mesh_by_direction = {
-            Direction.NORTH: ImageTexture.create_blank(
-                    "assets/characters/pacman/north_0.png"
-                ),
-            Direction.EAST: ImageTexture.create_blank(
-                    "assets/characters/pacman/east_0.png"
-                ),
-            Direction.SOUTH: ImageTexture.create_blank(
-                    "assets/characters/pacman/south_0.png"
-                ),
-            Direction.WEST: ImageTexture.create_blank(
-                    "assets/characters/pacman/west_0.png"
-                ),
-            None: ImageTexture.create_blank(
-                    "assets/characters/pacman/west_full.png"
-                )
-        }
-
-        self._inverse_mesh_by_direction = {
-            mesh: direction
-            for direction, mesh in self._mesh_by_direction.items()
-        }
-
-        self._mesh = self._mesh_by_direction[None]
-
-    def get_texture(self) -> ImageTexture:
-        return self._mesh_by_direction[self._direction]
-
     def try_move(self, direction: Direction) -> bool:
-        same = direction == self._direction
+        # same = direction == self._direction
         if super().try_move(direction):
-            if not same:
-                self.update_mesh()
+            # if not same:
+            #     self.update_mesh()
             return True
         return False
 
     def update(self, dt: float) -> None:
         super().update(dt)
+        self.update_animation(dt)
 
         self.add_exp(dt * self._exp_per_second)
 
@@ -168,16 +144,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self.try_move(Direction.WEST)
         if keys[pygame.K_RIGHT]:
             self.try_move(Direction.EAST)
-
-    def update_mesh(self) -> None:
-        actual_texture = self._mesh.texture
-        actual_mesh = self._mesh_by_direction[
-                self._inverse_mesh_by_direction[self._mesh]
-            ]
-        if not actual_mesh.texture:
-            actual_mesh.texture = actual_texture
-
-        return super().update_mesh()
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
         if self._queued is not None:
@@ -228,6 +194,21 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def on_death(self) -> None:
         self._direction = None
         super().on_death()
+
+    def init_displayable(self) -> None:
+        self._animations = {
+            direction: AnimationPlayer(
+                self.app.texture.get(TextureKeys.PACMAN, direction.to_string())
+            )
+            for direction in Direction
+        }
+        self._animations[None] = AnimationPlayer(self.app.texture.get(
+            TextureKeys.PACMAN,
+            'static'
+        ))
+
+    def get_animation(self) -> AnimationPlayer:
+        return self._animations[self._direction]
 
     def on_level_up(self) -> None:
         self._game._amelioration_interface.start()

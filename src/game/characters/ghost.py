@@ -1,6 +1,6 @@
 from abc import abstractmethod
-from pathlib import Path
 
+from src.app import App
 from src.core import (
     AI,
     AStar,
@@ -13,7 +13,10 @@ from src.core import (
 )
 from src.core.movable import Movable
 from src.game.characters.ghost_state import GhostState
-from src.graphics import ImageTexture, Color
+from src.game.characters.ghost_type import GhostType
+from src.graphics import Color
+from src.texture.animation_player import AnimationPlayer
+from src.texture.texture_keys import TextureKeys
 from src.utils import Direction, Pos
 
 
@@ -22,21 +25,33 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
     _state_cooldown: float | None
     a_star: AStar
     _texture_path: str
-    _meshs: dict[Direction, list[ImageTexture]]
     _spawn_tile: Tile
     _frightened_tile: Tile | None
     _base_speed: float
     _dead_speed: float
     _path_color: Color
 
+    _ghost_type: GhostType
+    _texture_key: TextureKeys
+
+    _animations_alive: dict[Direction, AnimationPlayer]
+    _animations_eaten: dict[Direction, AnimationPlayer]
+    _animation_frightened: AnimationPlayer
+
     def __init__(
                 self, name: str,
                 tile: Pos | Tile,
                 level: Level,
                 reward: float,
+                app: App,
+                ghost_type: GhostType,
+                texture_key: TextureKeys,
                 update_tracking_interval: float | None = 0.6,
-                path_color: Color = Color(255, 0, 0, 100)
+                path_color: Color = Color(255, 0, 0, 100),
             ) -> None:
+        self._ghost_type = ghost_type
+        self._texture_key = texture_key
+
         super().__init__(
             name=name,
             tile=tile,
@@ -45,7 +60,8 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
             proportion=0.9,
             reward=reward,
             edible=False,
-            update_tracking_interval=update_tracking_interval
+            update_tracking_interval=update_tracking_interval,
+            app=app
         )
         self._base_speed = 4.0
         self._dead_speed = 10.0
@@ -118,24 +134,11 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
             case GhostState.FRIGHTENED:
                 return self.get_frightened_tracking_tile()
 
-    def init_mesh(self) -> None:
-        self._meshs = {
-            direction: [
-                ImageTexture.create_blank(Path(
-                    self._texture_path, f'{direction.to_string()}_{i}.png'
-                ).as_posix())
-                for i in range(1)
-            ]
-            for direction in Direction
-        }
-
     def on_collision(self, other: 'Collider') -> None:
         if not isinstance(other, Entity):
             return
 
         super().on_collision(other)
-
-        self._mesh = self._meshs[Direction.EAST][0]
 
     def go_to(self, tile: Tile) -> None:
         path = self.a_star.find_path(
@@ -149,7 +152,7 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
     def update(self, dt: float) -> None:
         super().update(dt)
         self.update_ai(dt)
-        self.update_mesh()
+        self.update_animation(dt)
 
         self.update_state(dt)
 
@@ -164,17 +167,37 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
             else:
                 self.set_state(GhostState.CHASE)
 
-    def get_mesh(self) -> ImageTexture:
-        if not self._direction:
-            return self._meshs[Direction.EAST][0]
+    def init_displayable(self) -> None:
+        self._animations_alive = {
+            direction: AnimationPlayer(
+                self.app.texture.get(self._texture_key, direction.to_string())
+            )
+            for direction in Direction
+        }
+        self._animations_eaten = {
+            direction: AnimationPlayer(self.app.texture.get(
+                TextureKeys.GHOST_EATEN,
+                direction.to_string()
+            ))
+            for direction in Direction
+        }
+        self._animation_frightened = AnimationPlayer(
+            self.app.texture.get(TextureKeys.GHOST_FRIGHTENED)
+        )
 
-        return self._meshs[self._direction][0]
+    def get_animation(self) -> AnimationPlayer:
+        match self.get_state():
+            case GhostState.CHASE | GhostState.WAITING_RESPAWN:
+                if self._direction is None:
+                    return self._animations_alive[Direction.EAST]
+                return self._animations_alive[self._direction]
+            case GhostState.EATEN:
+                if self._direction is None:
+                    return self._animations_eaten[Direction.EAST]
 
-    def get_texture(self) -> ImageTexture:
-        if self._direction is None:
-            return self._meshs[Direction.EAST][0]
-
-        return self._meshs[self._direction][0]
+                return self._animations_eaten[self._direction]
+            case GhostState.FRIGHTENED:
+                return self._animation_frightened
 
     def update_tracking(self) -> None:
         if self._tracking_tile is None:

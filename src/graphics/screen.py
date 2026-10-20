@@ -59,7 +59,9 @@ class Screen:
         for c in self.clickables:
             c.click(x, y)
 
-    def add_mesh(self, mesh: Mesh | Interface) -> None:
+    def add_mesh(self, mesh: 'Mesh | Interface') -> None:
+        from src.ui.interface import Interface
+
         if isinstance(mesh, Interface | SuperMesh):
             self.add_layer(mesh.get_layer())
             return

@@ -2,6 +2,7 @@ import pygame
 from pygame.event import Event
 from pygame.time import Clock
 
+from src.app import App
 from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.game.characters import (
@@ -24,6 +25,7 @@ from src.ui import (
 
 
 class Game:
+    _app: App
     _player_start_position: tuple[int, int]
     _amelioration_interface: AmeliorationInterface
     _escape_interface: EscapeInterface
@@ -38,17 +40,18 @@ class Game:
     _font: Font
     _player: Player
 
-    def __init__(self, config: ConfigModel, screen: Screen) -> None:
+    def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
+        self._app = app
         self.set_status(GameStatus.INITIALIZING)
 
         self._set_config(config)
         self._set_screen(screen)
 
         self._font = Font(
-                self._config.font_path,
-                self._screen.moderngl_context,
-                pixel_size=self._config.screen_height // 22
-            )
+            self._config.font_path,
+            self._screen.moderngl_context,
+            pixel_size=self._config.screen_height // 22
+        )
 
         self._init_level()
         self._init_event_handler()
@@ -112,7 +115,8 @@ class Game:
                     'pacgum',
                     (x, y),
                     self._level,
-                    self._config.pacgum_reward
+                    self._config.pacgum_reward,
+                    self._app
                 )
 
         for pos in super_pacgum_positions:
@@ -120,7 +124,8 @@ class Game:
                 'super_pacgum',
                 pos,
                 self._level,
-                self._config.super_pacgum_reward
+                self._config.super_pacgum_reward,
+                self._app
             )
 
         self._player_start_position = (
@@ -134,21 +139,40 @@ class Game:
             self._config.player_level_exp_multiplier,
             self._config.player_first_level_exp,
             self._config.player_exp_per_second,
+            self._app,
             self
         )
 
         ghost_reward: float = self._config.ghost_reward
 
-        self._ghost_1 = BlinkyGhost(0, (0, 0), self._level, ghost_reward)
-        self._ghost_2 = PinkyGhost(0, (
-            self._level.get_width() - 1, 0
-        ), self._level, ghost_reward)
-        self._ghost_3 = InkyGhost(0, (
-            self._level.get_width() - 1, self._level.get_height() - 1
-        ), self._level, ghost_reward)
-        self._ghost_4 = ClydeGhost(0, (
-            0, self._level.get_height() - 1
-        ), self._level, ghost_reward)
+        self._ghost_1 = BlinkyGhost(
+            0,
+            (0, 0),
+            self._level,
+            ghost_reward,
+            app=self._app
+        )
+        self._ghost_2 = PinkyGhost(
+            0,
+            (self._level.get_width() - 1, 0),
+            self._level,
+            ghost_reward,
+            app=self._app
+        )
+        self._ghost_3 = InkyGhost(
+            0,
+            (self._level.get_width() - 1, self._level.get_height() - 1),
+            self._level,
+            ghost_reward,
+            app=self._app
+        )
+        self._ghost_4 = ClydeGhost(
+            0,
+            (0, self._level.get_height() - 1),
+            self._level,
+            ghost_reward,
+            app=self._app
+        )
 
     def init_interfaces(self) -> None:
         self._game_interface = GameInterface(self)

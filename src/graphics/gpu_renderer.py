@@ -5,7 +5,8 @@ from importlib.resources import files
 import moderngl
 import numpy as np
 
-from src.graphics import Mesh
+from src.core.displayable import Displayable
+from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
     Character,
@@ -179,6 +180,30 @@ class GPURenderer:
         return vertices, moderngl.TRIANGLE_STRIP
 
     @_vertices.register
+    def _(self, entity: Displayable) -> tuple[np.ndarray, int]:
+
+        pos = entity.get_position_on_screen()
+
+        x, y = pos.x, pos.y
+
+        image_width: int = entity.get_width()
+        image_height: int = entity.get_height()
+
+        left: float = x - image_width / 2
+        right: float = x + image_width / 2
+        top: float = y - image_height / 2
+        bottom: float = y + image_height / 2
+
+        vertices = np.array([
+            left,  top,    0, 0,
+            right, top,    1, 0,
+            left,  bottom, 0, 1,
+            right, bottom, 1, 1,
+        ], dtype='f4')
+
+        return vertices, moderngl.TRIANGLE_STRIP
+
+    @_vertices.register
     def _(self, character: Character) -> tuple[np.ndarray, int]:
         x, y = character.position.x, character.position.y
         width = character.infos['width']
@@ -242,6 +267,36 @@ class GPURenderer:
                 target: moderngl.Framebuffer
             ) -> None:
         raise TypeError(f'Unsupported mesh type: {type(mesh).__name__}')
+
+    @_draw_mesh.register
+    def _(
+                 self,
+                 entity: Displayable,
+                 source: moderngl.Texture,
+                 target: moderngl.Framebuffer
+             ) -> None:
+         vertices, mode = self._vertices(entity)
+         vertex_buffer = self.context.buffer(vertices.tobytes())
+         vao = self.context.vertex_array(
+             self.image_program,
+             [
+                 (
+                     vertex_buffer,
+                     '2f 2f',
+                     'in_position',
+                     'in_texcoord',
+                 ),
+             ],
+         )
+         entity.get_texture().texture.use(1)
+         self.image_program['image_texture'].value = 1
+         self.image_program['operation'].value = 1
+         self.image_program['use_tint'].value = False
+         self.image_program['screen_size'].value = (self.width, self.height)
+         target.use()
+         vao.render(mode=mode)
+         vertex_buffer.release()
+         vao.release()
 
     @_draw_mesh.register
     def _(

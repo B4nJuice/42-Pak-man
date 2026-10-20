@@ -1,0 +1,195 @@
+{
+  "name": "Pak-Man",
+  "version": 1,
+  "textures": {
+    "pacgum": "items/pacgum.png",
+    "super-pacgum": "items/super_pacgum.png",
+    "pacman": {
+      "frame_time": 0.1,
+      "default_variant": "static",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/pacman/north_0.png",
+            "characters/pacman/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/pacman/east_0.png",
+            "characters/pacman/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/pacman/south_0.png",
+            "characters/pacman/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/pacman/west_0.png",
+            "characters/pacman/west_1.png"
+          ]
+        },
+        "static": "characters/pacman/north_full.png"
+      }
+    },
+    "ghost-blinky": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/blinky/north_0.png",
+            "characters/ghosts/blinky/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/blinky/east_0.png",
+            "characters/ghosts/blinky/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/blinky/south_0.png",
+            "characters/ghosts/blinky/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/blinky/west_0.png",
+            "characters/ghosts/blinky/west_1.png"
+          ]
+        }
+      }
+    },
+    "ghost-pinky": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/pinky/north_0.png",
+            "characters/ghosts/pinky/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/pinky/east_0.png",
+            "characters/ghosts/pinky/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/pinky/south_0.png",
+            "characters/ghosts/pinky/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/pinky/west_0.png",
+            "characters/ghosts/pinky/west_1.png"
+          ]
+        }
+      }
+    },
+    "ghost-inky": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/inky/north_0.png",
+            "characters/ghosts/inky/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/inky/east_0.png",
+            "characters/ghosts/inky/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/inky/south_0.png",
+            "characters/ghosts/inky/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/inky/west_0.png",
+            "characters/ghosts/inky/west_1.png"
+          ]
+        }
+      }
+    },
+    "ghost-clyde": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": [
+            "characters/ghosts/clyde/north_0.png",
+            "characters/ghosts/clyde/north_1.png"
+          ]
+        },
+        "east": {
+          "frames": [
+            "characters/ghosts/clyde/east_0.png",
+            "characters/ghosts/clyde/east_1.png"
+          ]
+        },
+        "south": {
+          "frames": [
+            "characters/ghosts/clyde/south_0.png",
+            "characters/ghosts/clyde/south_1.png"
+          ]
+        },
+        "west": {
+          "frames": [
+            "characters/ghosts/clyde/west_0.png",
+            "characters/ghosts/clyde/west_1.png"
+          ]
+        }
+      }
+    },
+    "ghost-eaten": {
+      "default_variant": "south",
+      "variants": {
+        "north": {
+          "frames": ["characters/ghosts/dead/north.png"]
+        },
+        "east": {
+          "frames": ["characters/ghosts/dead/east.png"]
+        },
+        "south": {
+          "frames": ["characters/ghosts/dead/south.png"]
+        },
+        "west": {
+          "frames": ["characters/ghosts/dead/west.png"]
+        }
+      }
+    },
+    "ghost-frightened": {
+      "frame_time": 1.0,
+      "frames": [
+        {
+          "frames": [
+            "characters/ghosts/frightened/0_0.png",
+            "characters/ghosts/frightened/0_1.png"
+          ],
+          "frame_time": 0.2
+        },
+        {
+          "frames": [
+            "characters/ghosts/frightened/1_0.png",
+            "characters/ghosts/frightened/1_1.png"
+          ],
+          "frame_time": 0.2
+        }
+      ]
+    }
+  }
+}

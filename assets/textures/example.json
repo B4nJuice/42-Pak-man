@@ -1,0 +1,28 @@
+{
+  "name": "Pak-Man",
+  "version": 1,
+  "textures": {
+    "wall": "wall.png",
+
+    "torch": {
+      "frames": [
+        "torch_0.png",
+        "torch_1.png",
+        { "file": "torch_2.png", "duration": 0.4 }
+      ],
+      "frame_time": 0.1,
+      "loop": true
+    },
+
+    "blinky-ghost": {
+      "frame_time": 0.12,
+      "default_variant": "south",
+      "variants": {
+        "north": { "frames": ["player/n0.png", "player/n1.png", "player/n2.png"] },
+        "east":  { "frames": ["player/e0.png", "player/e1.png"], "frame_time": 0.2 },
+        "south": { "frames": ["player/s0.png", "player/s1.png", "player/s2.png"] },
+        "west":  ["player/w0.png", "player/w1.png"]
+      }
+    }
+  }
+}
