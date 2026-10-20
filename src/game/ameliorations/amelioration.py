@@ -22,11 +22,11 @@ class Amelioration(ABC):
     def get_level(self) -> int:
         return self._level
 
-    def next_upgrade(self) -> tuple[
+    def next_upgrade(self, luck: float = 1) -> tuple[
                 AmeliorationRarity, list[tuple['Skill', float]]
             ]:
         from src.game.ameliorations import AmeliorationRarity
-        value: float = random.random()
+        value: float = random.random() * luck
         rarity: AmeliorationRarity = AmeliorationRarity.get_rarity(value)
 
         skills_upgrades: list[tuple[Skill, float]] = []

@@ -12,6 +12,7 @@ from src.core.movable import Movable
 from src.game.ameliorations import (
     AmeliorationStore,
     ExpSkill,
+    LuckSkill,
     SpeedSkill,
     SuperTimeSkill,
 )
@@ -75,6 +76,14 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
         self._ameliorations.add(amelioration)
+
+    def get_luck(self) -> float:
+        multiplier: float = sum([
+            s.get_skill(LuckSkill).get_value()
+            for s in self._ameliorations.gets(LuckSkill)
+        ])
+
+        return 1 + 1 * multiplier / 100
 
     def get_speed(self) -> float:
         initial_speed: float = super().get_speed()

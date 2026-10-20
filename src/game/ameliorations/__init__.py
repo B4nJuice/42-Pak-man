@@ -2,7 +2,9 @@ from .amelioration import Amelioration
 from .amelioration_rarity import AmeliorationRarity
 from .amelioration_store import AmeliorationStore
 from .exp_amelioration import ExpAmelioration
+from .luck_amelioration import LuckAmelioration
 from .skills.exp_skill import ExpSkill
+from .skills.luck_skill import LuckSkill
 from .skills.skill import Skill
 from .skills.skill_store import SkillStore
 from .skills.skill_type import SkillType
@@ -17,6 +19,8 @@ __all__ = [
     'AmeliorationStore',
     'ExpAmelioration',
     'ExpSkill',
+    'LuckAmelioration',
+    'LuckSkill',
     'Skill',
     'SkillStore',
     'SkillType',

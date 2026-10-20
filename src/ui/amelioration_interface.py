@@ -226,7 +226,7 @@ class AmeliorationInterface(Interface):
                 self.game._player.get_next_ameliorations()
         ):
             amelioration = amelioration_type()
-            rarity, upgrades = amelioration.next_upgrade()
+            rarity, upgrades = amelioration.next_upgrade(luck = self.game._player.get_luck())
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
             )
