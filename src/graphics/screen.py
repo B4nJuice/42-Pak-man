@@ -1,6 +1,10 @@
 import pygame
-from pygame import Surface
 from moderngl import Context
+from pygame import Surface
+from pygame.event import Event
+
+from src.graphics import Clickable, Plane
+from src.ui.interface import Interface
 
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
@@ -15,6 +19,8 @@ class Screen:
     moderngl_context: Context
     static_mesh_layer: MeshLayer
     dynamic_mesh_layer: MeshLayer
+    clickables: list[Clickable]
+    background: Plane
 
     def __init__(
                 self,
@@ -31,12 +37,27 @@ class Screen:
         self.moderngl_context = self.gpu_renderer.context
         self.static_mesh_layer = MeshLayer()
         self.dynamic_mesh_layer = MeshLayer()
+        self.clickables = []
 
     def add_layer(
                 self,
                 layer: MeshLayer
             ) -> None:
         self.dynamic_mesh_layer.meshes.append(layer)
+        self.search_for_clickable(layer)
+
+    def search_for_clickable(self, layer: MeshLayer) -> None:
+        for mesh in layer.meshes:
+            if hasattr(mesh, "get_layer"):
+                self.search_for_clickable(mesh.get_layer())
+                continue
+            if isinstance(mesh, Clickable) and mesh._on_click:
+                self.clickables.append(mesh)
+
+    def click(self, _: Event, __: int) -> None:
+        x, y = pygame.mouse.get_pos()
+        for c in self.clickables:
+            c.click(x, y)
 
     def add_mesh(self, mesh: 'Mesh | Interface') -> None:
         from src.ui.interface import Interface
@@ -44,6 +65,9 @@ class Screen:
         if isinstance(mesh, Interface | SuperMesh):
             self.add_layer(mesh.get_layer())
             return
+
+        if isinstance(mesh, Clickable) and mesh._on_click:
+            self.clickables.append(mesh)
 
         layer = (
             self.dynamic_mesh_layer

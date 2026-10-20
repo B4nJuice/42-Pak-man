@@ -1,5 +1,6 @@
 from .color import Color, OperationEnum
 from .mesh import Mesh
+from .clickable import Clickable
 from .meshes import Character, Circle, ImageTexture, Line, Plane, Polygon
 from .position import Position
 from .mesh_layer import MeshLayer
@@ -19,6 +20,7 @@ __all__: list[str] = [
     'Position',
     'Screen',
     'SuperMesh',
+    'Clickable'
 ]
 
 

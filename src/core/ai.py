@@ -92,6 +92,7 @@ class AI:
         self._need_update_tracking = False
 
     def force_update_tracking(self) -> None:
+        self.set_tracking_tile(self.get_tracking_tile())
         self.update_tracking()
 
     def set_tracking_tile(self, tile: Tile) -> None:

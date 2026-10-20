@@ -13,7 +13,7 @@ class Mesh(ABC):
                 self,
                 color: Color,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False
+                dynamic: bool = False,
             ) -> None:
         self._color = color
         self._operation = operation
@@ -40,11 +40,3 @@ class Mesh(ABC):
 
     def set_hidden(self, hidden: bool) -> None:
         self._hidden = hidden
-
-    def contains(self, x: float, y: float) -> bool:
-        first, second = self.get_positions()
-
-        return (
-            min(first.x, second.x) <= x <= max(first.x, second.x)
-            and min(first.y, second.y) <= y <= max(first.y, second.y)
-        )

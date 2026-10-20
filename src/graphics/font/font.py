@@ -1,5 +1,6 @@
-import freetype
 from typing import Any
+
+import freetype
 from moderngl import Context
 
 
