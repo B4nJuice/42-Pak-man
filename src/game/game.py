@@ -202,12 +202,15 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
-        if event.key == pygame.K_ESCAPE:
-            if self.get_status() == GameStatus.PAUSED:
-                self._escape_interface.end()
-            else:
-                self._escape_interface.start()
-            # self.exit()
+        match event.key:
+            case pygame.K_ESCAPE:
+                if self.get_status() == GameStatus.PAUSED:
+                    self._escape_interface.end()
+                else:
+                    self._escape_interface.start()
+
+            case pygame.K_F1:
+                self._player._cheat = not self._player._cheat
 
     def _init_event_handler(self) -> None:
         self._event_handler = EventHandler()
