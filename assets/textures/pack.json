@@ -6,36 +6,33 @@
     "super-pacgum": "items/super_pacgum.png",
     "pacman": {
       "frame_time": 0.1,
-      "default_variant": "south",
+      "default_variant": "static",
       "variants": {
         "north": {
           "frames": [
             "characters/pacman/north_0.png",
             "characters/pacman/north_1.png"
-          ],
-          "static": "characters/pacman/north_full.png"
+          ]
         },
         "east": {
           "frames": [
             "characters/pacman/east_0.png",
             "characters/pacman/east_1.png"
-          ],
-          "static": "characters/pacman/east_full.png"
+          ]
         },
         "south": {
           "frames": [
             "characters/pacman/south_0.png",
             "characters/pacman/south_1.png"
-          ],
-          "static": "characters/pacman/south_full.png"
+          ]
         },
         "west": {
           "frames": [
             "characters/pacman/west_0.png",
             "characters/pacman/west_1.png"
-          ],
-          "static": "characters/pacman/west_full.png"
-        }
+          ]
+        },
+        "static": "characters/pacman/north_full.png"
       }
     },
     "ghost-blinky": {
@@ -158,7 +155,7 @@
         }
       }
     },
-    "ghost-dead": {
+    "ghost-eaten": {
       "default_variant": "south",
       "variants": {
         "north": {
@@ -176,21 +173,21 @@
       }
     },
     "ghost-frightened": {
-      "frame_time": 0.2,
+      "frame_time": 1.0,
       "frames": [
         {
           "frames": [
             "characters/ghosts/frightened/0_0.png",
             "characters/ghosts/frightened/0_1.png"
           ],
-          "frame_time": 1.0
+          "frame_time": 0.2
         },
         {
           "frames": [
             "characters/ghosts/frightened/1_0.png",
             "characters/ghosts/frightened/1_1.png"
           ],
-          "frame_time": 1.0
+          "frame_time": 0.2
         }
       ]
     }
