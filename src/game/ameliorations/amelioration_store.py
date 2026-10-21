@@ -43,7 +43,7 @@ class AmeliorationStore:
                 self,
                 amelioration: type[Amelioration]
             ) -> Amelioration | None:
-        gets =  [
+        gets = [
             a for a in self.all() if isinstance(a, amelioration)
         ]
         if len(gets) <= 0:

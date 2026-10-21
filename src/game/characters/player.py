@@ -246,6 +246,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         ameliorations = Amelioration.__subclasses__()
         return tuple(
             [
-                self._ameliorations.get_by_type(a) or a() for a in sample(ameliorations, min(3, len(ameliorations)))
+                self._ameliorations.get_by_type(a) or a() for a in sample(
+                    ameliorations, min(3, len(ameliorations))
+                )
             ]
         )
