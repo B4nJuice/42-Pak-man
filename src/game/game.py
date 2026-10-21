@@ -192,7 +192,7 @@ class Game:
         self._screen.add_mesh(self._amelioration_interface)
 
     def run(self) -> None:
-        self.set_status(GameStatus.RUNNING)
+        # self.set_status(GameStatus.RUNNING)
         dt: float = 0.0
 
         self.update(dt)
@@ -200,9 +200,7 @@ class Game:
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
-            if self.get_status() in [
-                        GameStatus.PAUSED, GameStatus.AMELIORATION
-                    ]:
+            if self.get_status() != GameStatus.RUNNING:
                 dt = 0
 
             if self._player.over:
