@@ -17,6 +17,12 @@ class TextureKeys(Enum):
     GHOST_EATEN = 'ghost-eaten'
     GHOST_FRIGHTENED = 'ghost-frightened'
 
+    AMELIORATION_EXP = 'amelioration-exp'
+    AMELIORATION_LUCK = 'amelioration-luck'
+    AMELIORATION_POWER = 'amelioration-power'
+    AMELIORATION_SPEED = 'amelioration-speed'
+    AMELIORATION_SUPER_TIME = 'amelioration-super-time'
+
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':
         entry: TextureKeys | None = next(

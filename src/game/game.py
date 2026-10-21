@@ -7,6 +7,7 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.core.displayable import Displayable
 from src.errors import PackError
+from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
     ClydeGhost,
@@ -181,6 +182,8 @@ class Game:
         )
 
     def init_interfaces(self) -> None:
+        Amelioration._app = self._app
+
         self._game_interface = GameInterface(self)
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)

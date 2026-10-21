@@ -4,4 +4,5 @@ from src.game.ameliorations.skills.luck_skill import LuckSkill
 
 class LuckAmelioration(Amelioration):
     def __init__(self) -> None:
-        self.init([LuckSkill()])
+        self.init([LuckSkill()], "amelioration-luck")
+        self.set_name("Luck Ring")

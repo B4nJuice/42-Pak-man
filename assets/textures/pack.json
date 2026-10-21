@@ -7,11 +7,11 @@
   "textures": {
     "pacgum": "items/pacgum.png",
     "super-pacgum": "items/super_pacgum.png",
-    "exp-amelioration": "ameliorations/exp_amelioration.png",
-    "luck-amelioration": "ameliorations/luck_amelioration.png",
-    "power-amelioration": "ameliorations/power_amelioration.png",
-    "speed-amelioration": "ameliorations/speed_amelioration.png",
-    "super-time-amelioration": "ameliorations/super_time_amelioration.png",
+    "amelioration-exp": "ameliorations/exp_amelioration.png",
+    "amelioration-luck": "ameliorations/luck_amelioration.png",
+    "amelioration-power": "ameliorations/power_amelioration.png",
+    "amelioration-speed": "ameliorations/speed_amelioration.png",
+    "amelioration-super-time": "ameliorations/super_time_amelioration.png",
     "pacman": {
       "frame_time": 0.2,
       "default_variant": "static",

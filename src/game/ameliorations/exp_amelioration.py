@@ -4,4 +4,5 @@ from src.game.ameliorations.skills.exp_skill import ExpSkill
 
 class ExpAmelioration(Amelioration):
     def __init__(self) -> None:
-        self.init([ExpSkill()])
+        self.init([ExpSkill()], "amelioration-exp")
+        self.set_name("Experience Ring")
