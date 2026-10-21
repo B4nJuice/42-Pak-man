@@ -8,9 +8,10 @@ class FontKeys(Enum):
 
     @classmethod
     def get(cls, key: str) -> 'FontKeys':
-        entry: FontKeys | None  = next(
-            (member for member in cls if member.value == key)
-        , None)
+        entry: FontKeys | None = next(
+            (member for member in cls if member.value == key),
+            None
+        )
         if entry is None:
             raise PackInvalidKey(key)
         return entry

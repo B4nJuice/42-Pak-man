@@ -9,6 +9,7 @@ class TextureDef:
     variants: dict[str, AnimationDef]
     default_variant: str
 
+
 @dataclass(frozen=True)
 class Texture:
     variants: dict[str, Animation]

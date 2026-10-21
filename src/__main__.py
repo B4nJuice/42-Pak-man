@@ -9,7 +9,7 @@ from .graphics.screen import Screen
 from .utils import Logger, TColor
 
 
-def init_pygame():
+def init_pygame() -> None:
     pygame.init()
 
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)

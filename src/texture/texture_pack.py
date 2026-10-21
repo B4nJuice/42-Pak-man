@@ -25,7 +25,13 @@ class TexturePack:
     _textures: dict[TextureKeys, TextureDef]
     _fonts: dict[FontKeys, Path]
 
-    def __init__(self, root: Path, name: str, textures: dict[TextureKeys, TextureDef], fonts: dict[FontKeys, Path]) -> None:
+    def __init__(
+                self,
+                root: Path,
+                name: str,
+                textures: dict[TextureKeys, TextureDef],
+                fonts: dict[FontKeys, Path]
+            ) -> None:
         self.root = root
         self.name = name
         self._textures = textures
@@ -55,16 +61,35 @@ class TexturePack:
         textures: dict[TextureKeys, TextureDef] = {}
         for texture_key, raw in raw_textures.items():
             try:
-                textures[TextureKeys.get(texture_key)] = cls._parse_texture(root, raw)
-            except (PackError, KeyError, TypeError, ValueError, AttributeError) as e:
-                LOGGER.warning(f'Texture {texture_key!r} in {root.name} ignored: {e}')
+                textures[TextureKeys.get(texture_key)] = cls._parse_texture(
+                    root,
+                    raw,
+                )
+            except (
+                PackError,
+                KeyError,
+                TypeError,
+                ValueError,
+                AttributeError,
+            ) as e:
+                LOGGER.warning(
+                    f'Texture {texture_key!r} in {root.name} ignored: {e}'
+                )
 
         fonts: dict[FontKeys, Path] = {}
         for font_key, raw in raw_fonts.items():
             try:
                 fonts[FontKeys.get(font_key)] = cls._parse_font(root, raw)
-            except (PackError, KeyError, TypeError, ValueError, AttributeError) as e:
-                LOGGER.warning(f'Font {font_key!r} in {root.name} ignored: {e}')
+            except (
+                PackError,
+                KeyError,
+                TypeError,
+                ValueError,
+                AttributeError,
+            ) as e:
+                LOGGER.warning(
+                    f'Font {font_key!r} in {root.name} ignored: {e}'
+                )
 
         return cls(root, data.get('name', root.name), textures, fonts)
 
@@ -75,9 +100,11 @@ class TexturePack:
         return self._fonts.get(key)
 
     @staticmethod
-    def _parse_font(root, raw: Any) -> Path:
+    def _parse_font(root: Path, raw: Any) -> Path:
         if not isinstance(raw, str):
-            raise PackError(f'font element must be a string, found : {type(raw)!r}')
+            raise PackError(
+                f'font element must be a string, found: {type(raw)!r}'
+            )
         return TexturePack._safe_path(root, raw)
 
     @staticmethod
@@ -90,20 +117,32 @@ class TexturePack:
             }
             default_variant: str = raw.get('default_variant', DEFAULT_VARIANT)
 
-            if not default_variant in variants:
-                raise PackError('no default variant set !')
+            if default_variant not in variants:
+                raise PackError(
+                    f'No default variant {default_variant!r} defined for '
+                    f'texture; available variants: {tuple(variants.keys())}'
+                )
 
-            return TextureDef(variants=variants, default_variant=default_variant)
+            return TextureDef(
+                variants=variants,
+                default_variant=default_variant
+            )
 
         return TextureDef(
             variants={
-                DEFAULT_VARIANT: TexturePack._parse_animation_raw(root, raw, {})
+                DEFAULT_VARIANT: (
+                    TexturePack._parse_animation_raw(root, raw, {})
+                )
             },
             default_variant=DEFAULT_VARIANT
         )
 
     @staticmethod
-    def _parse_animation_raw(root: Path, raw: TRAW, inherit: dict) -> AnimationDef:
+    def _parse_animation_raw(
+                root: Path,
+                raw: TRAW,
+                inherit: dict
+            ) -> AnimationDef:
         frame_time: float
         loop: bool
 
@@ -124,34 +163,61 @@ class TexturePack:
         elif isinstance(raw, dict) and 'frames' in raw \
                 and isinstance(raw['frames'], list):
             if is_list_of(raw['frames'], str):
-                return TexturePack._parse_animation(root, raw['frames'], frame_time, loop)
+                return TexturePack._parse_animation(
+                    root,
+                    raw['frames'],
+                    frame_time,
+                    loop
+                )
             else:
                 frames: list[AnimationDef] = []
                 for item in raw['frames']:
-                    frames.append(TexturePack._parse_animation_raw(root, item, {'frame_time': frame_time, 'loop': loop}))
-                return AnimationDef(frames=tuple(frames), loop=loop, duration=frame_time)
+                    frames.append(TexturePack._parse_animation_raw(
+                        root,
+                        item,
+                        {'frame_time': frame_time, 'loop': loop}
+                    ))
+                return AnimationDef(
+                    frames=tuple(frames),
+                    loop=loop,
+                    duration=frame_time
+                )
         elif isinstance(raw, dict) and 'file' in raw:
             return TexturePack._parse_animation(root, [raw], frame_time, loop)
         else:
             raise PackError('animation must be a string, list or object')
 
     @staticmethod
-    def _parse_animation(root: Path, items: list[str] | list[dict[str, str]], frame_time: float, loop: bool) -> AnimationDef:
+    def _parse_animation(
+                root: Path,
+                items: list[str] | list[dict[str, str]],
+                frame_time: float,
+                loop: bool
+            ) -> AnimationDef:
         if not isinstance(items, list) or not 0 < len(items) <= MAX_FRAMES:
-            raise PackError(f'\'frames\' must be a list of 1..{MAX_FRAMES} entries')
+            raise PackError(
+                f'\'frames\' must be a list of 1..{MAX_FRAMES} entries'
+            )
 
         frames = []
         for item in items:
             if isinstance(item, str):
                 file, duration = item, frame_time
             elif isinstance(item, dict):
-                file, duration = item['file'], float(item.get('duration', frame_time))
+                file, duration = item['file'], float(item.get(
+                    'duration',
+                    frame_time
+                ))
             else:
                 raise PackError(f'invalid frame entry: {item!r}')
             if not 0 < duration < 3600:
                 raise PackError(f'invalid duration: {duration}')
             frames.append(Frame(TexturePack._safe_path(root, file), duration))
-        return AnimationDef(frames=tuple(frames), loop=loop, duration=frame_time)
+        return AnimationDef(
+            frames=tuple(frames),
+            loop=loop,
+            duration=frame_time
+        )
 
     @staticmethod
     def _safe_path(root: Path, rel: str) -> Path:

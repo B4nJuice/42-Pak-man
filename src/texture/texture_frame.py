@@ -6,4 +6,4 @@ from .texture_data import TextureData
 
 @dataclass(frozen=True)
 class TextureFrame(Frame, TextureData):
-     pass
+    pass
