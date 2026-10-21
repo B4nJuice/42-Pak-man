@@ -251,10 +251,9 @@ class AmeliorationInterface(Interface):
     def start(self) -> None:
         self._next_ameliorations = []
         rarity_colors = self._rarity_colors()
-        for index, amelioration_type in enumerate(
+        for index, amelioration in enumerate(
                 self.game._player.get_next_ameliorations()
         ):
-            amelioration = amelioration_type()
             rarity, upgrades = amelioration.next_upgrade(
                 luck=self.game._player.get_luck(),
                 power=self.game._player.get_upgrade_power(),

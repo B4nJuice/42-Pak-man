@@ -15,6 +15,11 @@ class ConfigModel(BaseModel):
         description='Height of the level'
     )
 
+    max_player_ameliorations: int = Field(
+        default=3,
+        description='Maximum different amelioration a player can have.'
+    )
+
     screen_width: int = Field(
         gt=100,
         default=800,
