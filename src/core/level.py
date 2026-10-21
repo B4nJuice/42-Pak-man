@@ -1,7 +1,7 @@
 from src.core.entity_store import EntityStore
 
 from .collider import Collider
-from .displayable import Displayable
+from .displayable import Displayable, DisplayableEntity
 from .entity import Entity
 from .maze import Maze
 from .state_manager import StateManager
@@ -11,8 +11,8 @@ class Level(Maze):
     state: StateManager
     _entities: EntityStore
     _colliders: list[Collider]
-    _to_register: list[Displayable]
-    _to_unregister: list[Displayable]
+    _to_register: list[DisplayableEntity]
+    _to_unregister: list[DisplayableEntity]
 
     def __init__(self, seed: int):
         super().__init__(seed)
@@ -35,14 +35,14 @@ class Level(Maze):
 
         self.state.update(dt)
 
-    def register_entity(self, entity: Entity) -> None:
+    def register_entity(self, entity: DisplayableEntity) -> None:
         self._entities.add(entity)
         if isinstance(entity, Collider):
             self._colliders.append(entity)
         if isinstance(entity, Displayable):
             self._to_register.append(entity)
 
-    def unregister_entity(self, entity: Entity) -> None:
+    def unregister_entity(self, entity: DisplayableEntity) -> None:
         self._entities.remove(entity)
         if entity in self._colliders:
             self._colliders.remove(entity)

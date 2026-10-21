@@ -12,7 +12,7 @@ class Amelioration(ABC):
     _level: int
     _skills: 'SkillStore'
 
-    def __init__(self, skills: list['Skill']) -> None:
+    def init(self, skills: list['Skill']) -> None:
         from src.game.ameliorations import SkillStore
         self._skills = SkillStore()
         for skill in skills:

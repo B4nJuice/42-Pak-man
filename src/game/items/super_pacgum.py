@@ -1,5 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
+from src.core.displayable import DisplayableEntity
 from src.texture.animation_player import AnimationPlayer
 from src.texture.texture_keys import TextureKeys
 
@@ -41,7 +42,7 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
 
     def eat(self, eater: 'Player') -> bool:
         if super().eat(eater):
-            self.level.unregister_entity(self)
+            self.level.unregister_entity(cast(DisplayableEntity, self))
             self.level.state.set_frightened_phase()
             return True
         return False
