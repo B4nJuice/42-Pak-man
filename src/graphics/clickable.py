@@ -2,11 +2,12 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any
 
-from src.graphics import Mesh
+from src.graphics.mesh import Mesh
 
 
 class Clickable(ABC):
     _on_click: Callable | None = None
+
     def __init__(
                 self,
                 on_click: Callable | None = None,

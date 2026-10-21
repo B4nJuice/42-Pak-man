@@ -59,7 +59,9 @@ class AStar:
             closed.add(current_tile)
 
             current_node: Node = nodes[current_tile]
-            for next_tile, next_direction in self._level.get_possible_moves(current_tile):
+            for next_tile, next_direction in self._level.get_possible_moves(
+                        current_tile
+                    ):
                 if next_tile in closed:
                     continue
 

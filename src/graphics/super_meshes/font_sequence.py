@@ -7,9 +7,9 @@ from src.graphics.super_mesh import MeshLayer, SuperMesh
 
 
 class AlignEnum(Enum):
-    LEFT="LEFT"
-    CENTER="CENTER"
-    RIGHT="RIGHT"
+    LEFT = "LEFT"
+    CENTER = "CENTER"
+    RIGHT = "RIGHT"
 
 
 class FontSequence(SuperMesh):

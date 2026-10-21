@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from src.graphics import Clickable
+from ..clickable import Clickable
 from ..color import Color, OperationEnum
 from ..mesh import Mesh
 from ..position import Position

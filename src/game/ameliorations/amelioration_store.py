@@ -29,10 +29,10 @@ class AmeliorationStore:
             for cls in self._classes(skill):
                 self._ameliorations[cls].discard(amelioration)
 
-    def gets(self, cls: type[S]) -> list[A]:
-        return cast(list[A], list(self._ameliorations.get(cls, ())))
+    def gets(self, cls: type[Skill]) -> list[Amelioration]:
+        return list(self._ameliorations.get(cls, ()))
 
-    def get(self, cls: type[S]) -> Amelioration:
+    def get(self, cls: type[Skill]) -> Amelioration:
         ameliorations: list[Amelioration] = self.gets(cls)
         if (len(ameliorations) <= 0):
             raise AmeliorationStoreNotFound(str(cls))

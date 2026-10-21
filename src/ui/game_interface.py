@@ -45,7 +45,10 @@ class GameInterface(Interface):
             "Lvl .0",
             self.game._font,
             Color(*self.game._config.level_bar_color),
-            Position(level_bar_x - round(self.width * 0.01), level_bar_y + level_bar_height),
+            Position(
+                level_bar_x - round(self.width * 0.01),
+                level_bar_y + level_bar_height
+            ),
             spacing=1,
             align=AlignEnum.RIGHT,
             dynamic=True

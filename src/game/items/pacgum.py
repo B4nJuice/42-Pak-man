@@ -1,5 +1,8 @@
+from typing import cast
+
 from src.app import App
 from src.core import Collider, Displayable, Edible, Entity, Level, Tile
+from src.core.displayable import DisplayableEntity
 from src.game.characters.player import Player
 from src.texture.animation_player import AnimationPlayer
 from src.texture.texture_keys import TextureKeys
@@ -39,7 +42,7 @@ class PacGum(Edible, Collider, Displayable, Entity):
 
     def eat(self, eater: Player) -> bool:
         if super().eat(eater):
-            self.level.unregister_entity(self)
+            self.level.unregister_entity(cast(DisplayableEntity, self))
             return True
         return False
 

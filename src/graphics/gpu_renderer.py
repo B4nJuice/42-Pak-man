@@ -1,12 +1,13 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from functools import cache, singledispatchmethod
 from importlib.resources import files
+from typing import cast
 
 import moderngl
 import numpy as np
 
-from src.core.displayable import Displayable
-from src.graphics import OperationEnum
+from src.core.displayable import Displayable, DisplayableEntity
+from src.graphics.color import OperationEnum
 from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import (
@@ -17,6 +18,13 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
+
+
+def get_uniform(
+    program: moderngl.Program,
+    name: str,
+) -> moderngl.Uniform:
+    return cast(moderngl.Uniform, program[name])
 
 
 @cache
@@ -50,8 +58,8 @@ class GPURenderer:
             vertex_shader=_load_shader('circle.vert'),
             fragment_shader=_load_shader('circle.frag'),
         )
-        self.mesh_program['previous_frame'].value = 0
-        self.image_program['previous_frame'].value = 0
+        get_uniform(self.mesh_program, 'previous_frame').value = 0
+        get_uniform(self.image_program, 'previous_frame').value = 0
 
         self.copy_quad = self._create_copy_quad()
         self.screen_quad = self._create_screen_quad()
@@ -122,7 +130,7 @@ class GPURenderer:
             return np.empty(0, dtype='f4'), moderngl.TRIANGLES
 
         positions = polygon.positions + [polygon.positions[0]]
-        segments = []
+        segments: list[np.ndarray] = []
         for start, end in zip(positions, positions[1:]):
             start_x, start_y = start.x, start.y
             end_x, end_y = end.x, end.y
@@ -276,28 +284,35 @@ class GPURenderer:
                  source: moderngl.Texture,
                  target: moderngl.Framebuffer
              ) -> None:
-         vertices, mode = self._vertices(entity)
-         vertex_buffer = self.context.buffer(vertices.tobytes())
-         vao = self.context.vertex_array(
-             self.image_program,
-             [
-                 (
-                     vertex_buffer,
-                     '2f 2f',
-                     'in_position',
-                     'in_texcoord',
-                 ),
-             ],
-         )
-         entity.get_texture().texture.use(1)
-         self.image_program['image_texture'].value = 1
-         self.image_program['operation'].value = OperationEnum.SET.value
-         self.image_program['use_tint'].value = False
-         self.image_program['screen_size'].value = (self.width, self.height)
-         target.use()
-         vao.render(mode=mode)
-         vertex_buffer.release()
-         vao.release()
+        if entity.is_hidden():
+            return
+
+        vertices, mode = self._vertices(entity)
+        vertex_buffer = self.context.buffer(vertices.tobytes())
+        vao = self.context.vertex_array(
+            self.image_program,
+            [
+                (
+                    vertex_buffer,
+                    '2f 2f',
+                    'in_position',
+                    'in_texcoord',
+                ),
+            ],
+        )
+        entity.get_texture().texture.use(1)
+        get_uniform(self.image_program, 'image_texture').value = 1
+        get_uniform(
+            self.image_program, 'operation'
+        ).value = OperationEnum.SET.value
+        get_uniform(self.image_program, 'use_tint').value = False
+        get_uniform(
+            self.image_program, 'screen_size'
+        ).value = (self.width, self.height)
+        target.use()
+        vao.render(mode=mode)
+        vertex_buffer.release()
+        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -317,14 +332,18 @@ class GPURenderer:
             vertex_buffer,
             'in_position',
         )
-        self.mesh_program['screen_size'].value = (self.width, self.height)
-        self.mesh_program['mesh_color'].value = (
+        get_uniform(
+            self.mesh_program, 'screen_size'
+        ).value = (self.width, self.height)
+        get_uniform(self.mesh_program, 'mesh_color').value = (
             mesh.get_color().r / 255,
             mesh.get_color().g / 255,
             mesh.get_color().b / 255,
             mesh.get_color().a / 255,
         )
-        self.mesh_program['operation'].value = mesh.get_operation().value
+        get_uniform(
+            self.mesh_program, 'operation'
+        ).value = mesh.get_operation().value
         source.use(0)
         target.use()
 
@@ -349,21 +368,23 @@ class GPURenderer:
             vertex_buffer,
             'in_position',
         )
-        self.circle_program['height'].value = self.height
-        self.circle_program['screen_size'].value = (self.width, self.height)
-        self.circle_program['color'].value = (
+        get_uniform(self.circle_program, 'height').value = self.height
+        get_uniform(
+            self.circle_program, 'screen_size'
+        ).value = (self.width, self.height)
+        get_uniform(self.circle_program, 'color').value = (
             mesh.get_color().r / 255,
             mesh.get_color().g / 255,
             mesh.get_color().b / 255,
             mesh.get_color().a / 255,
         )
-        self.circle_program['center'].value = (
+        get_uniform(self.circle_program, 'center').value = (
             mesh.position.x,
             mesh.position.y,
         )
-        self.circle_program['radius'].value = mesh.radius
-        self.circle_program['thickness'].value = mesh.thickness
-        self.circle_program['filled'].value = mesh.filled
+        get_uniform(self.circle_program, 'radius').value = mesh.radius
+        get_uniform(self.circle_program, 'thickness').value = mesh.thickness
+        get_uniform(self.circle_program, 'filled').value = mesh.filled
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -394,11 +415,15 @@ class GPURenderer:
         )
         mesh.texture.use(1)
         source.use(0)
-        self.image_program["previous_frame"].value = 0
-        self.image_program['image_texture'].value = 1
-        self.image_program['operation'].value = mesh.get_operation().value
-        self.image_program['use_tint'].value = False
-        self.image_program['screen_size'].value = (self.width, self.height)
+        get_uniform(self.image_program, 'previous_frame').value = 0
+        get_uniform(self.image_program, 'image_texture').value = 1
+        get_uniform(
+            self.image_program, 'operation'
+        ).value = mesh.get_operation().value
+        get_uniform(self.image_program, 'use_tint').value = False
+        get_uniform(
+            self.image_program, 'screen_size'
+        ).value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -428,16 +453,20 @@ class GPURenderer:
             ],
         )
         mesh.infos['texture'].use(1)
-        self.image_program['image_texture'].value = 1
-        self.image_program['operation'].value = mesh.get_operation().value
-        self.image_program['use_tint'].value = True
-        self.image_program['tint'].value = (
+        get_uniform(self.image_program, 'image_texture').value = 1
+        get_uniform(
+            self.image_program, 'operation'
+        ).value = mesh.get_operation().value
+        get_uniform(self.image_program, 'use_tint').value = True
+        get_uniform(self.image_program, 'tint').value = (
             mesh.get_color().r / 255,
             mesh.get_color().g / 255,
             mesh.get_color().b / 255,
             mesh.get_color().a / 255,
         )
-        self.image_program['screen_size'].value = (self.width, self.height)
+        get_uniform(
+            self.image_program, 'screen_size'
+        ).value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
         vertex_buffer.release()
@@ -457,8 +486,8 @@ class GPURenderer:
 
     def render(
                 self,
-                static_meshes: Iterable[Mesh],
-                dynamic_meshes: Iterable[Mesh]
+                static_meshes: Iterable[Mesh | MeshLayer | DisplayableEntity],
+                dynamic_meshes: Iterable[Mesh | MeshLayer | DisplayableEntity]
             ) -> None:
         self.source_index = 0
         self.target_index = 1
@@ -469,14 +498,16 @@ class GPURenderer:
             target = self.framebuffers[self.target_index]
             target.use()
             source.use(0)
-            self.copy_program['source_texture'].value = 0
+            get_uniform(self.copy_program, 'source_texture').value = 0
             self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
             self._draw_mesh(mesh, source, target)
-            self.source_index, self.target_index = self.target_index, self.source_index
+            self.source_index, self.target_index = (
+                self.target_index, self.source_index
+            )
 
         self.context.screen.use()
         self.textures[self.source_index].use(0)
-        self.blit_program['source_texture'].value = 0
+        get_uniform(self.blit_program, 'source_texture').value = 0
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
         self.context.finish()
 
@@ -493,7 +524,10 @@ class GPURenderer:
         self.image_program.release()
         self.circle_program.release()
 
-    def _iter_meshes(self, meshes):
+    def _iter_meshes(
+        self,
+        meshes: Iterable[Mesh | MeshLayer | DisplayableEntity],
+    ) -> Iterator[Mesh | DisplayableEntity]:
         for mesh in meshes:
             if isinstance(mesh, MeshLayer):
                 yield from self._iter_meshes(mesh.meshes)
