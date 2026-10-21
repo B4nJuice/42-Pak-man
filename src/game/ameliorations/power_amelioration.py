@@ -4,4 +4,5 @@ from src.game.ameliorations.skills.power_skill import PowerSkill
 
 class PowerAmelioration(Amelioration):
     def __init__(self) -> None:
-        self.init([PowerSkill()])
+        self.init([PowerSkill()], "amelioration-power")
+        self.set_name("Power Ring")

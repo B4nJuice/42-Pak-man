@@ -2,25 +2,39 @@ from abc import ABC
 from random import random
 from typing import TYPE_CHECKING
 
+from src.app import App
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
+from src.texture.animation_player import AnimationPlayer
 
 if TYPE_CHECKING:
     from src.game.ameliorations import Skill, SkillStore
 
 
-class Amelioration(ABC):
+class Amelioration(SimpleDisplayable, ABC):
     _level: int
     _skills: 'SkillStore'
+    _app: App
+    _name: str
+    _animation: AnimationPlayer
 
-    def init(self, skills: list['Skill']) -> None:
+    def init(self, skills: list['Skill'], texture_key: str) -> None:
         from src.game.ameliorations import SkillStore
         self._skills = SkillStore()
         for skill in skills:
             self._skills.add(skill)
         self._level = 0
+        self.set_texture_key(texture_key)
+        self.set_name(self.__class__.__name__.removesuffix("Amelioration"))
+
+    def get_app(self) -> App:
+        return self._app
+
+    def set_name(self, name: str) -> None:
+        self._name = name
 
     def get_name(self) -> str:
-        return self.__class__.__name__.removesuffix("Amelioration")
+        return self._name
 
     def get_level(self) -> int:
         return self._level

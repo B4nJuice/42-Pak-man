@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from src.app import App
 from src.core.entity import Entity
 from src.graphics.position import Position
 from src.texture.animation_player import AnimationPlayer
 from src.texture.texture_frame import TextureFrame
+from src.texture.texture_keys import TextureKeys
 
 
 class Displayable(ABC):
@@ -98,6 +100,76 @@ class Displayable(ABC):
 
     def update_animation(self, dt: float) -> None:
         self.get_animation().update(dt)
+
+
+class SimpleDisplayable(Displayable):
+    _width: int
+    _height: int
+    _position: Position
+    _app: App
+    _texture_key: str
+
+    def __init__(
+        self,
+        app: App | None = None,
+        texture_key: str | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        position: Position | None = None,
+    ) -> None:
+        if (
+            app is None
+            or texture_key is None
+            or width is None
+            or height is None
+            or position is None
+        ):
+            raise TypeError(
+                'SimpleDisplayable requires app, texture, size and position'
+            )
+        self.set_app(app)
+        self.set_texture_key(texture_key)
+        self.set_width(width)
+        self.set_height(height)
+        self.set_position(position)
+        super().__init__()
+
+    def set_app(self, app: App) -> None:
+        self._app = app
+
+    def set_width(self, width: int) -> None:
+        self._width = width
+
+    def set_height(self, height: int) -> None:
+        self._height = height
+
+    def get_width(self) -> int:
+        return self._width
+
+    def get_height(self) -> int:
+        return self._height
+
+    def set_position(self, pos: Position) -> None:
+        self._position = pos
+
+    def get_position_on_screen(self) -> Position:
+        return self._position
+
+    def set_texture_key(self, texture_key: str) -> None:
+        self._texture_key = texture_key
+        if hasattr(self, '_animation'):
+            self.init_displayable()
+
+    def get_texture_key(self) -> str:
+        return self._texture_key
+
+    def init_displayable(self) -> None:
+        self._animation = AnimationPlayer(
+            self._app.texture.get(TextureKeys.get(self._texture_key))
+        )
+
+    def get_animation(self) -> AnimationPlayer:
+        return self._animation
 
 
 class DisplayableEntity(Displayable, Entity):

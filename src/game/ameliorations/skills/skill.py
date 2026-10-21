@@ -7,6 +7,7 @@ from src.game.ameliorations.skills.skill_type import SkillType
 class Skill(ABC):
     _type: SkillType
     _value: float
+    _suffix: str
 
     def __init__(
                 self,
@@ -15,6 +16,7 @@ class Skill(ABC):
             ) -> None:
         self._type = skill_type
         self._value = default_value
+        self._suffix = ""
 
     @abstractmethod
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:

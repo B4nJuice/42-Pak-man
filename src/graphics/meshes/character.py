@@ -9,6 +9,7 @@ class Character(Mesh):
     position: Position
     character: str
     infos: dict[str, Any]
+    scale: float
 
     def __init__(
                 self,
@@ -28,3 +29,7 @@ class Character(Mesh):
         self.position = position
         self.character = character
         self.infos = infos
+        self.scale = 1.0
+
+    def set_scale(self, scale: float) -> None:
+        self.scale = scale

@@ -20,6 +20,7 @@ class FontSequence(SuperMesh):
     characters: list[Character]
     align: AlignEnum
     text: str
+    scale: float
 
     def __init__(
                 self,
@@ -45,6 +46,7 @@ class FontSequence(SuperMesh):
         self.characters = []
         self.align = align if isinstance(align, AlignEnum) else\
             AlignEnum.CENTER
+        self.scale = 1.0
         self.init()
         self.set_sequence_text(text)
 
@@ -84,6 +86,7 @@ class FontSequence(SuperMesh):
                 mesh.position = character_position
                 mesh.set_color(self.get_color())
                 mesh.set_operation(self.get_operation())
+                mesh.set_scale(self.scale)
             else:
                 mesh = Character(
                     character,
@@ -97,6 +100,11 @@ class FontSequence(SuperMesh):
                 self.layer.meshes.append(mesh)
 
             cursor_x += infos["advance"] + self.spacing
+
+    def set_scale(self, scale: float) -> None:
+        self.scale = scale
+        for character in self.characters:
+            character.set_scale(scale)
 
     def refresh(self) -> None:
         self.set_sequence_text(self.text)

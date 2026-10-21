@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import DisplayableEntity
+from src.core.displayable import Displayable
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
@@ -141,7 +141,7 @@ class EscapeInterface(Interface):
 
     @staticmethod
     def _set_hidden(
-                mesh: Mesh | MeshLayer | DisplayableEntity,
+                mesh: Mesh | MeshLayer | Displayable,
                 hidden: bool
             ) -> None:
         if isinstance(mesh, MeshLayer):

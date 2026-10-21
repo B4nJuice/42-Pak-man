@@ -7,6 +7,7 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.core.displayable import Displayable
 from src.errors import PackError
+from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
     ClydeGhost,
@@ -181,6 +182,8 @@ class Game:
         )
 
     def init_interfaces(self) -> None:
+        Amelioration._app = self._app
+
         self._game_interface = GameInterface(self)
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)
@@ -230,6 +233,11 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
+        if (
+            self.get_status() == GameStatus.AMELIORATION
+            and self._amelioration_interface.handle_key(event.key)
+        ):
+            return
         match event.key:
             case pygame.K_ESCAPE:
                 if self.get_status() == GameStatus.PAUSED:

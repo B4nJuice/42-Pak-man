@@ -231,7 +231,21 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._game._amelioration_interface.start()
 
     def get_next_ameliorations(self) -> tuple[
-                type[Amelioration], ...
+                Amelioration, ...
             ]:
+        current_ameliorations = self._ameliorations.all()
+
+        if len(current_ameliorations) ==\
+                self._game._config.max_player_ameliorations:
+            return tuple(sample(
+                current_ameliorations + current_ameliorations, 3
+            ))
+
         ameliorations = Amelioration.__subclasses__()
-        return tuple(sample(ameliorations, min(3, len(ameliorations))))
+        return tuple(
+            [
+                self._ameliorations.get_by_type(a) or a() for a in sample(
+                    ameliorations, min(3, len(ameliorations))
+                )
+            ]
+        )
