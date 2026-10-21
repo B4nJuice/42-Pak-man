@@ -2,10 +2,10 @@ from collections.abc import Callable
 from random import sample
 from typing import TYPE_CHECKING
 
+import pygame
+
 if TYPE_CHECKING:
     from src.game.game import Game
-
-import pygame
 
 from src.app import App
 from src.core import Alive, Collider, Displayable, Edible, Entity, Level, Tile
@@ -21,6 +21,7 @@ from src.game.ameliorations import (
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters.ghost_state import GhostState
 from src.game.characters.player_state import PlayerState
+from src.game.game_status import GameStatus
 from src.graphics.super_meshes import Bar
 from src.texture.animation_player import AnimationPlayer
 from src.texture.texture_keys import TextureKeys
@@ -141,12 +142,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         super().on_collision_exit(other)
 
     def try_move(self, direction: Direction) -> bool:
-        # same = direction == self._direction
-        if super().try_move(direction):
-            # if not same:
-            #     self.update_mesh()
-            return True
-        return False
+        if self._game._status == GameStatus.INITIALIZING:
+            self._game.set_status(GameStatus.RUNNING)
+        return super().try_move(direction)
 
     def update(self, dt: float) -> None:
         super().update(dt)
