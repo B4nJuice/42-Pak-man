@@ -2,13 +2,15 @@ from abc import ABC
 from random import random
 from typing import TYPE_CHECKING
 
+from src.core.displayable import Displayable
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
+from src.texture.animation_player import AnimationPlayer
 
 if TYPE_CHECKING:
     from src.game.ameliorations import Skill, SkillStore
 
 
-class Amelioration(ABC):
+class Amelioration(Displayable, ABC):
     _level: int
     _skills: 'SkillStore'
 
@@ -55,3 +57,9 @@ class Amelioration(ABC):
 
     def get_skill(self, _type: type) -> 'Skill':
         return self._skills.get(_type)
+
+    def init_displayable(self) -> None:
+        pass
+
+    def get_animation(self) -> AnimationPlayer:
+        pass
