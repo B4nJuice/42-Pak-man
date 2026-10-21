@@ -1,3 +1,5 @@
+from typing import cast
+
 from src.core.entity_store import EntityStore
 
 from .collider import Collider
@@ -45,7 +47,7 @@ class Level(Maze):
     def unregister_entity(self, entity: DisplayableEntity | Entity) -> None:
         self._entities.remove(entity)
         if entity in self._colliders:
-            self._colliders.remove(entity)
+            self._colliders.remove(cast(Collider, entity))
         if isinstance(entity, Displayable):
             self._to_unregister.append(entity)
 
