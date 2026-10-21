@@ -5,7 +5,7 @@ from src.texture import TextureLoader
 from .app import App, TextureManager
 from .config import ConfigManager
 from .game import Game
-from .graphics import Screen
+from .graphics.screen import Screen
 from .utils import Logger, TColor
 
 
@@ -38,7 +38,9 @@ def main(verbose: bool) -> None:
         ),
         pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
     )
+
     pygame.display.set_caption("Pak-man")
+
     screen: Screen = Screen(
         config.get_config().screen_width,
         config.get_config().screen_height,

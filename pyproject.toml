@@ -16,13 +16,16 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "flake8>=7.3.0",
+    "Flake8-pyproject>=1.2.4",
     "mypy>=2.3.1",
     "pytest>=9.1.1",
 ]
 
 [tool.uv.sources]
 mazegenerator = { path = "lib/mazegenerator-2.1.0-py3-none-any.whl" }
+
+[tool.flake8]
+exclude = [".venv",".git","__pycache__","old","build","dist"]
 
 [tool.mypy]
 ignore_missing_imports = true

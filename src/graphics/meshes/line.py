@@ -27,8 +27,8 @@ class Line(Mesh):
             )
 
         if smooth_end:
-            delta_x: int = end_position.x - start_position.x
-            delta_y: int = end_position.y - start_position.y
+            delta_x: float = end_position.x - start_position.x
+            delta_y: float = end_position.y - start_position.y
             length: float = hypot(delta_x, delta_y)
 
             if length > 0:

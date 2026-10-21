@@ -3,16 +3,18 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from src.game.game import Game
 
+from src.core.displayable import DisplayableEntity
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
-from src.ui import Interface
+
+from .interface import Interface
 
 
 class EscapeInterface(Interface):
-    def __init__(self, game : 'Game') -> None:
+    def __init__(self, game: 'Game') -> None:
         self.game: Game = game
         self.hidden: bool = True
         self.layer: MeshLayer = MeshLayer()
@@ -30,13 +32,17 @@ class EscapeInterface(Interface):
             dynamic=True,
         )
 
-        panel_width = min(max(round(screen_width * 0.4), 280), screen_width - 48)
+        panel_width = min(
+            max(round(screen_width * 0.4), 280), screen_width - 48
+        )
         button_width = round(panel_width * 0.68)
         button_height = max(round(screen_height * 0.08), 42)
         button_gap = max(round(screen_height * 0.035), 14)
         buttons_height = 3 * button_height + 2 * button_gap
         panel_padding = max(round(screen_height * 0.08), 32)
-        panel_height = min(buttons_height + 2 * panel_padding, screen_height - 48)
+        panel_height = min(
+            buttons_height + 2 * panel_padding, screen_height - 48
+        )
         panel_x = (screen_width - panel_width) // 2
         panel_y = (screen_height - panel_height) // 2
         button_x = panel_x + (panel_width - button_width) // 2
@@ -104,7 +110,10 @@ class EscapeInterface(Interface):
                 label,
                 self.game._font,
                 Color(*config.menu_text_color),
-                Position(button_x + button_width // 2, y + button_height // 2 + 8),
+                Position(
+                    button_x + button_width // 2,
+                    y + button_height // 2 + 8
+                ),
                 spacing=4,
                 align=AlignEnum.CENTER,
                 dynamic=True,
@@ -131,7 +140,10 @@ class EscapeInterface(Interface):
             self._set_hidden(mesh, False)
 
     @staticmethod
-    def _set_hidden(mesh: Mesh | MeshLayer, hidden: bool) -> None:
+    def _set_hidden(
+                mesh: Mesh | MeshLayer | DisplayableEntity,
+                hidden: bool
+            ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 EscapeInterface._set_hidden(child, hidden)

@@ -5,17 +5,18 @@ if TYPE_CHECKING:
 from src.graphics import Color, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import Rectangle
-from src.ui import Interface
+from .interface import Interface
 
 
 class StatsInterface(Interface):
-    def __init__(self, game : 'Game') -> None:
+    def __init__(self, game: 'Game') -> None:
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 
         self.x_offset: int = round(self.game._config.screen_width * 0.02)
         self.y_offset: int = round(self.game._config.screen_height * 0.02)
-        self.width: int = round(self.game._config.screen_width * 0.25) - self.x_offset
+        self.width: int = round(self.game._config.screen_width * 0.25)\
+            - self.x_offset
         self.height: int = self.game._config.screen_height - self.y_offset
 
         self.border: Rectangle = Rectangle(

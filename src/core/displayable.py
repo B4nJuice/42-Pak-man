@@ -10,7 +10,7 @@ from src.texture.texture_frame import TextureFrame
 class Displayable(ABC):
     _rotation: float
     _proportion: float
-
+    _hidden: bool
     _mesh_level_position: Position
     _tile_height: int
     _tile_width: int
@@ -24,9 +24,16 @@ class Displayable(ABC):
             ) -> None:
         super().__init__(*args, **kwargs)
 
+        self.set_hidden(False)
         self._proportion = proportion
         self._rotation = rotation
         self.init_displayable()
+
+    def set_hidden(self, hidden: bool) -> None:
+        self._hidden = hidden
+
+    def is_hidden(self) -> bool:
+        return self._hidden
 
     def set_tile_size(self, height: int, width: int) -> None:
         self._tile_height = height

@@ -4,4 +4,4 @@ from src.game.ameliorations.skills.luck_skill import LuckSkill
 
 class LuckAmelioration(Amelioration):
     def __init__(self) -> None:
-        super().__init__([LuckSkill()])
+        self.init([LuckSkill()])

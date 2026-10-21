@@ -2,13 +2,13 @@ from collections import defaultdict
 from typing import TypeVar, cast
 
 from src.errors import SkillStoreNotFound
-from src.game.ameliorations import Skill
+from .skill import Skill
 
 A = TypeVar("A", bound=Skill)
 
 
 class SkillStore:
-    _skill: defaultdict[type[Skill], set[Skill]]
+    _skills: defaultdict[type[Skill], set[Skill]]
 
     def __init__(self) -> None:
         self._skills = defaultdict(set)

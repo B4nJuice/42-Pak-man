@@ -5,6 +5,7 @@ from src.texture.font_keys import FontKeys
 if TYPE_CHECKING:
     from src.game.game import Game
 
+from src.core.displayable import DisplayableEntity
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
 from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
@@ -13,7 +14,8 @@ from src.graphics.font import Font
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
-from src.ui import Interface
+
+from .interface import Interface
 
 
 class AmeliorationInterface(Interface):
@@ -25,7 +27,7 @@ class AmeliorationInterface(Interface):
         self.game: Game = game
         self.hidden: bool = True
         self.layer: MeshLayer = MeshLayer()
-        self._next_ameliorations = ()
+        self._next_ameliorations = []
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
@@ -218,7 +220,10 @@ class AmeliorationInterface(Interface):
             self._set_hidden(mesh, False)
 
     @staticmethod
-    def _set_hidden(mesh: Mesh | MeshLayer, hidden: bool) -> None:
+    def _set_hidden(
+                mesh: Mesh | MeshLayer | DisplayableEntity,
+                hidden: bool
+            ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 AmeliorationInterface._set_hidden(child, hidden)

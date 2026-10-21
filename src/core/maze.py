@@ -44,7 +44,12 @@ class Maze:
 
         return self._grid[y][x]
 
-    def get_tile_ahead(self, tile: Tile, direction: Direction, distance: int) -> Tile:
+    def get_tile_ahead(
+                self,
+                tile: Tile,
+                direction: Direction,
+                distance: int
+            ) -> Tile:
         x: int = tile.get_x() + direction.vector[0] * distance
         y: int = tile.get_y() + direction.vector[1] * distance
 
