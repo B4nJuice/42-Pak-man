@@ -39,10 +39,12 @@ class AmeliorationStore:
 
         return cast(Amelioration, list(self._ameliorations.get(cls, ())).pop())
 
-    def get_by_type(self, amelioration: type[Amelioration]) -> Amelioration | None:
+    def get_by_type(
+                self,
+                amelioration: type[Amelioration]
+            ) -> Amelioration | None:
         gets =  [
-            a for a in self._ameliorations.values()\
-            if isinstance(a, amelioration)
+            a for a in self.all() if isinstance(a, amelioration)
         ]
         if len(gets) <= 0:
             return None

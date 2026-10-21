@@ -137,5 +137,5 @@ class ConfigModel(BaseModel):
         default=100
     )
     player_exp_per_second: float = Field(
-        default=0.5
+        default=50
     )

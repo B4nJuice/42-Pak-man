@@ -125,13 +125,18 @@ class AmeliorationInterface(Interface):
         ]
 
         self.buttons: list[
-            tuple[Plane, Rectangle, SimpleDisplayable, list[FontSequence]]
+            tuple[
+                Plane,
+                Rectangle,
+                SimpleDisplayable,
+                list[FontSequence],
+                FontSequence,
+            ]
         ] = []
         icon_offset = 12
         icon_size = button_height - 2 * icon_offset
         text_left = button_x + icon_offset + icon_size + icon_offset
         text_right = button_x + button_width - icon_offset
-        text_center = (text_left + text_right) // 2
         for index, params in enumerate(button_params):
             label: str = params["label"]
             on_click: Any = params["on_click"]
@@ -170,11 +175,11 @@ class AmeliorationInterface(Interface):
                 self._title_font,
                 Color(*config.menu_text_color),
                 Position(
-                    text_center,
+                    text_left,
                     y + 12 + config.amelioration_title_font_size
                 ),
                 spacing=4,
-                align=AlignEnum.CENTER,
+                align=AlignEnum.LEFT,
                 dynamic=True,
             )
             rarity = FontSequence(
@@ -182,12 +187,12 @@ class AmeliorationInterface(Interface):
                 self._rarity_font,
                 Color(*config.menu_text_color),
                 Position(
-                    text_center,
+                    text_left,
                     y + 12 + config.amelioration_title_font_size
                     + line_gap + config.amelioration_rarity_font_size
                 ),
                 spacing=2,
-                align=AlignEnum.CENTER,
+                align=AlignEnum.LEFT,
                 dynamic=True,
             )
             skill_lines = [
@@ -196,7 +201,7 @@ class AmeliorationInterface(Interface):
                     self._skill_font,
                     Color(*config.menu_text_color),
                     Position(
-                        text_center,
+                        text_left,
                         y + 12 + config.amelioration_title_font_size
                         + config.amelioration_rarity_font_size
                         + 2 * line_gap
@@ -206,23 +211,36 @@ class AmeliorationInterface(Interface):
                         )
                     ),
                     spacing=2,
-                    align=AlignEnum.CENTER,
+                    align=AlignEnum.LEFT,
                     dynamic=True,
                 )
                 for skill_index in range(self._skill_line_count)
             ]
+            level = FontSequence(
+                "",
+                self._rarity_font,
+                Color(*config.menu_text_color),
+                Position(
+                    text_right,
+                    y + 12 + config.amelioration_title_font_size
+                ),
+                spacing=2,
+                align=AlignEnum.RIGHT,
+                dynamic=True,
+            )
             texts = [title, rarity, *skill_lines]
-            self.buttons.append((button, border, icon, texts))
+            self.buttons.append((button, border, icon, texts, level))
 
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.panel)
         self.layer.meshes.append(self.panel_border)
-        for button, border, icon, texts in self.buttons:
+        for button, border, icon, texts, level in self.buttons:
             self.layer.meshes.append(button)
             self.layer.meshes.append(border)
             self.layer.meshes.append(icon)
             for text in texts:
                 self.layer.meshes.append(text)
+            self.layer.meshes.append(level)
         self.hide()
 
     def hide(self) -> None:
@@ -261,7 +279,7 @@ class AmeliorationInterface(Interface):
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
             )
-            button, border, icon, texts = self.buttons[index]
+            button, border, icon, texts, level = self.buttons[index]
             color = Color(*rarity_colors[rarity])
             button.set_color(color)
             border.set_color(color)
@@ -270,6 +288,9 @@ class AmeliorationInterface(Interface):
                 amelioration.get_name()
             )
             texts[1].set_sequence_text(rarity.name)
+            level.set_sequence_text(
+                f"Level {amelioration.get_level() + 1}"
+            )
             for skill_index, text in enumerate(texts[2:]):
                 text.set_sequence_text(
                     self._format_skill(upgrades, skill_index)
@@ -304,8 +325,11 @@ class AmeliorationInterface(Interface):
             return ""
         skill, value = upgrades[index]
         skill_name = skill.__class__.__name__.removesuffix("Skill")
-        suffix = "%" if skill.get_type() == SkillType.PERCENTAGE else ""
-        return f"{skill_name} +{value:g}{suffix}"
+        suffix = "%" if skill.get_type() == SkillType.PERCENTAGE else\
+                skill._suffix
+        before = float(skill.get_value())
+        after = float(before + value)
+        return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"
 
     def end(self) -> None:
         self.hide()
