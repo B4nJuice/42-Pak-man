@@ -102,12 +102,37 @@ class Displayable(ABC):
         self.get_animation().update(dt)
 
 
-class SimpleDisplayable(Displayable, ABC):
+class SimpleDisplayable(Displayable):
     _width: int
     _height: int
     _position: Position
     _app: App
     _texture_key: str
+
+    def __init__(
+        self,
+        app: App | None = None,
+        texture_key: str | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        position: Position | None = None,
+    ) -> None:
+        if (
+            app is None
+            or texture_key is None
+            or width is None
+            or height is None
+            or position is None
+        ):
+            raise TypeError(
+                'SimpleDisplayable requires app, texture, size and position'
+            )
+        self.set_app(app)
+        self.set_texture_key(texture_key)
+        self.set_width(width)
+        self.set_height(height)
+        self.set_position(position)
+        super().__init__()
 
     def set_app(self, app: App) -> None:
         self._app = app
@@ -132,6 +157,11 @@ class SimpleDisplayable(Displayable, ABC):
 
     def set_texture_key(self, texture_key: str) -> None:
         self._texture_key = texture_key
+        if hasattr(self, '_animation'):
+            self.init_displayable()
+
+    def get_texture_key(self) -> str:
+        return self._texture_key
 
     def init_displayable(self) -> None:
         self._animation = AnimationPlayer(

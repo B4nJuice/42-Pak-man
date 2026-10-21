@@ -6,7 +6,7 @@ from typing import cast
 import moderngl
 import numpy as np
 
-from src.core.displayable import Displayable, DisplayableEntity
+from src.core.displayable import Displayable
 from src.graphics.color import OperationEnum
 from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import MeshLayer
@@ -486,8 +486,8 @@ class GPURenderer:
 
     def render(
                 self,
-                static_meshes: Iterable[Mesh | MeshLayer | DisplayableEntity],
-                dynamic_meshes: Iterable[Mesh | MeshLayer | DisplayableEntity]
+                static_meshes: Iterable[Mesh | MeshLayer | Displayable],
+                dynamic_meshes: Iterable[Mesh | MeshLayer | Displayable]
             ) -> None:
         self.source_index = 0
         self.target_index = 1
@@ -526,8 +526,8 @@ class GPURenderer:
 
     def _iter_meshes(
         self,
-        meshes: Iterable[Mesh | MeshLayer | DisplayableEntity],
-    ) -> Iterator[Mesh | DisplayableEntity]:
+        meshes: Iterable[Mesh | MeshLayer | Displayable],
+    ) -> Iterator[Mesh | Displayable]:
         for mesh in meshes:
             if isinstance(mesh, MeshLayer):
                 yield from self._iter_meshes(mesh.meshes)

@@ -17,6 +17,7 @@ class TextureKeys(Enum):
     GHOST_EATEN = 'ghost-eaten'
     GHOST_FRIGHTENED = 'ghost-frightened'
 
+    AMELIORATION_UNKNOWN = 'amelioration-unknown'
     AMELIORATION_EXP = 'amelioration-exp'
     AMELIORATION_LUCK = 'amelioration-luck'
     AMELIORATION_POWER = 'amelioration-power'

@@ -5,7 +5,7 @@ from src.texture.font_keys import FontKeys
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import DisplayableEntity
+from src.core.displayable import Displayable, SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
 from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
@@ -125,8 +125,13 @@ class AmeliorationInterface(Interface):
         ]
 
         self.buttons: list[
-            tuple[Plane, Rectangle, list[FontSequence]]
+            tuple[Plane, Rectangle, SimpleDisplayable, list[FontSequence]]
         ] = []
+        icon_offset = 12
+        icon_size = button_height - 2 * icon_offset
+        text_left = button_x + icon_offset + icon_size + icon_offset
+        text_right = button_x + button_width - icon_offset
+        text_center = (text_left + text_right) // 2
         for index, params in enumerate(button_params):
             label: str = params["label"]
             on_click: Any = params["on_click"]
@@ -150,12 +155,22 @@ class AmeliorationInterface(Interface):
                 dynamic=True,
                 smooth_end=True,
             )
+            icon = SimpleDisplayable(
+                self.game._app,
+                'amelioration-exp',
+                icon_size,
+                icon_size,
+                Position(
+                    button_x + icon_offset + icon_size // 2,
+                    y + button_height // 2,
+                ),
+            )
             title = FontSequence(
                 label,
                 self._title_font,
                 Color(*config.menu_text_color),
                 Position(
-                    button_x + button_width // 2,
+                    text_center,
                     y + 12 + config.amelioration_title_font_size
                 ),
                 spacing=4,
@@ -167,7 +182,7 @@ class AmeliorationInterface(Interface):
                 self._rarity_font,
                 Color(*config.menu_text_color),
                 Position(
-                    button_x + button_width // 2,
+                    text_center,
                     y + 12 + config.amelioration_title_font_size
                     + line_gap + config.amelioration_rarity_font_size
                 ),
@@ -181,7 +196,7 @@ class AmeliorationInterface(Interface):
                     self._skill_font,
                     Color(*config.menu_text_color),
                     Position(
-                        button_x + button_width // 2,
+                        text_center,
                         y + 12 + config.amelioration_title_font_size
                         + config.amelioration_rarity_font_size
                         + 2 * line_gap
@@ -197,14 +212,15 @@ class AmeliorationInterface(Interface):
                 for skill_index in range(self._skill_line_count)
             ]
             texts = [title, rarity, *skill_lines]
-            self.buttons.append((button, border, texts))
+            self.buttons.append((button, border, icon, texts))
 
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.panel)
         self.layer.meshes.append(self.panel_border)
-        for button, border, texts in self.buttons:
+        for button, border, icon, texts in self.buttons:
             self.layer.meshes.append(button)
             self.layer.meshes.append(border)
+            self.layer.meshes.append(icon)
             for text in texts:
                 self.layer.meshes.append(text)
         self.hide()
@@ -221,7 +237,7 @@ class AmeliorationInterface(Interface):
 
     @staticmethod
     def _set_hidden(
-                mesh: Mesh | MeshLayer | DisplayableEntity,
+                mesh: Mesh | MeshLayer | Displayable,
                 hidden: bool
             ) -> None:
         if isinstance(mesh, MeshLayer):
@@ -246,10 +262,11 @@ class AmeliorationInterface(Interface):
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
             )
-            button, border, texts = self.buttons[index]
+            button, border, icon, texts = self.buttons[index]
             color = Color(*rarity_colors[rarity])
             button.set_color(color)
             border.set_color(color)
+            icon.set_texture_key(amelioration.get_texture_key())
             texts[0].set_sequence_text(
                 amelioration.get_name()
             )

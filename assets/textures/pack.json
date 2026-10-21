@@ -7,6 +7,7 @@
   "textures": {
     "pacgum": "items/pacgum.png",
     "super-pacgum": "items/super_pacgum.png",
+    "amelioration-unknown": "ameliorations/unknown_amelioration.png",
     "amelioration-exp": "ameliorations/exp_amelioration.png",
     "amelioration-luck": "ameliorations/luck_amelioration.png",
     "amelioration-power": "ameliorations/power_amelioration.png",
