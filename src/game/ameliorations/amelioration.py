@@ -1,22 +1,24 @@
 from abc import ABC
 from random import random
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from src.app import App
-from src.core.displayable import Displayable
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
 from src.texture.animation_player import AnimationPlayer
+from src.texture.texture_keys import TextureKeys
 
 if TYPE_CHECKING:
     from src.game.ameliorations import Skill, SkillStore
 
 
-class Amelioration(Displayable, ABC):
+class Amelioration(SimpleDisplayable, ABC):
     _level: int
     _skills: 'SkillStore'
     _app: App
     _name: str
     _texture_key: str
+    _animation: AnimationPlayer
 
     def init(self, skills: list['Skill'], texture_key: str) -> None:
         from src.game.ameliorations import SkillStore
@@ -71,7 +73,9 @@ class Amelioration(Displayable, ABC):
         return self._skills.get(_type)
 
     def init_displayable(self) -> None:
-        pass
+        self._animation = AnimationPlayer(
+            self._app.texture.get(TextureKeys.get(self._texture_key))
+        )
 
     def get_animation(self) -> AnimationPlayer:
-        return cast(AnimationPlayer, None)
+        return self._animation

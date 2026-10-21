@@ -100,5 +100,29 @@ class Displayable(ABC):
         self.get_animation().update(dt)
 
 
+class SimpleDisplayable(Displayable, ABC):
+    _width: int
+    _height: int
+    _position: Position
+
+    def set_width(self, width: int) -> None:
+        self._width = width
+
+    def set_height(self, height: int) -> None:
+        self._height = height
+
+    def get_width(self) -> int:
+        return self._width
+
+    def get_height(self) -> int:
+        return self._height
+
+    def set_position(self, pos: Position) -> None:
+        self._position = pos
+
+    def get_position_on_screen(self) -> Position:
+        return self._position
+
+
 class DisplayableEntity(Displayable, Entity):
     """Structural equivalent of Displayable & Entity."""
