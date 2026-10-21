@@ -140,7 +140,10 @@ class EscapeInterface(Interface):
             self._set_hidden(mesh, False)
 
     @staticmethod
-    def _set_hidden(mesh: Mesh | MeshLayer | DisplayableEntity, hidden: bool) -> None:
+    def _set_hidden(
+                mesh: Mesh | MeshLayer | DisplayableEntity,
+                hidden: bool
+            ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 EscapeInterface._set_hidden(child, hidden)

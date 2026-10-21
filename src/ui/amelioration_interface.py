@@ -212,7 +212,10 @@ class AmeliorationInterface(Interface):
             self._set_hidden(mesh, False)
 
     @staticmethod
-    def _set_hidden(mesh: Mesh | MeshLayer | DisplayableEntity, hidden: bool) -> None:
+    def _set_hidden(
+                mesh: Mesh | MeshLayer | DisplayableEntity,
+                hidden: bool
+            ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 AmeliorationInterface._set_hidden(child, hidden)
