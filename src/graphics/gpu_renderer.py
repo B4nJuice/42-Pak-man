@@ -215,8 +215,8 @@ class GPURenderer:
     @_vertices.register
     def _(self, character: Character) -> tuple[np.ndarray, int]:
         x, y = character.position.x, character.position.y
-        width = character.infos['width']
-        height = character.infos['height']
+        width = character.infos['width'] * character.scale
+        height = character.infos['height'] * character.scale
 
         vertices = np.array([
             x, y, 0, 0,

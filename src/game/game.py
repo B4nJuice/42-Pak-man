@@ -235,6 +235,11 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
+        if (
+            self.get_status() == GameStatus.AMELIORATION
+            and self._amelioration_interface.handle_key(event.key)
+        ):
+            return
         match event.key:
             case pygame.K_ESCAPE:
                 if self.get_status() == GameStatus.PAUSED:

@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
+import pygame
+
 from src.texture.font_keys import FontKeys
 
 if TYPE_CHECKING:
@@ -19,6 +21,7 @@ from .interface import Interface
 
 
 class AmeliorationInterface(Interface):
+    _selection_scale = 1.08
     _next_ameliorations: list[
         tuple[Amelioration, AmeliorationRarity, list[tuple[Skill, float]]]
     ]
@@ -26,6 +29,7 @@ class AmeliorationInterface(Interface):
     def __init__(self, game: 'Game') -> None:
         self.game: Game = game
         self.hidden: bool = True
+        self._selected_index = 0
         self.layer: MeshLayer = MeshLayer()
         self._next_ameliorations = []
 
@@ -127,7 +131,7 @@ class AmeliorationInterface(Interface):
         self.buttons: list[
             tuple[
                 Plane,
-                Rectangle,
+                Plane,
                 SimpleDisplayable,
                 list[FontSequence],
                 FontSequence,
@@ -135,6 +139,7 @@ class AmeliorationInterface(Interface):
         ] = []
         icon_offset = 12
         icon_size = button_height - 2 * icon_offset
+        self._icon_size = icon_size
         text_left = button_x + icon_offset + icon_size + icon_offset
         text_right = button_x + button_width - icon_offset
         for index, params in enumerate(button_params):
@@ -151,14 +156,18 @@ class AmeliorationInterface(Interface):
                 dynamic=True,
                 on_click=on_click
             )
-            border = Rectangle(
-                Color(*config.menu_border_color),
-                Position(button_x, y),
-                button_width,
-                button_height,
-                2,
+            selected_button = Plane(
+                Color(*config.menu_button_color),
+                (
+                    Position(button_x - 8, y - 8),
+                    Position(
+                        button_x + button_width + 8,
+                        y + button_height + 8,
+                    )
+                ),
+                OperationEnum.ALPHA,
                 dynamic=True,
-                smooth_end=True,
+                on_click=on_click
             )
             icon = SimpleDisplayable(
                 self.game._app,
@@ -229,14 +238,30 @@ class AmeliorationInterface(Interface):
                 dynamic=True,
             )
             texts = [title, rarity, *skill_lines]
-            self.buttons.append((button, border, icon, texts, level))
+            self.buttons.append(
+                (
+                    button,
+                    selected_button,
+                    icon,
+                    texts,
+                    level,
+                )
+            )
 
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.panel)
         self.layer.meshes.append(self.panel_border)
-        for button, border, icon, texts, level in self.buttons:
+        for (
+            button,
+            selected_button,
+            icon,
+            texts,
+            level,
+        ) in (
+            self.buttons
+        ):
+            self.layer.meshes.append(selected_button)
             self.layer.meshes.append(button)
-            self.layer.meshes.append(border)
             self.layer.meshes.append(icon)
             for text in texts:
                 self.layer.meshes.append(text)
@@ -268,6 +293,7 @@ class AmeliorationInterface(Interface):
 
     def start(self) -> None:
         self._next_ameliorations = []
+        self._selected_index = 0
         rarity_colors = self._rarity_colors()
         for index, amelioration in enumerate(
                 self.game._player.get_next_ameliorations()
@@ -279,10 +305,18 @@ class AmeliorationInterface(Interface):
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
             )
-            button, border, icon, texts, level = self.buttons[index]
+            (
+                button,
+                selected_button,
+                icon,
+                texts,
+                level,
+            ) = (
+                self.buttons[index]
+            )
             color = Color(*rarity_colors[rarity])
             button.set_color(color)
-            border.set_color(color)
+            selected_button.set_color(color)
             icon.set_texture_key(amelioration.get_texture_key())
             texts[0].set_sequence_text(
                 amelioration.get_name()
@@ -296,7 +330,39 @@ class AmeliorationInterface(Interface):
                     self._format_skill(upgrades, skill_index)
                 )
         self.display()
+        self._update_selection()
         self.game.set_status(GameStatus.AMELIORATION)
+
+    def handle_key(self, key: int) -> bool:
+        if self.hidden:
+            return False
+        if key in (pygame.K_UP, pygame.K_LEFT):
+            self._selected_index = (self._selected_index - 1) % 3
+            self._update_selection()
+            return True
+        if key in (pygame.K_DOWN, pygame.K_RIGHT):
+            self._selected_index = (self._selected_index + 1) % 3
+            self._update_selection()
+            return True
+        if key in (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE):
+            self._choose_amelioration(self._selected_index)
+            return True
+        return False
+
+    def _update_selection(self) -> None:
+        for index, button_data in enumerate(self.buttons):
+            selected_button = button_data[1]
+            selected_button.set_hidden(index != self._selected_index)
+            button = button_data[0]
+            icon = button_data[2]
+            scale = (
+                self._selection_scale
+                if index == self._selected_index
+                else 1.0
+            )
+            button.set_hidden(False)
+            icon.set_width(round(self._icon_size * scale))
+            icon.set_height(round(self._icon_size * scale))
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]
@@ -325,8 +391,9 @@ class AmeliorationInterface(Interface):
             return ""
         skill, value = upgrades[index]
         skill_name = skill.__class__.__name__.removesuffix("Skill")
-        suffix = "%" if skill.get_type() == SkillType.PERCENTAGE else\
-                skill._suffix
+        suffix = (
+            "%" if skill.get_type() == SkillType.PERCENTAGE else skill._suffix
+        )
         before = float(skill.get_value())
         after = float(before + value)
         return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"
