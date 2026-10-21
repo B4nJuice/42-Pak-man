@@ -10,9 +10,12 @@ from src.texture.texture_frame import TextureFrame
 from src.texture.texture_keys import TextureKeys
 from src.texture.texture_loader import TextureLoader
 from src.texture.texture_pack import TexturePack
+from src.utils import TColor
+from src.utils.logger import Logger
 
 
 class TextureManager:
+    _logger: Logger
     _loader: TextureLoader
 
     _default: TexturePack
@@ -20,7 +23,17 @@ class TextureManager:
 
     _textures: dict[TextureKeys, Texture]
 
-    def __init__(self, texture_loader: TextureLoader, default_path: str) -> None:
+    def __init__(
+        self,
+        texture_loader: TextureLoader,
+        default_path: str,
+        verbose: bool = True
+    ) -> None:
+        self._logger = Logger(
+            name='Texture',
+            color=TColor.CYAN,
+            verbose=verbose
+        )
         self._loader = texture_loader
 
         self._default = TexturePack.from_directory(default_path)
@@ -30,11 +43,20 @@ class TextureManager:
         self.load_textures(self._default)
 
     def load_pack(self, path: str) -> None:
+        self._logger.log(f'Loading texture pack: {path}')
+
         self._user = TexturePack.from_directory(path)
         self.load_textures(self._user)
 
+        self._logger.info(f'Texture pack loaded: {self._user.name!r}')
+
     def unload_pack(self) -> None:
+        self._logger.log('Unloading user texture pack, restoring default')
+
+        self._user = None
         self.load_textures(self._default)
+
+        self._logger.info('Default texture pack restored')
 
     def get(self, key: TextureKeys, variant: str | None = None) -> Animation:
         texture: Texture = self._textures[key]
@@ -61,12 +83,12 @@ class TextureManager:
         )
 
     def load_textures(self, pack: TexturePack) -> None:
-        _missing_textures: list[TextureKeys] = []
+        missing_textures: list[TextureKeys] = []
 
         for key in TextureKeys:
             texture_definition = pack.get(key)
             if texture_definition is None:
-                _missing_textures.append(key)
+                missing_textures.append(key)
                 continue
 
             variants: dict[str, Animation] = {}
@@ -78,8 +100,10 @@ class TextureManager:
                 variants=variants
             )
 
-        if pack == self._default and len(_missing_textures) > 0:
-            raise MissingTextureError()
+        if pack == self._default and len(missing_textures) > 0:
+            raise MissingTextureError([
+                key.value for key in missing_textures
+            ])
 
     def _transform_animation(self, definition: AnimationDef) -> Animation:
         return Animation(
@@ -91,7 +115,10 @@ class TextureManager:
             loop=definition.loop
         )
 
-    def _build_frame(self, frame: Frame | AnimationDef) -> Animation | TextureFrame:
+    def _build_frame(
+        self,
+        frame: Frame | AnimationDef,
+    ) -> Animation | TextureFrame:
         if isinstance(frame, AnimationDef):
             return self._transform_animation(frame)
         data = self._loader.load(frame.path)

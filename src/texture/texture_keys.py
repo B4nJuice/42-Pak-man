@@ -19,9 +19,10 @@ class TextureKeys(Enum):
 
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':
-        entry: TextureKeys | None  = next(
-            (member for member in cls if member.value == key)
-        , None)
+        entry: TextureKeys | None = next(
+            (member for member in cls if member.value == key),
+            None
+        )
         if entry is None:
             raise PackInvalidKey(key)
         return entry

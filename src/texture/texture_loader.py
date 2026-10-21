@@ -4,6 +4,8 @@ import moderngl
 from moderngl import Context
 from PIL import Image
 
+from src.errors import AssetLoadError
+
 from .texture_data import TextureData
 
 MAX_DIM = 4096
@@ -21,21 +23,31 @@ class TextureLoader:
         if path in self._textures:
             return self._textures[path]
 
-        with Image.open(path) as im:
-            im.load()
-            if max(im.size) > MAX_DIM:
-                raise ValueError(f'image too large: {im.size}')
-            image = im.convert('RGBA')
+        try:
+            with Image.open(path) as im:
+                im.load()
+                if max(im.size) > MAX_DIM:
+                    raise ValueError(f'image too large: {im.size}')
+                image = im.convert('RGBA')
 
-            texture = self._ctx.texture(image.size, 4, image.tobytes())
-            texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
-            texture.use(location=0)
+                texture = self._ctx.texture(image.size, 4, image.tobytes())
+                texture.filter = (
+                    moderngl.NEAREST,
+                    moderngl.NEAREST,
+                )
+                texture.use(location=0)
 
-            self._textures[path] = TextureData(texture, image.size)
-            return self._textures[path]
+                self._textures[path] = TextureData(texture, image.size)
+                return self._textures[path]
+        except (OSError, ValueError, RuntimeError) as exc:
+            raise AssetLoadError(
+                path,
+                pack=str(path.parent),
+                reason=str(exc),
+            ) from exc
 
     def unload(self, path: Path) -> None:
-        if not path in self._textures:
+        if path not in self._textures:
             return
 
         self._textures[path].texture.release()

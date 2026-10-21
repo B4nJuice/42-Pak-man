@@ -246,9 +246,19 @@ class Game:
                     self.load_pack('textures/reverse-textures')
                 except PackError as e:
                     self._logger.warning(f'Cannot load ressource pack: {str(e)!r}')
+            case pygame.K_F10:
+                self.unload_pack()
 
     def load_pack(self, path: str) -> None:
         self._app.texture.load_pack(path)
+
+        for e in self._level.store.all():
+            if not isinstance(e, Displayable):
+                continue
+            e.init_displayable()
+
+    def unload_pack(self) -> None:
+        self._app.texture.unload_pack()
 
         for e in self._level.store.all():
             if not isinstance(e, Displayable):
