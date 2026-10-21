@@ -25,7 +25,7 @@ class AmeliorationInterface(Interface):
         self.game: Game = game
         self.hidden: bool = True
         self.layer: MeshLayer = MeshLayer()
-        self._next_ameliorations = ()
+        self._next_ameliorations = []
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height

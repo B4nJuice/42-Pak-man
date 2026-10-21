@@ -35,14 +35,14 @@ class Level(Maze):
 
         self.state.update(dt)
 
-    def register_entity(self, entity: DisplayableEntity) -> None:
+    def register_entity(self, entity: DisplayableEntity | Entity) -> None:
         self._entities.add(entity)
         if isinstance(entity, Collider):
             self._colliders.append(entity)
         if isinstance(entity, Displayable):
             self._to_register.append(entity)
 
-    def unregister_entity(self, entity: DisplayableEntity) -> None:
+    def unregister_entity(self, entity: DisplayableEntity | Entity) -> None:
         self._entities.remove(entity)
         if entity in self._colliders:
             self._colliders.remove(entity)

@@ -8,7 +8,7 @@ A = TypeVar("A", bound=Skill)
 
 
 class SkillStore:
-    _skill: defaultdict[type[Skill], set[Skill]]
+    _skills: defaultdict[type[Skill], set[Skill]]
 
     def __init__(self) -> None:
         self._skills = defaultdict(set)

@@ -3,11 +3,13 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from src.game.game import Game
 
+from src.core.displayable import DisplayableEntity
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
+
 from .interface import Interface
 
 
@@ -138,7 +140,7 @@ class EscapeInterface(Interface):
             self._set_hidden(mesh, False)
 
     @staticmethod
-    def _set_hidden(mesh: Mesh | MeshLayer, hidden: bool) -> None:
+    def _set_hidden(mesh: Mesh | MeshLayer | DisplayableEntity, hidden: bool) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 EscapeInterface._set_hidden(child, hidden)
