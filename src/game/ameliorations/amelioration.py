@@ -6,7 +6,6 @@ from src.app import App
 from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations.amelioration_rarity import AmeliorationRarity
 from src.texture.animation_player import AnimationPlayer
-from src.texture.texture_keys import TextureKeys
 
 if TYPE_CHECKING:
     from src.game.ameliorations import Skill, SkillStore
@@ -17,7 +16,6 @@ class Amelioration(SimpleDisplayable, ABC):
     _skills: 'SkillStore'
     _app: App
     _name: str
-    _texture_key: str
     _animation: AnimationPlayer
 
     def init(self, skills: list['Skill'], texture_key: str) -> None:
@@ -26,7 +24,7 @@ class Amelioration(SimpleDisplayable, ABC):
         for skill in skills:
             self._skills.add(skill)
         self._level = 0
-        self._texture_key = texture_key
+        self.set_texture_key(texture_key)
         self.set_name(self.__class__.__name__.removesuffix("Amelioration"))
 
     def get_app(self) -> App:
@@ -71,11 +69,3 @@ class Amelioration(SimpleDisplayable, ABC):
 
     def get_skill(self, _type: type) -> 'Skill':
         return self._skills.get(_type)
-
-    def init_displayable(self) -> None:
-        self._animation = AnimationPlayer(
-            self._app.texture.get(TextureKeys.get(self._texture_key))
-        )
-
-    def get_animation(self) -> AnimationPlayer:
-        return self._animation

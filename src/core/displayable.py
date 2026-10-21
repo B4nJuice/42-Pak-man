@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from src.app import App
 from src.core.entity import Entity
 from src.graphics.position import Position
 from src.texture.animation_player import AnimationPlayer
 from src.texture.texture_frame import TextureFrame
+from src.texture.texture_keys import TextureKeys
 
 
 class Displayable(ABC):
@@ -104,6 +106,11 @@ class SimpleDisplayable(Displayable, ABC):
     _width: int
     _height: int
     _position: Position
+    _app: App
+    _texture_key: str
+
+    def set_app(self, app: App) -> None:
+        self._app = app
 
     def set_width(self, width: int) -> None:
         self._width = width
@@ -122,6 +129,17 @@ class SimpleDisplayable(Displayable, ABC):
 
     def get_position_on_screen(self) -> Position:
         return self._position
+
+    def set_texture_key(self, texture_key: str) -> None:
+        self._texture_key = texture_key
+
+    def init_displayable(self) -> None:
+        self._animation = AnimationPlayer(
+            self._app.texture.get(TextureKeys.get(self._texture_key))
+        )
+
+    def get_animation(self) -> AnimationPlayer:
+        return self._animation
 
 
 class DisplayableEntity(Displayable, Entity):
