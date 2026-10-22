@@ -171,7 +171,7 @@ class AmeliorationInterface(Interface):
             )
             icon = SimpleDisplayable(
                 self.game._app,
-                'amelioration-exp',
+                'amelioration-unknown',
                 icon_size,
                 icon_size,
                 Position(

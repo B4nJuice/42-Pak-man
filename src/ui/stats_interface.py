@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 from src.graphics import Color, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import Rectangle
+
 from .interface import Interface
 
 
