@@ -114,6 +114,12 @@ class ConfigModel(BaseModel):
         gt=0,
         description="Skill font size of amelioration buttons"
     )
+
+    placeholder_amelioration_color: tuple[int, int, int, int] = Field(
+        default=(255, 255, 255, 50),
+        description="background placholder color"
+    )
+
     #           Exp params
 
     # rewards

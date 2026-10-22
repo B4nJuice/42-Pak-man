@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 from src.core.displayable import Displayable
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
-from src.graphics.mesh_layer import MeshLayer
+from src.graphics.mesh_layer import LayerProtocol, MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
@@ -141,15 +141,16 @@ class EscapeInterface(Interface):
 
     @staticmethod
     def _set_hidden(
-                mesh: Mesh | MeshLayer | Displayable,
+                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
                 hidden: bool
             ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 EscapeInterface._set_hidden(child, hidden)
             return
-        mesh.set_hidden(hidden)
-        if hasattr(mesh, "get_layer"):
+        if isinstance(mesh, Mesh | Displayable):
+            mesh.set_hidden(hidden)
+        if isinstance(mesh, LayerProtocol):
             EscapeInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:
