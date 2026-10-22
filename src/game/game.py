@@ -83,6 +83,7 @@ class Game:
     def update(self, dt: float) -> None:
         self._level.update(dt)
         self.refresh_maze()
+        self._stats_interface.refresh()
         self._screen.refresh()
         self._game_interface.refresh(dt)
 
