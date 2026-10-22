@@ -31,17 +31,27 @@ class ConfigModel(BaseModel):
         description='Height of the screen'
     )
 
-    maze_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
-        description="Color of the maze"
+    background: tuple[int, int, int] = Field(
+        default=(13, 16, 28),
+        description="Color of the backgound"
+    )
+
+    maze_backgroud_color: tuple[int, int, int] = Field(
+        default=(13, 16, 28),
+        description="Color of the maze tile"
+    )
+
+    maze_wall_color: tuple[int, int, int] = Field(
+        default=(46, 46, 255),
+        description="Color of the maze walls"
     )
 
     level_bar_color: tuple[int, int, int] = Field(
-        default=(255, 180, 45),
+        default=(251, 218, 30),
         description="Color of the level's progression bar"
     )
     level_bar_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(53, 64, 95),
         description="Color of the border level's progression bar"
     )
 
@@ -51,7 +61,7 @@ class ConfigModel(BaseModel):
     )
 
     stats_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(53, 64, 95),
         description="Color of the border of the stats"
     )
 
@@ -145,3 +155,5 @@ class ConfigModel(BaseModel):
     player_exp_per_second: float = Field(
         default=0.5
     )
+
+    # leaderboard

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.game import Game
-from src.graphics import Color, Position
+from src.graphics import Color, Plane, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
 
@@ -25,6 +25,17 @@ class GameInterface(Interface):
         level_bar_height: int = round(self.height*0.03)
 
         self.game._player.set_level_text = self.set_level_text
+
+        self.background = Plane(
+            Color(13, 16, 28),
+            (
+                Position(0, 0),
+                Position(
+                    self.game._config.screen_width,
+                    self.game._config.screen_height
+                )
+            )
+        )
 
         self.level_bar: Bar = Bar(
             Color(*self.game._config.level_bar_color),
@@ -94,7 +105,8 @@ class GameInterface(Interface):
 
         self.maze: MeshLevel = MeshLevel(
             self.game._level,
-            Color(*self.game._config.maze_color),
+            Color(*self.game._config.maze_wall_color),
+            Color(*self.game._config.maze_backgroud_color),
             Position(maze_x, maze_y),
             maze_width,
             maze_height,
@@ -103,6 +115,7 @@ class GameInterface(Interface):
             smooth_end=True
         )
 
+        self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.level_bar)
         self.layer.meshes.append(self.level_text)
         self.layer.meshes.append(self.timer)
