@@ -1,6 +1,5 @@
 import hashlib
 import hmac
-import os
 import secrets
 from pathlib import Path
 
@@ -44,36 +43,44 @@ class LeaderboardCore:
             self.save()
         return added
 
+    def get(self) -> list[LeaderboardEntryModel]:
+        return self._leaderboard.entries
+
     def save(self) -> bool:
         try:
-            Path(self._path).parent.mkdir(exist_ok=True)
-            with open(self._path, 'w', encoding='UTF-8') as f:
-                self._leaderboard.sig = self._leaderboard.compile(
-                    self._hash_function,
-                    self._get_first_hash()
-                )
+            path = Path(self._path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            self._leaderboard.sig = self._leaderboard.compile(
+                self._hash_function,
+                self._get_first_hash(),
+            )
+
+            with open(path, 'w', encoding='UTF-8') as f:
                 f.write(self._leaderboard.model_dump_json())
 
                 return True
-        except (OSError, RuntimeError) as e:
-            print(e)
+        except (OSError, RuntimeError, ValueError) as e:
+            self._logger.warning(f'Cannot save leaderboard : {e!s}')
         return False
 
     def load(self) -> None:
-        leaderboard: LeaderboardModel | None = self._load_leaderboard_file()
+        leaderboard = self._load_leaderboard_file()
 
         if leaderboard is None:
             self._logger.log(
-                'No valid leaderboard found at '
-                f'{self._path!r}; creating empty one.'
+                f'No valid leaderboard found at {self._path!r}; '
+                'creating empty one.'
             )
             leaderboard = self._generate_empty_leaderboard()
+            leaderboard.clean()
+            self._leaderboard = leaderboard
+            self.save()
+        else:
+            leaderboard.clean()
+            self._leaderboard = leaderboard
 
-        leaderboard.clean()
-        self._leaderboard = leaderboard
         self._logger.info(
-            'Leaderboard loaded with '
-            f'{len(self._leaderboard.entries)} entries.'
+            f'Leaderboard loaded with {len(self._leaderboard.entries)} entries.'
         )
 
     def _load_leaderboard_file(self) -> LeaderboardModel | None:
@@ -97,9 +104,6 @@ class LeaderboardCore:
             self._logger.log(f'Leaderboard file not found at {self._path!r}.')
 
         return None
-
-    def can_read_file(self) -> bool:
-        return os.access(self._path, os.R_OK)
 
     def _generate_empty_leaderboard(self) -> LeaderboardModel:
         return LeaderboardModel()
@@ -134,7 +138,7 @@ class LeaderboardCore:
             print(e)
 
     def generate_secret(self) -> bytes:
-        return secrets.token_hex(nbytes=16).encode()
+        return secrets.token_hex(nbytes=16).encode('utf-8')
 
     def _hash_function(self, payload: bytes) -> str:
         return hmac.new(self.get_secret(), payload, hashlib.sha256).hexdigest()
@@ -143,4 +147,5 @@ class LeaderboardCore:
         return self._hash_function(b'None|0|' + self.get_secret())
 
     def set_path(self, path: str) -> None:
-        self._path = path
+        normalized_path = str(Path(path).expanduser().resolve())
+        self._path = normalized_path

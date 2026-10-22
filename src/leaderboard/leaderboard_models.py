@@ -3,7 +3,7 @@ import json
 from collections.abc import Callable
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from src.utils import utc_now
 
@@ -15,10 +15,21 @@ class LeaderboardEntryModel(BaseModel):
 
     sig: str | None = Field(default=None)
 
+    @field_validator('name')
+    @classmethod
+    def validate_name(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError('name cannot be empty')
+        if len(cleaned) < 3 or len(cleaned) > 15:
+            raise ValueError('name must be between 3 and 15 characters long')
+        if any(ord(ch) < 32 or ord(ch) == 127 for ch in cleaned):
+            raise ValueError('name contains invalid control characters')
+        return cleaned
+
     def compile(self, prevus_sig: str) -> str:
         self.sig = prevus_sig
         payload = self.model_dump_json()
-
         return payload
 
 
