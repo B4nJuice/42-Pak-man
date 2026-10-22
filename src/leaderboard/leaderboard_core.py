@@ -22,7 +22,11 @@ class LeaderboardCore:
     _secret: bytes | None
     _leaderboard: LeaderboardModel
 
-    def __init__(self, path: str = DEFAULT_PATH, verbose: bool = False) -> None:
+    def __init__(
+                self,
+                path: str = DEFAULT_PATH,
+                verbose: bool = False
+            ) -> None:
         self._logger = Logger(
             name='Leaderboard',
             color=TColor.BRIGHT_YELLOW,
@@ -86,7 +90,8 @@ class LeaderboardCore:
                 )
         except (ValidationError, ValueError):
             self._logger.warning(
-                f'Leaderboard file at {self._path!r} is malformed or corrupted.'
+                f'Leaderboard file at {self._path!r} is malformed or '
+                'corrupted.'
             )
         except (OSError, RuntimeError):
             self._logger.log(f'Leaderboard file not found at {self._path!r}.')
