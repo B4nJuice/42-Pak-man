@@ -36,7 +36,7 @@ class StatsInterface(Interface):
         self.height: int = self.game._config.screen_height - self.y_offset
 
         self.background: Plane = Plane(
-            Color(0, 0, 0),
+            Color(*self.game._config.stats_background_color),
             (
                 Position(self.x_offset, self.y_offset),
                 Position(self.width, self.height)
@@ -57,7 +57,7 @@ class StatsInterface(Interface):
         self.title: FontSequence = FontSequence(
             "Stats",
             self.game._font,
-            Color(*self.game._config.stats_border_color),
+            Color(*self.game._config.stats_text_color),
             Position(
                 self.x_offset + self.width // 2,
                 self.y_offset + title_font_size + 12,
@@ -76,7 +76,7 @@ class StatsInterface(Interface):
             FontSequence(
                 "",
                 self._stats_font,
-                Color(*self.game._config.stats_border_color),
+                Color(*self.game._config.stats_text_color),
                 Position(
                     self.x_offset + 12,
                     self.y_offset + title_font_size + 42

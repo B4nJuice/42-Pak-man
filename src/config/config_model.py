@@ -56,13 +56,23 @@ class ConfigModel(BaseModel):
     )
 
     timer_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(248, 245, 233),
         description="timer font color"
     )
 
     stats_border_color: tuple[int, int, int] = Field(
         default=(53, 64, 95),
         description="Color of the border of the stats"
+    )
+
+    stats_background_color: tuple[int, int, int] = Field(
+        default=(13, 16, 28),
+        description="Color of the background of the stats"
+    )
+
+    stats_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description="Color of the text of the stats"
     )
 
     menu_overlay_color: tuple[int, int, int] = Field(
