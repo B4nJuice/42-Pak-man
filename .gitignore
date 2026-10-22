@@ -1,6 +1,7 @@
 # Project files
 build
 /textures
+.pak-man
 
 # Virtual environment
 .venv

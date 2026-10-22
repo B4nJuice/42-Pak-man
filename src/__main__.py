@@ -64,3 +64,4 @@ def main(verbose: bool) -> None:
 if __name__ == '__main__':
     main(verbose=True)
     # pack = TexturePack.from_directory('assets/textures')
+    # leaderboard_manager = LeaderboardCore()
