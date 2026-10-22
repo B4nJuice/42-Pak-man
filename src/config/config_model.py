@@ -116,7 +116,7 @@ class ConfigModel(BaseModel):
     )
 
     placeholder_amelioration_color: tuple[int, int, int, int] = Field(
-        default = (255, 255, 255, 50),
+        default=(255, 255, 255, 50),
         description="background placholder color"
     )
 

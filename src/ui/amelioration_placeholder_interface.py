@@ -88,6 +88,5 @@ class AmeliorationPlaceholderInterface(Interface):
         )
         self.layer.meshes.append(self.level)
 
-
     def get_layer(self) -> MeshLayer:
         return self.layer

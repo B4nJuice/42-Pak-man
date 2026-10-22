@@ -13,7 +13,7 @@ from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import MeshLayer
+from src.graphics.mesh_layer import LayerProtocol, MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
@@ -280,15 +280,16 @@ class AmeliorationInterface(Interface):
 
     @staticmethod
     def _set_hidden(
-                mesh: Mesh | MeshLayer | Displayable,
+                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
                 hidden: bool
             ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 AmeliorationInterface._set_hidden(child, hidden)
             return
-        mesh.set_hidden(hidden)
-        if hasattr(mesh, "get_layer"):
+        if isinstance(mesh, Mesh | Displayable):
+            mesh.set_hidden(hidden)
+        if isinstance(mesh, LayerProtocol):
             AmeliorationInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:

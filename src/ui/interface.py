@@ -6,6 +6,7 @@ from src.graphics.mesh_layer import MeshLayer
 if TYPE_CHECKING:
     from src.game.game import Game
 
+
 class Interface(ABC):
     def __init__(self, game: 'Game') -> None:
         ...

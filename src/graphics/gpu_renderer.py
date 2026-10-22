@@ -9,7 +9,7 @@ import numpy as np
 from src.core.displayable import Displayable
 from src.graphics.color import OperationEnum
 from src.graphics.mesh import Mesh
-from src.graphics.mesh_layer import MeshLayer
+from src.graphics.mesh_layer import LayerProtocol, MeshLayer
 from src.graphics.meshes import (
     Character,
     Circle,
@@ -486,8 +486,8 @@ class GPURenderer:
 
     def render(
                 self,
-                static_meshes: Iterable[Mesh | MeshLayer | Displayable],
-                dynamic_meshes: Iterable[Mesh | MeshLayer | Displayable]
+                static_meshes: Iterable[Mesh | LayerProtocol | Displayable],
+                dynamic_meshes: Iterable[Mesh | LayerProtocol | Displayable]
             ) -> None:
         self.source_index = 0
         self.target_index = 1
@@ -526,7 +526,7 @@ class GPURenderer:
 
     def _iter_meshes(
         self,
-        meshes: Iterable[Mesh | MeshLayer | Displayable],
+        meshes: Iterable[Mesh | LayerProtocol | Displayable],
     ) -> Iterator[Mesh | Displayable]:
         for mesh in meshes:
             if isinstance(mesh, MeshLayer):
