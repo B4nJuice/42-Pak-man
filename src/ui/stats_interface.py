@@ -18,6 +18,9 @@ from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 from src.texture.font_keys import FontKeys
 
+from .amelioration_placeholder_interface import (
+    AmeliorationPlaceholderInterface,
+)
 from .interface import Interface
 
 
@@ -85,13 +88,42 @@ class StatsInterface(Interface):
             )
             for index in range(7)
         ]
+        placeholder_y = (
+            self.y_offset + title_font_size + 42
+            + 7 * (stats_font_size + 5) + 18
+        )
+        content_left = self.x_offset + 12
+        content_right = self.width - 12
+        content_bottom = self.height - 12
+        placeholder_gap = 6
+        placeholder_size = min(
+            (content_right - content_left - 2 * placeholder_gap) // 3,
+            content_bottom - placeholder_y,
+        )
+        placeholder_size = max(1, placeholder_size)
+        self.amelioration_placeholders = [
+            AmeliorationPlaceholderInterface(
+                self.game,
+                Position(
+                    content_left
+                    + index * (placeholder_size + 6),
+                    placeholder_y,
+                ),
+                placeholder_size,
+                placeholder_size,
+            )
+            for index in range(3)
+        ]
 
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.border)
         self.layer.meshes.append(self.title)
         for stat in self.stats:
             self.layer.meshes.append(stat)
+        for placeholder in self.amelioration_placeholders:
+            self.layer.meshes.append(placeholder)
         self.refresh()
+        self.refresh_ameliorations()
 
     def refresh(self) -> None:
         player = self.game._player
@@ -106,6 +138,13 @@ class StatsInterface(Interface):
         )
         for stat, value in zip(self.stats, values):
             stat.set_sequence_text(value)
+
+    def refresh_ameliorations(self) -> None:
+        ameliorations = self.game._player._ameliorations.all()
+        for placeholder, amelioration in zip(
+                self.amelioration_placeholders, ameliorations
+        ):
+            placeholder.set_amelioration(amelioration)
 
     def _format_skill(self, skill_type: type[Skill]) -> str:
         player = self.game._player

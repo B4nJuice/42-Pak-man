@@ -366,8 +366,8 @@ class AmeliorationInterface(Interface):
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]
-        self.game._player.add_amelioration(amelioration)
         amelioration.level_up(upgrades)
+        self.game._player.add_amelioration(amelioration)
         self.end()
 
     def _rarity_colors(self) -> dict[

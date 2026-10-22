@@ -81,7 +81,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self.set_state(PlayerState.NORMAL)
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
-        self._ameliorations.add(amelioration)
+        if amelioration not in self._ameliorations.all():
+            self._ameliorations.add(amelioration)
+        self._game._stats_interface.refresh_ameliorations()
 
     def get_luck(self) -> float:
         multiplier: float = sum([
