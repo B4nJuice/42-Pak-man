@@ -13,7 +13,7 @@ from src.game.ameliorations import (
 )
 from src.graphics import Color, Position
 from src.graphics.mesh_layer import MeshLayer
-from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
+from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, Rectangle
 from src.utils.font_manager import FontKey
 
 from .amelioration_placeholder_interface import (
@@ -91,6 +91,36 @@ class StatsInterface(Interface):
             ),
             align=AlignEnum.RIGHT,
         )
+
+        max_lives = self.game._player._max_lives
+        lives_bar_width = self.game._app.size.get(225)
+        lives_bar_gap = self.game._app.size.get(6)
+        single_bar_width = max(
+            1,
+            (
+                lives_bar_width
+                - lives_bar_gap * max(0, max_lives - 1)
+            ) // max_lives,
+        )
+        self.lives_bars = [
+            Bar(
+                Color(*self.game._config.lives_bar_fill_color),
+                Color(*self.game._config.lives_bar_border_color),
+                Position(
+                    content_left
+                    + index * (single_bar_width + lives_bar_gap),
+                    self.y_offset + self.game._app.size.get(129),
+                ),
+                single_bar_width,
+                self.game._app.size.get(8),
+                border_thickness=1,
+                goal=1,
+                progression=0,
+                dynamic=True,
+                smooth_end=True,
+            )
+            for index in range(max_lives)
+        ]
 
         skill_y = self.y_offset + self.game._app.size.get(155)
 
@@ -172,6 +202,8 @@ class StatsInterface(Interface):
         self.layer.meshes.append(self.title)
         self.layer.meshes.append(self.lives_text)
         self.layer.meshes.append(self.lives_number)
+        for lives_bar in self.lives_bars:
+            self.layer.meshes.append(lives_bar)
         for skill_interface in self.skill_interfaces:
             self.layer.meshes.append(skill_interface)
         for placeholder in self.amelioration_placeholders:
@@ -189,7 +221,10 @@ class StatsInterface(Interface):
         self.lives_number.set_sequence_text(
             f"{player._lives}/{player._max_lives}"
         )
-
+        for index, lives_bar in enumerate(self.lives_bars):
+            lives_bar.set_progression(
+                1 if index < player._lives else 0
+            )
 
     def refresh_ameliorations(self) -> None:
         ameliorations = self.game._player._ameliorations.all()

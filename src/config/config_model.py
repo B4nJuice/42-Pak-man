@@ -170,6 +170,16 @@ class ConfigModel(BaseModel):
          description="skill value color"
     )
 
+    lives_bar_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="skill value color"
+    )
+
+    lives_bar_fill_color: tuple[int, int, int] = Field(
+        default=(230, 89, 178),
+        description="skill value color"
+    )
+
     #           Exp params
 
     # rewards
