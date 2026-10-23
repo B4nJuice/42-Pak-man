@@ -15,6 +15,7 @@ from src.utils.direction import Direction
 
 
 class MeshLevel(SuperMesh):
+    bg_color: Color
     entity_meshes: list[DisplayableEntity]
     wall_thickness: int
     position: Position
@@ -34,6 +35,7 @@ class MeshLevel(SuperMesh):
                 self,
                 level: Level,
                 color: Color,
+                bg_color: Color,
                 position: Position,
                 width: int,
                 height: int,
@@ -47,6 +49,8 @@ class MeshLevel(SuperMesh):
             operation=operation,
             dynamic=dynamic
         )
+
+        self.bg_color = bg_color
 
         self.width = width
         self.height = height
@@ -89,7 +93,7 @@ class MeshLevel(SuperMesh):
         for row in self.level.get_grid():
             for tile in row:
                 tile_mesh = Plane(
-                    Color.default(),
+                    self.bg_color,
                     (
                         Position(
                             tile.get_x() * self.tile_width + self.position.x,
@@ -102,7 +106,7 @@ class MeshLevel(SuperMesh):
                             self.position.y
                         )
                     ),
-                    operation=OperationEnum.ALPHA
+                    operation=OperationEnum.SET
                 )
                 self.tiles.append(tile_mesh)
                 self.layer.meshes.append(tile_mesh)
@@ -193,7 +197,7 @@ class MeshLevel(SuperMesh):
 
     def refresh(self) -> None:
         for tile_mesh in self.tiles:
-            tile_mesh.set_color(Color.default())
+            tile_mesh.set_color(self.bg_color)
 
         if not self.player._cheat:
             return

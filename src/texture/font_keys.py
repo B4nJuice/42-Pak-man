@@ -5,6 +5,8 @@ from src.errors.pack_invalid_key import PackInvalidKey
 
 class FontKeys(Enum):
     DEFAULT = 'default'
+    BOLD = 'default-bold'
+    TITLE = 'title'
 
     @classmethod
     def get(cls, key: str) -> 'FontKeys':

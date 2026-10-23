@@ -8,6 +8,7 @@ from .pack_error import PackError
 from .pack_invalid_key import PackInvalidKey
 from .skill_store_error import SkillStoreNotFound
 from .texture_pack_error import TexturePackError
+from .wrong_font_format_error import WrongFontFormatError
 
 __all__: list[str] = [
     'AmeliorationStoreNotFound',
@@ -20,4 +21,5 @@ __all__: list[str] = [
     'PackInvalidKey',
     'SkillStoreNotFound',
     'TexturePackError',
+    'WrongFontFormatError'
 ]
