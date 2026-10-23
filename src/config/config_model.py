@@ -32,12 +32,12 @@ class ConfigModel(BaseModel):
     )
 
     background: tuple[int, int, int] = Field(
-        default=(13, 16, 28),
+        default=(13, 16, 38),
         description="Color of the backgound"
     )
 
     maze_backgroud_color: tuple[int, int, int] = Field(
-        default=(13, 16, 28),
+        default=(13, 16, 38),
         description="Color of the maze tile"
     )
 
@@ -66,7 +66,7 @@ class ConfigModel(BaseModel):
     )
 
     stats_background_color: tuple[int, int, int] = Field(
-        default=(13, 16, 28),
+        default=(13, 16, 48),
         description="Color of the background of the stats"
     )
 

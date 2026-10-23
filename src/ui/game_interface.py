@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.game import Game
+from src.app import App
 from src.graphics import Color, Plane, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
@@ -11,6 +12,7 @@ from .interface import Interface
 
 class GameInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        self.app: App = game._app
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 
@@ -21,13 +23,13 @@ class GameInterface(Interface):
 
         level_bar_x: int = self.x_offset + round(self.width * 0.07)
         level_bar_y: int = self.y_offset
-        level_bar_width: int = round(self.width*0.88)
-        level_bar_height: int = round(self.height*0.03)
+        level_bar_width: int = round(self.width * 0.88)
+        level_bar_height: int = round(self.height * 0.03)
 
         self.game._player.set_level_text = self.set_level_text
 
         self.background = Plane(
-            Color(13, 16, 28),
+            Color(*self.game._config.background),
             (
                 Position(0, 0),
                 Position(
@@ -43,8 +45,8 @@ class GameInterface(Interface):
             Position(level_bar_x, level_bar_y),
             level_bar_width,
             level_bar_height,
-            1,
-            100,
+            border_thickness=2,
+            goal=100,
             progression=0,
             dynamic=True,
             smooth_end=True,
