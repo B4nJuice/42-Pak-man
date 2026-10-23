@@ -129,7 +129,6 @@ class StatsInterface(Interface):
         skill_height = self.game._app.size.get(53)
         skill_title_font_size = 13
         skill_value_font_size = 40
-        super_time_height = skill_height + 12
         skills = (
             ("SPEED", SpeedSkill),
             ("LUCK", LuckSkill),
@@ -169,12 +168,19 @@ class StatsInterface(Interface):
                 self.game._level.state.frightened_phase.get_default(),
             )
         )
-        placeholder_y = (
-            skill_y
-            + 2 * (skill_height + skill_gap)
-            + super_time_height
-            + 24
+
+        self.amelioration_text = FontSequence(
+            "AMELIORATIONS",
+            self.game._app.fonts.get(FontKey.BOLD_10),
+            Color(*self.game._config.lives_text_color),
+            Position(
+                content_left,
+                self.y_offset + self.game._app.size.get(386)
+            ),
+            align=AlignEnum.LEFT,
         )
+
+        placeholder_y = self.y_offset + self.game._app.size.get(404)
         content_right = self.width - 12
         content_bottom = self.height - 12
         placeholder_gap = 6
@@ -206,6 +212,9 @@ class StatsInterface(Interface):
             self.layer.meshes.append(lives_bar)
         for skill_interface in self.skill_interfaces:
             self.layer.meshes.append(skill_interface)
+
+        self.layer.meshes.append(self.amelioration_text)
+
         for placeholder in self.amelioration_placeholders:
             self.layer.meshes.append(placeholder)
 
