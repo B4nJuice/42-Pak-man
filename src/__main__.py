@@ -1,10 +1,13 @@
 import pygame
 
+from src.errors import BaseError
+from src.game.game import Game
 from src.texture import TextureLoader
+from src.utils.font_manager import FontManager
+from src.utils.size import SizeCore
 
 from .app import App, TextureManager
 from .config import ConfigManager
-from .game import Game
 from .graphics.screen import Screen
 from .utils import Logger, TColor
 
@@ -22,8 +25,7 @@ def init_pygame() -> None:
     )
 
 
-def main(verbose: bool) -> None:
-    logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
+def main(verbose: bool, logger: Logger) -> None:
     logger.log('Starting Pak-man')
 
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
@@ -47,13 +49,28 @@ def main(verbose: bool) -> None:
         pygame_screen,
     )
 
+    sizes: SizeCore = SizeCore(
+        config.get_config().screen_width,
+        config.get_config().screen_height
+    )
+
+    texture_manager: TextureManager = TextureManager(
+        TextureLoader(screen.moderngl_context),
+        default_path='assets/textures'
+    )
+
+    fonts: FontManager = FontManager(
+        sizes,
+        texture_manager,
+        screen.moderngl_context
+    )
+
     app: App = App(
         config=config,
         ctx=screen.moderngl_context,
-        texture=TextureManager(
-            TextureLoader(screen.moderngl_context),
-            default_path='assets/textures'
-        )
+        texture=texture_manager,
+        size=sizes,
+        fonts=fonts
     )
 
     game: Game = Game(config.get_config(), screen, app)
@@ -62,5 +79,10 @@ def main(verbose: bool) -> None:
 
 
 if __name__ == '__main__':
-    main(verbose=True)
-    # pack = TexturePack.from_directory('assets/textures')
+    verbose: bool = True
+
+    logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
+    try:
+        main(verbose, logger)
+    except BaseError as e:
+        logger.error(str(e))
