@@ -24,6 +24,7 @@ class SkillInterface(Interface):
     game: 'Game'
     background: Plane
     title: FontSequence
+    default_value: float
 
     def __init__(
                 self,
@@ -43,7 +44,7 @@ class SkillInterface(Interface):
         self.skill = skill
         self.width = width
         self.height = height
-
+        self.default_value = default_value
 
         self.background = Plane(
             Color(*self.game._config.skill_interface_background_color),
@@ -84,7 +85,7 @@ class SkillInterface(Interface):
     def _format_skill(self, skill_type: type[Skill]) -> str:
         player = self.game._player
         skill = skill_type()
-        value = sum(
+        value =self.default_value + sum(
             amelioration.get_skill(skill_type).get_value()
             for amelioration in player._ameliorations.gets(skill_type)
         )
