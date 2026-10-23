@@ -37,6 +37,10 @@ class GPURenderer:
         self.width = width
         self.height = height
         self.context = moderngl.create_context()
+        self._vertex_cache: dict[
+            int,
+            tuple[bytes, int, str, moderngl.VertexArray, moderngl.Buffer],
+        ] = {}
 
         self.mesh_program = self.context.program(
             vertex_shader=_load_shader('mesh.vert'),
@@ -71,6 +75,61 @@ class GPURenderer:
             self.context.framebuffer(color_attachments=texture)
             for texture in self.textures
         ]
+
+    def _get_cached_vao(
+        self,
+        mesh: object,
+        vertices: np.ndarray,
+        mode: int,
+        program: moderngl.Program,
+        layout: str,
+    ) -> moderngl.VertexArray:
+        mesh_key = id(mesh)
+        raw = vertices.tobytes()
+        cached = self._vertex_cache.get(mesh_key)
+
+        if cached is not None:
+            cached_data, cached_mode, cached_layout, cached_vao, cached_buffer = (
+                cached
+            )
+            if (
+                cached_data == raw
+                and cached_mode == mode
+                and cached_layout == layout
+            ):
+                return cached_vao
+            cached_vao.release()
+            cached_buffer.release()
+
+        if layout == 'in_position':
+            buffer = self.context.buffer(raw)
+            vao = self.context.simple_vertex_array(
+                program,
+                buffer,
+                'in_position',
+            )
+        else:
+            buffer = self.context.buffer(raw)
+            vao = self.context.vertex_array(
+                program,
+                [
+                    (
+                        buffer,
+                        '2f 2f',
+                        'in_position',
+                        'in_texcoord',
+                    ),
+                ],
+            )
+
+        self._vertex_cache[mesh_key] = (raw, mode, layout, vao, buffer)
+        return vao
+
+    def _destroy_cached_meshes(self) -> None:
+        for _, _, _, vao, buffer in self._vertex_cache.values():
+            vao.release()
+            buffer.release()
+        self._vertex_cache.clear()
 
     def _create_screen_quad(self) -> moderngl.VertexArray:
         vertices = np.array(
@@ -288,17 +347,12 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(entity)
-        vertex_buffer = self.context.buffer(vertices.tobytes())
-        vao = self.context.vertex_array(
+        vao = self._get_cached_vao(
+            entity,
+            vertices,
+            mode,
             self.image_program,
-            [
-                (
-                    vertex_buffer,
-                    '2f 2f',
-                    'in_position',
-                    'in_texcoord',
-                ),
-            ],
+            '2f 2f',
         )
         entity.get_texture().texture.use(1)
         get_uniform(self.image_program, 'image_texture').value = 1
@@ -311,8 +365,6 @@ class GPURenderer:
         ).value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
-        vertex_buffer.release()
-        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -325,11 +377,11 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
-        vertex_buffer = self.context.buffer(vertices.tobytes())
-
-        vao = self.context.simple_vertex_array(
+        vao = self._get_cached_vao(
+            mesh,
+            vertices,
+            mode,
             self.mesh_program,
-            vertex_buffer,
             'in_position',
         )
         get_uniform(
@@ -348,8 +400,6 @@ class GPURenderer:
         target.use()
 
         vao.render(mode=mode)
-        vertex_buffer.release()
-        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -362,10 +412,11 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
-        vertex_buffer = self.context.buffer(vertices.tobytes())
-        vao = self.context.simple_vertex_array(
+        vao = self._get_cached_vao(
+            mesh,
+            vertices,
+            mode,
             self.circle_program,
-            vertex_buffer,
             'in_position',
         )
         get_uniform(self.circle_program, 'height').value = self.height
@@ -387,8 +438,6 @@ class GPURenderer:
         get_uniform(self.circle_program, 'filled').value = mesh.filled
         target.use()
         vao.render(mode=mode)
-        vertex_buffer.release()
-        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -401,17 +450,12 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
-        vertex_buffer = self.context.buffer(vertices.tobytes())
-        vao = self.context.vertex_array(
+        vao = self._get_cached_vao(
+            mesh,
+            vertices,
+            mode,
             self.image_program,
-            [
-                (
-                    vertex_buffer,
-                    '2f 2f',
-                    'in_position',
-                    'in_texcoord',
-                ),
-            ],
+            '2f 2f',
         )
         mesh.texture.use(1)
         source.use(0)
@@ -426,8 +470,6 @@ class GPURenderer:
         ).value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
-        vertex_buffer.release()
-        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -440,17 +482,12 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
-        vertex_buffer = self.context.buffer(vertices.tobytes())
-        vao = self.context.vertex_array(
+        vao = self._get_cached_vao(
+            mesh,
+            vertices,
+            mode,
             self.image_program,
-            [
-                (
-                    vertex_buffer,
-                    '2f 2f',
-                    'in_position',
-                    'in_texcoord',
-                ),
-            ],
+            '2f 2f',
         )
         mesh.infos['texture'].use(1)
         get_uniform(self.image_program, 'image_texture').value = 1
@@ -469,8 +506,6 @@ class GPURenderer:
         ).value = (self.width, self.height)
         target.use()
         vao.render(mode=mode)
-        vertex_buffer.release()
-        vao.release()
 
     @_draw_mesh.register
     def _(
@@ -480,9 +515,12 @@ class GPURenderer:
                 target: moderngl.Framebuffer
             ) -> None:
         for mesh in layer.meshes:
-            if hasattr(mesh, "get_layer"):
-                mesh = mesh.get_layer()
-            self._draw_mesh(mesh, source, target)
+            if hasattr(mesh, 'get_layer'):
+                resolved = cast(LayerProtocol, mesh).get_layer()
+                if isinstance(resolved, MeshLayer):
+                    self._draw_mesh(resolved, source, target)
+                    continue
+            self._draw_mesh(cast(Mesh | Displayable, mesh), source, target)
 
     def render(
                 self,
@@ -512,6 +550,7 @@ class GPURenderer:
         self.context.finish()
 
     def release(self) -> None:
+        self._destroy_cached_meshes()
         for framebuffer in self.framebuffers:
             framebuffer.release()
         for texture in self.textures:
@@ -531,11 +570,13 @@ class GPURenderer:
         for mesh in meshes:
             if isinstance(mesh, MeshLayer):
                 yield from self._iter_meshes(mesh.meshes)
-            else:
-                if hasattr(mesh, "get_layer"):
-                    mesh = mesh.get_layer()
+                continue
 
-                if isinstance(mesh, MeshLayer):
-                    yield from self._iter_meshes([mesh])
-                else:
-                    yield mesh
+            if hasattr(mesh, 'get_layer'):
+                resolved = cast(LayerProtocol, mesh).get_layer()
+                if isinstance(resolved, MeshLayer):
+                    yield from self._iter_meshes(resolved.meshes)
+                    continue
+
+            if isinstance(mesh, (Mesh, Displayable)):
+                yield cast(Mesh | Displayable, mesh)
