@@ -7,8 +7,9 @@ from src.graphics.color import Color
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes.plane import Plane
 from src.graphics.position import Position
-from src.graphics.super_meshes import AlignEnum, FontSequence
+from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 from src.ui.interface import Interface
+from src.utils.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -21,6 +22,7 @@ class AmeliorationPlaceholderInterface(Interface):
     height: int
     amelioration: Amelioration | None
     background: Plane
+    border: Rectangle
     icon: SimpleDisplayable | None
     level: FontSequence
     game: 'Game'
@@ -50,20 +52,28 @@ class AmeliorationPlaceholderInterface(Interface):
             operation=OperationEnum.ALPHA
         )
 
+        self.border = Rectangle(
+            Color(*self.game._config.placeholder_amelioration_border_color),
+            position,
+            width,
+            height,
+            thickness=2,
+            smooth_end=True
+        )
+
         self.layer.meshes.append(self.background)
+        self.layer.meshes.append(self.border)
         self.level = FontSequence(
             "",
-            self.game._font,
+            self.game._app.fonts.get(FontKey.TITLE_10),
             Color(*self.game._config.menu_text_color),
             Position(
-                self.position.x + self.width - 4,
-                self.position.y + self.height - 4,
+                self.position.x + self.width - self.game._app.size.get(3),
+                self.position.y + self.height - self.game._app.size.get(3),
             ),
-            spacing=1,
             align=AlignEnum.RIGHT,
             dynamic=True,
         )
-        self.level.set_scale(0.5)
 
     def set_amelioration(self, amelioration: Amelioration) -> None:
         self.amelioration = amelioration
@@ -75,16 +85,17 @@ class AmeliorationPlaceholderInterface(Interface):
         self.icon = SimpleDisplayable(
             self.game._app,
             self.amelioration.get_texture_key(),
-            self.width,
-            self.height,
+            round(self.width * 0.72),
+            round(self.height * 0.72),
             Position(
                 self.position.x + self.width // 2,
                 self.position.y + self.height // 2
-            )
+            ),
+
         )
         self.layer.meshes.append(self.icon)
         self.level.set_sequence_text(
-            f"Lvl {self.amelioration.get_level()}"
+            f"LV.{self.amelioration.get_level()}"
         )
         self.layer.meshes.append(self.level)
 

@@ -135,9 +135,54 @@ class ConfigModel(BaseModel):
         description="Skill font size of amelioration buttons"
     )
 
-    placeholder_amelioration_color: tuple[int, int, int, int] = Field(
-        default=(255, 255, 255, 50),
+    placeholder_amelioration_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
         description="background placholder color"
+    )
+
+    placeholder_amelioration_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="background placholder color"
+    )
+
+    skill_interface_background_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description="background skill color"
+    )
+
+    skill_interface_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="border skill color"
+    )
+
+    skill_interface_title_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="skill title color"
+    )
+
+    skill_interface_value_color: tuple[int, int, int] = Field(
+         default=(248, 245, 233),
+         description="skill value color"
+     )
+
+    lives_text_color: tuple[int, int, int] = Field(
+         default=(162, 172, 201),
+         description="skill value color"
+    )
+
+    lives_number_color: tuple[int, int, int] = Field(
+         default=(248, 245, 233),
+         description="skill value color"
+    )
+
+    lives_bar_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="skill value color"
+    )
+
+    lives_bar_fill_color: tuple[int, int, int] = Field(
+        default=(230, 89, 178),
+        description="skill value color"
     )
 
     #           Exp params

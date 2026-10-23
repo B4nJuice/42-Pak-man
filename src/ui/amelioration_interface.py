@@ -21,7 +21,7 @@ from .interface import Interface
 
 
 class AmeliorationInterface(Interface):
-    _selection_scale = 1.08
+    _selection_scale: float = 1.08
     _next_ameliorations: list[
         tuple[Amelioration, AmeliorationRarity, list[tuple[Skill, float]]]
     ]
