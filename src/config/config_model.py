@@ -140,6 +140,26 @@ class ConfigModel(BaseModel):
         description="background placholder color"
     )
 
+    skill_interface_background_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="background skill color"
+    )
+
+    skill_interface_border_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="border skill color"
+    )
+
+    skill_interface_title_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="skill title color"
+    )
+
+    skill_interface_value_color: tuple[int, int, int] = Field(
+         default=(248, 245, 233),
+         description="skill value color"
+     )
+
     #           Exp params
 
     # rewards
