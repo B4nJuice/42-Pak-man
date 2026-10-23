@@ -7,6 +7,7 @@ class Alive:
     _initial_max_health: int
     _initial_health: int
     _max_health: int
+    _max_lives: int
     _health: int
     _lives: int
 
@@ -28,6 +29,7 @@ class Alive:
         self.set_health(health)
         self.set_max_health(max_health)
         self.set_lives(lives)
+        self.set_max_lives(lives)
         self._initial_health = self.get_health()
         self._initial_max_health = self.get_max_health()
 
@@ -39,6 +41,9 @@ class Alive:
 
     def set_lives(self, lives: int) -> None:
         self._lives = max(0, lives)
+
+    def set_max_lives(self, max_lives: int) -> None:
+        self._max_lives = max(1, max_lives)
 
     def get_health(self) -> int:
         return self._health

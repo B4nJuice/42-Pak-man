@@ -66,13 +66,35 @@ class StatsInterface(Interface):
                 ),
             ),
             align=AlignEnum.CENTER,
-            dynamic=True,
         )
 
-        skill_y = self.y_offset + title_font_size * 2
+        content_left = self.x_offset + self.game._app.size.get(20)
+
+        self.lives_text = FontSequence(
+            "LIVES",
+            self.game._app.fonts.get(FontKey.BOLD_10),
+            Color(*self.game._config.lives_text_color),
+            Position(
+                content_left,
+                self.y_offset + self.game._app.size.get(115.5)
+            ),
+            align=AlignEnum.LEFT,
+        )
+
+        self.lives_number = FontSequence(
+            "3/3",
+            self.game._app.fonts.get(FontKey.BOLD_10),
+            Color(*self.game._config.lives_number_color),
+            Position(
+                content_left + self.game._app.size.get(225),
+                self.y_offset + self.game._app.size.get(115.5)
+            ),
+            align=AlignEnum.RIGHT,
+        )
+
+        skill_y = self.y_offset + self.game._app.size.get(155)
 
         skill_gap = self.game._app.size.get(12)
-        content_left = self.x_offset + self.game._app.size.get(20)
         skill_width = self.game._app.size.get(106.5)
         skill_height = self.game._app.size.get(53)
         skill_title_font_size = 13
@@ -148,16 +170,26 @@ class StatsInterface(Interface):
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.border)
         self.layer.meshes.append(self.title)
+        self.layer.meshes.append(self.lives_text)
+        self.layer.meshes.append(self.lives_number)
         for skill_interface in self.skill_interfaces:
             self.layer.meshes.append(skill_interface)
         for placeholder in self.amelioration_placeholders:
             self.layer.meshes.append(placeholder)
+
         self.refresh()
         self.refresh_ameliorations()
 
     def refresh(self) -> None:
+        player = self.game._player
+
         for skill_interface in self.skill_interfaces:
             skill_interface.refresh()
+
+        self.lives_number.set_sequence_text(
+            f"{player._lives}/{player._max_lives}"
+        )
+
 
     def refresh_ameliorations(self) -> None:
         ameliorations = self.game._player._ameliorations.all()
