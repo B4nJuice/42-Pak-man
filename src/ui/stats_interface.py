@@ -181,20 +181,18 @@ class StatsInterface(Interface):
         )
 
         placeholder_y = self.y_offset + self.game._app.size.get(404)
-        content_right = self.width - 12
-        content_bottom = self.height - 12
-        placeholder_gap = 6
-        placeholder_size = min(
-            (content_right - content_left - 2 * placeholder_gap) // 3,
-            content_bottom - placeholder_y,
-        )
+        placeholder_size = self.game._app.size.get(64)
+        placeholder_gap = (
+            self.game._app.size.get(225) -
+            placeholder_size * 3
+        ) // 2
         placeholder_size = max(1, placeholder_size)
         self.amelioration_placeholders = [
             AmeliorationPlaceholderInterface(
                 self.game,
                 Position(
                     content_left
-                    + index * (placeholder_size + 6),
+                    + index * (placeholder_size + placeholder_gap),
                     placeholder_y,
                 ),
                 placeholder_size,
