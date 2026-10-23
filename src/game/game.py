@@ -136,8 +136,12 @@ class Game:
                 self._app
             )
 
+        level_width: int = self._level.get_width()
+        level_height: int = self._level.get_height()
+
         self._player_start_position = (
-                self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
+                level_width // 2 - 1 + level_width % 2,
+                level_height // 2 - 1 + level_height % 2
             )
 
         self._player = Player(
