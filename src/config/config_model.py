@@ -135,8 +135,13 @@ class ConfigModel(BaseModel):
         description="Skill font size of amelioration buttons"
     )
 
-    placeholder_amelioration_color: tuple[int, int, int, int] = Field(
-        default=(255, 255, 255, 50),
+    placeholder_amelioration_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description="background placholder color"
+    )
+
+    placeholder_amelioration_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
         description="background placholder color"
     )
 

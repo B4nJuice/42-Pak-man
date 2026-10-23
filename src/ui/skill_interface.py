@@ -62,7 +62,8 @@ class SkillInterface(Interface):
             position,
             width,
             height,
-            2
+            thickness=2,
+            smooth_end=True
         )
 
         size = self.game._app.size
