@@ -241,9 +241,10 @@ class Game:
             return
         match event.key:
             case pygame.K_ESCAPE:
-                if self.get_status() == GameStatus.PAUSED:
+                game_status: GameStatus = self.get_status()
+                if game_status == GameStatus.PAUSED:
                     self._escape_interface.end()
-                else:
+                elif game_status != GameStatus.AMELIORATION:
                     self._escape_interface.start()
 
             case pygame.K_F1:
