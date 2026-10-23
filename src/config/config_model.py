@@ -141,12 +141,12 @@ class ConfigModel(BaseModel):
     )
 
     skill_interface_background_color: tuple[int, int, int] = Field(
-        default=(53, 64, 95),
+        default=(32, 40, 61),
         description="background skill color"
     )
 
     skill_interface_border_color: tuple[int, int, int] = Field(
-        default=(162, 172, 201),
+        default=(53, 64, 95),
         description="border skill color"
     )
 

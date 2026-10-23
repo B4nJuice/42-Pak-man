@@ -9,19 +9,18 @@ from src.game.ameliorations import (
     LuckSkill,
     PowerSkill,
     SpeedSkill,
+    SuperTimeSkill,
 )
-from src.game.ameliorations.skills.skill import Skill
-from src.game.ameliorations.skills.skill_type import SkillType
 from src.graphics import Color, Position
-from src.graphics.font import Font
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
-from src.texture.font_keys import FontKeys
+from src.utils.font_manager import FontKey
 
 from .amelioration_placeholder_interface import (
     AmeliorationPlaceholderInterface,
 )
 from .interface import Interface
+from .skill_interface import SkillInterface
 
 
 class StatsInterface(Interface):
@@ -53,46 +52,77 @@ class StatsInterface(Interface):
             smooth_end=True
         )
 
-        title_font_size = self.game._config.screen_height // 22
+        title_font_size = self.game._app.size.get(43)
         self.title: FontSequence = FontSequence(
-            "Stats",
-            self.game._font,
+            "STATS",
+            self.game._app.fonts.get(FontKey.TITLE_36),
             Color(*self.game._config.stats_text_color),
             Position(
-                self.x_offset + self.width // 2,
-                self.y_offset + title_font_size + 12,
+                (self.x_offset + self.width) // 2,
+                (
+                    self.y_offset +
+                    self.game._app.size.get(38) +
+                    title_font_size // 2
+                ),
             ),
-            spacing=1,
             align=AlignEnum.CENTER,
             dynamic=True,
         )
-        stats_font_size = max(10, self.game._config.screen_height // 42)
-        self._stats_font = Font(
-            self.game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
-            self.game._screen.moderngl_context,
-            pixel_size=stats_font_size,
+
+        skill_y = self.y_offset + title_font_size * 2
+
+        skill_gap = self.game._app.size.get(12)
+        content_left = self.x_offset + self.game._app.size.get(20)
+        skill_width = self.game._app.size.get(106.5)
+        skill_height = self.game._app.size.get(53)
+        skill_title_font_size = 13
+        skill_value_font_size = 40
+        super_time_height = skill_height + 12
+        skills = (
+            ("SPEED", SpeedSkill),
+            ("LUCK", LuckSkill),
+            ("POWER", PowerSkill),
+            ("EXP", ExpSkill),
         )
-        self.stats: list[FontSequence] = [
-            FontSequence(
-                "",
-                self._stats_font,
-                Color(*self.game._config.stats_text_color),
+        self.skill_interfaces = [
+            SkillInterface(
+                self.game,
+                skill_type(),
+                title,
                 Position(
-                    self.x_offset + 12,
-                    self.y_offset + title_font_size + 42
-                    + index * (stats_font_size + 5),
+                    content_left
+                    + (index % 2) * (skill_width + skill_gap),
+                    skill_y + (index // 2) * (skill_height + skill_gap),
                 ),
-                spacing=1,
-                align=AlignEnum.LEFT,
-                dynamic=True,
+                skill_width,
+                skill_height,
+                skill_title_fontkey=FontKey.BOLD_8,
+                skill_value_fontkey=FontKey.BOLD_18,
+                skill_title_font_size=skill_title_font_size,
+                skill_value_font_size=skill_value_font_size
             )
-            for index in range(7)
+            for index, (title, skill_type) in enumerate(skills)
         ]
-        placeholder_y = (
-            self.y_offset + title_font_size + 42
-            + 7 * (stats_font_size + 5) + 18
+        self.skill_interfaces.append(
+            SkillInterface(
+                self.game,
+                SuperTimeSkill(),
+                "SUPER TIME",
+                Position(
+                    content_left,
+                    skill_y + 2 * (skill_height + skill_gap),
+                ),
+                self.game._app.size.get(225),
+                self.game._app.size.get(72),
+                self.game._level.state.frightened_phase.get_default(),
+            )
         )
-        content_left = self.x_offset + 12
+        placeholder_y = (
+            skill_y
+            + 2 * (skill_height + skill_gap)
+            + super_time_height
+            + 24
+        )
         content_right = self.width - 12
         content_bottom = self.height - 12
         placeholder_gap = 6
@@ -118,26 +148,16 @@ class StatsInterface(Interface):
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.border)
         self.layer.meshes.append(self.title)
-        for stat in self.stats:
-            self.layer.meshes.append(stat)
+        for skill_interface in self.skill_interfaces:
+            self.layer.meshes.append(skill_interface)
         for placeholder in self.amelioration_placeholders:
             self.layer.meshes.append(placeholder)
         self.refresh()
         self.refresh_ameliorations()
 
     def refresh(self) -> None:
-        player = self.game._player
-        values = (
-            f"Level: {player._actual_level}",
-            f"Experience: {player._exp_points:.1f}",
-            f"Speed: {self._format_skill(SpeedSkill)}",
-            f"Luck: {self._format_skill(LuckSkill)}",
-            f"Power: {self._format_skill(PowerSkill)}",
-            f"Exp: {self._format_skill(ExpSkill)}",
-            f"Super time: {self._format_super_time()}",
-        )
-        for stat, value in zip(self.stats, values):
-            stat.set_sequence_text(value)
+        for skill_interface in self.skill_interfaces:
+            skill_interface.refresh()
 
     def refresh_ameliorations(self) -> None:
         ameliorations = self.game._player._ameliorations.all()
@@ -145,22 +165,6 @@ class StatsInterface(Interface):
                 self.amelioration_placeholders, ameliorations
         ):
             placeholder.set_amelioration(amelioration)
-
-    def _format_skill(self, skill_type: type[Skill]) -> str:
-        player = self.game._player
-        skill = skill_type()
-        value = sum(
-            amelioration.get_skill(skill_type).get_value()
-            for amelioration in player._ameliorations.gets(skill_type)
-        )
-        if skill.get_type() == SkillType.STATIC:
-            return f"{value:.1f}{skill._suffix}"
-        return f" x{1 + value / 100:.2f}"
-
-    def _format_super_time(self) -> str:
-        default_time = self.game._level.state.frightened_phase.get_default()
-        additional_time = self.game._player.get_additional_super_time()
-        return f"{default_time + additional_time:.1f}s"
 
     def get_layer(self) -> MeshLayer:
         return self.layer

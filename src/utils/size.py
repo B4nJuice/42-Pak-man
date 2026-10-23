@@ -14,5 +14,5 @@ class SizeCore:
 
         self._scale = height / self.BASE_HEIGHT
 
-    def get(self, size: int) -> int:
+    def get(self, size: float) -> int:
         return round(self._scale * size)
