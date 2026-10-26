@@ -11,6 +11,7 @@ from src.utils.size import SizeCore
 if TYPE_CHECKING:
     from src.fonts.font_manager import FontManager
 
+
 @dataclass(frozen=True)
 class App:
     ctx: Context
