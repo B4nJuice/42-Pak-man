@@ -12,6 +12,7 @@ class Movable:
     _progress: float
     _queued: Direction | None
     tile: Tile
+    _freeze: bool
 
     def __init__(self, *args: Any, speed: float = 4.0, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -25,6 +26,8 @@ class Movable:
         self._queued = None
         self._direction = None
 
+        self._freeze = False
+
     def get_speed(self) -> float:
         return self._speed
 
@@ -32,13 +35,22 @@ class Movable:
         self._speed = speed
 
     def is_moving(self) -> bool:
-        return self._target is not None
+        return self._target is not None or self._freeze
 
     def get_target(self) -> Tile | None:
         return self._target
 
     def get_direction(self) -> Direction | None:
         return self._direction
+
+    def set_freeze(self, status: bool) -> None:
+        self._freeze = status
+
+    def toggle_freeze(self) -> None:
+        self._freeze = not self._freeze
+
+    def is_frezzed(self) -> bool:
+        return self._freeze
 
     @property
     def pos(self) -> Vec2:
@@ -109,7 +121,7 @@ class Movable:
         return True
 
     def update(self, dt: float) -> None:
-        if not isinstance(self, Entity):
+        if not isinstance(self, Entity) or self._freeze:
             return
 
         if self._target is None or self._direction is None:

@@ -12,6 +12,7 @@ from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
     ClydeGhost,
+    Ghost,
     InkyGhost,
     PinkyGhost,
     Player,
@@ -46,6 +47,7 @@ class Game:
     _clock: Clock
     _font: Font
     _player: Player
+    _freeze_ghost: bool
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -68,6 +70,18 @@ class Game:
 
         self.init_entities()
         self.init_interfaces()
+
+        self.freeze_ghots()
+
+    def freeze_ghots(self) -> None:
+        self._freeze_ghost = True
+        for ghost in self._level._entities.gets(Ghost):
+            ghost.set_freeze(self._freeze_ghost)
+
+    def unfreeze_ghost(self) -> None:
+        self._freeze_ghost = False
+        for ghost in self._level._entities.gets(Ghost):
+            ghost.set_freeze(self._freeze_ghost)
 
     def set_status(self, status: GameStatus) -> None:
         self._status = status
