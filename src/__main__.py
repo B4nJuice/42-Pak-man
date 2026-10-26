@@ -3,6 +3,7 @@ import pygame
 from src.errors import BaseError
 from src.fonts.font_manager import FontManager
 from src.game.game import Game
+from src.leaderboard import LeaderboardCore
 from src.settings import KeyManager, SettingsManager
 from src.texture.texture_loader import TextureLoader
 from src.texture.texture_manager import TextureManager
@@ -31,10 +32,8 @@ def main(verbose: bool, logger: Logger) -> None:
     logger.log('Starting Pak-man')
 
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
-    # config.display_config()
 
     init_pygame()
-
     pygame_screen = pygame.display.set_mode(
         (
             config.get_config().screen_width,
@@ -42,7 +41,6 @@ def main(verbose: bool, logger: Logger) -> None:
         ),
         pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
     )
-
     pygame.display.set_caption("Pak-man")
 
     screen: Screen = Screen(
@@ -69,11 +67,16 @@ def main(verbose: bool, logger: Logger) -> None:
 
     settings: SettingsManager = SettingsManager(
         path='.pak-man/settings.json',
-        verbose=False
+        verbose=verbose
     )
 
     key_manager: KeyManager = KeyManager(
         settings=settings
+    )
+
+    leaderboard: LeaderboardCore = LeaderboardCore(
+        path='.pak-man/leaderboard.json',
+        verbose=verbose
     )
 
     app: App = App(
@@ -83,16 +86,16 @@ def main(verbose: bool, logger: Logger) -> None:
         size=sizes,
         fonts=fonts,
         settings=settings,
-        key_manager=key_manager
+        key_manager=key_manager,
+        leaderboard=leaderboard
     )
 
     game: Game = Game(config.get_config(), screen, app)
-
     game.run()
 
 
 if __name__ == '__main__':
-    verbose: bool = True
+    verbose: bool = False
 
     logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
     try:

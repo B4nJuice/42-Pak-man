@@ -31,7 +31,7 @@ class ConfigManager:
                 'Failed to load config, using default settings'
             )
             self._config = ConfigModel()
-        self._logger.log('Configuration loaded successfully')
+        self._logger.info('Configuration loaded successfully')
 
     def get_config(self) -> ConfigModel:
         return self._config

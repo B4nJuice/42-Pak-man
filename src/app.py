@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from moderngl import Context
 
 from src.config import ConfigManager
+from src.leaderboard import LeaderboardCore
 from src.settings import KeyManager, SettingsManager
 from src.texture import TextureManager
 from src.utils.size import SizeCore
@@ -21,3 +22,4 @@ class App:
     fonts: 'FontManager'
     settings: SettingsManager
     key_manager: KeyManager
+    leaderboard: LeaderboardCore
