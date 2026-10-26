@@ -80,11 +80,11 @@ class ConfigModel(BaseModel):
         description="Color of the pause menu overlay"
     )
     menu_panel_color: tuple[int, int, int] = Field(
-        default=(20, 20, 20),
+        default=(16, 22, 44),
         description="Color of the pause menu panel"
     )
     menu_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(53, 64, 95),
         description="Color of the pause menu border"
     )
     menu_button_color: tuple[int, int, int] = Field(
@@ -185,6 +185,26 @@ class ConfigModel(BaseModel):
         description="skill value color"
     )
 
+    back_level_up_color: tuple[int, int, int] = Field(
+        default=(138, 80, 28)
+    )
+
+    level_up_color: tuple[int, int, int] = Field(
+        default=(255, 227, 75)
+    )
+
+    amelioration_card_color: tuple[int, int, int] = Field(
+        default=(32, 32, 44)
+    )
+
+    amelioration_card_border_color: tuple[int, int, int] = Field(
+        default=(32, 32, 44)
+    )
+
+    amelioration_name: tuple[int, int, int] = Field(
+        default=(248, 245, 233)
+    )
+
     #           Exp params
 
     # rewards
@@ -208,7 +228,7 @@ class ConfigModel(BaseModel):
         default=100
     )
     player_exp_per_second: float = Field(
-        default=0.5
+        default=50
     )
 
     # leaderboard

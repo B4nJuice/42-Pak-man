@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any
 import pygame
 
 from src.texture.font_keys import FontKeys
+from src.utils.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -33,6 +34,8 @@ class AmeliorationInterface(Interface):
         self.layer: MeshLayer = MeshLayer()
         self._next_ameliorations = []
 
+        size = self.game._app.size
+
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
         config = self.game._config
@@ -61,12 +64,46 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-            Color(*config.menu_overlay_color, 150),
+            Color(*config.menu_overlay_color, 120),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
             dynamic=True,
+        )
+
+        self.panel = Plane(
+            Color(*config.menu_panel_color),
+            (
+                Position(size.get(280), size.get(120)),
+                Position(size.get(280 + 722), size.get(120 + 482))
+            ),
+            OperationEnum.SET,
+            dynamic=True,
+        )
+
+        self.panel_border = Rectangle(
+            Color(*config.menu_border_color),
+            Position(size.get(280), size.get(120)),
+            size.get(722),
+            size.get(482),
+            2,
+            dynamic=True,
+            smooth_end=True,
+        )
+
+        self.back_level_up_text = FontSequence(
+            "LEVEL UP!",
+            self.game._app.fonts.get(FontKey.TITLE_40),
+            Color(*self.game._config.back_level_up_color),
+            Position(size.get(640), size.get(187))
+        )
+
+        self.level_up_text = FontSequence(
+            "LEVEL UP!",
+            self.game._app.fonts.get(FontKey.TITLE_40),
+            Color(*self.game._config.level_up_color),
+            Position(size.get(640), size.get(182))
         )
 
         panel_width = min(
@@ -94,24 +131,7 @@ class AmeliorationInterface(Interface):
         button_x = panel_x + (panel_width - button_width) // 2
         first_button_y = panel_y + (panel_height - buttons_height) // 2
 
-        self.panel = Plane(
-            Color(*config.menu_panel_color, 245),
-            (
-                Position(panel_x, panel_y),
-                Position(panel_x + panel_width, panel_y + panel_height)
-            ),
-            OperationEnum.ALPHA,
-            dynamic=True,
-        )
-        self.panel_border = Rectangle(
-            Color(*config.menu_border_color),
-            Position(panel_x, panel_y),
-            panel_width,
-            panel_height,
-            3,
-            dynamic=True,
-            smooth_end=True,
-        )
+
 
         button_params: list[dict[str, Any]] = [
             {
@@ -251,6 +271,9 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.panel)
         self.layer.meshes.append(self.panel_border)
+        self.layer.meshes.append(self.back_level_up_text)
+        self.layer.meshes.append(self.level_up_text)
+
         for (
             button,
             selected_button,
@@ -260,12 +283,13 @@ class AmeliorationInterface(Interface):
         ) in (
             self.buttons
         ):
-            self.layer.meshes.append(selected_button)
-            self.layer.meshes.append(button)
-            self.layer.meshes.append(icon)
-            for text in texts:
-                self.layer.meshes.append(text)
-            self.layer.meshes.append(level)
+            pass
+            # self.layer.meshes.append(selected_button)
+            # self.layer.meshes.append(button)
+            # self.layer.meshes.append(icon)
+            # for text in texts:
+                # self.layer.meshes.append(text)
+            # self.layer.meshes.append(level)
         self.hide()
 
     def hide(self) -> None:
