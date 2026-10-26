@@ -34,3 +34,21 @@ class KeyManager:
 
     def update(self) -> None:
         self._pressed_keys = pygame.key.get_pressed()
+
+    def add_key(self, action: ActionKey, key: int) -> None:
+        self.get_keys(action).append(key)
+        self._settings.save()
+
+    def remove_key(self, action: ActionKey, key: int) -> None:
+        if key in self.get_keys(action):
+            self.get_keys(action).remove(key)
+            self._settings.save()
+
+    def set(self, action: ActionKey, key: int) -> None:
+        self.get_keys(action).clear()
+        self.get_keys(action).append(key)
+        self._settings.save()
+
+    def clear(self, action: ActionKey) -> None:
+        self.get_keys(action).clear()
+        self._settings.save()
