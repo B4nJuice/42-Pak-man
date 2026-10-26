@@ -199,7 +199,7 @@ class MeshLevel(SuperMesh):
         for tile_mesh in self.tiles:
             tile_mesh.set_color(self.bg_color)
 
-        if not self.player._cheat:
+        if not self.player._wallhack:
             return
 
         from src.game.characters import Ghost

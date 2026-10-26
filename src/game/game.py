@@ -260,7 +260,7 @@ class Game:
 
         match event.key:
             case pygame.K_F1:
-                self._player._cheat = not self._player._cheat
+                self._player._wallhack = not self._player._wallhack
             case pygame.K_F9:
                 try:
                     self.load_pack('textures/reverse-textures')

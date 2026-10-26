@@ -41,7 +41,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     _actual_level: int
     _exp_points: float
     _level_exp: float
-    _cheat: bool
+    _wallhack: bool
+    _godmod: bool
+    _noclip: bool
     _game: 'Game'
 
     def __init__(
@@ -68,7 +70,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             app=app
         )
 
-        self._cheat = False
+        self._wallhack = True
+        self._godmod = True
+        self._noclip = True
         self._ameliorations = AmeliorationStore()
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
@@ -134,7 +138,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         if isinstance(other, Ghost):
             match other.get_state():
                 case GhostState.CHASE:
-                    self.set_health(0)
+                    if not self._godmod:
+                        self.set_health(0)
                 case GhostState.FRIGHTENED:
                     other.set_state(GhostState.EATEN)
 
@@ -143,10 +148,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
     def on_collision_exit(self, other: 'Collider') -> None:
         super().on_collision_exit(other)
 
-    def try_move(self, direction: Direction) -> bool:
+    def try_move(self, direction: Direction, force: bool = False) -> bool:
         if self._game._status == GameStatus.INITIALIZING:
             self._game.set_status(GameStatus.RUNNING)
-        return super().try_move(direction)
+        return super().try_move(direction, self._noclip or force)
+
+    def try_move_forward(self, force: bool = False) -> bool:
+        return super().try_move_forward(self._noclip or force)
 
     def update(self, dt: float) -> None:
         super().update(dt)
@@ -211,6 +219,8 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
     def on_death(self) -> None:
         self._direction = None
+        if self._godmod:
+            return
         super().on_death()
 
     def init_displayable(self) -> None:

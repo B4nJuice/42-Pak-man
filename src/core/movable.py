@@ -59,7 +59,7 @@ class Movable:
             return self._target
         return self.tile
 
-    def try_move(self, direction: Direction) -> bool:
+    def try_move(self, direction: Direction, force: bool = False) -> bool:
         if not isinstance(self, Entity):
             raise TypeError('Entity does not have a pos property')
 
@@ -80,7 +80,7 @@ class Movable:
         next_tile = self.level.get_next_tile(self.get_tile(), direction)
         if next_tile is None:
             return False
-        if next_tile.has_wall(direction.opposite()):
+        if next_tile.has_wall(direction.opposite()) and not force:
             return False
 
         self._target = next_tile
@@ -88,7 +88,7 @@ class Movable:
         self._progress = 0
         return True
 
-    def try_move_forward(self) -> bool:
+    def try_move_forward(self, force: bool = False) -> bool:
         if self._direction is None:
             return False
 
@@ -101,7 +101,7 @@ class Movable:
         next_tile = self.level.get_next_tile(self.get_tile(), self._direction)
         if next_tile is None:
             return False
-        if next_tile.has_wall(self._direction.opposite()):
+        if next_tile.has_wall(self._direction.opposite()) and not force:
             return False
 
         self._target = next_tile
