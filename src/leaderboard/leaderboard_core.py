@@ -80,7 +80,8 @@ class LeaderboardCore:
             self._leaderboard = leaderboard
 
         self._logger.info(
-            f'Leaderboard loaded with {len(self._leaderboard.entries)} entries.'
+            f'Leaderboard loaded with {len(self._leaderboard.entries)}'
+            ' entries.'
         )
 
     def _load_leaderboard_file(self) -> LeaderboardModel | None:
