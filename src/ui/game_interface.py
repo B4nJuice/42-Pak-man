@@ -1,8 +1,11 @@
 from typing import TYPE_CHECKING
 
+from ..fonts.font_manager import FontKey
+
 if TYPE_CHECKING:
     from src.game import Game
-from src.graphics import Color, Position
+from src.app import App
+from src.graphics import Color, Plane, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
 
@@ -11,6 +14,7 @@ from .interface import Interface
 
 class GameInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        self.app: App = game._app
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 
@@ -21,10 +25,21 @@ class GameInterface(Interface):
 
         level_bar_x: int = self.x_offset + round(self.width * 0.07)
         level_bar_y: int = self.y_offset
-        level_bar_width: int = round(self.width*0.88)
-        level_bar_height: int = round(self.height*0.03)
+        level_bar_width: int = round(self.width * 0.88)
+        level_bar_height: int = round(self.height * 0.03)
 
         self.game._player.set_level_text = self.set_level_text
+
+        self.background = Plane(
+            Color(*self.game._config.background),
+            (
+                Position(0, 0),
+                Position(
+                    self.game._config.screen_width,
+                    self.game._config.screen_height
+                )
+            )
+        )
 
         self.level_bar: Bar = Bar(
             Color(*self.game._config.level_bar_color),
@@ -32,8 +47,8 @@ class GameInterface(Interface):
             Position(level_bar_x, level_bar_y),
             level_bar_width,
             level_bar_height,
-            1,
-            100,
+            border_thickness=2,
+            goal=100,
             progression=0,
             dynamic=True,
             smooth_end=True,
@@ -42,12 +57,12 @@ class GameInterface(Interface):
         self.game._player._level_bar = self.level_bar
 
         self.level_text: FontSequence = FontSequence(
-            "Lvl .0",
-            self.game._font,
+            "Lv. 0",
+            self.app.fonts.get(FontKey.TITLE_24),
             Color(*self.game._config.level_bar_color),
             Position(
                 level_bar_x - round(self.width * 0.01),
-                level_bar_y + level_bar_height
+                level_bar_y + level_bar_height - 2
             ),
             spacing=1,
             align=AlignEnum.RIGHT,
@@ -56,7 +71,7 @@ class GameInterface(Interface):
 
         self.timer: FontSequence = FontSequence(
             "Null",
-            self.game._font,
+            self.app.fonts.get(FontKey.TITLE_24),
             Color(*self.game._config.timer_color),
             Position(
                     self.x_offset + round(self.width / 2),
@@ -94,7 +109,8 @@ class GameInterface(Interface):
 
         self.maze: MeshLevel = MeshLevel(
             self.game._level,
-            Color(*self.game._config.maze_color),
+            Color(*self.game._config.maze_wall_color),
+            Color(*self.game._config.maze_backgroud_color),
             Position(maze_x, maze_y),
             maze_width,
             maze_height,
@@ -103,6 +119,7 @@ class GameInterface(Interface):
             smooth_end=True
         )
 
+        self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.level_bar)
         self.layer.meshes.append(self.level_text)
         self.layer.meshes.append(self.timer)

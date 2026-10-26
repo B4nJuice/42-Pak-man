@@ -1,10 +1,16 @@
 import pygame
 
-from src.texture import TextureLoader
+from src.errors import BaseError
+from src.fonts.font_manager import FontManager
+from src.game.game import Game
+from src.leaderboard import LeaderboardCore
+from src.settings import KeyManager, SettingsManager
+from src.texture.texture_loader import TextureLoader
+from src.texture.texture_manager import TextureManager
+from src.utils.size import SizeCore
 
-from .app import App, TextureManager
-from .config import ConfigManager
-from .game import Game
+from .app import App
+from .config.config_manager import ConfigManager
 from .graphics.screen import Screen
 from .utils import Logger, TColor
 
@@ -22,15 +28,12 @@ def init_pygame() -> None:
     )
 
 
-def main(verbose: bool) -> None:
-    logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
+def main(verbose: bool, logger: Logger) -> None:
     logger.log('Starting Pak-man')
 
     config: ConfigManager = ConfigManager('config.jsonc', verbose)
-    # config.display_config()
 
     init_pygame()
-
     pygame_screen = pygame.display.set_mode(
         (
             config.get_config().screen_width,
@@ -38,7 +41,6 @@ def main(verbose: bool) -> None:
         ),
         pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
     )
-
     pygame.display.set_caption("Pak-man")
 
     screen: Screen = Screen(
@@ -47,21 +49,56 @@ def main(verbose: bool) -> None:
         pygame_screen,
     )
 
+    sizes: SizeCore = SizeCore(
+        config.get_config().screen_width,
+        config.get_config().screen_height
+    )
+
+    texture_manager: TextureManager = TextureManager(
+        TextureLoader(screen.moderngl_context),
+        default_path='assets/textures'
+    )
+
+    fonts: FontManager = FontManager(
+        sizes,
+        texture_manager,
+        screen.moderngl_context
+    )
+
+    settings: SettingsManager = SettingsManager(
+        path='.pak-man/settings.json',
+        verbose=verbose
+    )
+
+    key_manager: KeyManager = KeyManager(
+        settings=settings
+    )
+
+    leaderboard: LeaderboardCore = LeaderboardCore(
+        path='.pak-man/leaderboard.json',
+        verbose=verbose
+    )
+
     app: App = App(
         config=config,
         ctx=screen.moderngl_context,
-        texture=TextureManager(
-            TextureLoader(screen.moderngl_context),
-            default_path='assets/textures'
-        )
+        texture=texture_manager,
+        size=sizes,
+        fonts=fonts,
+        settings=settings,
+        key_manager=key_manager,
+        leaderboard=leaderboard
     )
 
     game: Game = Game(config.get_config(), screen, app)
-
     game.run()
 
 
 if __name__ == '__main__':
-    main(verbose=True)
-    # pack = TexturePack.from_directory('assets/textures')
-    # leaderboard_manager = LeaderboardCore()
+    verbose: bool = False
+
+    logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
+    try:
+        main(verbose, logger)
+    except BaseError as e:
+        logger.error(str(e))

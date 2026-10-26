@@ -2,7 +2,10 @@
   "name": "Pak-Man",
   "version": 1,
   "fonts": {
-    "default": "fonts/Bold Frame.ttf"
+    "default": "fonts/SpaceGrotesk-Regular.ttf",
+    "default-bold": "fonts/SpaceGrotesk-Bold.ttf",
+    "title": "fonts/Bungee-Regular.ttf",
+    "title-secondary": "fonts/PressStart2P-Regular.ttf"
   },
   "textures": {
     "pacgum": "items/pacgum.png",

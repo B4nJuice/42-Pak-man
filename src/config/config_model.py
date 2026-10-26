@@ -31,50 +31,87 @@ class ConfigModel(BaseModel):
         description='Height of the screen'
     )
 
-    maze_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
-        description="Color of the maze"
+    background: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description="Color of the backgound"
+    )
+
+    maze_backgroud_color: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description="Color of the maze tile"
+    )
+
+    maze_wall_color: tuple[int, int, int] = Field(
+        default=(46, 46, 255),
+        description="Color of the maze walls"
     )
 
     level_bar_color: tuple[int, int, int] = Field(
-        default=(255, 180, 45),
+        default=(251, 218, 30),
         description="Color of the level's progression bar"
     )
     level_bar_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(53, 64, 95),
         description="Color of the border level's progression bar"
     )
 
     timer_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(248, 245, 233),
         description="timer font color"
     )
 
     stats_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+        default=(53, 64, 95),
         description="Color of the border of the stats"
     )
 
-    menu_overlay_color: tuple[int, int, int] = Field(
+    stats_background_color: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description="Color of the background of the stats"
+    )
+
+    stats_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description="Color of the text of the stats"
+    )
+
+    pause_menu_overlay_color: tuple[int, int, int] = Field(
         default=(0, 0, 0),
         description="Color of the pause menu overlay"
     )
-    menu_panel_color: tuple[int, int, int] = Field(
-        default=(20, 20, 20),
+    pause_menu_background_color: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
         description="Color of the pause menu panel"
     )
-    menu_border_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+    pause_menu_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
         description="Color of the pause menu border"
     )
-    menu_button_color: tuple[int, int, int] = Field(
-        default=(35, 35, 35),
+    pause_menu_button_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
         description="Color of the pause menu buttons"
     )
-    menu_text_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+    pause_menu_button_hover_color: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description="Color of the pause menu buttons"
+    )
+    pause_menu_text_primary: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
         description="Color of the pause menu text"
     )
+    pause_menu_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="Color of the pause menu text"
+    )
+    pause_menu_text_button: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description="Color of the pause menu text"
+    )
+    pause_menu_text_button_hover: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description="Color of the pause menu text"
+    )
+
     amelioration_common_color: tuple[int, int, int] = Field(
         default=(120, 120, 120),
         description="Color of common ameliorations"
@@ -114,6 +151,57 @@ class ConfigModel(BaseModel):
         gt=0,
         description="Skill font size of amelioration buttons"
     )
+
+    placeholder_amelioration_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description="background placholder color"
+    )
+
+    placeholder_amelioration_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="background placholder color"
+    )
+
+    skill_interface_background_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description="background skill color"
+    )
+
+    skill_interface_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="border skill color"
+    )
+
+    skill_interface_title_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="skill title color"
+    )
+
+    skill_interface_value_color: tuple[int, int, int] = Field(
+         default=(248, 245, 233),
+         description="skill value color"
+     )
+
+    lives_text_color: tuple[int, int, int] = Field(
+         default=(162, 172, 201),
+         description="skill value color"
+    )
+
+    lives_number_color: tuple[int, int, int] = Field(
+         default=(248, 245, 233),
+         description="skill value color"
+    )
+
+    lives_bar_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description="skill value color"
+    )
+
+    lives_bar_fill_color: tuple[int, int, int] = Field(
+        default=(230, 89, 178),
+        description="skill value color"
+    )
+
     #           Exp params
 
     # rewards
@@ -139,3 +227,5 @@ class ConfigModel(BaseModel):
     player_exp_per_second: float = Field(
         default=0.5
     )
+
+    # leaderboard

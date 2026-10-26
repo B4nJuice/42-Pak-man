@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from src.errors import MissingTextureError, PackError
+from src.fonts import FontKeys
 from src.texture.animation import Animation
 from src.texture.animation_definition import AnimationDef
-from src.texture.font_keys import FontKeys
 from src.texture.frame import Frame
 from src.texture.texture_definition import Texture
 from src.texture.texture_frame import TextureFrame

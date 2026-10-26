@@ -11,7 +11,7 @@ class Skill(ABC):
 
     def __init__(
                 self,
-                skill_type: SkillType,
+                skill_type: SkillType = SkillType.PERCENTAGE,
                 default_value: float = 0
             ) -> None:
         self._type = skill_type

@@ -7,6 +7,7 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.core.displayable import Displayable
 from src.errors import PackError
+from src.fonts.font_keys import FontKeys
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
@@ -19,7 +20,7 @@ from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
 from src.graphics.screen import Screen
-from src.texture.font_keys import FontKeys
+from src.settings.action_key import ActionKey
 from src.ui import (
     AmeliorationInterface,
     EscapeInterface,
@@ -83,6 +84,7 @@ class Game:
     def update(self, dt: float) -> None:
         self._level.update(dt)
         self.refresh_maze()
+        self._stats_interface.refresh()
         self._screen.refresh()
         self._game_interface.refresh(dt)
 
@@ -135,8 +137,12 @@ class Game:
                 self._app
             )
 
+        level_width: int = self._level.get_width()
+        level_height: int = self._level.get_height()
+
         self._player_start_position = (
-                self._level.get_width()//2 - 1, self._level.get_height()//2 - 1
+                level_width // 2 - 1 + level_width % 2,
+                level_height // 2 - 1 + level_height % 2
             )
 
         self._player = Player(
@@ -198,13 +204,16 @@ class Game:
         # self.set_status(GameStatus.RUNNING)
         dt: float = 0.0
 
+        self._app.key_manager.update()
         self.update(dt)
         while self.get_status() != GameStatus.EXIT:
+            self._app.key_manager.update()
+
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
             if self.get_status() != GameStatus.RUNNING:
-                dt = 0
+                dt = 0.0
 
             if self._player.over:
                 break
@@ -238,13 +247,18 @@ class Game:
             and self._amelioration_interface.handle_key(event.key)
         ):
             return
-        match event.key:
-            case pygame.K_ESCAPE:
-                if self.get_status() == GameStatus.PAUSED:
-                    self._escape_interface.end()
-                else:
-                    self._escape_interface.start()
 
+        if self._app.key_manager.is_pressed_event(
+            ActionKey.BACK_PAUSE_RESUME,
+            event
+        ):
+            game_status: GameStatus = self.get_status()
+            if game_status == GameStatus.PAUSED:
+                self._escape_interface.action_resume()
+            elif game_status != GameStatus.AMELIORATION:
+                self._escape_interface.action_pause()
+
+        match event.key:
             case pygame.K_F1:
                 self._player._cheat = not self._player._cheat
             case pygame.K_F9:

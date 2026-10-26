@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import pygame
 
-from src.texture.font_keys import FontKeys
+from src.fonts import FontKeys
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -13,7 +13,7 @@ from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import MeshLayer
+from src.graphics.mesh_layer import LayerProtocol, MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
@@ -21,7 +21,7 @@ from .interface import Interface
 
 
 class AmeliorationInterface(Interface):
-    _selection_scale = 1.08
+    _selection_scale: float = 1.08
     _next_ameliorations: list[
         tuple[Amelioration, AmeliorationRarity, list[tuple[Skill, float]]]
     ]
@@ -61,7 +61,7 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-            Color(*config.menu_overlay_color, 150),
+            Color(*config.pause_menu_overlay_color, 150),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
@@ -95,7 +95,7 @@ class AmeliorationInterface(Interface):
         first_button_y = panel_y + (panel_height - buttons_height) // 2
 
         self.panel = Plane(
-            Color(*config.menu_panel_color, 245),
+            Color(*config.pause_menu_background_color, 245),
             (
                 Position(panel_x, panel_y),
                 Position(panel_x + panel_width, panel_y + panel_height)
@@ -104,7 +104,7 @@ class AmeliorationInterface(Interface):
             dynamic=True,
         )
         self.panel_border = Rectangle(
-            Color(*config.menu_border_color),
+            Color(*config.pause_menu_border_color),
             Position(panel_x, panel_y),
             panel_width,
             panel_height,
@@ -147,7 +147,7 @@ class AmeliorationInterface(Interface):
             on_click: Any = params["on_click"]
             y = first_button_y + index * (button_height + button_gap)
             button = Plane(
-                Color(*config.menu_button_color),
+                Color(*config.pause_menu_button_color),
                 (
                     Position(button_x, y),
                     Position(button_x + button_width, y + button_height)
@@ -157,7 +157,7 @@ class AmeliorationInterface(Interface):
                 on_click=on_click
             )
             selected_button = Plane(
-                Color(*config.menu_button_color),
+                Color(*config.pause_menu_button_color),
                 (
                     Position(button_x - 8, y - 8),
                     Position(
@@ -171,7 +171,7 @@ class AmeliorationInterface(Interface):
             )
             icon = SimpleDisplayable(
                 self.game._app,
-                'amelioration-exp',
+                'amelioration-unknown',
                 icon_size,
                 icon_size,
                 Position(
@@ -182,7 +182,7 @@ class AmeliorationInterface(Interface):
             title = FontSequence(
                 label,
                 self._title_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
                     y + 12 + config.amelioration_title_font_size
@@ -194,7 +194,7 @@ class AmeliorationInterface(Interface):
             rarity = FontSequence(
                 "",
                 self._rarity_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
                     y + 12 + config.amelioration_title_font_size
@@ -208,7 +208,7 @@ class AmeliorationInterface(Interface):
                 FontSequence(
                     "",
                     self._skill_font,
-                    Color(*config.menu_text_color),
+                    Color(*config.pause_menu_text_button),
                     Position(
                         text_left,
                         y + 12 + config.amelioration_title_font_size
@@ -228,7 +228,7 @@ class AmeliorationInterface(Interface):
             level = FontSequence(
                 "",
                 self._rarity_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_right,
                     y + 12 + config.amelioration_title_font_size
@@ -280,15 +280,16 @@ class AmeliorationInterface(Interface):
 
     @staticmethod
     def _set_hidden(
-                mesh: Mesh | MeshLayer | Displayable,
+                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
                 hidden: bool
             ) -> None:
         if isinstance(mesh, MeshLayer):
             for child in mesh.meshes:
                 AmeliorationInterface._set_hidden(child, hidden)
             return
-        mesh.set_hidden(hidden)
-        if hasattr(mesh, "get_layer"):
+        if isinstance(mesh, Mesh | Displayable):
+            mesh.set_hidden(hidden)
+        if isinstance(mesh, LayerProtocol):
             AmeliorationInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:
@@ -366,8 +367,8 @@ class AmeliorationInterface(Interface):
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]
-        self.game._player.add_amelioration(amelioration)
         amelioration.level_up(upgrades)
+        self.game._player.add_amelioration(amelioration)
         self.end()
 
     def _rarity_colors(self) -> dict[
