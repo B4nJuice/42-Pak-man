@@ -264,7 +264,7 @@ class EscapeInterface(Interface):
 
     def action_main_menu(self) -> None:
         self.hide()
-        print('To implement !')
+        print('To implement (Main Menu -> escape_interface.py)!')
         sys.exit(0)
 
     def get_layer(self) -> MeshLayer:
