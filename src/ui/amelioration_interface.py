@@ -18,6 +18,7 @@ from src.graphics.mesh_layer import LayerProtocol, MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
+from .amelioration_card_interface import AmeliorationCardInterface
 from .interface import Interface
 
 
@@ -91,6 +92,14 @@ class AmeliorationInterface(Interface):
             dynamic=True,
             smooth_end=True,
         )
+
+        self.cards = [
+            AmeliorationCardInterface(
+                self.game,
+                Position(size.get(327 + index * 212), size.get(245)),
+            )
+            for index in range(3)
+        ]
 
         self.back_level_up_text = FontSequence(
             "LEVEL UP!",
@@ -273,6 +282,7 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.append(self.panel_border)
         self.layer.meshes.append(self.back_level_up_text)
         self.layer.meshes.append(self.level_up_text)
+        self.layer.meshes.extend(self.cards)
 
         for (
             button,
@@ -329,6 +339,11 @@ class AmeliorationInterface(Interface):
             )
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
+            )
+            self.cards[index].set_amelioration(
+                amelioration,
+                upgrades,
+                (rarity.name, rarity_colors[rarity])
             )
             (
                 button,

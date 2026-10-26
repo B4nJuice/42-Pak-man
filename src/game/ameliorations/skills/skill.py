@@ -8,6 +8,7 @@ class Skill(ABC):
     _type: SkillType
     _value: float
     _suffix: str
+    _name: str
 
     def __init__(
                 self,
@@ -21,6 +22,12 @@ class Skill(ABC):
     @abstractmethod
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:
         pass
+
+    def set_name(self, name: str) -> None:
+        self._name = name
+
+    def get_name(self) -> str:
+        return self._name
 
     def upgrade(self, value: float) -> None:
         self._value += value

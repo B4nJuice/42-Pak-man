@@ -96,27 +96,27 @@ class ConfigModel(BaseModel):
         description="Color of the pause menu text"
     )
     amelioration_common_color: tuple[int, int, int] = Field(
-        default=(120, 120, 120),
+        default=(196, 196, 196),
         description="Color of common ameliorations"
     )
     amelioration_uncommon_color: tuple[int, int, int] = Field(
-        default=(70, 180, 90),
+        default=(85, 230, 65),
         description="Color of uncommon ameliorations"
     )
     amelioration_rare_color: tuple[int, int, int] = Field(
-        default=(70, 130, 220),
+        default=(95, 163, 216),
         description="Color of rare ameliorations"
     )
     amelioration_epic_color: tuple[int, int, int] = Field(
-        default=(155, 80, 210),
+        default=(191, 102, 239),
         description="Color of epic ameliorations"
     )
     amelioration_legendary_color: tuple[int, int, int] = Field(
-        default=(230, 150, 35),
+        default=(255, 227, 75),
         description="Color of legendary ameliorations"
     )
     amelioration_mythic_color: tuple[int, int, int] = Field(
-        default=(220, 50, 70),
+        default=(237, 42, 113),
         description="Color of mythic ameliorations"
     )
     amelioration_title_font_size: int = Field(
@@ -198,11 +198,35 @@ class ConfigModel(BaseModel):
     )
 
     amelioration_card_border_color: tuple[int, int, int] = Field(
-        default=(32, 32, 44)
+        default=(53, 64, 95)
     )
 
     amelioration_name: tuple[int, int, int] = Field(
         default=(248, 245, 233)
+    )
+
+    amelioration_description: tuple[int, int, int] = Field(
+        default=(162, 172, 201)
+    )
+
+    amelioration_effect_background_color: tuple[int, int, int] = Field(
+        default=(9, 14, 28)
+    )
+
+    choose_button_background_color: tuple[int, int, int] = Field(
+        default=(32, 41, 66)
+    )
+
+    choose_button_text_color: tuple[int, int, int] = Field(
+        default=(246, 246, 246)
+    )
+
+    amelioration_rarity_text_color: tuple[int, int, int] = Field(
+        default=(196, 196, 196)
+    )
+
+    skill_name_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201)
     )
 
     #           Exp params
