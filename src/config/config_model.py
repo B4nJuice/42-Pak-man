@@ -88,11 +88,11 @@ class ConfigModel(BaseModel):
         description="Color of the pause menu border"
     )
     pause_menu_button_color: tuple[int, int, int] = Field(
-        default=(35, 35, 35),
+        default=(32, 40, 61),
         description="Color of the pause menu buttons"
     )
     pause_menu_button_hover_color: tuple[int, int, int] = Field(
-        default=(35, 35, 35),
+        default=(251, 218, 30),
         description="Color of the pause menu buttons"
     )
     pause_menu_text_primary: tuple[int, int, int] = Field(
