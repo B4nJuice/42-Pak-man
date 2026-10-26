@@ -254,9 +254,9 @@ class Game:
         ):
             game_status: GameStatus = self.get_status()
             if game_status == GameStatus.PAUSED:
-                self._escape_interface.end()
+                self._escape_interface.action_resume()
             elif game_status != GameStatus.AMELIORATION:
-                self._escape_interface.start()
+                self._escape_interface.action_pause()
 
         match event.key:
             case pygame.K_F1:

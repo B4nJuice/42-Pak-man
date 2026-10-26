@@ -18,6 +18,7 @@ from .font_keys import FontKeys
 class FontKey(Enum):
     TEXT_8 = (8, FontKeys.DEFAULT)
     TEXT_10 = (10, FontKeys.DEFAULT)
+    TEXT_12 = (12, FontKeys.DEFAULT)
     TEXT_13 = (13, FontKeys.DEFAULT)
     BOLD_8 = (8, FontKeys.BOLD)
     BOLD_10 = (10, FontKeys.BOLD)
@@ -25,6 +26,7 @@ class FontKey(Enum):
     BOLD_24 = (24, FontKeys.BOLD)
     TITLE_10 = (10, FontKeys.TITLE)
     TITLE_14 = (14, FontKeys.TITLE)
+    TITLE_18 = (18, FontKeys.TITLE)
     TITLE_24 = (24, FontKeys.TITLE)
     TITLE_36 = (36, FontKeys.TITLE)
     TITLE_40 = (40, FontKeys.TITLE)
