@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import pygame
 
-from src.texture.font_keys import FontKeys
+from src.fonts import FontKeys
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -61,7 +61,7 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-            Color(*config.menu_overlay_color, 150),
+            Color(*config.pause_menu_overlay_color, 150),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
@@ -95,7 +95,7 @@ class AmeliorationInterface(Interface):
         first_button_y = panel_y + (panel_height - buttons_height) // 2
 
         self.panel = Plane(
-            Color(*config.menu_panel_color, 245),
+            Color(*config.pause_menu_background_color, 245),
             (
                 Position(panel_x, panel_y),
                 Position(panel_x + panel_width, panel_y + panel_height)
@@ -104,7 +104,7 @@ class AmeliorationInterface(Interface):
             dynamic=True,
         )
         self.panel_border = Rectangle(
-            Color(*config.menu_border_color),
+            Color(*config.pause_menu_border_color),
             Position(panel_x, panel_y),
             panel_width,
             panel_height,
@@ -147,7 +147,7 @@ class AmeliorationInterface(Interface):
             on_click: Any = params["on_click"]
             y = first_button_y + index * (button_height + button_gap)
             button = Plane(
-                Color(*config.menu_button_color),
+                Color(*config.pause_menu_button_color),
                 (
                     Position(button_x, y),
                     Position(button_x + button_width, y + button_height)
@@ -157,7 +157,7 @@ class AmeliorationInterface(Interface):
                 on_click=on_click
             )
             selected_button = Plane(
-                Color(*config.menu_button_color),
+                Color(*config.pause_menu_button_color),
                 (
                     Position(button_x - 8, y - 8),
                     Position(
@@ -182,7 +182,7 @@ class AmeliorationInterface(Interface):
             title = FontSequence(
                 label,
                 self._title_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
                     y + 12 + config.amelioration_title_font_size
@@ -194,7 +194,7 @@ class AmeliorationInterface(Interface):
             rarity = FontSequence(
                 "",
                 self._rarity_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
                     y + 12 + config.amelioration_title_font_size
@@ -208,7 +208,7 @@ class AmeliorationInterface(Interface):
                 FontSequence(
                     "",
                     self._skill_font,
-                    Color(*config.menu_text_color),
+                    Color(*config.pause_menu_text_button),
                     Position(
                         text_left,
                         y + 12 + config.amelioration_title_font_size
@@ -228,7 +228,7 @@ class AmeliorationInterface(Interface):
             level = FontSequence(
                 "",
                 self._rarity_font,
-                Color(*config.menu_text_color),
+                Color(*config.pause_menu_text_button),
                 Position(
                     text_right,
                     y + 12 + config.amelioration_title_font_size

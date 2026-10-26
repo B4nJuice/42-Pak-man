@@ -6,14 +6,15 @@ from moderngl import Context
 from src.errors import WrongFontFormatError
 from src.graphics.font.font import Font
 from src.texture import TextureManager
-from src.texture.font_keys import FontKeys
+from src.utils.size import SizeCore
 
-from .size import SizeCore
+from .font_keys import FontKeys
 
 
 class FontKey(Enum):
     TEXT_8 = (8, FontKeys.DEFAULT)
     TEXT_10 = (10, FontKeys.DEFAULT)
+    TEXT_13 = (13, FontKeys.DEFAULT)
     BOLD_8 = (8, FontKeys.BOLD)
     BOLD_10 = (10, FontKeys.BOLD)
     BOLD_18 = (18, FontKeys.BOLD)
@@ -23,6 +24,8 @@ class FontKey(Enum):
     TITLE_24 = (24, FontKeys.TITLE)
     TITLE_36 = (36, FontKeys.TITLE)
     TITLE_40 = (40, FontKeys.TITLE)
+    TITLE_42 = (42, FontKeys.TITLE)
+    TITLE_SECONDARY_9 = (9, FontKeys.TITLE_SECONDARY)
 
     def __init__(self, size: int, style: FontKeys):
         self.size = size

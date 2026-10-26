@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from src.fonts import FontKey
 from src.game.ameliorations.skills.skill import Skill
 from src.game.ameliorations.skills.skill_type import SkillType
 from src.graphics import MeshLayer
@@ -10,7 +11,6 @@ from src.graphics.super_meshes import AlignEnum
 from src.graphics.super_meshes.font_sequence import FontSequence
 from src.ui.amelioration_interface import Rectangle
 from src.ui.interface import Interface
-from src.utils.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game import Game

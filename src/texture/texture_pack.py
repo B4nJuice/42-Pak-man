@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Any
 
 from src.errors import PackError
+from src.fonts import FontKeys
 from src.texture.animation_definition import AnimationDef
-from src.texture.font_keys import FontKeys
 from src.texture.frame import Frame
 from src.texture.texture_definition import TextureDef
 from src.texture.texture_keys import TextureKeys

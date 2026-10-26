@@ -7,6 +7,7 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level
 from src.core.displayable import Displayable
 from src.errors import PackError
+from src.fonts.font_keys import FontKeys
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
@@ -19,7 +20,6 @@ from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
 from src.graphics.screen import Screen
-from src.texture.font_keys import FontKeys
 from src.ui import (
     AmeliorationInterface,
     EscapeInterface,

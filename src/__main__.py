@@ -1,9 +1,9 @@
 import pygame
 
 from src.errors import BaseError
+from src.fonts import FontManager
 from src.game.game import Game
 from src.texture import TextureLoader
-from src.utils.font_manager import FontManager
 from src.utils.size import SizeCore
 
 from .app import App, TextureManager
