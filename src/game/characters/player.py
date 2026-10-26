@@ -2,7 +2,7 @@ from collections.abc import Callable
 from random import sample
 from typing import TYPE_CHECKING
 
-import pygame
+from src.settings.action_key import ActionKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -154,14 +154,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
-        keys: pygame.key.ScancodeWrapper = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
+        if self.app.key_manager.is_pressed(ActionKey.MOVE_UP):
             self.try_move(Direction.NORTH)
-        if keys[pygame.K_DOWN]:
+        if self.app.key_manager.is_pressed(ActionKey.MOVE_DOWN):
             self.try_move(Direction.SOUTH)
-        if keys[pygame.K_LEFT]:
+        if self.app.key_manager.is_pressed(ActionKey.MOVE_LEFT):
             self.try_move(Direction.WEST)
-        if keys[pygame.K_RIGHT]:
+        if self.app.key_manager.is_pressed(ActionKey.MOVE_RIGHT):
             self.try_move(Direction.EAST)
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:

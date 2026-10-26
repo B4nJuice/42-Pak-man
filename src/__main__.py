@@ -3,6 +3,7 @@ import pygame
 from src.errors import BaseError
 from src.fonts.font_manager import FontManager
 from src.game.game import Game
+from src.settings import KeyManager, SettingsManager
 from src.texture.texture_loader import TextureLoader
 from src.texture.texture_manager import TextureManager
 from src.utils.size import SizeCore
@@ -66,12 +67,23 @@ def main(verbose: bool, logger: Logger) -> None:
         screen.moderngl_context
     )
 
+    settings: SettingsManager = SettingsManager(
+        path='.pak-man/settings.json',
+        verbose=False
+    )
+
+    key_manager: KeyManager = KeyManager(
+        settings=settings
+    )
+
     app: App = App(
         config=config,
         ctx=screen.moderngl_context,
         texture=texture_manager,
         size=sizes,
-        fonts=fonts
+        fonts=fonts,
+        settings=settings,
+        key_manager=key_manager
     )
 
     game: Game = Game(config.get_config(), screen, app)
