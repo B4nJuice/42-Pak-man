@@ -1,11 +1,15 @@
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from freetype.ft_errors import FT_Exception
 from moderngl import Context
 
 from src.errors import WrongFontFormatError
 from src.graphics.font.font import Font
-from src.texture import TextureManager
+
+if TYPE_CHECKING:
+    from src.texture.texture_manager import TextureManager
+
 from src.utils.size import SizeCore
 
 from .font_keys import FontKeys
@@ -34,14 +38,14 @@ class FontKey(Enum):
 
 class FontManager:
     _sizes: SizeCore
-    _texture_manager: TextureManager
+    _texture_manager: 'TextureManager'
     _context: Context
     _fonts: dict[FontKey, Font]
 
     def __init__(
                 self,
                 sizes: SizeCore,
-                texture_manager: TextureManager,
+                texture_manager: 'TextureManager',
                 context: Context
             ) -> None:
         self._sizes = sizes

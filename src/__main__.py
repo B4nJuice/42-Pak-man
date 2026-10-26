@@ -1,13 +1,14 @@
 import pygame
 
 from src.errors import BaseError
-from src.fonts import FontManager
+from src.fonts.font_manager import FontManager
 from src.game.game import Game
-from src.texture import TextureLoader
+from src.texture.texture_loader import TextureLoader
+from src.texture.texture_manager import TextureManager
 from src.utils.size import SizeCore
 
-from .app import App, TextureManager
-from .config import ConfigManager
+from .app import App
+from .config.config_manager import ConfigManager
 from .graphics.screen import Screen
 from .utils import Logger, TColor
 
