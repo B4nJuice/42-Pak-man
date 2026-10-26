@@ -20,6 +20,7 @@ from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
 from src.graphics.screen import Screen
+from src.settings.action_key import ActionKey
 from src.ui import (
     AmeliorationInterface,
     EscapeInterface,
@@ -203,13 +204,16 @@ class Game:
         # self.set_status(GameStatus.RUNNING)
         dt: float = 0.0
 
+        self._app.key_manager.update()
         self.update(dt)
         while self.get_status() != GameStatus.EXIT:
+            self._app.key_manager.update()
+
             for event in pygame.event.get():
                 self._event_handler.dispatch_event(event, event.type)
 
             if self.get_status() != GameStatus.RUNNING:
-                dt = 0
+                dt = 0.0
 
             if self._player.over:
                 break
@@ -243,14 +247,18 @@ class Game:
             and self._amelioration_interface.handle_key(event.key)
         ):
             return
-        match event.key:
-            case pygame.K_ESCAPE:
-                game_status: GameStatus = self.get_status()
-                if game_status == GameStatus.PAUSED:
-                    self._escape_interface.end()
-                elif game_status != GameStatus.AMELIORATION:
-                    self._escape_interface.start()
 
+        if self._app.key_manager.is_pressed_event(
+            ActionKey.BACK_PAUSE_RESUME,
+            event
+        ):
+            game_status: GameStatus = self.get_status()
+            if game_status == GameStatus.PAUSED:
+                self._escape_interface.end()
+            elif game_status != GameStatus.AMELIORATION:
+                self._escape_interface.start()
+
+        match event.key:
             case pygame.K_F1:
                 self._player._cheat = not self._player._cheat
             case pygame.K_F9:

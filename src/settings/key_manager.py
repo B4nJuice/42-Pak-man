@@ -32,6 +32,9 @@ class KeyManager:
             for key in self.get_keys(action)
         )
 
+    def is_pressed_event(self, action: ActionKey, event: pygame.Event) -> bool:
+        return event.key in self.get_keys(action)
+
     def update(self) -> None:
         self._pressed_keys = pygame.key.get_pressed()
 

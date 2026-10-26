@@ -15,7 +15,7 @@ class SettingsManager:
         self._path = path
         self._logger = Logger(
             name='Settings',
-            color=TColor.BRIGHT_RED,
+            color=TColor.BRIGHT_GREEN,
             verbose=verbose
         )
 
