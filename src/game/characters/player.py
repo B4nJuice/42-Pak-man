@@ -70,9 +70,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             app=app
         )
 
-        self._wallhack = True
-        self._godmod = True
-        self._noclip = True
         self._ameliorations = AmeliorationStore()
         self._level_exp_multiplier = level_exp_multiplier
         self._next_level_exp = first_level_exp
@@ -83,6 +80,10 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._level_exp = 0
         self._game = game
         self.set_state(PlayerState.NORMAL)
+
+        self._wallhack = True
+        self._godmod = True
+        self._noclip = True
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
         if amelioration not in self._ameliorations.all():

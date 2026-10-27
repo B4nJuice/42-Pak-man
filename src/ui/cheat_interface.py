@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from src.fonts.font_manager import FontKey
 from src.graphics.meshes.line import Line
@@ -162,11 +162,12 @@ class CheatInterface(Interface):
             ],
         ))
 
-        toggles_params = [
+        toggles_params: list[dict[str, Any]] = [
             {
                 'name': 'God Mod',
                 'description': 'Take no damage',
                 'action': self.toggle_godmod,
+                'status': self.game.get_godmod_status(),
                 'x': 0,
                 'y': 0
             },
@@ -174,6 +175,7 @@ class CheatInterface(Interface):
                 'name': 'No Clip',
                 'description': 'Pass through walls',
                 'action': self.toggle_noclip,
+                'status': self.game.get_noclip_status(),
                 'x': 1,
                 'y': 0
             },
@@ -181,6 +183,7 @@ class CheatInterface(Interface):
                 'name': 'Wall Hack',
                 'description': 'Predicts ghost movements through walls',
                 'action': self.toggle_wallhack,
+                'status': self.game.get_wallhack_status(),
                 'x': 0,
                 'y': 1
             },
@@ -188,6 +191,7 @@ class CheatInterface(Interface):
                 'name': 'Freeze Ghosts',
                 'description': 'Pause ghost movement',
                 'action': self.toggle_freeze,
+                'status': self.game.get_freeze_status(),
                 'x': 1,
                 'y': 1
             }
@@ -202,20 +206,30 @@ class CheatInterface(Interface):
         for toggle_params in toggles_params:
             toggle: ToggleButton = ToggleButton(
                 position=Position(
-                    toggle_x + (toggle_width + toggle_gap) * toggle_params['x'],
-                    toggle_y + (toggle_height + toggle_gap) * toggle_params['y']
+                    toggle_x + (toggle_width + toggle_gap)
+                    * toggle_params['x'],
+                    toggle_y + (toggle_height + toggle_gap)
+                    * toggle_params['y']
                 ),
                 width=toggle_width,
                 height=toggle_height,
+                state=ToggleState.get(toggle_params['status']),
                 inactive_color=Color(*config.cheat_toggle_bg_inactive_color),
                 active_color=Color(*config.cheat_toggle_bg_active_color),
-                inactive_track_color=Color(*config.cheat_toggle_button_inactive_color),
-                active_track_color=Color(*config.cheat_toggle_button_active_color),
-                thumb_inactive_color=Color(*config.cheat_toggle_text_inactive_color),
-                thumb_active_color=Color(*config.cheat_toggle_text_active_color),
+                inactive_track_color=Color(
+                    *config.cheat_toggle_button_inactive_color
+                ),
+                active_track_color=Color(
+                    *config.cheat_toggle_button_active_color
+                ),
+                thumb_inactive_color=Color(
+                    *config.cheat_toggle_text_inactive_color
+                ),
+                thumb_active_color=Color(
+                    *config.cheat_toggle_text_active_color
+                ),
                 border_color=Color(*config.cheat_toggle_border_color),
                 border_thickness=2,
-                state=ToggleState.INACTIVE,
                 operation=OperationEnum.ALPHA,
                 switch_padding=size.get(12),
                 switch_padding_inner=size.get(4),
@@ -262,6 +276,60 @@ class CheatInterface(Interface):
                 on_click=toggle_params['action']
             )
             self.layer.meshes.append(toggle)
+
+        titles_params: list[dict[str, Any]] = [
+            {
+                'label': 'Add Lives',
+                'x': 0,
+                'y': 0
+            },
+            {
+                'label': 'Add Xp',
+                'x': 1,
+                'y': 0
+            },
+            {
+                'label': 'Add Timer',
+                'x': 0,
+                'y': 1
+            },
+            {
+                'label': 'Time Speed',
+                'x': 1,
+                'y': 1
+            },
+            {
+                'label': 'Change Level',
+                'x': 0,
+                'y': 2
+            },
+            {
+                'label': 'Give Skills',
+                'x': 1,
+                'y': 2
+            }
+        ]
+
+        title_gap_x: int = size.get(24)
+        title_gap_y: int = size.get(20)
+        title_width: int = size.get(384)
+        title_height: int = size.get(62)
+        title_x: float = popup_position.x + size.get(32)
+        title_y: float = popup_position.y + size.get(305 + 8)
+
+        for title_params in titles_params:
+            self.layer.meshes.append(FontSequence(
+                text=title_params['label'],
+                font=fonts.get(FontKey.TITLE_14),
+                color=Color(*config.cheat_text_color),
+                position=Position(
+                    title_x + (title_width + title_gap_x) * title_params['x'],
+                    title_y + (title_height + title_gap_y) * title_params['y']
+                ),
+                align=AlignEnum.LEFT
+            ))
+
+        
 
         self.layer.meshes.append(Button(
             position=Position(
@@ -312,17 +380,44 @@ class CheatInterface(Interface):
 
         self.display()
 
+    def add_life(self) -> None:
+        print('add life')
+
+    def add_xp(self) -> None:
+        print('add xp')
+
+    def add_timer(self) -> None:
+        print('add timer')
+
+    def remove_timer(self) -> None:
+        print('remove timer')
+
+    def prev_level(self) -> None:
+        print('prev level')
+
+    def next_level(self) -> None:
+        print('next level')
+
+    def set_time_speed(self) -> None:
+        print('set time speed')
+
+    def give_skill(self) -> None:
+        print('give skill')
+
     def toggle_godmod(self, value: bool) -> None:
-        print(f'toggle_godmod: {value}')
+        self.game.toggle_godmod(value)
 
     def toggle_noclip(self, value: bool) -> None:
         print(f'toggle_noclip: {value}')
+        self.game.toggle_noclip(value)
 
     def toggle_wallhack(self, value: bool) -> None:
         print(f'toggle_wallhack: {value}')
+        self.game.toggle_wallhack(value)
 
     def toggle_freeze(self, value: bool) -> None:
         print(f'toggle_freeze: {value}')
+        self.game.toggle_freeze(value)
 
     def hide(self) -> None:
         self.hidden = True

@@ -71,27 +71,41 @@ class Game:
         self._init_screen()
         self.generate_level()
 
-
         self.init_entities()
+        self.toggle_freeze(True)
         self.init_interfaces()
         self.init_timer()
-
-        self.freeze_ghots()
 
     def init_timer(self) -> None:
         self._timer = Timer(600)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
         self._timer.set_cb_finish(lambda: print('player win'))
 
-    def freeze_ghots(self) -> None:
-        self._freeze_ghost = True
+    def toggle_freeze(self, value: bool) -> None:
+        self._freeze_ghost = value
         for ghost in self._level._entities.gets(Ghost):
             ghost.set_freeze(self._freeze_ghost)
 
-    def unfreeze_ghost(self) -> None:
-        self._freeze_ghost = False
-        for ghost in self._level._entities.gets(Ghost):
-            ghost.set_freeze(self._freeze_ghost)
+    def toggle_wallhack(self, value: bool) -> None:
+        self._player._wallhack = value
+
+    def toggle_noclip(self, value: bool) -> None:
+        self._player._noclip = value
+
+    def toggle_godmod(self, value: bool) -> None:
+        self._player._godmod = value
+
+    def get_freeze_status(self) -> bool:
+        return self._freeze_ghost
+
+    def get_wallhack_status(self) -> bool:
+        return self._player._wallhack
+
+    def get_noclip_status(self) -> bool:
+        return self._player._noclip
+
+    def get_godmod_status(self) -> bool:
+        return self._player._godmod
 
     def set_status(self, status: GameStatus) -> None:
         self._status = status

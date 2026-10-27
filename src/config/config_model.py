@@ -230,8 +230,6 @@ class ConfigModel(BaseModel):
 
     # leaderboard
 
-
-
     # cheat menu
     cheat_overlay_color: tuple[int, int, int] = Field(
         default=(0, 0, 0),
@@ -243,6 +241,10 @@ class ConfigModel(BaseModel):
     )
     cheat_border_color: tuple[int, int, int] = Field(
         default=(53, 64, 95),
+        description=''
+    )
+    cheat_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
         description=''
     )
     cheat_button_background_color: tuple[int, int, int] = Field(

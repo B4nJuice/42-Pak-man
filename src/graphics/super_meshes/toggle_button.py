@@ -16,6 +16,13 @@ class ToggleState(Enum):
     INACTIVE = "inactive"
     ACTIVE = "active"
 
+    @classmethod
+    def get(cls, value: bool) -> 'ToggleState':
+        if value:
+            return cls.ACTIVE
+        else:
+            return cls.INACTIVE
+
 
 @dataclass(frozen=True)
 class ToggleStyle:
