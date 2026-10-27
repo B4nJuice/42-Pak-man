@@ -229,3 +229,75 @@ class ConfigModel(BaseModel):
     )
 
     # leaderboard
+
+
+
+    # cheat menu
+    cheat_overlay_color: tuple[int, int, int] = Field(
+        default=(0, 0, 0),
+        description=''
+    )
+    cheat_background_color: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    cheat_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    cheat_button_background_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    cheat_button_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    cheat_button_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    cheat_toggle_bg_inactive_color: tuple[int, int, int] = Field(
+        default=(16, 22, 43),
+        description=''
+    )
+    cheat_toggle_bg_active_color: tuple[int, int, int] = Field(
+        default=(30, 30, 47),
+        description=''
+    )
+    cheat_toggle_button_inactive_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    cheat_toggle_button_active_color: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    cheat_toggle_button_border_inactive_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    cheat_toggle_button_border_active_color: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    cheat_toggle_border_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    cheat_toggle_text_inactive_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    cheat_toggle_text_active_color: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description=''
+    )
+    cheat_toggle_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    cheat_toggle_text_secondary_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
