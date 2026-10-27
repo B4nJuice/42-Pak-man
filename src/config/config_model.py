@@ -286,7 +286,7 @@ class ConfigModel(BaseModel):
         default=100
     )
     player_exp_per_second: float = Field(
-        default=50
+        default=0.5
     )
 
     # leaderboard
