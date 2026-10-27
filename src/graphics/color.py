@@ -38,6 +38,9 @@ class Color:
         self.a = self._min_max(a)
         self.is_default = default
 
+    def set_alpha(self, alpha: int) -> None:
+        self.a = min(255, max(0, alpha))
+
     @staticmethod
     def _min_max(
                 value: int,

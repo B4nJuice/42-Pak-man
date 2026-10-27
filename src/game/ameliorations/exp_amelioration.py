@@ -6,3 +6,4 @@ class ExpAmelioration(Amelioration):
     def __init__(self) -> None:
         self.init([ExpSkill()], "amelioration-exp")
         self.set_name("Experience Ring")
+        self.set_description("Gain more experience.")
