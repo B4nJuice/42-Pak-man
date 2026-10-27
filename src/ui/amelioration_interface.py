@@ -97,6 +97,7 @@ class AmeliorationInterface(Interface):
             AmeliorationCardInterface(
                 self.game,
                 Position(size.get(327 + index * 216), size.get(245)),
+                on_choose=lambda index=index: self._choose_amelioration(index),
             )
             for index in range(3)
         ]

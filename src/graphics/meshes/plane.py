@@ -15,13 +15,15 @@ class Plane(Clickable, Mesh):
                 positions: tuple[Position, Position],
                 operation: OperationEnum = OperationEnum.SET,
                 dynamic: bool = False,
-                on_click: Callable | None = None
+                on_click: Callable | None = None,
+                on_hover: Callable | None = None,
             ) -> None:
         super().__init__(
                 color=color,
                 operation=operation,
                 dynamic=dynamic,
-                on_click=on_click
+                on_click=on_click,
+                on_hover=on_hover
             )
 
         self.positions = positions

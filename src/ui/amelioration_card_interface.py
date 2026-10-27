@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations.amelioration import Amelioration
@@ -34,6 +34,7 @@ class AmeliorationCardInterface(Interface):
                 self,
                 game: 'Game',
                 position: Position,
+                on_choose: Callable[[], None] | None = None,
             ) -> None:
         self.layer = MeshLayer()
         self.position = position
@@ -88,7 +89,8 @@ class AmeliorationCardInterface(Interface):
                     self.position.x + self.size.get(163 + 14),
                     self.position.y + self.size.get(29 + 241)
                 ),
-            )
+            ),
+            on_click=on_choose,
         )
 
         self.choose_button_text = FontSequence(

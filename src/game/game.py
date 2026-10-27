@@ -236,6 +236,9 @@ class Game:
         self._event_handler.register_listener(
             pygame.MOUSEBUTTONUP, self._screen.click
         )
+        self._event_handler.register_listener(
+            pygame.MOUSEMOTION, self._screen.hover
+        )
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (

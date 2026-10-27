@@ -54,13 +54,26 @@ class Screen:
             if hasattr(mesh, "get_layer"):
                 self.search_for_clickable(mesh.get_layer())
                 continue
-            if isinstance(mesh, Clickable) and mesh._on_click:
+            if (
+                isinstance(mesh, Clickable)
+                and (mesh._on_click or mesh._on_hover)
+            ):
                 self.clickables.append(mesh)
 
     def click(self, _: Event, __: int) -> None:
         x, y = pygame.mouse.get_pos()
         for c in self.clickables:
             c.click(x, y)
+
+    def hover(self, _: Event, __: int) -> None:
+        x, y = pygame.mouse.get_pos()
+        hovered = False
+        for c in self.clickables:
+            if c._on_hover and c.contains(x, y):
+                c.hover(x, y)
+                hovered = True
+        if hovered:
+            self.refresh()
 
     def add_mesh(self, mesh: 'Mesh | Interface') -> None:
         from src.ui.interface import Interface
@@ -69,7 +82,10 @@ class Screen:
             self.add_layer(mesh.get_layer())
             return
 
-        if isinstance(mesh, Clickable) and mesh._on_click:
+        if (
+            isinstance(mesh, Clickable)
+            and (mesh._on_click or mesh._on_hover)
+        ):
             self.clickables.append(mesh)
 
         layer = (
