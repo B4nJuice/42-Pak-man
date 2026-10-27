@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-<<<<<<< HEAD
-from src.texture.font_keys import FontKeys
-from src.utils.font_manager import FontKey
-=======
-from src.fonts import FontKeys
->>>>>>> origin/main
+from src.fonts.font_keys import FontKeys
+from src.fonts.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -68,16 +65,12 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-<<<<<<< HEAD
-            Color(*config.menu_overlay_color, 120),
-=======
-            Color(*config.pause_menu_overlay_color, 150),
->>>>>>> origin/main
+            Color(*config.pause_menu_overlay_color, 120),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
-            dynamic=True,
+            dynamic=True
         )
 
         self.panel = Plane(
@@ -91,7 +84,7 @@ class AmeliorationInterface(Interface):
         )
 
         self.panel_border = Rectangle(
-            Color(*config.menu_border_color),
+            Color(*config.pause_menu_border_color),
             Position(size.get(279), size.get(119)),
             size.get(722),
             size.get(482),
@@ -149,8 +142,6 @@ class AmeliorationInterface(Interface):
         button_x = panel_x + (panel_width - button_width) // 2
         first_button_y = panel_y + (panel_height - buttons_height) // 2
 
-<<<<<<< HEAD
-=======
         self.panel = Plane(
             Color(*config.pause_menu_background_color, 245),
             (
@@ -170,7 +161,6 @@ class AmeliorationInterface(Interface):
             smooth_end=True,
         )
 
->>>>>>> origin/main
         button_params: list[dict[str, Any]] = [
             {
                 "label": "Amelioration",

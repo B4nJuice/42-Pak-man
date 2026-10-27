@@ -79,19 +79,16 @@ class ConfigModel(BaseModel):
         default=(0, 0, 0),
         description="Color of the pause menu overlay"
     )
-<<<<<<< HEAD
     menu_panel_color: tuple[int, int, int] = Field(
         default=(16, 22, 44),
         description="Color of the pause menu panel"
     )
-    menu_border_color: tuple[int, int, int] = Field(
-=======
+
     pause_menu_background_color: tuple[int, int, int] = Field(
         default=(13, 16, 48),
         description="Color of the pause menu panel"
     )
     pause_menu_border_color: tuple[int, int, int] = Field(
->>>>>>> origin/main
         default=(53, 64, 95),
         description="Color of the pause menu border"
     )

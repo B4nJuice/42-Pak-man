@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from src.core.displayable import SimpleDisplayable
+from src.fonts.font_manager import FontKey
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.ameliorations.skills.skill import Skill
 from src.graphics.color import Color, OperationEnum
@@ -11,7 +12,6 @@ from src.graphics.meshes.plane import Plane
 from src.graphics.position import Position
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 from src.ui.interface import Interface
-from src.utils.font_manager import FontKey
 from src.utils.size import SizeCore
 
 if TYPE_CHECKING:
