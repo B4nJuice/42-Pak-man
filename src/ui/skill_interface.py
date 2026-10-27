@@ -41,6 +41,7 @@ class SkillInterface(Interface):
                 skill_title_font_size: float = 23,
                 skill_value_font_size: float = 55.5,
             ) -> None:
+        super().__init__(game)
         self.game = game
         self.layer = MeshLayer()
 

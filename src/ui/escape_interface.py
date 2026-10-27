@@ -26,6 +26,7 @@ from .interface import Interface
 
 class EscapeInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        super().__init__(game)
         self.game: Game = game
         self.hidden: bool = True
         self.layer: MeshLayer = MeshLayer()
@@ -232,27 +233,9 @@ class EscapeInterface(Interface):
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                EscapeInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            EscapeInterface._set_hidden(mesh.get_layer(), hidden)
 
     def action_pause(self) -> None:
         self.display()

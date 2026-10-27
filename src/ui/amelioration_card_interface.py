@@ -39,6 +39,7 @@ class AmeliorationCardInterface(Interface):
                 on_choose: Callable[[], None] | None = None,
                 on_hover: Callable[[], None] | None = None,
             ) -> None:
+        super().__init__(game)
         self.layer = MeshLayer()
         self.position = position
         self.amelioration = None
