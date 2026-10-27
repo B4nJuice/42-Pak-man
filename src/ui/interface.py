@@ -8,8 +8,13 @@ if TYPE_CHECKING:
 
 
 class Interface(ABC):
+    hidden: bool
+
     def __init__(self, game: 'Game') -> None:
-        ...
+        self.hidden = False
+
+    def is_hidden(self) -> bool:
+        return self.hidden
 
     @abstractmethod
     def get_layer(self) -> MeshLayer:
