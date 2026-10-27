@@ -4,7 +4,7 @@ from pygame.time import Clock
 
 from src.app import App
 from src.config import ConfigModel
-from src.core import EventHandler, Level
+from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.errors import PackError
 from src.fonts.font_keys import FontKeys
@@ -48,6 +48,7 @@ class Game:
     _font: Font
     _player: Player
     _freeze_ghost: bool
+    _timer: Timer
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -68,10 +69,17 @@ class Game:
         self._init_screen()
         self.generate_level()
 
+
         self.init_entities()
         self.init_interfaces()
+        self.init_timer()
 
         self.freeze_ghots()
+
+    def init_timer(self) -> None:
+        self._timer = Timer(600)
+        self._timer.set_cb_update(self._game_interface.refresh_timer)
+        self._timer.set_cb_finish(lambda: print('player win'))
 
     def freeze_ghots(self) -> None:
         self._freeze_ghost = True
@@ -96,10 +104,11 @@ class Game:
         )
 
     def update(self, dt: float) -> None:
+        self._timer.update(dt)
         self._level.update(dt)
         self.refresh_maze()
         self._stats_interface.refresh()
-        self._screen.refresh()
+        self._screen.refresh() 
         self._game_interface.refresh(dt)
 
         if not self._player.alive:

@@ -81,8 +81,6 @@ class GameInterface(Interface):
             dynamic=True
         )
 
-        self.set_timer(600)
-
         maze_x = self.x_offset + round(self.width * 0.02)
         maze_y = self.y_offset + level_bar_height + round(self.height * 0.07)
 
@@ -130,7 +128,7 @@ class GameInterface(Interface):
         return f"{int(seconds//60):02}:{int(seconds) % 60:02}"
 
     def set_level_text(self, level: int) -> None:
-        self.level_text.set_sequence_text(f"Lvl .{level}")
+        self.level_text.set_sequence_text(f"LV. {level}")
 
     def set_level_bar_progression(self, progression: float) -> None:
         self.level_bar.set_progression(progression)
@@ -138,16 +136,10 @@ class GameInterface(Interface):
     def set_level_bar_goal(self, goal: float) -> None:
         self.level_bar.set_goal(goal)
 
-    def set_timer(self, seconds: float) -> None:
-        self.timer_value: float = seconds
-        self.refresh_timer()
+    def refresh_timer(self, value: float) -> None:
+        self.timer.set_sequence_text(self.sec_to_str(max(value, 0.0)))
 
-    def refresh_timer(self, dt: float = 0) -> None:
-        self.timer_value -= dt
-        self.timer.set_sequence_text(self.sec_to_str(self.timer_value))
-
-    def refresh(self, dt: float) -> None:
-        self.refresh_timer(dt)
+    def refresh(self, _: float) -> None:
         self.maze.refresh()
 
     def get_layer(self) -> MeshLayer:
