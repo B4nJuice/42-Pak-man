@@ -15,7 +15,7 @@ from .interface import Interface
 class GameInterface(Interface):
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
-        
+
         self.app: App = game._app
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
