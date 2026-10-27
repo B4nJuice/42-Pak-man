@@ -41,6 +41,7 @@ class AmeliorationPlaceholderInterface(Interface):
         self.amelioration = None
         self.icon = None
         self.game = game
+        super().__init__(game)
 
         self.background = Plane(
             Color(*self.game._config.placeholder_amelioration_color),
