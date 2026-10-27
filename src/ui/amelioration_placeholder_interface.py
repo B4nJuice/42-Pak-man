@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from src.core.displayable import SimpleDisplayable
+from src.fonts import FontKey
 from src.game.ameliorations.amelioration import Amelioration
 from src.graphics import OperationEnum
 from src.graphics.color import Color
@@ -9,7 +10,6 @@ from src.graphics.meshes.plane import Plane
 from src.graphics.position import Position
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 from src.ui.interface import Interface
-from src.utils.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
@@ -66,7 +66,7 @@ class AmeliorationPlaceholderInterface(Interface):
         self.level = FontSequence(
             "",
             self.game._app.fonts.get(FontKey.TITLE_10),
-            Color(*self.game._config.menu_text_color),
+            Color(*self.game._config.pause_menu_text_button),
             Position(
                 self.position.x + self.width - self.game._app.size.get(3),
                 self.position.y + self.height - self.game._app.size.get(3),

@@ -7,6 +7,7 @@ class FontKeys(Enum):
     DEFAULT = 'default'
     BOLD = 'default-bold'
     TITLE = 'title'
+    TITLE_SECONDARY = 'title-secondary'
 
     @classmethod
     def get(cls, key: str) -> 'FontKeys':

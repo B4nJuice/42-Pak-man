@@ -75,26 +75,51 @@ class ConfigModel(BaseModel):
         description="Color of the text of the stats"
     )
 
-    menu_overlay_color: tuple[int, int, int] = Field(
+    pause_menu_overlay_color: tuple[int, int, int] = Field(
         default=(0, 0, 0),
         description="Color of the pause menu overlay"
     )
+<<<<<<< HEAD
     menu_panel_color: tuple[int, int, int] = Field(
         default=(16, 22, 44),
         description="Color of the pause menu panel"
     )
     menu_border_color: tuple[int, int, int] = Field(
+=======
+    pause_menu_background_color: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description="Color of the pause menu panel"
+    )
+    pause_menu_border_color: tuple[int, int, int] = Field(
+>>>>>>> origin/main
         default=(53, 64, 95),
         description="Color of the pause menu border"
     )
-    menu_button_color: tuple[int, int, int] = Field(
-        default=(35, 35, 35),
+    pause_menu_button_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
         description="Color of the pause menu buttons"
     )
-    menu_text_color: tuple[int, int, int] = Field(
-        default=(255, 255, 255),
+    pause_menu_button_hover_color: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description="Color of the pause menu buttons"
+    )
+    pause_menu_text_primary: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
         description="Color of the pause menu text"
     )
+    pause_menu_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description="Color of the pause menu text"
+    )
+    pause_menu_text_button: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description="Color of the pause menu text"
+    )
+    pause_menu_text_button_hover: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description="Color of the pause menu text"
+    )
+
     amelioration_common_color: tuple[int, int, int] = Field(
         default=(196, 196, 196),
         description="Color of common ameliorations"
