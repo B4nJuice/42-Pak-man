@@ -28,6 +28,7 @@ from src.ui import (
     GameInterface,
     StatsInterface,
 )
+from src.ui.cheat_interface import CheatInterface
 from src.utils import Logger, TColor
 
 
@@ -39,6 +40,7 @@ class Game:
     _escape_interface: EscapeInterface
     _stats_interface: StatsInterface
     _game_interface: GameInterface
+    _cheat_interface: CheatInterface
     _event_handler: EventHandler
     _config: ConfigModel
     _status: GameStatus
@@ -108,7 +110,7 @@ class Game:
         self._level.update(dt)
         self.refresh_maze()
         self._stats_interface.refresh()
-        self._screen.refresh() 
+        self._screen.refresh()
         self._game_interface.refresh(dt)
 
         if not self._player.alive:
@@ -217,11 +219,13 @@ class Game:
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)
         self._amelioration_interface = AmeliorationInterface(self)
+        self._cheat_interface = CheatInterface(self)
 
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
         self._screen.add_mesh(self._amelioration_interface)
+        self._screen.add_mesh(self._cheat_interface)
 
     def run(self) -> None:
         # self.set_status(GameStatus.RUNNING)

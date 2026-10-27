@@ -49,7 +49,7 @@ class EscapeInterface(Interface):
         height: int = 465
         width_middle: int = screen_width // 2
 
-        popup_position, popup_size, popup_plane, popup_border = \
+        popup_position, _, popup_plane, popup_border = \
             generate_popup_bg(
                 width=width,
                 height=height,

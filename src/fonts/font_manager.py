@@ -22,6 +22,7 @@ class FontKey(Enum):
     TEXT_13 = (13, FontKeys.DEFAULT)
     BOLD_8 = (8, FontKeys.BOLD)
     BOLD_10 = (10, FontKeys.BOLD)
+    BOLD_14 = (14, FontKeys.BOLD)
     BOLD_18 = (18, FontKeys.BOLD)
     BOLD_24 = (24, FontKeys.BOLD)
     TITLE_10 = (10, FontKeys.TITLE)
@@ -31,6 +32,7 @@ class FontKey(Enum):
     TITLE_36 = (36, FontKeys.TITLE)
     TITLE_40 = (40, FontKeys.TITLE)
     TITLE_42 = (42, FontKeys.TITLE)
+    TITLE_SECONDARY_8 = (8, FontKeys.TITLE_SECONDARY)
     TITLE_SECONDARY_9 = (9, FontKeys.TITLE_SECONDARY)
 
     def __init__(self, size: int, style: FontKeys):
