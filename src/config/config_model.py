@@ -22,12 +22,12 @@ class ConfigModel(BaseModel):
 
     screen_width: int = Field(
         gt=100,
-        default=800,
+        default=1280,
         description='Width of the screen'
     )
     screen_height: int = Field(
         gt=100,
-        default=600,
+        default=720,
         description='Height of the screen'
     )
 
