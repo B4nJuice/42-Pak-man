@@ -390,7 +390,9 @@ class AmeliorationInterface(Interface):
         return False
 
     def _update_selection(self) -> None:
-        for index, button_data in enumerate(self.buttons):
+        for index, (button_data, card) in enumerate(
+                zip(self.buttons, self.cards)
+        ):
             selected_button = button_data[1]
             selected_button.set_hidden(index != self._selected_index)
             button = button_data[0]
@@ -403,6 +405,10 @@ class AmeliorationInterface(Interface):
             button.set_hidden(False)
             icon.set_width(round(self._icon_size * scale))
             icon.set_height(round(self._icon_size * scale))
+            if index == self._selected_index:
+                card.select()
+            else:
+                card.unselect()
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]

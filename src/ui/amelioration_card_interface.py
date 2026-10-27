@@ -310,10 +310,10 @@ class AmeliorationCardInterface(Interface):
         self.border.set_thickness(2)
         self.border.set_color(self.rarity_color)
         self.choose_button_background.set_color(self.rarity_color)
+        self.choose_button_text.set_sequence_text("> CHOOSE UPGRADE <")
         self.choose_button_text.set_color(
             Color(*self.game._config.selected_choose_button_color)
         )
-        self.choose_button_text.set_sequence_text("> CHOOSE UPGRADE <")
 
     def unselect(self) -> None:
         self.border.set_thickness(1)
@@ -323,10 +323,10 @@ class AmeliorationCardInterface(Interface):
         self.choose_button_background.set_color(
             Color(*self.game._config.choose_button_background_color)
         )
+        self.choose_button_text.set_sequence_text("CHOOSE UPGRADE")
         self.choose_button_text.set_color(
             Color(*self.game._config.choose_button_text_color)
         )
-        self.choose_button_text.set_sequence_text("CHOOSE UPGRADE")
 
     def get_layer(self) -> MeshLayer:
         return self.layer
