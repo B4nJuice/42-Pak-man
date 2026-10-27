@@ -76,8 +76,8 @@ class AmeliorationInterface(Interface):
         self.panel = Plane(
             Color(*config.menu_panel_color),
             (
-                Position(size.get(280), size.get(120)),
-                Position(size.get(280 + 722), size.get(120 + 482))
+                Position(size.get(279), size.get(119)),
+                Position(size.get(279 + 722), size.get(119 + 482))
             ),
             OperationEnum.SET,
             dynamic=True,
@@ -85,7 +85,7 @@ class AmeliorationInterface(Interface):
 
         self.panel_border = Rectangle(
             Color(*config.menu_border_color),
-            Position(size.get(280), size.get(120)),
+            Position(size.get(279), size.get(119)),
             size.get(722),
             size.get(482),
             2,
@@ -96,7 +96,7 @@ class AmeliorationInterface(Interface):
         self.cards = [
             AmeliorationCardInterface(
                 self.game,
-                Position(size.get(327 + index * 212), size.get(245)),
+                Position(size.get(327 + index * 216), size.get(245)),
             )
             for index in range(3)
         ]
@@ -431,9 +431,7 @@ class AmeliorationInterface(Interface):
             return ""
         skill, value = upgrades[index]
         skill_name = skill.__class__.__name__.removesuffix("Skill")
-        suffix = (
-            "%" if skill.get_type() == SkillType.PERCENTAGE else skill._suffix
-        )
+        suffix = skill.get_suffix()
         before = float(skill.get_value())
         after = float(before + value)
         return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"

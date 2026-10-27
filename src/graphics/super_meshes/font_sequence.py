@@ -21,6 +21,7 @@ class FontSequence(SuperMesh):
     align: AlignEnum
     text: str
     scale: float
+    total_width: int
 
     def __init__(
                 self,
@@ -57,6 +58,21 @@ class FontSequence(SuperMesh):
         for char in self.characters:
             char.set_color(color)
 
+    def set_color_indexes(
+                self,
+                color: Color,
+                indexes: list[int] | None
+            ) -> None:
+        if indexes is None:
+            for char in self.characters:
+                char.set_color(color)
+        else:
+            l = len(self.text)
+            for i in indexes:
+                if i >= l:
+                    break
+                self.characters[i].set_color(color)
+
     def set_sequence_text(self, text: str) -> None:
         self.text = text
         self.characters = []
@@ -68,6 +84,8 @@ class FontSequence(SuperMesh):
             total_width += infos["advance"]
             if index < len(self.text) - 1:
                 total_width += self.spacing
+
+        self.total_width = total_width
 
         match self.align:
             case AlignEnum.LEFT:

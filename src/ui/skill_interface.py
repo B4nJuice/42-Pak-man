@@ -112,5 +112,5 @@ class SkillInterface(Interface):
             for amelioration in player._ameliorations.gets(skill_type)
         )
         if skill.get_type() == SkillType.STATIC:
-            return f"{value:.2f}{skill._suffix}"
+            return f"{value:.2f}{skill.get_suffix()}"
         return f"{1 + value / 100:.2f}x"

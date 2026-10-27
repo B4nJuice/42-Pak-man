@@ -12,6 +12,7 @@ from .size import SizeCore
 
 
 class FontKey(Enum):
+    TEXT_6 = (6, FontKeys.DEFAULT)
     TEXT_8 = (8, FontKeys.DEFAULT)
     TEXT_10 = (10, FontKeys.DEFAULT)
     BOLD_8 = (8, FontKeys.BOLD)

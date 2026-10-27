@@ -229,6 +229,14 @@ class ConfigModel(BaseModel):
         default=(162, 172, 201)
     )
 
+    skill_upgrade_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233)
+    )
+
+    skill_change_color: tuple[int, int, int] = Field(
+        default=(101, 114, 147)
+    )
+
     #           Exp params
 
     # rewards

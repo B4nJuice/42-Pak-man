@@ -17,11 +17,14 @@ class Skill(ABC):
             ) -> None:
         self._type = skill_type
         self._value = default_value
-        self._suffix = ""
+        self._suffix = "%"
 
     @abstractmethod
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:
         pass
+
+    def get_suffix(self) -> str:
+        return self._suffix
 
     def set_name(self, name: str) -> None:
         self._name = name

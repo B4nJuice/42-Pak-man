@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from src.core.displayable import SimpleDisplayable
@@ -135,10 +136,10 @@ class AmeliorationCardInterface(Interface):
             self.game._app.fonts.get(FontKey.BOLD_8),
             Color(*self.game._config.amelioration_rarity_text_color),
             Position(
-                self.position.x + self.size.get(15 + 30.5),
+                self.position.x + self.size.get(21),
                 self.position.y + self.size.get(15 + 10),
             ),
-            align=AlignEnum.CENTER,
+            align=AlignEnum.LEFT,
             dynamic=True,
         )
 
@@ -178,6 +179,30 @@ class AmeliorationCardInterface(Interface):
             dynamic=True,
         )
 
+        self.skill_upgrade = FontSequence(
+            "",
+            self.game._app.fonts.get(FontKey.TEXT_6),
+            Color(*self.game._config.skill_upgrade_color),
+            Position(
+                self.position.x + self.size.get(21),
+                self.position.y + self.size.get(224),
+            ),
+            align=AlignEnum.LEFT,
+            dynamic=True,
+        )
+
+        self.skill_change = FontSequence(
+            "",
+            self.game._app.fonts.get(FontKey.BOLD_8),
+            Color(*self.game._config.skill_change_color),
+            Position(
+                self.position.x + self.size.get(172),
+                self.position.y + self.size.get(213),
+            ),
+            align=AlignEnum.RIGHT,
+            dynamic=True,
+        )
+
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.border)
         self.layer.meshes.append(self.amelioration_rarity_background)
@@ -187,7 +212,8 @@ class AmeliorationCardInterface(Interface):
         self.layer.meshes.append(self.choose_button_text)
         self.layer.meshes.append(self.level_text)
         self.layer.meshes.append(self.skill_name)
-
+        self.layer.meshes.append(self.skill_upgrade)
+        self.layer.meshes.append(self.skill_change)
 
     def set_amelioration(
                 self,
@@ -209,12 +235,47 @@ class AmeliorationCardInterface(Interface):
         self.amelioration_rarity_text.set_color(Color(*rarity_color))
 
         rarity_color = list(rarity_color) + [23]
-        self.amelioration_rarity_background.set_color(
-            Color(*rarity_color)
+        rarity_color = Color(*rarity_color)
+        self.amelioration_rarity_background.set_color(rarity_color)
+        self.amelioration_rarity_background.set_width(
+            self.amelioration_rarity_text.total_width + self.size.get(12)
         )
-        skill = amelioration.get_skills()[0]
 
-        self.skill_name.set_sequence_text(skill.get_name())
+        rarity_color = deepcopy(rarity_color)
+        rarity_color.set_alpha(255)
+
+        skill_names = []
+        skill_upgrades = []
+        skill_changes = []
+        skill_change_highlight_indexes = []
+        skill_change_index = 0
+        for skill, skill_value in upgrades:
+            before = float(skill.get_value())
+            after = before + skill_value
+            suffix = skill.get_suffix()
+            before_text = f"{before:.2f}{suffix}"
+            after_text = f"{after:.2f}{suffix}"
+            change_text = f"{before_text} → {after_text}"
+
+            skill_names.append(skill.get_name())
+            skill_upgrades.append(
+                f"+{skill_value:.2f} {suffix} {skill.get_name()}"
+            )
+            skill_changes.append(change_text)
+            arrow_index = skill_change_index + len(before_text) + 1
+            after_start = arrow_index + len("→ ")
+            skill_change_highlight_indexes.extend(
+                range(arrow_index, after_start + len(after_text))
+            )
+            skill_change_index += len(change_text) + len(" / ")
+
+        self.skill_name.set_sequence_text(" / ".join(skill_names))
+        self.skill_upgrade.set_sequence_text(" / ".join(skill_upgrades))
+        self.skill_change.set_sequence_text(" / ".join(skill_changes))
+        self.skill_change.set_color_indexes(
+            rarity_color,
+            skill_change_highlight_indexes
+        )
 
         self.icon = SimpleDisplayable(
             self.game._app,
