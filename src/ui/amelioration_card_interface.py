@@ -35,6 +35,7 @@ class AmeliorationCardInterface(Interface):
                 game: 'Game',
                 position: Position,
                 on_choose: Callable[[], None] | None = None,
+                on_hover: Callable[[], None] | None = None,
             ) -> None:
         self.layer = MeshLayer()
         self.position = position
@@ -91,6 +92,7 @@ class AmeliorationCardInterface(Interface):
                 ),
             ),
             on_click=on_choose,
+            on_hover=on_hover,
         )
 
         self.choose_button_text = FontSequence(

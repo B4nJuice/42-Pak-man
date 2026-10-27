@@ -98,6 +98,7 @@ class AmeliorationInterface(Interface):
                 self.game,
                 Position(size.get(327 + index * 216), size.get(245)),
                 on_choose=lambda index=index: self._choose_amelioration(index),
+                on_hover=lambda index=index: self._select_amelioration(index),
             )
             for index in range(3)
         ]
@@ -410,6 +411,12 @@ class AmeliorationInterface(Interface):
                 card.select()
             else:
                 card.unselect()
+
+    def _select_amelioration(self, index: int) -> None:
+        if self._selected_index == index:
+            return
+        self._selected_index = index
+        self._update_selection()
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]
