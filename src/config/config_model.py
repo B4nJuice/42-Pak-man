@@ -237,6 +237,10 @@ class ConfigModel(BaseModel):
         default=(101, 114, 147)
     )
 
+    selected_choose_button_color: tuple[int, int, int] = Field(
+        default=(31, 31, 31)
+    )
+
     #           Exp params
 
     # rewards

@@ -241,8 +241,8 @@ class AmeliorationCardInterface(Interface):
             self.amelioration_rarity_text.total_width + self.size.get(12)
         )
 
-        rarity_color = deepcopy(rarity_color)
-        rarity_color.set_alpha(255)
+        self.rarity_color = deepcopy(rarity_color)
+        self.rarity_color.set_alpha(255)
 
         skill_names = []
         skill_upgrades = []
@@ -273,7 +273,7 @@ class AmeliorationCardInterface(Interface):
         self.skill_upgrade.set_sequence_text(" / ".join(skill_upgrades))
         self.skill_change.set_sequence_text(" / ".join(skill_changes))
         self.skill_change.set_color_indexes(
-            rarity_color,
+            self.rarity_color,
             skill_change_highlight_indexes
         )
 
@@ -305,6 +305,28 @@ class AmeliorationCardInterface(Interface):
         self.layer.meshes.append(self.amelioration_name)
         self.layer.meshes.append(self.amelioration_description)
         self.layer.meshes.append(self.icon)
+
+    def select(self) -> None:
+        self.border.set_thickness(2)
+        self.border.set_color(self.rarity_color)
+        self.choose_button_background.set_color(self.rarity_color)
+        self.choose_button_text.set_color(
+            Color(*self.game._config.selected_choose_button_color)
+        )
+        self.choose_button_text.set_sequence_text("> CHOOSE UPGRADE <")
+
+    def unselect(self) -> None:
+        self.border.set_thickness(1)
+        self.border.set_color(
+            Color(*self.game._config.amelioration_card_border_color)
+        )
+        self.choose_button_background.set_color(
+            Color(*self.game._config.choose_button_background_color)
+        )
+        self.choose_button_text.set_color(
+            Color(*self.game._config.choose_button_text_color)
+        )
+        self.choose_button_text.set_sequence_text("CHOOSE UPGRADE")
 
     def get_layer(self) -> MeshLayer:
         return self.layer
