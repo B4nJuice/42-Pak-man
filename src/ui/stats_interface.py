@@ -37,8 +37,14 @@ class StatsInterface(Interface):
         self.background: Plane = Plane(
             Color(*self.game._config.stats_background_color),
             (
-                Position(self.game._app.size.get(27), self.game._app.size.get(15)),
-                Position(self.game._app.size.get(27 + 265), self.game._app.size.get(15 + 689))
+                Position(
+                    self.game._app.size.get(27),
+                    self.game._app.size.get(15)
+                ),
+                Position(
+                    self.game._app.size.get(27 + 265),
+                    self.game._app.size.get(15 + 689)
+                )
             ),
         )
 

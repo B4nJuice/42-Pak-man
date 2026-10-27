@@ -67,9 +67,9 @@ class FontSequence(SuperMesh):
             for char in self.characters:
                 char.set_color(color)
         else:
-            l = len(self.text)
+            text_len = len(self.text)
             for i in indexes:
-                if i >= l:
+                if i >= text_len:
                     break
                 self.characters[i].set_color(color)
 

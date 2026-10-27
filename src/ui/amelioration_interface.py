@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 import pygame
 
@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 from src.core.displayable import Displayable, SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
-from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
 from src.graphics import Color, Mesh, OperationEnum, Position
 from src.graphics.font import Font
@@ -93,12 +92,12 @@ class AmeliorationInterface(Interface):
             smooth_end=True,
         )
 
-        self.cards = [
+        self.cards: list[AmeliorationCardInterface] = [
             AmeliorationCardInterface(
                 self.game,
                 Position(size.get(327 + index * 216), size.get(245)),
-                on_choose=lambda index=index: self._choose_amelioration(index),
-                on_hover=lambda index=index: self._select_amelioration(index),
+                on_choose=self._choose_callback(index),
+                on_hover=self._hover_callback(index),
             )
             for index in range(3)
         ]
@@ -141,8 +140,6 @@ class AmeliorationInterface(Interface):
         panel_y = (screen_height - panel_height) // 2
         button_x = panel_x + (panel_width - button_width) // 2
         first_button_y = panel_y + (panel_height - buttons_height) // 2
-
-
 
         button_params: list[dict[str, Any]] = [
             {
@@ -286,22 +283,6 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.append(self.level_up_text)
         self.layer.meshes.extend(self.cards)
 
-        for (
-            button,
-            selected_button,
-            icon,
-            texts,
-            level,
-        ) in (
-            self.buttons
-        ):
-            pass
-            # self.layer.meshes.append(selected_button)
-            # self.layer.meshes.append(button)
-            # self.layer.meshes.append(icon)
-            # for text in texts:
-                # self.layer.meshes.append(text)
-            # self.layer.meshes.append(level)
         self.hide()
 
     def hide(self) -> None:
@@ -417,6 +398,16 @@ class AmeliorationInterface(Interface):
             return
         self._selected_index = index
         self._update_selection()
+
+    def _choose_callback(self, index: int) -> Callable[[], None]:
+        def choose() -> None:
+            self._choose_amelioration(index)
+        return choose
+
+    def _hover_callback(self, index: int) -> Callable[[], None]:
+        def hover() -> None:
+            self._select_amelioration(index)
+        return hover
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]

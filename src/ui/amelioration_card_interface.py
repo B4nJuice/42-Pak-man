@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations.amelioration import Amelioration
@@ -29,6 +30,7 @@ class AmeliorationCardInterface(Interface):
     level: FontSequence
     game: 'Game'
     size: SizeCore
+    rarity_color: Color
 
     def __init__(
                 self,
@@ -238,20 +240,24 @@ class AmeliorationCardInterface(Interface):
         self.amelioration_rarity_text.set_sequence_text("✦ " + rarity_name)
         self.amelioration_rarity_text.set_color(Color(*rarity_color))
 
-        rarity_color = list(rarity_color) + [23]
-        rarity_color = Color(*rarity_color)
-        self.amelioration_rarity_background.set_color(rarity_color)
+        _rarity_color: Color = Color(
+            rarity_color[0],
+            rarity_color[1],
+            rarity_color[2],
+            23,
+        )
+        self.amelioration_rarity_background.set_color(_rarity_color)
         self.amelioration_rarity_background.set_width(
             self.amelioration_rarity_text.total_width + self.size.get(12)
         )
 
-        self.rarity_color = deepcopy(rarity_color)
+        self.rarity_color = deepcopy(_rarity_color)
         self.rarity_color.set_alpha(255)
 
         skill_names = []
         skill_upgrades = []
         skill_changes = []
-        skill_change_highlight_indexes = []
+        skill_change_highlight_indexes: list[int] = []
         skill_change_index = 0
         for skill, skill_value in upgrades:
             before = float(skill.get_value())
