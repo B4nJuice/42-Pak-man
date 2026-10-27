@@ -9,12 +9,12 @@ from src.fonts.font_manager import FontKey
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable, SimpleDisplayable
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
@@ -30,7 +30,7 @@ class AmeliorationInterface(Interface):
 
     def __init__(self, game: 'Game') -> None:
         self.game: Game = game
-        self.hidden: bool = True
+        super().__init__(game)
         self._selected_index = 0
         self.layer: MeshLayer = MeshLayer()
         self._next_ameliorations = []
@@ -288,27 +288,9 @@ class AmeliorationInterface(Interface):
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                AmeliorationInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            AmeliorationInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:
         self._next_ameliorations = []
