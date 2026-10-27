@@ -4,6 +4,8 @@ from src.graphics.meshes.plane import Plane
 
 if TYPE_CHECKING:
     from src.game.game import Game
+
+from src.fonts import FontKey
 from src.game.ameliorations import (
     ExpSkill,
     LuckSkill,
@@ -14,7 +16,6 @@ from src.game.ameliorations import (
 from src.graphics import Color, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, Rectangle
-from src.utils.font_manager import FontKey
 
 from .amelioration_placeholder_interface import (
     AmeliorationPlaceholderInterface,

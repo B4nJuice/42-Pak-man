@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from ..fonts.font_manager import FontKey
+
 if TYPE_CHECKING:
     from src.game import Game
 from src.app import App
@@ -55,12 +57,12 @@ class GameInterface(Interface):
         self.game._player._level_bar = self.level_bar
 
         self.level_text: FontSequence = FontSequence(
-            "Lvl .0",
-            self.game._font,
+            "Lv. 0",
+            self.app.fonts.get(FontKey.TITLE_24),
             Color(*self.game._config.level_bar_color),
             Position(
                 level_bar_x - round(self.width * 0.01),
-                level_bar_y + level_bar_height
+                level_bar_y + level_bar_height - 2
             ),
             spacing=1,
             align=AlignEnum.RIGHT,
@@ -69,7 +71,7 @@ class GameInterface(Interface):
 
         self.timer: FontSequence = FontSequence(
             "Null",
-            self.game._font,
+            self.app.fonts.get(FontKey.TITLE_24),
             Color(*self.game._config.timer_color),
             Position(
                     self.x_offset + round(self.width / 2),
