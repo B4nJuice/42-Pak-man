@@ -14,10 +14,9 @@ from ..graphics.super_meshes.button import (
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics import Color, OperationEnum, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 
 from .generators.popup_generator import generate_popup_bg

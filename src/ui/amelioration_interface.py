@@ -9,12 +9,12 @@ from src.fonts.font_manager import FontKey
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable, SimpleDisplayable
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
