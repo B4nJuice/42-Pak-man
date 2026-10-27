@@ -207,7 +207,6 @@ class Game:
         self.update(dt)
         while self.get_status() != GameStatus.EXIT:
             dt = self._clock.tick(120.0) / 1000.0
-            print(dt)
             self._app.key_manager.update()
 
             for event in pygame.event.get():
