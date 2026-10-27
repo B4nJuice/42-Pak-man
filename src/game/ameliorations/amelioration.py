@@ -17,6 +17,7 @@ class Amelioration(SimpleDisplayable, ABC):
     _app: App
     _name: str
     _animation: AnimationPlayer
+    _description: str
 
     def init(self, skills: list['Skill'], texture_key: str) -> None:
         from src.game.ameliorations import SkillStore
@@ -29,6 +30,12 @@ class Amelioration(SimpleDisplayable, ABC):
 
     def get_app(self) -> App:
         return self._app
+
+    def set_description(self, description: str) -> None:
+        self._description = description
+
+    def get_description(self) -> str:
+        return self._description
 
     def set_name(self, name: str) -> None:
         self._name = name

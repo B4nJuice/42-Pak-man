@@ -8,6 +8,7 @@ from .skill_type import SkillType
 class SuperTimeSkill(Skill):
     def __init__(self) -> None:
         super().__init__(SkillType.STATIC, default_value=0)
+        self.set_name("Super time")
         self._suffix = "s"
 
     def next_upgrade(self, rarity: AmeliorationRarity) -> float:

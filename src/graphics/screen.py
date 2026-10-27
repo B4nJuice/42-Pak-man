@@ -23,6 +23,8 @@ class Screen:
     static_mesh_layer: MeshLayer
     dynamic_mesh_layer: MeshLayer
     clickables: list[Clickable]
+    _hovered_clickables: set[Clickable]
+    _last_mouse_position: tuple[int, int] | None
     background: Plane
 
     def __init__(
@@ -41,6 +43,8 @@ class Screen:
         self.static_mesh_layer = MeshLayer()
         self.dynamic_mesh_layer = MeshLayer()
         self.clickables = []
+        self._hovered_clickables = set()
+        self._last_mouse_position = None
 
     def add_layer(
                 self,
@@ -54,13 +58,31 @@ class Screen:
             if hasattr(mesh, "get_layer"):
                 self.search_for_clickable(mesh.get_layer())
                 continue
-            if isinstance(mesh, Clickable) and mesh._on_click:
+            if (
+                isinstance(mesh, Clickable)
+                and (mesh._on_click or mesh._on_hover)
+            ):
                 self.clickables.append(mesh)
 
     def click(self, _: Event, __: int) -> None:
         x, y = pygame.mouse.get_pos()
         for c in self.clickables:
             c.click(x, y)
+
+    def hover(self, _: Event, __: int) -> None:
+        position = pygame.mouse.get_pos()
+        if position == self._last_mouse_position:
+            return
+        self._last_mouse_position = position
+        x, y = position
+        hovered_clickables = set()
+        for c in self.clickables:
+            if c._on_hover and c.contains(x, y):
+                hovered_clickables.add(c)
+
+        for c in hovered_clickables - self._hovered_clickables:
+            c.hover(x, y)
+        self._hovered_clickables = hovered_clickables
 
     def add_mesh(self, mesh: 'Mesh | Interface') -> None:
         from src.ui.interface import Interface
@@ -69,7 +91,10 @@ class Screen:
             self.add_layer(mesh.get_layer())
             return
 
-        if isinstance(mesh, Clickable) and mesh._on_click:
+        if (
+            isinstance(mesh, Clickable)
+            and (mesh._on_click or mesh._on_hover)
+        ):
             self.clickables.append(mesh)
 
         layer = (
