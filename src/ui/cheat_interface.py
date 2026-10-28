@@ -19,9 +19,8 @@ from ..graphics.super_meshes.button import (
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable
-from src.graphics import Color, Mesh, OperationEnum, Position
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics import Color, OperationEnum, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 
 from .generators.popup_generator import generate_popup_bg
@@ -30,12 +29,11 @@ from .interface import Interface
 
 class CheatInterface(Interface):
     game: 'Game'
-    hiden: bool
     layer: MeshLayer
 
     def __init__(self, game: 'Game') -> None:
+        super().__init__(game)
         self.game = game
-        self.hidden = True
         self.layer = MeshLayer()
 
         screen_width = self.game._screen.width
@@ -525,11 +523,9 @@ class CheatInterface(Interface):
                                 *config.cheat_button_action_text_color
                             ),
                             offset_y=size.get(4),
-                            offset_x=-size.get(2)
                         ),
                     ]
                 ))
-
 
         self.layer.meshes.append(Button(
             position=Position(
@@ -621,27 +617,9 @@ class CheatInterface(Interface):
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                CheatInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            CheatInterface._set_hidden(mesh.get_layer(), hidden)
 
     def action_open(self) -> None:
         self.display()
