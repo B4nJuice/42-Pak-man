@@ -1,17 +1,18 @@
+from typing import TYPE_CHECKING
+
 import pygame
 from moderngl import Context
 from pygame import Surface
 from pygame.event import Event
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.ui.interface import Interface
 
 from .clickable import Clickable
-from .meshes.plane import Plane
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
 from .mesh_layer import MeshLayer
+from .meshes.plane import Plane
 from .super_mesh import SuperMesh
 
 
@@ -88,7 +89,8 @@ class Screen:
         from src.ui.interface import Interface
 
         if isinstance(mesh, Interface | SuperMesh):
-            self.add_layer(mesh.get_layer())
+            self.search_for_clickable(mesh.get_layer())
+            self.dynamic_mesh_layer.meshes.append(mesh)
             return
 
         if (

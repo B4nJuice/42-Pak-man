@@ -26,6 +26,7 @@ from .skill_interface import SkillInterface
 
 class StatsInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        super().__init__(game)
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 
