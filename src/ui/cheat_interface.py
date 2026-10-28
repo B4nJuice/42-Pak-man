@@ -538,7 +538,9 @@ class CheatInterface(Interface):
         for idx, val in enumerate([0.5, 1, 2, 4]):
             self.layer.meshes.append(Button(
                 position=Position(
-                    speed_button_x + (speed_button_width + speed_button_gap) * idx,
+                    speed_button_x + (
+                        speed_button_width + speed_button_gap
+                    ) * idx,
                     speed_button_y
                 ),
                 width=speed_button_width,
@@ -575,7 +577,6 @@ class CheatInterface(Interface):
                     )
                 ]
             ))
-
 
         self.layer.meshes.append(Button(
             position=Position(
@@ -624,7 +625,7 @@ class CheatInterface(Interface):
                 ),
             ))
 
-        self.display()
+        self.hide()
 
     def add_life(self) -> None:
         print('add life')
