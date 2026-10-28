@@ -329,7 +329,207 @@ class CheatInterface(Interface):
                 align=AlignEnum.LEFT
             ))
 
-        
+        buttons_params: list[dict[str, Any]] = [
+            {
+                'type': 'label',
+                'content': '3',
+                'label': 'lives',
+                'w': size.get(292),
+                'h': size.get(36),
+                'x': align_left,
+                'y': popup_position.y + size.get(331),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': '+ Add',
+                'w': size.get(84),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(332),
+                'y': popup_position.y + size.get(331),
+                'action': None,
+            },
+
+            {
+                'type': 'button',
+                'content': '- Remove',
+                'w': size.get(120),
+                'h': size.get(36),
+                'x': align_left,
+                'y': popup_position.y + size.get(413),
+                'action': None,
+            },
+            {
+                'type': 'label',
+                'content': '60',
+                'label': 'seconds',
+                'w': size.get(128),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(160),
+                'y': popup_position.y + size.get(413),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': '+ Add',
+                'w': size.get(120),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(296),
+                'y': popup_position.y + size.get(413),
+                'action': None,
+            },
+
+            {
+                'type': 'button',
+                'content': 'Prev Level',
+                'w': size.get(120),
+                'h': size.get(36),
+                'x': align_left,
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+            {
+                'type': 'label',
+                'content': 'Level 01',
+                'label': '',
+                'w': size.get(128),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(160),
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': 'Next Level',
+                'w': size.get(120),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(296),
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+
+            {
+                'type': 'label',
+                'content': '500',
+                'label': 'xp',
+                'w': size.get(292),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(440),
+                'y': popup_position.y + size.get(331),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': '+ Add',
+                'w': size.get(84),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(740),
+                'y': popup_position.y + size.get(331),
+                'action': None,
+            },
+
+            {
+                'type': 'button',
+                'content': '↑',
+                'w': size.get(36),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(440),
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': '↓',
+                'w': size.get(36),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(696),
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+            {
+                'type': 'button',
+                'content': 'Give',
+                'w': size.get(84),
+                'h': size.get(36),
+                'x': popup_position.x + size.get(740),
+                'y': popup_position.y + size.get(495),
+                'action': None,
+            },
+        ]
+
+        for button_params in buttons_params:
+            if button_params['type'] == 'label':
+                self.layer.meshes.append(Button(
+                    position=Position(
+                        button_params['x'],
+                        button_params['y']
+                    ),
+                    width=button_params['w'],
+                    height=button_params['h'],
+                    normal_color=Color(
+                        *config.cheat_button_label_background_color
+                    ),
+                    hover_color=Color(
+                        *config.cheat_button_label_background_color
+                    ),
+                    border_color=Color(
+                        *config.cheat_button_label_border_color
+                    ),
+                    border_thickness=size.get(1),
+                    on_click=button_params['action'],
+                    texts=[
+                        ButtonTextConfig(
+                            text=button_params['content'],
+                            font=fonts.get(FontKey.TITLE_SECONDARY_10),
+                            color=Color(*config.cheat_button_label_text_color),
+                            alignment=AlignEnum.LEFT,
+                            offset_y=size.get(6),
+                            offset_x=-(button_params['w'] // 2) + size.get(12),
+                        ),
+                        ButtonTextConfig(
+                            text=button_params['label'],
+                            font=fonts.get(FontKey.TEXT_12),
+                            color=Color(
+                                *config.cheat_button_label_text_secondary_color
+                            ),
+                            alignment=AlignEnum.RIGHT,
+                            offset_y=size.get(4),
+                            offset_x=(button_params['w'] // 2) - size.get(12),
+                        ),
+                    ]
+                ))
+            else:
+                self.layer.meshes.append(Button(
+                    position=Position(
+                        button_params['x'],
+                        button_params['y']
+                    ),
+                    width=button_params['w'],
+                    height=button_params['h'],
+                    normal_color=Color(
+                        *config.cheat_button_action_background_color
+                    ),
+                    hover_color=Color(
+                        *config.cheat_button_action_background_color
+                    ),
+                    border_color=Color(
+                        *config.cheat_button_action_border_color
+                    ),
+                    border_thickness=size.get(1),
+                    on_click=button_params['action'],
+                    texts=[
+                        ButtonTextConfig(
+                            text=button_params['content'],
+                            font=fonts.get(FontKey.TITLE_12),
+                            color=Color(
+                                *config.cheat_button_action_text_color
+                            ),
+                            offset_y=size.get(4),
+                            offset_x=-size.get(2)
+                        ),
+                    ]
+                ))
+
 
         self.layer.meshes.append(Button(
             position=Position(

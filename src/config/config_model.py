@@ -303,3 +303,31 @@ class ConfigModel(BaseModel):
         default=(162, 172, 201),
         description=''
     )
+    cheat_button_label_background_color: tuple[int, int, int] = Field(
+        default=(16, 22, 43),
+        description=''
+    )
+    cheat_button_label_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    cheat_button_label_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    cheat_button_label_text_secondary_color: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    cheat_button_action_background_color: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    cheat_button_action_border_color: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    cheat_button_action_text_color: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
