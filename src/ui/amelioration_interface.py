@@ -1,23 +1,20 @@
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 import pygame
 
-<<<<<<< HEAD
-from src.texture.font_keys import FontKeys
-from src.utils.font_manager import FontKey
-=======
-from src.fonts import FontKeys
->>>>>>> origin/main
+from src.fonts.font_keys import FontKeys
+from src.fonts.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable, SimpleDisplayable
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
@@ -33,7 +30,7 @@ class AmeliorationInterface(Interface):
 
     def __init__(self, game: 'Game') -> None:
         self.game: Game = game
-        self.hidden: bool = True
+        super().__init__(game)
         self._selected_index = 0
         self.layer: MeshLayer = MeshLayer()
         self._next_ameliorations = []
@@ -68,16 +65,12 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-<<<<<<< HEAD
-            Color(*config.menu_overlay_color, 120),
-=======
-            Color(*config.pause_menu_overlay_color, 150),
->>>>>>> origin/main
+            Color(*config.pause_menu_overlay_color, 120),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
-            dynamic=True,
+            dynamic=True
         )
 
         self.panel = Plane(
@@ -91,7 +84,7 @@ class AmeliorationInterface(Interface):
         )
 
         self.panel_border = Rectangle(
-            Color(*config.menu_border_color),
+            Color(*config.pause_menu_border_color),
             Position(size.get(279), size.get(119)),
             size.get(722),
             size.get(482),
@@ -149,28 +142,6 @@ class AmeliorationInterface(Interface):
         button_x = panel_x + (panel_width - button_width) // 2
         first_button_y = panel_y + (panel_height - buttons_height) // 2
 
-<<<<<<< HEAD
-=======
-        self.panel = Plane(
-            Color(*config.pause_menu_background_color, 245),
-            (
-                Position(panel_x, panel_y),
-                Position(panel_x + panel_width, panel_y + panel_height)
-            ),
-            OperationEnum.ALPHA,
-            dynamic=True,
-        )
-        self.panel_border = Rectangle(
-            Color(*config.pause_menu_border_color),
-            Position(panel_x, panel_y),
-            panel_width,
-            panel_height,
-            3,
-            dynamic=True,
-            smooth_end=True,
-        )
-
->>>>>>> origin/main
         button_params: list[dict[str, Any]] = [
             {
                 "label": "Amelioration",
@@ -317,27 +288,9 @@ class AmeliorationInterface(Interface):
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                AmeliorationInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            AmeliorationInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:
         self._next_ameliorations = []

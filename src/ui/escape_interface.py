@@ -14,10 +14,9 @@ from ..graphics.super_meshes.button import (
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics import Color, OperationEnum, Position
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 
 from .generators.popup_generator import generate_popup_bg
@@ -26,6 +25,7 @@ from .interface import Interface
 
 class EscapeInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        super().__init__(game)
         self.game: Game = game
         self.hidden: bool = True
         self.layer: MeshLayer = MeshLayer()
@@ -121,7 +121,7 @@ class EscapeInterface(Interface):
         buttons_params: list[dict[str, Any]] = [
             {
                 'label': 'RESUME',
-                'lavel_hover': '> RESUME',
+                'label_hover': '> RESUME',
                 'action_key_label': 'ESC',
                 'action_key': None,
                 'action': self.action_resume,
@@ -130,7 +130,7 @@ class EscapeInterface(Interface):
             },
             {
                 'label': 'SETTINGS',
-                'lavel_hover': '> SETTINGS',
+                'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
                 'action': None,
@@ -139,7 +139,7 @@ class EscapeInterface(Interface):
             },
             {
                 'label': 'MAIN MENU',
-                'lavel_hover': '> MAIN MENU',
+                'label_hover': '> MAIN MENU',
                 'action_key_label': None,
                 'action_key': None,
                 'action': self.action_main_menu,
@@ -181,8 +181,8 @@ class EscapeInterface(Interface):
                             ),
                         },
                         state_texts={
-                            ButtonState.HOVER: button_params['lavel_hover'],
-                            ButtonState.SELECTED: button_params['lavel_hover'],
+                            ButtonState.HOVER: button_params['label_hover'],
+                            ButtonState.SELECTED: button_params['label_hover'],
                         }
                     ),
                     *(
@@ -232,27 +232,9 @@ class EscapeInterface(Interface):
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                EscapeInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            EscapeInterface._set_hidden(mesh.get_layer(), hidden)
 
     def action_pause(self) -> None:
         self.display()
