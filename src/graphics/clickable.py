@@ -6,7 +6,7 @@ from src.graphics.mesh import Mesh
 from src.graphics.mesh_layer import LayerProtocol
 
 
-class Clickable(ABC):
+class Clickable(Mesh, ABC):
     _on_click: Callable | None = None
     _parents: list[LayerProtocol]
 
@@ -17,10 +17,6 @@ class Clickable(ABC):
                 *args: Any,
                 **kwargs: Any
             ) -> None:
-        if not isinstance(self, Mesh):
-            raise TypeError(
-                f'Clickable must be a subclass of Mesh, got {type(self)}'
-            )
         self._parents = []
 
         super().__init__(*args, **kwargs)
