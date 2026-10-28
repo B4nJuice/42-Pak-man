@@ -24,7 +24,9 @@ class Font:
         self._face = freetype.Face(self._font_path)
         self._face.set_pixel_sizes(0, pixel_size)
 
-        for char in list(range(32, 127)) + [ord("✦"), ord("→")]:
+        special_char: list[str] = ['✦', '→', '↑', '↓']
+
+        for char in list(range(32, 127)) + [ord(c) for c in special_char]:
             self._face.load_char(chr(char))
 
             glyph = self._face.glyph
