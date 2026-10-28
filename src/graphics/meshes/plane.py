@@ -2,11 +2,10 @@ from collections.abc import Callable
 
 from ..clickable import Clickable
 from ..color import Color, OperationEnum
-from ..mesh import Mesh
 from ..position import Position
 
 
-class Plane(Clickable, Mesh):
+class Plane(Clickable):
     positions: tuple[Position, Position]
 
     def __init__(
