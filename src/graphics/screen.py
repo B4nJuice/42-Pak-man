@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 from .clickable import Clickable
 from .gpu_renderer import GPURenderer
 from .mesh import Mesh
-from .mesh_layer import MeshLayer
+from .mesh_layer import LayerProtocol, MeshLayer
 from .meshes.plane import Plane
 from .super_mesh import SuperMesh
 
@@ -52,17 +52,25 @@ class Screen:
                 layer: MeshLayer
             ) -> None:
         self.dynamic_mesh_layer.meshes.append(layer)
-        self.search_for_clickable(layer)
+        self.search_for_clickable(layer, [layer])
 
-    def search_for_clickable(self, layer: MeshLayer) -> None:
+    def search_for_clickable(
+                self,
+                layer: MeshLayer,
+                parents: list[LayerProtocol] | None = None
+            ) -> None:
+        if parents is None:
+            parents = []
+
         for mesh in layer.meshes:
             if hasattr(mesh, "get_layer"):
-                self.search_for_clickable(mesh.get_layer())
+                self.search_for_clickable(mesh.get_layer(), parents + [mesh])
                 continue
             if (
                 isinstance(mesh, Clickable)
                 and (mesh._on_click or mesh._on_hover)
             ):
+                mesh.set_parents(parents)
                 self.clickables.append(mesh)
 
     def click(self, _: Event, __: int) -> None:
@@ -89,7 +97,7 @@ class Screen:
         from src.ui.interface import Interface
 
         if isinstance(mesh, Interface | SuperMesh):
-            self.search_for_clickable(mesh.get_layer())
+            self.search_for_clickable(mesh.get_layer(), [mesh])
             self.dynamic_mesh_layer.meshes.append(mesh)
             return
 
