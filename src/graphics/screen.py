@@ -89,6 +89,7 @@ class Screen:
         from src.ui.interface import Interface
 
         if isinstance(mesh, Interface | SuperMesh):
+            self.search_for_clickable(mesh.get_layer())
             self.dynamic_mesh_layer.meshes.append(mesh)
             return
 
