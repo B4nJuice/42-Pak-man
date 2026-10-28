@@ -121,7 +121,7 @@ class EscapeInterface(Interface):
         buttons_params: list[dict[str, Any]] = [
             {
                 'label': 'RESUME',
-                'lavel_hover': '> RESUME',
+                'label_hover': '> RESUME',
                 'action_key_label': 'ESC',
                 'action_key': None,
                 'action': self.action_resume,
@@ -130,7 +130,7 @@ class EscapeInterface(Interface):
             },
             {
                 'label': 'SETTINGS',
-                'lavel_hover': '> SETTINGS',
+                'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
                 'action': None,
@@ -139,7 +139,7 @@ class EscapeInterface(Interface):
             },
             {
                 'label': 'MAIN MENU',
-                'lavel_hover': '> MAIN MENU',
+                'label_hover': '> MAIN MENU',
                 'action_key_label': None,
                 'action_key': None,
                 'action': self.action_main_menu,
@@ -181,8 +181,8 @@ class EscapeInterface(Interface):
                             ),
                         },
                         state_texts={
-                            ButtonState.HOVER: button_params['lavel_hover'],
-                            ButtonState.SELECTED: button_params['lavel_hover'],
+                            ButtonState.HOVER: button_params['label_hover'],
+                            ButtonState.SELECTED: button_params['label_hover'],
                         }
                     ),
                     *(
