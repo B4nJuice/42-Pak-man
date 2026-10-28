@@ -31,6 +31,9 @@ class CheatInterface(Interface):
     game: 'Game'
     layer: MeshLayer
 
+    time_speed_active: float
+    time_speed_buttons: dict[float, Button]
+
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
         self.game = game
@@ -526,6 +529,53 @@ class CheatInterface(Interface):
                         ),
                     ]
                 ))
+
+        speed_button_gap: int = size.get(6)
+        speed_button_width: int = size.get(91.5)
+        speed_button_height: int = size.get(36)
+        speed_button_x: float = popup_position.x + size.get(440)
+        speed_button_y: float = popup_position.y + size.get(413)
+        for idx, val in enumerate([0.5, 1, 2, 4]):
+            self.layer.meshes.append(Button(
+                position=Position(
+                    speed_button_x + (speed_button_width + speed_button_gap) * idx,
+                    speed_button_y
+                ),
+                width=speed_button_width,
+                height=speed_button_height,
+                normal_color=Color(
+                    *config.cheat_button_label_background_color
+                ),
+                hover_color=Color(
+                    *config.cheat_toggle_button_active_color, 18
+                ),
+                selected_color=Color(
+                    *config.cheat_toggle_button_active_color, 18
+                ),
+                border_color=Color(
+                    *config.cheat_button_label_border_color
+                ),
+                selected_border_color=Color(
+                    *config.cheat_toggle_button_active_color
+                ),
+                border_thickness=size.get(1),
+                on_click=None,
+                state=ButtonState.SELECTED if val == 1 else ButtonState.NORMAL,
+                texts=[
+                    ButtonTextConfig(
+                        text=f'{val}×',
+                        font=fonts.get(FontKey.TITLE_SECONDARY_10),
+                        color=Color(*config.cheat_button_label_text_color),
+                        state_colors={
+                            ButtonState.SELECTED: Color(
+                                *config.cheat_toggle_button_active_color
+                            )
+                        },
+                        offset_y=size.get(6),
+                    )
+                ]
+            ))
+
 
         self.layer.meshes.append(Button(
             position=Position(

@@ -7,7 +7,6 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.errors import PackError
-from src.fonts.font_keys import FontKeys
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
@@ -19,7 +18,6 @@ from src.game.characters import (
 )
 from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
-from src.graphics.font import Font
 from src.graphics.screen import Screen
 from src.settings.action_key import ActionKey
 from src.ui import (
@@ -47,7 +45,6 @@ class Game:
     _screen: Screen
     _level: Level
     _clock: Clock
-    _font: Font
     _player: Player
     _freeze_ghost: bool
     _timer: Timer
@@ -59,12 +56,6 @@ class Game:
 
         self._set_config(config)
         self._set_screen(screen)
-
-        self._font = Font(
-            self._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
-            self._screen.moderngl_context,
-            pixel_size=self._config.screen_height // 22
-        )
 
         self._init_level()
         self._init_event_handler()
