@@ -509,7 +509,6 @@ class GPURenderer:
         self.textures[self.source_index].use(0)
         get_uniform(self.blit_program, 'source_texture').value = 0
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
-        self.context.finish()
 
     def release(self) -> None:
         for framebuffer in self.framebuffers:
@@ -527,15 +526,15 @@ class GPURenderer:
     def _iter_meshes(
         self,
         meshes: Iterable[Mesh | LayerProtocol | Displayable],
-    ) -> Iterator[Mesh | Displayable]:
+    ) -> Iterator[Mesh | LayerProtocol | Displayable]:
         for mesh in meshes:
+            if mesh.is_hidden():
+                continue
             if isinstance(mesh, MeshLayer):
                 yield from self._iter_meshes(mesh.meshes)
             else:
                 if hasattr(mesh, "get_layer"):
                     mesh = mesh.get_layer()
-
-                if isinstance(mesh, MeshLayer):
                     yield from self._iter_meshes([mesh])
                 else:
                     yield mesh

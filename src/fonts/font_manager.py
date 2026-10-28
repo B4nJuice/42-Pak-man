@@ -16,6 +16,7 @@ from .font_keys import FontKeys
 
 
 class FontKey(Enum):
+    TEXT_6 = (6, FontKeys.DEFAULT)
     TEXT_8 = (8, FontKeys.DEFAULT)
     TEXT_10 = (10, FontKeys.DEFAULT)
     TEXT_11 = (11, FontKeys.DEFAULT)

@@ -11,6 +11,7 @@ class Clickable(ABC):
     def __init__(
                 self,
                 on_click: Callable | None = None,
+                on_hover: Callable | None = None,
                 *args: Any,
                 **kwargs: Any
             ) -> None:
@@ -21,11 +22,16 @@ class Clickable(ABC):
 
         super().__init__(*args, **kwargs)
         self._on_click = on_click
+        self._on_hover = on_hover
 
     @abstractmethod
     def contains(self, x: int, y: int) -> bool:
         pass
 
+    def hover(self, x: int, y: int, *args: Any, **kwargs: Any) -> Any:
+        if self._on_hover and self.contains(x, y):
+            return self._on_hover(*args, **kwargs)
+
     def click(self, x: int, y: int, *args: Any, **kwargs: Any) -> Any:
         if self._on_click and self.contains(x, y):
-            self._on_click(*args, **kwargs)
+            return self._on_click(*args, **kwargs)

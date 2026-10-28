@@ -26,6 +26,7 @@ from .skill_interface import SkillInterface
 
 class StatsInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        super().__init__(game)
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
 
@@ -38,16 +39,22 @@ class StatsInterface(Interface):
         self.background: Plane = Plane(
             Color(*self.game._config.stats_background_color),
             (
-                Position(self.x_offset, self.y_offset),
-                Position(self.width, self.height)
+                Position(
+                    self.game._app.size.get(27),
+                    self.game._app.size.get(15)
+                ),
+                Position(
+                    self.game._app.size.get(27 + 265),
+                    self.game._app.size.get(15 + 689)
+                )
             ),
         )
 
         self.border: Rectangle = Rectangle(
             Color(*self.game._config.stats_border_color),
-            Position(self.x_offset, self.y_offset),
-            self.width - self.x_offset,
-            self.height - self.y_offset,
+            Position(self.game._app.size.get(27), self.game._app.size.get(15)),
+            self.game._app.size.get(265),
+            self.game._app.size.get(689),
             3,
             dynamic=True,
             smooth_end=True

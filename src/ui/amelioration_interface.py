@@ -1,22 +1,24 @@
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 import pygame
 
-from src.fonts import FontKeys
+from src.fonts.font_keys import FontKeys
+from src.fonts.font_manager import FontKey
 
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.core.displayable import Displayable, SimpleDisplayable
+from src.core.displayable import SimpleDisplayable
 from src.game.ameliorations import Amelioration, AmeliorationRarity, Skill
-from src.game.ameliorations.skills.skill_type import SkillType
 from src.game.game_status import GameStatus
-from src.graphics import Color, Mesh, OperationEnum, Position
+from src.graphics import Color, OperationEnum, Position
 from src.graphics.font import Font
-from src.graphics.mesh_layer import LayerProtocol, MeshLayer
+from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
 from src.graphics.super_meshes import AlignEnum, FontSequence, Rectangle
 
+from .amelioration_card_interface import AmeliorationCardInterface
 from .interface import Interface
 
 
@@ -28,10 +30,12 @@ class AmeliorationInterface(Interface):
 
     def __init__(self, game: 'Game') -> None:
         self.game: Game = game
-        self.hidden: bool = True
+        super().__init__(game)
         self._selected_index = 0
         self.layer: MeshLayer = MeshLayer()
         self._next_ameliorations = []
+
+        size = self.game._app.size
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
@@ -61,12 +65,56 @@ class AmeliorationInterface(Interface):
         )
 
         self.background = Plane(
-            Color(*config.pause_menu_overlay_color, 150),
+            Color(*config.pause_menu_overlay_color, 120),
             (
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
+            dynamic=True
+        )
+
+        self.panel = Plane(
+            Color(*config.menu_panel_color),
+            (
+                Position(size.get(279), size.get(119)),
+                Position(size.get(279 + 722), size.get(119 + 482))
+            ),
+            OperationEnum.SET,
             dynamic=True,
+        )
+
+        self.panel_border = Rectangle(
+            Color(*config.pause_menu_border_color),
+            Position(size.get(279), size.get(119)),
+            size.get(722),
+            size.get(482),
+            2,
+            dynamic=True,
+            smooth_end=True,
+        )
+
+        self.cards: list[AmeliorationCardInterface] = [
+            AmeliorationCardInterface(
+                self.game,
+                Position(size.get(327 + index * 216), size.get(245)),
+                on_choose=self._choose_callback(index),
+                on_hover=self._hover_callback(index),
+            )
+            for index in range(3)
+        ]
+
+        self.back_level_up_text = FontSequence(
+            "LEVEL UP!",
+            self.game._app.fonts.get(FontKey.TITLE_40),
+            Color(*self.game._config.back_level_up_color),
+            Position(size.get(640), size.get(187))
+        )
+
+        self.level_up_text = FontSequence(
+            "LEVEL UP!",
+            self.game._app.fonts.get(FontKey.TITLE_40),
+            Color(*self.game._config.level_up_color),
+            Position(size.get(640), size.get(182))
         )
 
         panel_width = min(
@@ -93,25 +141,6 @@ class AmeliorationInterface(Interface):
         panel_y = (screen_height - panel_height) // 2
         button_x = panel_x + (panel_width - button_width) // 2
         first_button_y = panel_y + (panel_height - buttons_height) // 2
-
-        self.panel = Plane(
-            Color(*config.pause_menu_background_color, 245),
-            (
-                Position(panel_x, panel_y),
-                Position(panel_x + panel_width, panel_y + panel_height)
-            ),
-            OperationEnum.ALPHA,
-            dynamic=True,
-        )
-        self.panel_border = Rectangle(
-            Color(*config.pause_menu_border_color),
-            Position(panel_x, panel_y),
-            panel_width,
-            panel_height,
-            3,
-            dynamic=True,
-            smooth_end=True,
-        )
 
         button_params: list[dict[str, Any]] = [
             {
@@ -251,46 +280,17 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.panel)
         self.layer.meshes.append(self.panel_border)
-        for (
-            button,
-            selected_button,
-            icon,
-            texts,
-            level,
-        ) in (
-            self.buttons
-        ):
-            self.layer.meshes.append(selected_button)
-            self.layer.meshes.append(button)
-            self.layer.meshes.append(icon)
-            for text in texts:
-                self.layer.meshes.append(text)
-            self.layer.meshes.append(level)
+        self.layer.meshes.append(self.back_level_up_text)
+        self.layer.meshes.append(self.level_up_text)
+        self.layer.meshes.extend(self.cards)
+
         self.hide()
 
     def hide(self) -> None:
         self.hidden = True
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, True)
 
     def display(self) -> None:
         self.hidden = False
-        for mesh in self.get_layer().meshes:
-            self._set_hidden(mesh, False)
-
-    @staticmethod
-    def _set_hidden(
-                mesh: Mesh | LayerProtocol | MeshLayer | Displayable,
-                hidden: bool
-            ) -> None:
-        if isinstance(mesh, MeshLayer):
-            for child in mesh.meshes:
-                AmeliorationInterface._set_hidden(child, hidden)
-            return
-        if isinstance(mesh, Mesh | Displayable):
-            mesh.set_hidden(hidden)
-        if isinstance(mesh, LayerProtocol):
-            AmeliorationInterface._set_hidden(mesh.get_layer(), hidden)
 
     def start(self) -> None:
         self._next_ameliorations = []
@@ -305,6 +305,11 @@ class AmeliorationInterface(Interface):
             )
             self._next_ameliorations.append(
                 (amelioration, rarity, upgrades)
+            )
+            self.cards[index].set_amelioration(
+                amelioration,
+                upgrades,
+                (rarity.name, rarity_colors[rarity])
             )
             (
                 button,
@@ -351,7 +356,9 @@ class AmeliorationInterface(Interface):
         return False
 
     def _update_selection(self) -> None:
-        for index, button_data in enumerate(self.buttons):
+        for index, (button_data, card) in enumerate(
+                zip(self.buttons, self.cards)
+        ):
             selected_button = button_data[1]
             selected_button.set_hidden(index != self._selected_index)
             button = button_data[0]
@@ -364,6 +371,26 @@ class AmeliorationInterface(Interface):
             button.set_hidden(False)
             icon.set_width(round(self._icon_size * scale))
             icon.set_height(round(self._icon_size * scale))
+            if index == self._selected_index:
+                card.select()
+            else:
+                card.unselect()
+
+    def _select_amelioration(self, index: int) -> None:
+        if self._selected_index == index:
+            return
+        self._selected_index = index
+        self._update_selection()
+
+    def _choose_callback(self, index: int) -> Callable[[], None]:
+        def choose() -> None:
+            self._choose_amelioration(index)
+        return choose
+
+    def _hover_callback(self, index: int) -> Callable[[], None]:
+        def hover() -> None:
+            self._select_amelioration(index)
+        return hover
 
     def _choose_amelioration(self, index: int) -> None:
         amelioration, _, upgrades = self._next_ameliorations[index]
@@ -392,9 +419,7 @@ class AmeliorationInterface(Interface):
             return ""
         skill, value = upgrades[index]
         skill_name = skill.__class__.__name__.removesuffix("Skill")
-        suffix = (
-            "%" if skill.get_type() == SkillType.PERCENTAGE else skill._suffix
-        )
+        suffix = skill.get_suffix()
         before = float(skill.get_value())
         after = float(before + value)
         return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"

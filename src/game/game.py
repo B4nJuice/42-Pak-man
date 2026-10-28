@@ -242,12 +242,12 @@ class Game:
         self._screen.add_mesh(self._cheat_interface)
 
     def run(self) -> None:
-        # self.set_status(GameStatus.RUNNING)
         dt: float = 0.0
 
         self._app.key_manager.update()
         self.update(dt)
         while self.get_status() != GameStatus.EXIT:
+            dt = self._clock.tick(120.0) / 1000.0
             self._app.key_manager.update()
 
             for event in pygame.event.get():
@@ -260,7 +260,6 @@ class Game:
                 break
 
             self.update(dt)
-            dt = self._clock.tick(120.0) / 1000
 
     def exit(self) -> None:
         self.set_status(GameStatus.EXIT)
@@ -280,6 +279,9 @@ class Game:
         )
         self._event_handler.register_listener(
             pygame.MOUSEBUTTONUP, self._screen.click
+        )
+        self._event_handler.register_listener(
+            pygame.MOUSEMOTION, self._screen.hover
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:

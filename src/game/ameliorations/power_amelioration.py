@@ -6,3 +6,4 @@ class PowerAmelioration(Amelioration):
     def __init__(self) -> None:
         self.init([PowerSkill()], "amelioration-power")
         self.set_name("Power Ring")
+        self.set_description("Deal more damage.")
