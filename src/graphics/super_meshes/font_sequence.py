@@ -55,6 +55,7 @@ class FontSequence(SuperMesh):
         pass
 
     def set_color(self, color: Color) -> None:
+        super().set_color(color)
         for char in self.characters:
             char.set_color(color)
 
