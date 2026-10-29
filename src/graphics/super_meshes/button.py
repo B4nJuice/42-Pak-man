@@ -257,12 +257,12 @@ class Button(SuperMesh):
                 self.position.x + (self.width // 2) + text_config.offset_x,
                 self.position.y + (self.height // 2) + text_config.offset_y,
             )
+            sequence.set_sequence_text(
+                text_config.get_text_for_state(self.state)
+            )
             sequence.set_color(
                 text_config.get_color_for_state(self.state)
                 or self._current_color()
-            )
-            sequence.set_sequence_text(
-                text_config.get_text_for_state(self.state)
             )
             sequence.set_operation(self.get_operation())
             sequence.align = text_config.alignment
