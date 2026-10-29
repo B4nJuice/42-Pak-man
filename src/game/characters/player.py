@@ -154,6 +154,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
+        if self._game._status not in [
+                    GameStatus.RUNNING,
+                    GameStatus.INITIALIZING
+                ]:
+            return
+
         if self.app.key_manager.is_pressed(ActionKey.MOVE_UP):
             self.try_move(Direction.NORTH)
         if self.app.key_manager.is_pressed(ActionKey.MOVE_DOWN):
