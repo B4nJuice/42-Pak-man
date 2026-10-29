@@ -7,6 +7,7 @@ import pygame
 from src.fonts.font_manager import FontKey
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import AlignEnum, FontSequence
+from src.settings.action_key import ActionKey
 
 from ..graphics.super_meshes.button import (
     Button,
@@ -242,19 +243,29 @@ class EscapeInterface(Interface):
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
-        if key in (pygame.K_UP, pygame.K_LEFT):
+        if key in self.game._app.key_manager.get_keys(
+                    [
+                        ActionKey.MOVE_LEFT,
+                        ActionKey.MOVE_UP
+                    ]
+                ):
             self._selected_index = (
                     self._selected_index - 1
                 ) % len(self.buttons)
             self._update_selection()
             return True
-        if key in (pygame.K_DOWN, pygame.K_RIGHT):
+        if key in self.game._app.key_manager.get_keys(
+                    [
+                        ActionKey.MOVE_DOWN,
+                        ActionKey.MOVE_RIGHT
+                    ]
+                ):
             self._selected_index = (
                     self._selected_index + 1
                 ) % len(self.buttons)
             self._update_selection()
             return True
-        if key in (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE):
+        if key in self.game._app.key_manager.get_keys(ActionKey.SELECT):
             self.buttons[self._selected_index].sim_click()
             return True
         return False
