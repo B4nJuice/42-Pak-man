@@ -246,7 +246,9 @@ class Game:
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
             self.get_status() == GameStatus.AMELIORATION
-            and self._amelioration_interface.handle_key(event.key)
+            and self._amelioration_interface.handle_key(event.key) or
+            self.get_status() == GameStatus.PAUSED
+            and self._escape_interface.handle_key(event.key)
         ):
             return
 

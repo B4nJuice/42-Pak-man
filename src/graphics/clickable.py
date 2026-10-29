@@ -40,3 +40,7 @@ class Clickable(Mesh, ABC):
     def click(self, x: int, y: int, *args: Any, **kwargs: Any) -> Any:
         if not self.is_hidden() and self._on_click and self.contains(x, y):
             return self._on_click(*args, **kwargs)
+
+    def sim_click(self, *args: Any, **kwargs: Any) -> Any:
+        if self._on_click:
+            return self._on_click(*args, **kwargs)
