@@ -100,7 +100,6 @@ class Button(SuperMesh):
                 selected_color: Color | None = None,
                 state: ButtonState = ButtonState.NORMAL,
                 operation: OperationEnum = OperationEnum.ALPHA,
-                dynamic: bool = False,
                 on_click: Callable | None = None,
                 border_thickness: int = 0,
                 border_color: Color | None = None,
@@ -112,7 +111,6 @@ class Button(SuperMesh):
         super().__init__(
             normal_color,
             operation=operation,
-            dynamic=dynamic,
         )
 
         self.position = position
@@ -161,7 +159,6 @@ class Button(SuperMesh):
                 ),
             ),
             operation=self.get_operation(),
-            dynamic=self.is_dynamic(),
             on_click=on_click,
         )
         self.layer.meshes.append(self.plane)
@@ -175,7 +172,6 @@ class Button(SuperMesh):
                 self.height,
                 self.border_thickness,
                 operation=self.get_operation(),
-                dynamic=self.is_dynamic(),
                 smooth_end=True
             )
             self.layer.meshes.append(self.border)
@@ -230,7 +226,6 @@ class Button(SuperMesh):
             spacing=config.spacing,
             align=config.alignment,
             operation=self.get_operation(),
-            dynamic=self.is_dynamic(),
         )
         label.set_scale(config.scale)
         self._text_sequences.append(label)
@@ -330,7 +325,6 @@ class Button(SuperMesh):
                 self.height,
                 self.border_thickness,
                 operation=self.get_operation(),
-                dynamic=self.is_dynamic(),
             )
             self.layer.meshes.append(self.border)
         elif self.border is not None and self.border_thickness <= 0:

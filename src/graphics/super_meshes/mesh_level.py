@@ -41,13 +41,11 @@ class MeshLevel(SuperMesh):
                 height: int,
                 wall_thickness: int,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False,
                 smooth_end: bool = False,
             ) -> None:
         super().__init__(
             color,
             operation=operation,
-            dynamic=dynamic
         )
 
         self.bg_color = bg_color
@@ -82,7 +80,6 @@ class MeshLevel(SuperMesh):
             self.get_color(),
             operation=self.get_operation(),
             thickness=self.wall_thickness,
-            dynamic=self.is_dynamic(),
             smooth_end=smooth_end
         )
 

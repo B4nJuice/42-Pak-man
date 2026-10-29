@@ -14,13 +14,11 @@ class Polygon(Mesh):
                 positions: list[Position],
                 operation: OperationEnum = OperationEnum.SET,
                 thickness: int = 1,
-                dynamic: bool = False,
                 smooth_end: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                dynamic
             )
 
         self.positions = positions

@@ -49,7 +49,6 @@ class AmeliorationPlaceholderInterface(Interface):
                 position,
                 Position(position.x + width, position.y + height)
             ),
-            dynamic=False,
             operation=OperationEnum.ALPHA
         )
 
@@ -73,7 +72,6 @@ class AmeliorationPlaceholderInterface(Interface):
                 self.position.y + self.height - self.game._app.size.get(3),
             ),
             align=AlignEnum.RIGHT,
-            dynamic=True,
         )
 
     def set_amelioration(self, amelioration: Amelioration) -> None:

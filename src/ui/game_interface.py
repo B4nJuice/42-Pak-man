@@ -52,7 +52,6 @@ class GameInterface(Interface):
             border_thickness=2,
             goal=100,
             progression=0,
-            dynamic=True,
             smooth_end=True,
         )
 
@@ -68,7 +67,6 @@ class GameInterface(Interface):
             ),
             spacing=1,
             align=AlignEnum.RIGHT,
-            dynamic=True
         )
 
         self.timer: FontSequence = FontSequence(
@@ -80,7 +78,6 @@ class GameInterface(Interface):
                     self.y_offset + round(self.height*0.07)
                 ),
             spacing=1,
-            dynamic=True
         )
 
         self.set_timer(600)
@@ -117,7 +114,6 @@ class GameInterface(Interface):
             maze_width,
             maze_height,
             wall_thickness=3,
-            dynamic=True,
             smooth_end=True
         )
 

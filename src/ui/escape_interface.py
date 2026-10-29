@@ -42,7 +42,6 @@ class EscapeInterface(Interface):
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
-            dynamic=True,
         )
 
         width: int = 520

@@ -7,18 +7,15 @@ class Mesh(ABC):
     _color: Color
     _operation: OperationEnum
     _hidden: bool
-    _dynamic: bool
 
     def __init__(
                 self,
                 color: Color,
-                operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False,
+                operation: OperationEnum = OperationEnum.SET
             ) -> None:
         self._color = color
         self._operation = operation
         self._hidden = False
-        self._dynamic = dynamic
 
     def get_color(self) -> Color:
         return self._color
@@ -28,9 +25,6 @@ class Mesh(ABC):
 
     def is_hidden(self) -> bool:
         return self._hidden
-
-    def is_dynamic(self) -> bool:
-        return self._dynamic
 
     def set_color(self, color: Color) -> None:
         self._color = color

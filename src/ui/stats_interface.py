@@ -56,7 +56,6 @@ class StatsInterface(Interface):
             self.game._app.size.get(265),
             self.game._app.size.get(689),
             3,
-            dynamic=True,
             smooth_end=True
         )
 
@@ -124,7 +123,6 @@ class StatsInterface(Interface):
                 border_thickness=1,
                 goal=1,
                 progression=0,
-                dynamic=True,
                 smooth_end=True,
             )
             for index in range(max_lives)
