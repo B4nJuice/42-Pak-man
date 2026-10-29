@@ -2,8 +2,6 @@ import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-import pygame
-
 from src.fonts.font_manager import FontKey
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import AlignEnum, FontSequence

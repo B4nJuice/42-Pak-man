@@ -28,7 +28,9 @@ class KeyManager:
                     return self._settings.get().controls.select
                 case ActionKey.BACK_PAUSE_RESUME:
                     return self._settings.get().controls.back_pause_resume
-        return list(chain.from_iterable([self.get_keys(_action) for _action in action]))
+        return list(chain.from_iterable(
+            [self.get_keys(_action) for _action in action]
+        ))
 
     def is_pressed(self, action: ActionKey | list[ActionKey]) -> bool:
         if isinstance(action, ActionKey):
