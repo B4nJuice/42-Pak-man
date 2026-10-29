@@ -24,12 +24,10 @@ class ImageTexture(Mesh):
                 width: int = 0,
                 height: int = 0,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False
             ) -> None:
         super().__init__(
             Color.default(),
             operation,
-            dynamic
         )
 
         self.position = position
@@ -57,5 +55,4 @@ class ImageTexture(Mesh):
             width=0,
             height=0,
             operation=OperationEnum.SET,
-            dynamic=False,
         )

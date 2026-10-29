@@ -18,12 +18,10 @@ class Character(Mesh):
                 color: Color,
                 position: Position,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                dynamic
             )
 
         self.position = position

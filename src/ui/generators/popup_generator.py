@@ -29,7 +29,6 @@ def generate_popup_bg(
 
     bg: Plane = Plane(
         color=bg_color,
-        dynamic=False,
         operation=OperationEnum.SET,
         positions=(
             position,
@@ -39,7 +38,6 @@ def generate_popup_bg(
 
     border: Rectangle = Rectangle(
         color=border_color,
-        dynamic=False,
         position=Position(
             position.x - (r_border_tickness if not border_inside else 0),
             position.y - (r_border_tickness if not border_inside else 0)

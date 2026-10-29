@@ -17,12 +17,10 @@ class Circle(Mesh):
                 operation: OperationEnum = OperationEnum.SET,
                 thickness: int = 1,
                 filled: bool = False,
-                dynamic: bool = False
             ) -> None:
         super().__init__(
                 color,
                 operation,
-                dynamic
             )
 
         self.position = position

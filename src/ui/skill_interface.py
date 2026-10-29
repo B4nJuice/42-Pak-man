@@ -91,7 +91,6 @@ class SkillInterface(Interface):
             ),
             spacing=1,
             align=AlignEnum.LEFT,
-            dynamic=True
         )
 
         self.layer.meshes.append(self.background)

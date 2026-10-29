@@ -31,13 +31,11 @@ class Bar(SuperMesh):
                 goal: float,
                 progression: float = 0,
                 operation: OperationEnum = OperationEnum.SET,
-                dynamic: bool = False,
                 smooth_end: bool = False,
             ) -> None:
         super().__init__(
             color,
             operation=operation,
-            dynamic=dynamic
         )
 
         self.width = width
@@ -66,7 +64,6 @@ class Bar(SuperMesh):
                 )
             ),
             operation=self.get_operation(),
-            dynamic=self.is_dynamic()
         )
 
         self.layer.meshes.append(self.inner)
@@ -78,7 +75,6 @@ class Bar(SuperMesh):
             self.height,
             self.border_thickness,
             operation=self.get_operation(),
-            dynamic=self.is_dynamic(),
             smooth_end=self.smooth_end
         )
 

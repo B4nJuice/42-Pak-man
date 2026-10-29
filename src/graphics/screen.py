@@ -21,8 +21,7 @@ class Screen:
     height: int
     gpu_renderer: GPURenderer
     moderngl_context: Context
-    static_mesh_layer: MeshLayer
-    dynamic_mesh_layer: MeshLayer
+    layer: MeshLayer
     clickables: list[Clickable]
     _hovered_clickables: set[Clickable]
     _last_mouse_position: tuple[int, int] | None
@@ -41,8 +40,7 @@ class Screen:
         self.height = height
         self.gpu_renderer = GPURenderer(width, height)
         self.moderngl_context = self.gpu_renderer.context
-        self.static_mesh_layer = MeshLayer()
-        self.dynamic_mesh_layer = MeshLayer()
+        self.layer = MeshLayer()
         self.clickables = []
         self._hovered_clickables = set()
         self._last_mouse_position = None
@@ -51,7 +49,7 @@ class Screen:
                 self,
                 layer: MeshLayer
             ) -> None:
-        self.dynamic_mesh_layer.meshes.append(layer)
+        self.layer.meshes.append(layer)
         self.search_for_clickable(layer, [layer])
 
     def search_for_clickable(
@@ -98,7 +96,7 @@ class Screen:
 
         if isinstance(mesh, Interface | SuperMesh):
             self.search_for_clickable(mesh.get_layer(), [mesh])
-            self.dynamic_mesh_layer.meshes.append(mesh)
+            self.layer.meshes.append(mesh)
             return
 
         if (
@@ -107,15 +105,7 @@ class Screen:
         ):
             self.clickables.append(mesh)
 
-        layer = (
-            self.dynamic_mesh_layer
-            if mesh.is_dynamic()
-            else self.static_mesh_layer
-        )
-        layer.meshes.append(mesh)
+        self.layer.meshes.append(mesh)
 
     def refresh(self) -> None:
-        self.gpu_renderer.render(
-            self.static_mesh_layer.meshes,
-            self.dynamic_mesh_layer.meshes
-        )
+        self.gpu_renderer.render(self.layer.meshes)

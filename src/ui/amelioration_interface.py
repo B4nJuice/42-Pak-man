@@ -70,7 +70,6 @@ class AmeliorationInterface(Interface):
                 Position(0, 0), Position(screen_width, screen_height)
             ),
             OperationEnum.ALPHA,
-            dynamic=True
         )
 
         self.panel = Plane(
@@ -80,7 +79,6 @@ class AmeliorationInterface(Interface):
                 Position(size.get(279 + 722), size.get(119 + 482))
             ),
             OperationEnum.SET,
-            dynamic=True,
         )
 
         self.panel_border = Rectangle(
@@ -89,7 +87,6 @@ class AmeliorationInterface(Interface):
             size.get(722),
             size.get(482),
             2,
-            dynamic=True,
             smooth_end=True,
         )
 
@@ -182,7 +179,6 @@ class AmeliorationInterface(Interface):
                     Position(button_x + button_width, y + button_height)
                 ),
                 OperationEnum.ALPHA,
-                dynamic=True,
                 on_click=on_click
             )
             selected_button = Plane(
@@ -195,7 +191,6 @@ class AmeliorationInterface(Interface):
                     )
                 ),
                 OperationEnum.ALPHA,
-                dynamic=True,
                 on_click=on_click
             )
             icon = SimpleDisplayable(
@@ -218,7 +213,6 @@ class AmeliorationInterface(Interface):
                 ),
                 spacing=4,
                 align=AlignEnum.LEFT,
-                dynamic=True,
             )
             rarity = FontSequence(
                 "",
@@ -231,7 +225,6 @@ class AmeliorationInterface(Interface):
                 ),
                 spacing=2,
                 align=AlignEnum.LEFT,
-                dynamic=True,
             )
             skill_lines = [
                 FontSequence(
@@ -250,7 +243,6 @@ class AmeliorationInterface(Interface):
                     ),
                     spacing=2,
                     align=AlignEnum.LEFT,
-                    dynamic=True,
                 )
                 for skill_index in range(self._skill_line_count)
             ]
@@ -264,7 +256,6 @@ class AmeliorationInterface(Interface):
                 ),
                 spacing=2,
                 align=AlignEnum.RIGHT,
-                dynamic=True,
             )
             texts = [title, rarity, *skill_lines]
             self.buttons.append(

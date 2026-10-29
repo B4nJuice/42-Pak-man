@@ -56,7 +56,6 @@ class AmeliorationCardInterface(Interface):
                     position.y + self.size.get(289)
                 )
             ),
-            dynamic=False,
         )
 
         self.border = Rectangle(
@@ -107,7 +106,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(259),
             ),
             align=AlignEnum.CENTER,
-            dynamic=True,
         )
 
         self.amelioration_rarity_background = Plane(
@@ -123,7 +121,6 @@ class AmeliorationCardInterface(Interface):
                 ),
             ),
             operation=OperationEnum.ALPHA,
-            dynamic=True
         )
 
         self.level_text = FontSequence(
@@ -135,7 +132,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(18 + 10),
             ),
             align=AlignEnum.RIGHT,
-            dynamic=True,
         )
 
         self.amelioration_rarity_text = FontSequence(
@@ -147,7 +143,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(15 + 10),
             ),
             align=AlignEnum.LEFT,
-            dynamic=True,
         )
 
         self.amelioration_name = FontSequence(
@@ -159,7 +154,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(158),
             ),
             align=AlignEnum.LEFT,
-            dynamic=True,
         )
 
         self.amelioration_description = FontSequence(
@@ -171,7 +165,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(181),
             ),
             align=AlignEnum.LEFT,
-            dynamic=True,
         )
 
         self.skill_name = FontSequence(
@@ -183,7 +176,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(212),
             ),
             align=AlignEnum.LEFT,
-            dynamic=True,
         )
 
         self.skill_upgrade = FontSequence(
@@ -195,7 +187,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(224),
             ),
             align=AlignEnum.LEFT,
-            dynamic=True,
         )
 
         self.skill_change = FontSequence(
@@ -207,7 +198,6 @@ class AmeliorationCardInterface(Interface):
                 self.position.y + self.size.get(213),
             ),
             align=AlignEnum.RIGHT,
-            dynamic=True,
         )
 
         self.layer.meshes.append(self.background)
