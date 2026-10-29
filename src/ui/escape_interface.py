@@ -1,5 +1,8 @@
 import sys
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
+
+import pygame
 
 from src.fonts.font_manager import FontKey
 from src.graphics.meshes.line import Line
@@ -48,7 +51,7 @@ class EscapeInterface(Interface):
         height: int = 465
         width_middle: int = screen_width // 2
 
-        popup_position, popup_size, popup_plane, popup_border = \
+        popup_position, _, popup_plane, popup_border = \
             generate_popup_bg(
                 width=width,
                 height=height,
@@ -124,6 +127,7 @@ class EscapeInterface(Interface):
                 'action_key_label': 'ESC',
                 'action_key': None,
                 'action': self.action_resume,
+                'hover': self._hover_callback,
                 'y': 153,
                 'selected': True
             },
@@ -133,6 +137,7 @@ class EscapeInterface(Interface):
                 'action_key_label': None,
                 'action_key': None,
                 'action': None,
+                'hover': self._hover_callback,
                 'y': 246,
                 'selected': False
             },
@@ -142,12 +147,16 @@ class EscapeInterface(Interface):
                 'action_key_label': None,
                 'action_key': None,
                 'action': self.action_main_menu,
+                'hover': self._hover_callback,
                 'y': 318,
                 'selected': False
             }
         ]
-        buttons: list[Button] = []
-        for button_params in buttons_params:
+        self.buttons: list[Button] = []
+        self.hovered_button: Button | None = None
+        self._selected_index: int = 0
+
+        for index, button_params in enumerate(buttons_params):
             button = Button(
                 position=Position(
                     popup_position.x + size.get(32),
@@ -163,6 +172,7 @@ class EscapeInterface(Interface):
                 ),
                 border_thickness=size.get(1),
                 on_click=button_params['action'],
+                on_hover=button_params['hover'](index),
                 texts=[
                     ButtonTextConfig(
                         text=button_params['label'],
@@ -210,9 +220,9 @@ class EscapeInterface(Interface):
             )
             if (button_params['selected']):
                 button.set_selected(True)
-            buttons.append(button)
+            self.buttons.append(button)
 
-        for button in buttons:
+        for button in self.buttons:
             self.layer.meshes.append(button)
 
         line: Line = Line(
@@ -228,6 +238,45 @@ class EscapeInterface(Interface):
         )
         self.layer.meshes.append(line)
         self.hide()
+
+    def handle_key(self, key: int) -> bool:
+        if self.hidden:
+            return False
+        if key in (pygame.K_UP, pygame.K_LEFT):
+            self._selected_index = (
+                    self._selected_index - 1
+                ) % len(self.buttons)
+            self._update_selection()
+            return True
+        if key in (pygame.K_DOWN, pygame.K_RIGHT):
+            self._selected_index = (
+                    self._selected_index + 1
+                ) % len(self.buttons)
+            self._update_selection()
+            return True
+        if key in (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE):
+            self.buttons[self._selected_index].sim_click()
+            return True
+        return False
+
+    def _update_selection(self) -> None:
+        for button in self.buttons:
+            button.set_selected(button == self.buttons[self._selected_index])
+
+    def _hover_callback(self, index: int) -> Callable[[], None]:
+        def hover() -> None:
+            self._hover_button(index)
+            self._selected_index = index
+            self._update_selection()
+        return hover
+
+    def _hover_button(self, index: int) -> None:
+        if self.buttons[index] is self.hovered_button:
+            return
+
+        self.hovered_button = self.buttons[index]
+        for button in self.buttons:
+            button.set_hovered(False)
 
     def hide(self) -> None:
         self.hidden = True

@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
 
 from src.graphics.color import Color, OperationEnum
 from src.graphics.font import Font
@@ -101,6 +102,7 @@ class Button(SuperMesh):
                 state: ButtonState = ButtonState.NORMAL,
                 operation: OperationEnum = OperationEnum.ALPHA,
                 on_click: Callable | None = None,
+                on_hover: Callable | None = None,
                 border_thickness: int = 0,
                 border_color: Color | None = None,
                 hover_border_color: Color | None = None,
@@ -149,6 +151,11 @@ class Button(SuperMesh):
         self.texts = texts or []
         self._text_sequences = []
 
+        def _on_hover() -> Any:
+            if on_hover:
+                return on_hover()
+            self.set_hovered(True)
+
         self.plane = Plane(
             self.get_color(),
             (
@@ -160,6 +167,7 @@ class Button(SuperMesh):
             ),
             operation=self.get_operation(),
             on_click=on_click,
+            on_hover=_on_hover,
         )
         self.layer.meshes.append(self.plane)
 
@@ -359,3 +367,6 @@ class Button(SuperMesh):
     def set_color(self, color: Color) -> None:
         super().set_color(color)
         self.plane.set_color(color)
+
+    def sim_click(self, *args: Any, **kwargs: Any) -> Any:
+        return self.plane.sim_click(*args, **kwargs)
