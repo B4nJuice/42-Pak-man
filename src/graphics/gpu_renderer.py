@@ -486,14 +486,13 @@ class GPURenderer:
 
     def render(
                 self,
-                static_meshes: Iterable[Mesh | LayerProtocol | Displayable],
-                dynamic_meshes: Iterable[Mesh | LayerProtocol | Displayable]
+                meshes: Iterable[Mesh | LayerProtocol | Displayable]
             ) -> None:
         self.source_index = 0
         self.target_index = 1
         self.framebuffers[self.source_index].clear(0.0, 0.0, 0.0, 0.0)
 
-        for mesh in self._iter_meshes([*static_meshes, *dynamic_meshes]):
+        for mesh in self._iter_meshes(meshes):
             source = self.textures[self.source_index]
             target = self.framebuffers[self.target_index]
             target.use()
