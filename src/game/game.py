@@ -16,6 +16,7 @@ from src.game.characters import (
     PinkyGhost,
     Player,
 )
+from src.game.characters.ghost import Ghost
 from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.font import Font
@@ -95,6 +96,10 @@ class Game:
             self._player._target = None
             self._player._queued = None
             self._player.set_tile(self._player_start_position)
+            for ghost in self._ghosts:
+                self.set_status(GameStatus.INITIALIZING)
+                ghost._target = None
+                ghost.tile = ghost.get_spawn_tile()
 
         pygame.display.flip()
 
@@ -158,34 +163,18 @@ class Game:
 
         ghost_reward: float = self._config.ghost_reward
 
-        self._ghost_1 = BlinkyGhost(
-            0,
-            (0, 0),
-            self._level,
-            ghost_reward,
-            app=self._app
-        )
-        self._ghost_2 = PinkyGhost(
-            0,
-            (self._level.get_width() - 1, 0),
-            self._level,
-            ghost_reward,
-            app=self._app
-        )
-        self._ghost_3 = InkyGhost(
-            0,
-            (self._level.get_width() - 1, self._level.get_height() - 1),
-            self._level,
-            ghost_reward,
-            app=self._app
-        )
-        self._ghost_4 = ClydeGhost(
-            0,
-            (0, self._level.get_height() - 1),
-            self._level,
-            ghost_reward,
-            app=self._app
-        )
+        self._ghosts: list[Ghost] = []
+
+        for pos, ghost in [
+            ((0, 0), BlinkyGhost),
+            ((self._level.get_width() - 1, 0), PinkyGhost),
+            ((self._level.get_width() - 1, self._level.get_height() - 1),
+                InkyGhost),
+            ((0, self._level.get_height() - 1), ClydeGhost)
+        ]:
+            self._ghosts.append(
+                ghost(0, pos, self._level, ghost_reward, app=self._app)
+            )
 
     def init_interfaces(self) -> None:
         Amelioration._app = self._app
