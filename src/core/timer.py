@@ -22,8 +22,20 @@ class Timer:
     def set(self, value: float) -> None:
         self._value = value
 
+    def add_time(self, value: float) -> None:
+        self._value += value
+
+    def remove_time(self, value: float) -> None:
+        self._value = max(self._value - value, 0.0)
+
     def set_speed(self, value: float) -> None:
         self._speed = value
+
+    def get_speed(self) -> float:
+        return self._speed
+
+    def get(self) -> float:
+        return self._value
 
     def update(self, dt: float) -> None:
         if self._value <= 0.0:

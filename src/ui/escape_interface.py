@@ -291,6 +291,8 @@ class EscapeInterface(Interface):
         self.hidden = True
 
     def display(self) -> None:
+        self._hover_callback(0)()
+
         self.hidden = False
 
     def action_pause(self) -> None:

@@ -1,10 +1,14 @@
 from typing import TYPE_CHECKING, Any
 
+from src.core.displayable import SimpleDisplayable
 from src.fonts.font_manager import FontKey
+from src.game.ameliorations import Amelioration
+from src.game.characters.player import Player
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import (
     AlignEnum,
     FontSequence,
+    Rectangle,
     ToggleButton,
     ToggleState,
     ToggleTextConfig,
@@ -33,6 +37,11 @@ class CheatInterface(Interface):
 
     time_speed_active: float
     time_speed_buttons: dict[float, Button]
+
+    ameliorations: list[Amelioration]
+    amelioration_index: int
+    amelioration_icon: SimpleDisplayable
+    amelioration_text: FontSequence
 
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
@@ -347,7 +356,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(332),
                 'y': popup_position.y + size.get(331),
-                'action': None,
+                'action': self.add_lives,
             },
 
             {
@@ -357,7 +366,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': align_left,
                 'y': popup_position.y + size.get(413),
-                'action': None,
+                'action': self.remove_timer,
             },
             {
                 'type': 'label',
@@ -376,7 +385,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(296),
                 'y': popup_position.y + size.get(413),
-                'action': None,
+                'action': self.add_timer,
             },
 
             {
@@ -386,7 +395,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': align_left,
                 'y': popup_position.y + size.get(495),
-                'action': None,
+                'action': self.prev_level,
             },
             {
                 'type': 'label',
@@ -405,12 +414,12 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(296),
                 'y': popup_position.y + size.get(495),
-                'action': None,
+                'action': self.next_level,
             },
 
             {
                 'type': 'label',
-                'content': '500',
+                'content': '50',
                 'label': 'xp',
                 'w': size.get(292),
                 'h': size.get(36),
@@ -425,7 +434,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(740),
                 'y': popup_position.y + size.get(331),
-                'action': None,
+                'action': self.add_xp,
             },
 
             {
@@ -435,7 +444,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(440),
                 'y': popup_position.y + size.get(495),
-                'action': None,
+                'action': self.change_amelioration_up,
             },
             {
                 'type': 'button',
@@ -444,7 +453,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(696),
                 'y': popup_position.y + size.get(495),
-                'action': None,
+                'action': self.change_amelioration_down,
             },
             {
                 'type': 'button',
@@ -453,7 +462,7 @@ class CheatInterface(Interface):
                 'h': size.get(36),
                 'x': popup_position.x + size.get(740),
                 'y': popup_position.y + size.get(495),
-                'action': None,
+                'action': self.give_amelioration,
             },
         ]
 
@@ -577,6 +586,59 @@ class CheatInterface(Interface):
                 ]
             ))
 
+        self.init_ameliorations()
+
+        self.amelioration_text = FontSequence(
+            text='Unknown ring',
+            font=fonts.get(FontKey.BOLD_13),
+            color=Color(*config.cheat_button_label_text_color),
+            position=Position(
+                popup_position.x + size.get(528),
+                popup_position.y + size.get(517)
+            ),
+            align=AlignEnum.LEFT
+        )
+
+        self.amelioration_icon = SimpleDisplayable(
+            self.game._app,
+            'amelioration-unknown',
+            size.get(24),
+            size.get(24),
+            Position(
+                popup_position.x + size.get(496 + 24 // 2),
+                popup_position.y + size.get(501 + 24 // 2),
+            ),
+        )
+
+        self.update_amelioration()
+        self.layer.meshes.append(Plane(
+            color=Color(*config.cheat_button_label_background_color),
+            positions=(
+                Position(
+                    popup_position.x + size.get(484),
+                    popup_position.y + size.get(495)
+                ),
+                Position(
+                    popup_position.x + size.get(484 + 204),
+                    popup_position.y + size.get(495 + 36)
+                )
+            ),
+        ))
+        self.layer.meshes.append(Rectangle(
+            color=Color(*config.cheat_button_label_border_color),
+            position=Position(
+                popup_position.x + size.get(484),
+                popup_position.y + size.get(495)
+            ),
+            width=size.get(204),
+            height=size.get(36),
+            thickness=size.get(1),
+            smooth_end=True
+        ))
+
+        self.layer.meshes.append(self.amelioration_text)
+        self.layer.meshes.append(self.amelioration_icon)
+
         self.layer.meshes.append(Button(
             position=Position(
                 popup_position.x + size.get(596),
@@ -624,19 +686,52 @@ class CheatInterface(Interface):
                 ),
             ))
 
-        self.hide()
+        self.display()
 
-    def add_life(self) -> None:
-        print('add life')
+    def get_player(self) -> Player:
+        return self.game._level._entities.get(Player)
+
+    def init_ameliorations(self) -> None:
+        self.ameliorations = [
+            _amelioration()
+            for _amelioration in Amelioration.__subclasses__()
+        ]
+        self.amelioration_index = 0
+
+    def update_amelioration(self) -> None:
+        _amelioration = self.ameliorations[self.amelioration_index]
+
+        self.amelioration_icon.set_texture_key(_amelioration.get_texture_key())
+        self.amelioration_text.set_sequence_text(_amelioration.get_name())
+
+    def change_amelioration(self, d: int) -> None:
+        new_index = (self.amelioration_index + d) % len(self.ameliorations)
+
+        self.amelioration_index = new_index
+        self.update_amelioration()
+
+    def change_amelioration_up(self) -> None:
+        self.change_amelioration(1)
+
+    def change_amelioration_down(self) -> None:
+        self.change_amelioration(-1)
+
+    def give_amelioration(self) -> None:
+        self.get_player().add_amelioration(
+            self.ameliorations[self.amelioration_index]
+        )
+
+    def add_lives(self) -> None:
+        self.get_player().add_lives(3)
 
     def add_xp(self) -> None:
-        print('add xp')
+        self.get_player().add_exp(50)
 
     def add_timer(self) -> None:
-        print('add timer')
+        self.game._timer.add_time(1)
 
     def remove_timer(self) -> None:
-        print('remove timer')
+        self.game._timer.remove_time(1)
 
     def prev_level(self) -> None:
         print('prev level')
@@ -646,9 +741,6 @@ class CheatInterface(Interface):
 
     def set_time_speed(self) -> None:
         print('set time speed')
-
-    def give_skill(self) -> None:
-        print('give skill')
 
     def toggle_godmod(self, value: bool) -> None:
         self.game.toggle_godmod(value)

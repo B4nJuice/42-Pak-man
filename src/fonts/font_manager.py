@@ -24,6 +24,7 @@ class FontKey(Enum):
     TEXT_13 = (13, FontKeys.DEFAULT)
     BOLD_8 = (8, FontKeys.BOLD)
     BOLD_10 = (10, FontKeys.BOLD)
+    BOLD_13 = (13, FontKeys.BOLD)
     BOLD_14 = (14, FontKeys.BOLD)
     BOLD_18 = (18, FontKeys.BOLD)
     BOLD_24 = (24, FontKeys.BOLD)
