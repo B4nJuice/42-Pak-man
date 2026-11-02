@@ -8,6 +8,7 @@ from .entity import Entity
 from .event_handler import EventHandler
 from .level import Level
 from .tile import Tile
+from .timer import Timer
 
 __all__: list[str] = [
     'AI',
@@ -19,5 +20,6 @@ __all__: list[str] = [
     'Entity',
     'EventHandler',
     'Level',
-    'Tile'
+    'Tile',
+    'Timer'
 ]
