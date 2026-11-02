@@ -15,6 +15,7 @@ from src.graphics.super_meshes import (
     ToggleTextConfig,
 )
 from src.settings.action_key import ActionKey
+from src.utils import Logger, TColor
 
 from ..graphics.super_meshes.button import (
     Button,
@@ -34,12 +35,15 @@ from .interface import Interface
 
 
 class CheatInterface(Interface):
+    logger: Logger
     game: 'Game'
     prev_game_status: GameStatus
     layer: MeshLayer
 
     time_speed_active: float
     time_speed_buttons: dict[float, Button]
+    cheat_toggles: dict[str, ToggleButton]
+    cheat_status_text: FontSequence
 
     ameliorations: list[Amelioration]
     amelioration_index: int
@@ -47,6 +51,11 @@ class CheatInterface(Interface):
     amelioration_text: FontSequence
 
     def __init__(self, game: 'Game') -> None:
+        self.logger = Logger(
+            name='Cheat',
+            color=TColor.BRIGHT_MAGENTA,
+            verbose=game._logger.verbose
+        )
         super().__init__(game)
         self.game = game
         self.layer = MeshLayer()
@@ -107,8 +116,8 @@ class CheatInterface(Interface):
             ),
             align=AlignEnum.LEFT
         ))
-        texts.append(FontSequence(
-            text='2 cheats active',
+        self.cheat_status_text = FontSequence(
+            text='0 cheats active',
             font=fonts.get(FontKey.TEXT_13),
             color=Color(*config.pause_menu_text_secondary),
             position=Position(
@@ -116,7 +125,8 @@ class CheatInterface(Interface):
                 popup_position.y + size.get(77.5 + 15)
             ),
             align=AlignEnum.RIGHT
-        ))
+        )
+        texts.append(self.cheat_status_text)
         texts.append(FontSequence(
             text='Bend the rules. Changes affect this run only.',
             font=fonts.get(FontKey.TEXT_12),
@@ -176,6 +186,7 @@ class CheatInterface(Interface):
 
         toggles_params: list[dict[str, Any]] = [
             {
+                'key': 'godmod',
                 'name': 'God Mod',
                 'description': 'Take no damage',
                 'action': self.toggle_godmod,
@@ -184,6 +195,7 @@ class CheatInterface(Interface):
                 'y': 0
             },
             {
+                'key': 'noclip',
                 'name': 'No Clip',
                 'description': 'Pass through walls',
                 'action': self.toggle_noclip,
@@ -192,6 +204,7 @@ class CheatInterface(Interface):
                 'y': 0
             },
             {
+                'key': 'wallhack',
                 'name': 'Wall Hack',
                 'description': 'Predicts ghost movements through walls',
                 'action': self.toggle_wallhack,
@@ -200,6 +213,7 @@ class CheatInterface(Interface):
                 'y': 1
             },
             {
+                'key': 'freeze',
                 'name': 'Freeze Ghosts',
                 'description': 'Pause ghost movement',
                 'action': self.toggle_freeze,
@@ -214,6 +228,7 @@ class CheatInterface(Interface):
         toggle_height: int = size.get(68)
         toggle_x: float = popup_position.x + size.get(32)
         toggle_y: float = popup_position.y + size.get(116)
+        self.cheat_toggles = {}
 
         for toggle_params in toggles_params:
             toggle: ToggleButton = ToggleButton(
@@ -288,6 +303,7 @@ class CheatInterface(Interface):
                 on_click=toggle_params['action']
             )
             self.layer.meshes.append(toggle)
+            self.cheat_toggles[toggle_params['key']] = toggle
 
         titles_params: list[dict[str, Any]] = [
             {
@@ -546,8 +562,10 @@ class CheatInterface(Interface):
         speed_button_height: int = size.get(36)
         speed_button_x: float = popup_position.x + size.get(440)
         speed_button_y: float = popup_position.y + size.get(413)
+        self.time_speed_active = 1.0
+        self.time_speed_buttons = {}
         for idx, val in enumerate([0.5, 1, 2, 4]):
-            self.layer.meshes.append(Button(
+            button = Button(
                 position=Position(
                     speed_button_x + (
                         speed_button_width + speed_button_gap
@@ -572,8 +590,9 @@ class CheatInterface(Interface):
                     *config.cheat_toggle_button_active_color
                 ),
                 border_thickness=size.get(1),
-                on_click=None,
-                state=ButtonState.SELECTED if val == 1 else ButtonState.NORMAL,
+                on_click=lambda speed=val: self.set_time_speed(speed),
+                state=ButtonState.SELECTED if val == self.time_speed_active
+                else ButtonState.NORMAL,
                 texts=[
                     ButtonTextConfig(
                         text=f'{val}×',
@@ -587,7 +606,9 @@ class CheatInterface(Interface):
                         offset_y=size.get(6),
                     )
                 ]
-            ))
+            )
+            self.layer.meshes.append(button)
+            self.time_speed_buttons[val] = button
 
         self.init_ameliorations()
 
@@ -689,6 +710,8 @@ class CheatInterface(Interface):
                 ),
             ))
 
+        self.sync_cheat_toggles()
+        self.refresh_cheat_info()
         self.hide()
 
     def get_player(self) -> Player:
@@ -720,60 +743,108 @@ class CheatInterface(Interface):
         self.change_amelioration(-1)
 
     def give_amelioration(self) -> None:
-        self.get_player().add_amelioration(
-            self.ameliorations[self.amelioration_index]
-        )
+        amelioration = self.ameliorations[self.amelioration_index]
+
+        self.get_player().add_amelioration(amelioration)
+        self.logger.info(f'Given amelioration: {amelioration.get_name()}')
 
     def add_lives(self) -> None:
         self.get_player().add_lives(3)
+        self.logger.info('Added 3 lives to player')
 
     def add_xp(self) -> None:
         self.get_player().add_exp(50)
+        self.logger.info('Added 50 XP to player')
 
     def add_timer(self) -> None:
         self.game._timer.add_time(60)
+        self.logger.info('Timer increased by 60 seconds')
 
     def remove_timer(self) -> None:
         self.game._timer.remove_time(60)
+        self.logger.info('Timer reduced by 60 seconds')
 
     def prev_level(self) -> None:
-        print('prev level')
+        self.logger.warning('Previous level cheat is not implemented yet')
 
     def next_level(self) -> None:
-        print('next level')
+        self.logger.warning('Next level cheat is not implemented yet')
 
-    def set_time_speed(self) -> None:
-        print('set time speed')
+    def set_time_speed(self, value: float, log: bool = True) -> None:
+        self.time_speed_active = value
+        self.game._timer.set_speed(value)
+
+        for speed, button in self.time_speed_buttons.items():
+            button.set_selected(speed == value)
+
+        if log:
+            self.logger.info(f'Timer speed set to {value}×')
+
+    def get_active_cheats_count(self) -> int:
+        return sum([
+            self.game.get_godmod_status(),
+            self.game.get_noclip_status(),
+            self.game.get_wallhack_status(),
+            self.game.get_freeze_status(),
+        ])
+
+    def refresh_cheat_info(self) -> None:
+        active_count = self.get_active_cheats_count()
+        label = 'cheat active' if active_count == 1 else 'cheats active'
+        self.cheat_status_text.set_sequence_text(f'{active_count} {label}')
+
+    def sync_cheat_toggles(self) -> None:
+        statuses: dict[str, bool] = {
+            'godmod': self.game.get_godmod_status(),
+            'noclip': self.game.get_noclip_status(),
+            'wallhack': self.game.get_wallhack_status(),
+            'freeze': self.game.get_freeze_status(),
+        }
+
+        for key, toggle in self.cheat_toggles.items():
+            toggle.set_active(statuses.get(key, False))
+
+        if not hasattr(self.game, '_timer'):
+            return
+
+        current_speed = self.game._timer.get_speed()
+        if current_speed in self.time_speed_buttons:
+            self.set_time_speed(current_speed, log=False)
 
     def toggle_godmod(self, value: bool) -> None:
         self.game.toggle_godmod(value)
+        self.refresh_cheat_info()
+        self.logger.info(f'God Mod: {"ON" if value else "OFF"}')
 
     def toggle_noclip(self, value: bool) -> None:
-        print(f'toggle_noclip: {value}')
         self.game.toggle_noclip(value)
+        self.refresh_cheat_info()
+        self.logger.info(f'No Clip: {"ON" if value else "OFF"}')
 
     def toggle_wallhack(self, value: bool) -> None:
-        print(f'toggle_wallhack: {value}')
         self.game.toggle_wallhack(value)
+        self.refresh_cheat_info()
+        self.logger.info(f'Wall Hack: {"ON" if value else "OFF"}')
 
     def toggle_freeze(self, value: bool) -> None:
-        print(f'toggle_freeze: {value}')
         self.game.toggle_freeze(value)
-
-    def hide(self) -> None:
-        self.hidden = True
-
-    def display(self) -> None:
-        self.hidden = False
+        self.refresh_cheat_info()
+        self.logger.info(f'Freeze Ghosts: {"ON" if value else "OFF"}')
 
     def action_open(self) -> None:
+        self.sync_cheat_toggles()
+        self.refresh_cheat_info()
         self.display()
         self.prev_game_status = self.game.get_status()
         self.game.set_status(GameStatus.CHEAT_MENU)
+        self.logger.info(
+            f'Cheat menu opened ({self.get_active_cheats_count()} active)'
+        )
 
     def action_close(self) -> None:
         self.hide()
         self.game.set_status(self.prev_game_status)
+        self.logger.info('Cheat menu closed')
 
     def action_toggle(self) -> None:
         if self.hidden:
