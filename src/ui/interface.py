@@ -16,6 +16,12 @@ class Interface(ABC):
     def is_hidden(self) -> bool:
         return self.hidden
 
+    def hide(self) -> None:
+        self.hidden = True
+
+    def display(self) -> None:
+        self.hidden = False
+
     @abstractmethod
     def get_layer(self) -> MeshLayer:
         ...

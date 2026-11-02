@@ -277,12 +277,6 @@ class AmeliorationInterface(Interface):
 
         self.hide()
 
-    def hide(self) -> None:
-        self.hidden = True
-
-    def display(self) -> None:
-        self.hidden = False
-
     def start(self) -> None:
         self._next_ameliorations = []
         self._selected_index = 0

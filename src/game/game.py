@@ -63,7 +63,7 @@ class Game:
         self.generate_level()
 
         self.init_entities()
-        self.toggle_freeze(True)
+        self.toggle_freeze(False)
         self.init_interfaces()
         self.init_timer()
 
@@ -266,6 +266,7 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
+            self._cheat_interface.handle_key(event.key) or
             self.get_status() == GameStatus.AMELIORATION
             and self._amelioration_interface.handle_key(event.key) or
             self.get_status() == GameStatus.PAUSED
@@ -285,7 +286,7 @@ class Game:
 
         match event.key:
             case pygame.K_F1:
-                self._player._wallhack = not self._player._wallhack
+                self._cheat_interface.action_toggle()
             case pygame.K_F9:
                 try:
                     self.load_pack('textures/reverse-textures')

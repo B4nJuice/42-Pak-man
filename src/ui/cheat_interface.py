@@ -4,6 +4,7 @@ from src.core.displayable import SimpleDisplayable
 from src.fonts.font_manager import FontKey
 from src.game.ameliorations import Amelioration
 from src.game.characters.player import Player
+from src.game.game_status import GameStatus
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import (
     AlignEnum,
@@ -13,6 +14,7 @@ from src.graphics.super_meshes import (
     ToggleState,
     ToggleTextConfig,
 )
+from src.settings.action_key import ActionKey
 
 from ..graphics.super_meshes.button import (
     Button,
@@ -33,6 +35,7 @@ from .interface import Interface
 
 class CheatInterface(Interface):
     game: 'Game'
+    prev_game_status: GameStatus
     layer: MeshLayer
 
     time_speed_active: float
@@ -686,7 +689,7 @@ class CheatInterface(Interface):
                 ),
             ))
 
-        self.display()
+        self.hide()
 
     def get_player(self) -> Player:
         return self.game._level._entities.get(Player)
@@ -728,10 +731,10 @@ class CheatInterface(Interface):
         self.get_player().add_exp(50)
 
     def add_timer(self) -> None:
-        self.game._timer.add_time(1)
+        self.game._timer.add_time(60)
 
     def remove_timer(self) -> None:
-        self.game._timer.remove_time(1)
+        self.game._timer.remove_time(60)
 
     def prev_level(self) -> None:
         print('prev level')
@@ -765,9 +768,28 @@ class CheatInterface(Interface):
 
     def action_open(self) -> None:
         self.display()
+        self.prev_game_status = self.game.get_status()
+        self.game.set_status(GameStatus.CHEAT_MENU)
 
     def action_close(self) -> None:
         self.hide()
+        self.game.set_status(self.prev_game_status)
+
+    def action_toggle(self) -> None:
+        if self.hidden:
+            self.action_open()
+        else:
+            self.action_close()
 
     def get_layer(self) -> MeshLayer:
         return self.layer
+
+    def handle_key(self, key: int) -> bool:
+        if self.hidden:
+            return False
+        if key in self.game._app.key_manager.get_keys(
+                    ActionKey.BACK_PAUSE_RESUME
+                ):
+            self.action_close()
+            return True
+        return False

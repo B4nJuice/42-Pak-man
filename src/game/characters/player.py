@@ -81,9 +81,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._game = game
         self.set_state(PlayerState.NORMAL)
 
-        self._wallhack = True
-        self._godmod = True
-        self._noclip = True
+        self._wallhack = False
+        self._godmod = False
+        self._noclip = False
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
         if amelioration not in self._ameliorations.all():
