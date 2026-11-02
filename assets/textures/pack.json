@@ -16,6 +16,7 @@
     "amelioration-power": "ameliorations/power_amelioration.png",
     "amelioration-speed": "ameliorations/speed_amelioration.png",
     "amelioration-super-time": "ameliorations/super_time_amelioration.png",
+    "main-backdrop": "menus/main_backdrop.png",
     "pacman": {
       "frame_time": 0.3,
       "default_variant": "static",

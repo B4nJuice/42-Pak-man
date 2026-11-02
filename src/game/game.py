@@ -28,6 +28,7 @@ from src.ui import (
     GameInterface,
     StatsInterface,
 )
+from src.ui.lobby_interface import LobbyInterface
 from src.utils import Logger, TColor
 
 
@@ -188,6 +189,8 @@ class Game:
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
         self._screen.add_mesh(self._amelioration_interface)
+
+        self._screen.add_mesh(LobbyInterface(self))
 
     def run(self) -> None:
         dt: float = 0.0
