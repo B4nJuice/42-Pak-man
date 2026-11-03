@@ -17,6 +17,7 @@
     "amelioration-speed": "ameliorations/speed_amelioration.png",
     "amelioration-super-time": "ameliorations/super_time_amelioration.png",
     "main-backdrop": "menus/main_backdrop.png",
+    "lobby-assets-pacman-ghost": "menus/lobby_assets_pacman_ghost.png",
     "pacman": {
       "frame_time": 0.3,
       "default_variant": "static",

@@ -112,7 +112,7 @@ class SimpleDisplayable(Displayable):
     def __init__(
         self,
         app: App | None = None,
-        texture_key: str | None = None,
+        texture_key: str | TextureKeys | None = None,
         width: int | None = None,
         height: int | None = None,
         position: Position | None = None,
@@ -155,8 +155,12 @@ class SimpleDisplayable(Displayable):
     def get_position_on_screen(self) -> Position:
         return self._position
 
-    def set_texture_key(self, texture_key: str) -> None:
-        self._texture_key = texture_key
+    def set_texture_key(self, texture_key: str | TextureKeys) -> None:
+        if isinstance(texture_key, TextureKeys):
+            self._texture_key = texture_key.str()
+        else:
+            self._texture_key = texture_key
+
         if hasattr(self, '_animation'):
             self.init_displayable()
 
