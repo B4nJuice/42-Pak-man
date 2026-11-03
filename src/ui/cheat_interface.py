@@ -722,6 +722,12 @@ class CheatInterface(Interface):
             _amelioration()
             for _amelioration in Amelioration.__subclasses__()
         ]
+
+        for amelioration in self.ameliorations:
+            _, up = amelioration.next_upgrade()
+
+            amelioration.level_up(up)
+
         self.amelioration_index = 0
 
     def update_amelioration(self) -> None:

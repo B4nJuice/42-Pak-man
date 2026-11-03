@@ -86,7 +86,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._noclip = False
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
-        if amelioration not in self._ameliorations.all():
+        if type(amelioration) not in [
+                    a.__class__ for a in self._ameliorations.all()
+                ]:
             self._ameliorations.add(amelioration)
         self._game._stats_interface.refresh_ameliorations()
 
