@@ -154,7 +154,6 @@ class Button(SuperMesh):
         def _on_hover() -> Any:
             if on_hover:
                 return on_hover()
-            self.set_hovered(True)
 
         self.plane = Plane(
             self.get_color(),
@@ -263,6 +262,9 @@ class Button(SuperMesh):
             sequence.set_color(
                 text_config.get_color_for_state(self.state)
                 or self._current_color()
+            )
+            sequence.set_sequence_text(
+                text_config.get_text_for_state(self.state)
             )
             sequence.set_operation(self.get_operation())
             sequence.align = text_config.alignment

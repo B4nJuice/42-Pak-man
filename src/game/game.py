@@ -4,22 +4,20 @@ from pygame.time import Clock
 
 from src.app import App
 from src.config import ConfigModel
-from src.core import EventHandler, Level
+from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.errors import PackError
-from src.fonts.font_keys import FontKeys
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
     ClydeGhost,
+    Ghost,
     InkyGhost,
     PinkyGhost,
     Player,
 )
-from src.game.characters.ghost import Ghost
 from src.game.game_status import GameStatus
 from src.game.items import PacGum, SuperPacGum
-from src.graphics.font import Font
 from src.graphics.screen import Screen
 from src.settings.action_key import ActionKey
 from src.ui import (
@@ -28,6 +26,7 @@ from src.ui import (
     GameInterface,
     StatsInterface,
 )
+from src.ui.cheat_interface import CheatInterface
 from src.ui.lobby_interface import LobbyInterface
 from src.utils import Logger, TColor
 
@@ -40,14 +39,16 @@ class Game:
     _escape_interface: EscapeInterface
     _stats_interface: StatsInterface
     _game_interface: GameInterface
+    _cheat_interface: CheatInterface
     _event_handler: EventHandler
     _config: ConfigModel
     _status: GameStatus
     _screen: Screen
     _level: Level
     _clock: Clock
-    _font: Font
     _player: Player
+    _freeze_ghost: bool
+    _timer: Timer
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -57,19 +58,46 @@ class Game:
         self._set_config(config)
         self._set_screen(screen)
 
-        self._font = Font(
-            self._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
-            self._screen.moderngl_context,
-            pixel_size=self._config.screen_height // 22
-        )
-
         self._init_level()
         self._init_event_handler()
         self._init_screen()
         self.generate_level()
 
         self.init_entities()
+        self.toggle_freeze(False)
         self.init_interfaces()
+        self.init_timer()
+
+    def init_timer(self) -> None:
+        self._timer = Timer(600)
+        self._timer.set_cb_update(self._game_interface.refresh_timer)
+        self._timer.set_cb_finish(lambda: print('player win'))
+
+    def toggle_freeze(self, value: bool) -> None:
+        self._freeze_ghost = value
+        for ghost in self._level._entities.gets(Ghost):
+            ghost.set_freeze(self._freeze_ghost)
+
+    def toggle_wallhack(self, value: bool) -> None:
+        self._player._wallhack = value
+
+    def toggle_noclip(self, value: bool) -> None:
+        self._player._noclip = value
+
+    def toggle_godmod(self, value: bool) -> None:
+        self._player._godmod = value
+
+    def get_freeze_status(self) -> bool:
+        return self._freeze_ghost
+
+    def get_wallhack_status(self) -> bool:
+        return self._player._wallhack
+
+    def get_noclip_status(self) -> bool:
+        return self._player._noclip
+
+    def get_godmod_status(self) -> bool:
+        return self._player._godmod
 
     def set_status(self, status: GameStatus) -> None:
         self._status = status
@@ -84,6 +112,7 @@ class Game:
         )
 
     def update(self, dt: float) -> None:
+        self._timer.update(dt)
         self._level.update(dt)
         self.refresh_maze()
         self._stats_interface.refresh()
@@ -97,6 +126,7 @@ class Game:
             self._player._target = None
             self._player._queued = None
             self._player.set_tile(self._player_start_position)
+
             for ghost in self._ghosts:
                 self.set_status(GameStatus.INITIALIZING)
                 ghost._target = None
@@ -184,11 +214,13 @@ class Game:
         self._stats_interface = StatsInterface(self)
         self._escape_interface = EscapeInterface(self)
         self._amelioration_interface = AmeliorationInterface(self)
+        self._cheat_interface = CheatInterface(self)
 
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
         self._screen.add_mesh(self._amelioration_interface)
+        self._screen.add_mesh(self._cheat_interface)
 
         self._screen.add_mesh(LobbyInterface(self))
 
@@ -237,6 +269,7 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
+            self._cheat_interface.handle_key(event.key) or
             self.get_status() == GameStatus.AMELIORATION
             and self._amelioration_interface.handle_key(event.key) or
             self.get_status() == GameStatus.PAUSED
@@ -256,7 +289,7 @@ class Game:
 
         match event.key:
             case pygame.K_F1:
-                self._player._cheat = not self._player._cheat
+                self._cheat_interface.action_toggle()
             case pygame.K_F9:
                 try:
                     self.load_pack('textures/reverse-textures')

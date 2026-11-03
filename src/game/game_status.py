@@ -7,3 +7,4 @@ class GameStatus(Enum):
     PAUSED = 1
     INITIALIZING = 2
     AMELIORATION = 3
+    CHEAT_MENU = 4
