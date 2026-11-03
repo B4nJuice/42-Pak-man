@@ -843,7 +843,8 @@ class CheatInterface(Interface):
 
     def action_close(self) -> None:
         self.hide()
-        self.game.set_status(self.prev_game_status)
+        if self.game.get_status() == GameStatus.CHEAT_MENU:
+            self.game.set_status(self.prev_game_status)
         self.logger.info('Cheat menu closed')
 
     def action_toggle(self) -> None:
