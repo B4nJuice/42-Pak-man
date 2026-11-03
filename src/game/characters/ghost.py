@@ -141,6 +141,11 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         super().on_collision(other)
 
     def go_to(self, tile: Tile) -> None:
+        if tile == self.get_tile() and self.is_moving():
+            self.clear_next_moves()
+            self.on_arrive_ai()
+            return
+
         path = self.a_star.find_path(
             start=self.get_target_tile(),
             end=tile
@@ -151,9 +156,11 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
 
     def update(self, dt: float) -> None:
         super().update(dt)
-        self.update_ai(dt)
-        self.update_animation(dt)
 
+        if not self._freeze:
+            self.update_ai(dt)
+
+        self.update_animation(dt)
         self.update_state(dt)
 
     def update_state(self, dt: float) -> None:

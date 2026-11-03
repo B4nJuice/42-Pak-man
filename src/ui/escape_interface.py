@@ -287,11 +287,9 @@ class EscapeInterface(Interface):
         for button in self.buttons:
             button.set_hovered(False)
 
-    def hide(self) -> None:
-        self.hidden = True
-
     def display(self) -> None:
-        self.hidden = False
+        self._hover_callback(0)()
+        super().display()
 
     def action_pause(self) -> None:
         self.display()
