@@ -1,14 +1,20 @@
-from src.game.game import Game
+from typing import TYPE_CHECKING
+
 from src.game.game_status import GameStatus
 from src.ui.interface import Interface
 
+if TYPE_CHECKING:
+    from src.game.game import Game
+
 
 class InterfaceManager:
-    _interfaces: dict[GameStatus, Interface]
-    _game: Game
+    _interfaces: dict[GameStatus, list[Interface]]
+    _interface_list: list[Interface]
+    _game: 'Game'
 
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: 'Game') -> None:
         self._interfaces = {}
+        self._interface_list = []
         self._game = game
 
     def set_interface(
@@ -17,16 +23,17 @@ class InterfaceManager:
                 interface: Interface
             ) -> None:
         if isinstance(status, GameStatus):
-            self._interfaces[status] = interface
+            self._interfaces.setdefault(status, []).append(interface)
+            self._interface_list.append(interface)
         else:
             for _status in status:
                 self.set_interface(_status, interface)
 
     def refresh_interfaces(self) -> None:
         status: GameStatus = self._game.get_status()
-        target_interface: Interface = self._interfaces[status]
-        for interface in self._interfaces.values():
-            if not interface.is_hidden() and interface != target_interface:
+        target_interfaces: list[Interface] = self._interfaces[status]
+        for interface in self._interface_list:
+            if not interface.is_hidden() and interface not in target_interfaces:
                 interface.hide()
-            elif interface == target_interface and interface.is_hidden():
+            elif interface in target_interfaces and interface.is_hidden():
                 interface.display()
