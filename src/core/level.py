@@ -85,3 +85,10 @@ class Level(Maze):
 
     def get_entities(self) -> list[Entity]:
         return self._entities.all()
+
+    def is_finished(self) -> bool:
+        from src.game.items.pacgum import PacGum
+        from src.game.items.super_pacgum import SuperPacGum
+
+        return not self._entities.gets(PacGum)\
+            and not self._entities.gets(SuperPacGum)
