@@ -28,5 +28,5 @@ class InterfaceManager:
         for interface in self._interfaces.values():
             if not interface.is_hidden() and interface != target_interface:
                 interface.hide()
-            elif interface == target_interface and not interface.is_hidden():
+            elif interface == target_interface and interface.is_hidden():
                 interface.display()
