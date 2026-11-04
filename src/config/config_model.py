@@ -431,7 +431,6 @@ class ConfigModel(BaseModel):
         description=''
     )
 
-
     # Game version
     game_version: tuple[int, int, int] = Field(
         default=(0, 1, 0)
@@ -439,4 +438,4 @@ class ConfigModel(BaseModel):
 
     def get_version(self) -> str:
         return f'{self.game_version[0]}.{self.game_version[1]}.'\
-        f'{self.game_version[2]}'
+            f'{self.game_version[2]}'

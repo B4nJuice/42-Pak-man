@@ -27,7 +27,6 @@ from src.ui import (
     StatsInterface,
 )
 from src.ui.cheat_interface import CheatInterface
-from src.ui.lobby_interface import LobbyInterface
 from src.utils import Logger, TColor
 
 

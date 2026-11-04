@@ -38,4 +38,4 @@ class TextureKeys(Enum):
         return entry
 
     def str(self) -> str:
-       return self.value
+        return self.value
