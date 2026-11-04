@@ -1,6 +1,7 @@
 from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING, Any
 
+from src.core.displayable import SimpleDisplayable
 from src.fonts import FontKey
 from src.game.game_status import GameStatus
 from src.graphics.super_meshes import (
@@ -11,6 +12,7 @@ from src.graphics.super_meshes import (
 )
 from src.graphics.super_meshes.button import ButtonTextConfig
 from src.settings import ActionKey
+from src.texture.texture_keys import TextureKeys
 from src.utils import Logger, TColor
 
 if TYPE_CHECKING:
@@ -127,6 +129,17 @@ class VictoryInterface(Interface):
             )
 
         self.layer.meshes.extend(_victory_texts())
+
+        self.layer.meshes.append(SimpleDisplayable(
+            app=game._app,
+            texture_key=TextureKeys.VICTORY_PACMAN,
+            width=size.get(36),
+            height=size.get(36),
+            position=Position(
+                popup_position.x + size.get(152.5 + 36 / 2),
+                popup_position.y + size.get(64 + 36 / 2)
+            )
+        ))
 
         self.final_score = BoxInterface(
             game=game,
