@@ -314,6 +314,21 @@ class GameoverInterface(Interface):
         for button in self.buttons:
             self.layer.meshes.append(button)
 
+    def open(
+        self,
+        final_score: int | str,
+        time_survived: int | str,
+        level_reached: int | str,
+        ghosts_defeated: int | str,
+        pellets_eaten: int | str,
+    ) -> None:
+        self.final_score.refresh(str(final_score))
+        self.time_survived.refresh(str(time_survived))
+        self.level_reached.refresh(str(level_reached))
+        self.ghosts_defeated.refresh(str(ghosts_defeated))
+        self.pellets_eaten.refresh(str(pellets_eaten))
+        self.display()
+
     def _update_selection(self) -> None:
         for button in self.buttons:
             button.set_selected(button == self.buttons[self._selected_index])
