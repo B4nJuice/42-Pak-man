@@ -26,6 +26,8 @@ class TextureKeys(Enum):
 
     MAIN_BACKDROP = 'main-backdrop'
     LOBBY_ASSETS_PACMAN_GHOST = 'lobby-assets-pacman-ghost'
+    VICTORY_PACMAN = 'victory-pacman'
+    GAMEOVER_GHOST = 'gameover-ghost'
 
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':

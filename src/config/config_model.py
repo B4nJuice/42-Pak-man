@@ -469,6 +469,48 @@ class ConfigModel(BaseModel):
         description=''
     )
 
+    # gameover meunus
+    gameover_bg: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    gameover_bg_accent: tuple[int, int, int] = Field(
+        default=(30, 30, 47),
+        description=''
+    )
+    gameover_bg_secondary: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    gameover_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    gameover_border_accent: tuple[int, int, int] = Field(
+        default=(233, 190, 47),
+        description=''
+    )
+    gameover_border_secondary: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    gameover_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    gameover_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    gameover_text_accent2: tuple[int, int, int] = Field(
+        default=(255, 183, 255),
+        description=''
+    )
+    gameover_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+
     # Game version
     game_version: tuple[int, int, int] = Field(
         default=(0, 1, 0)

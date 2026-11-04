@@ -18,6 +18,8 @@
     "amelioration-super-time": "ameliorations/super_time_amelioration.png",
     "main-backdrop": "menus/main_backdrop.png",
     "lobby-assets-pacman-ghost": "menus/lobby_assets_pacman_ghost.png",
+    "victory-pacman": "menus/victory_pacman.png",
+    "gameover-ghost": "menus/gameover_ghost.png",
     "pacman": {
       "frame_time": 0.3,
       "default_variant": "static",
