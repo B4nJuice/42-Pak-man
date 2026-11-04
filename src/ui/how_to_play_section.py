@@ -127,8 +127,8 @@ class HowToPlaySection(Interface):
         self.layer.meshes.append(self.number)
         self.layer.meshes.append(self.title)
 
-        for text in self.texts:
-            self.layer.meshes.append(text)
+        for text_sequance in self.texts:
+            self.layer.meshes.append(text_sequance)
 
     def refresh(self) -> None:
         pass
