@@ -431,6 +431,44 @@ class ConfigModel(BaseModel):
         description=''
     )
 
+    # victory meunus
+    victory_bg: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    victory_bg_accent: tuple[int, int, int] = Field(
+        default=(30, 30, 47),
+        description=''
+    )
+    victory_bg_secondary: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    victory_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    victory_border_accent: tuple[int, int, int] = Field(
+        default=(233, 190, 47),
+        description=''
+    )
+    victory_border_secondary: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    victory_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    victory_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    victory_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+
     # Game version
     game_version: tuple[int, int, int] = Field(
         default=(0, 1, 0)
