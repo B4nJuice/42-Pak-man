@@ -125,7 +125,7 @@ class EscapeInterface(Interface):
                 'label_hover': '> RESUME',
                 'action_key_label': 'ESC',
                 'action_key': None,
-                'action': self.action_resume,
+                'action': lambda: self.game.set_status(GameStatus.RUNNING),
                 'hover': self._hover_callback,
                 'y': 153,
                 'selected': True
@@ -236,7 +236,6 @@ class EscapeInterface(Interface):
             ),
         )
         self.layer.meshes.append(line)
-        self.hide()
 
     def handle_key(self, key: int) -> bool:
         if self.hidden:
@@ -287,20 +286,8 @@ class EscapeInterface(Interface):
         for button in self.buttons:
             button.set_hovered(False)
 
-    def display(self) -> None:
-        self._hover_callback(0)()
-        super().display()
-
-    def action_pause(self) -> None:
-        self.display()
-        self.game.set_status(GameStatus.PAUSED)
-
-    def action_resume(self) -> None:
-        self.hide()
-        self.game.set_status(GameStatus.RUNNING)
-
     def action_main_menu(self) -> None:
-        self.hide()
+        self.game.set_status(GameStatus.RUNNING)
         print('To implement (Main Menu -> escape_interface.py)!')
         sys.exit(0)
 

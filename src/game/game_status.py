@@ -8,3 +8,7 @@ class GameStatus(Enum):
     INITIALIZING = 2
     AMELIORATION = 3
     CHEAT_MENU = 4
+
+    @classmethod
+    def get_all(cls) -> list["GameStatus"]:
+        return [status for status in cls]

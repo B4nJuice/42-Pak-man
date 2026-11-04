@@ -6,6 +6,7 @@ from src.app import App
 from src.config import ConfigModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
+from src.core.interface_manager import InterfaceManager
 from src.errors import PackError
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
@@ -35,6 +36,7 @@ class Game:
     _logger: Logger
     _player_start_position: tuple[int, int]
     _amelioration_interface: AmeliorationInterface
+    _interface_manager: InterfaceManager
     _escape_interface: EscapeInterface
     _stats_interface: StatsInterface
     _game_interface: GameInterface
@@ -52,6 +54,9 @@ class Game:
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
         self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
+
+        self._interface_manager = InterfaceManager(self)
+
         self.set_status(GameStatus.INITIALIZING)
 
         self._set_config(config)
@@ -100,6 +105,7 @@ class Game:
 
     def set_status(self, status: GameStatus) -> None:
         self._status = status
+        self._interface_manager.refresh_interfaces()
 
     def get_status(self) -> GameStatus:
         return self._status
@@ -215,11 +221,33 @@ class Game:
         self._amelioration_interface = AmeliorationInterface(self)
         self._cheat_interface = CheatInterface(self)
 
+        self._interface_manager.set_interface(
+            GameStatus.get_all(),
+            self._game_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.get_all(),
+            self._stats_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.PAUSED,
+            self._escape_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.AMELIORATION,
+            self._amelioration_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.CHEAT_MENU,
+            self._cheat_interface
+        )
+
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
         self._screen.add_mesh(self._amelioration_interface)
         self._screen.add_mesh(self._cheat_interface)
+        self._interface_manager.refresh_interfaces()
 
         # self._screen.add_mesh(LobbyInterface(self))
 
@@ -291,9 +319,9 @@ class Game:
         ):
             game_status: GameStatus = self.get_status()
             if game_status == GameStatus.PAUSED:
-                self._escape_interface.action_resume()
+                self.set_status(GameStatus.RUNNING)
             elif game_status != GameStatus.AMELIORATION:
-                self._escape_interface.action_pause()
+                self.set_status(GameStatus.PAUSED)
 
         match event.key:
             case pygame.K_F1:
