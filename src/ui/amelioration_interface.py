@@ -275,8 +275,6 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.append(self.level_up_text)
         self.layer.meshes.extend(self.cards)
 
-        self.hide()
-
     def start(self) -> None:
         self._next_ameliorations = []
         self._selected_index = 0
@@ -320,7 +318,6 @@ class AmeliorationInterface(Interface):
                 text.set_sequence_text(
                     self._format_skill(upgrades, skill_index)
                 )
-        self.display()
         self._update_selection()
         self.game.set_status(GameStatus.AMELIORATION)
 
@@ -410,7 +407,6 @@ class AmeliorationInterface(Interface):
         return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"
 
     def end(self) -> None:
-        self.hide()
         self.game.set_status(GameStatus.RUNNING)
 
     def get_layer(self) -> MeshLayer:

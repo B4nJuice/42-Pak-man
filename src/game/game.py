@@ -105,6 +105,7 @@ class Game:
 
     def set_status(self, status: GameStatus) -> None:
         self._status = status
+        self._interface_manager.refresh_interfaces()
 
     def get_status(self) -> GameStatus:
         return self._status
@@ -307,9 +308,9 @@ class Game:
         ):
             game_status: GameStatus = self.get_status()
             if game_status == GameStatus.PAUSED:
-                self._escape_interface.hide()
+                self.set_status(GameStatus.RUNNING)
             elif game_status != GameStatus.AMELIORATION:
-                self._escape_interface.display()
+                self.set_status(GameStatus.PAUSED)
 
         match event.key:
             case pygame.K_F1:
