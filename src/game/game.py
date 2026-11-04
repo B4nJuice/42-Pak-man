@@ -222,7 +222,7 @@ class Game:
         self._screen.add_mesh(self._amelioration_interface)
         self._screen.add_mesh(self._cheat_interface)
 
-        self._screen.add_mesh(LobbyInterface(self))
+        # self._screen.add_mesh(LobbyInterface(self))
 
     def run(self) -> None:
         dt: float = 0.0
