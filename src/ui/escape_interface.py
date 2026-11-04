@@ -125,7 +125,7 @@ class EscapeInterface(Interface):
                 'label_hover': '> RESUME',
                 'action_key_label': 'ESC',
                 'action_key': None,
-                'action': self.action_resume,
+                'action': self.hide,
                 'hover': self._hover_callback,
                 'y': 153,
                 'selected': True
@@ -289,14 +289,11 @@ class EscapeInterface(Interface):
 
     def display(self) -> None:
         self._hover_callback(0)()
+        self.game.set_status(GameStatus.PAUSED)
         super().display()
 
-    def action_pause(self) -> None:
-        self.display()
-        self.game.set_status(GameStatus.PAUSED)
-
-    def action_resume(self) -> None:
-        self.hide()
+    def hide(self) -> None:
+        super().hide()
         self.game.set_status(GameStatus.RUNNING)
 
     def action_main_menu(self) -> None:

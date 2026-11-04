@@ -155,7 +155,7 @@ class CheatInterface(Interface):
                 *config.pause_menu_button_hover_color
             ),
             border_thickness=size.get(1),
-            on_click=self.action_close,
+            on_click=self.display,
             texts=[
                 ButtonTextConfig(
                     text='ESC',
@@ -674,7 +674,7 @@ class CheatInterface(Interface):
             hover_color=Color(*config.pause_menu_button_hover_color),
             border_color=Color(*config.pause_menu_button_hover_color),
             border_thickness=size.get(1),
-            on_click=self.action_close,
+            on_click=self.hide,
             texts=[
                 ButtonTextConfig(
                     text='> Back to game',
@@ -837,27 +837,27 @@ class CheatInterface(Interface):
         self.refresh_cheat_info()
         self.logger.info(f'Freeze Ghosts: {"ON" if value else "OFF"}')
 
-    def action_open(self) -> None:
+    def display(self) -> None:
         self.sync_cheat_toggles()
         self.refresh_cheat_info()
-        self.display()
+        super().display()
         self.prev_game_status = self.game.get_status()
         self.game.set_status(GameStatus.CHEAT_MENU)
         self.logger.info(
             f'Cheat menu opened ({self.get_active_cheats_count()} active)'
         )
 
-    def action_close(self) -> None:
-        self.hide()
+    def hide(self) -> None:
+        super().hide()
         if self.game.get_status() == GameStatus.CHEAT_MENU:
             self.game.set_status(self.prev_game_status)
         self.logger.info('Cheat menu closed')
 
     def action_toggle(self) -> None:
         if self.hidden:
-            self.action_open()
+            self.display()
         else:
-            self.action_close()
+            self.hide()
 
     def get_layer(self) -> MeshLayer:
         return self.layer
