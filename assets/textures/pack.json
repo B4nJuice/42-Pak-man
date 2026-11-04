@@ -20,6 +20,10 @@
     "lobby-assets-pacman-ghost": "menus/lobby_assets_pacman_ghost.png",
     "victory-pacman": "menus/victory_pacman.png",
     "gameover-ghost": "menus/gameover_ghost.png",
+    "how-to-play-01": "menus/how_to_play/01.png",
+    "how-to-play-02": "menus/how_to_play/02.png",
+    "how-to-play-03": "menus/how_to_play/03.png",
+    "how-to-play-04": "menus/how_to_play/04.png",
     "pacman": {
       "frame_time": 0.3,
       "default_variant": "static",
