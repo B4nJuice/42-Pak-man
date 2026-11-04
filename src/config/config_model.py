@@ -392,3 +392,50 @@ class ConfigModel(BaseModel):
         default=(248, 245, 233),
         description=''
     )
+
+    # Lobby menu
+    lobby_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    lobby_text_primary: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    lobby_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    lobby_button_bg: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    lobby_button_bg_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    lobby_button_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    lobby_button_text_accent: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description=''
+    )
+    lobby_button_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    lobby_button_border_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+
+    # Game version
+    game_version: tuple[int, int, int] = Field(
+        default=(0, 1, 0)
+    )
+
+    def get_version(self) -> str:
+        return f'{self.game_version[0]}.{self.game_version[1]}.'\
+            f'{self.game_version[2]}'

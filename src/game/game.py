@@ -221,6 +221,8 @@ class Game:
         self._screen.add_mesh(self._amelioration_interface)
         self._screen.add_mesh(self._cheat_interface)
 
+        # self._screen.add_mesh(LobbyInterface(self))
+
     def run(self) -> None:
         dt: float = 0.0
 
@@ -243,6 +245,15 @@ class Game:
 
     def exit(self) -> None:
         self.set_status(GameStatus.EXIT)
+
+    def launch_new_run(self) -> None:
+        self._logger.warning('to implement (game.py)')
+
+    def open_leaderboard(self) -> None:
+        self._logger.warning('to implement (game.py)')
+
+    def open_settings(self) -> None:
+        self._logger.warning('to implement (game.py)')
 
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()

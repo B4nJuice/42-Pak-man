@@ -24,6 +24,9 @@ class TextureKeys(Enum):
     AMELIORATION_SPEED = 'amelioration-speed'
     AMELIORATION_SUPER_TIME = 'amelioration-super-time'
 
+    MAIN_BACKDROP = 'main-backdrop'
+    LOBBY_ASSETS_PACMAN_GHOST = 'lobby-assets-pacman-ghost'
+
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':
         entry: TextureKeys | None = next(
@@ -33,3 +36,6 @@ class TextureKeys(Enum):
         if entry is None:
             raise PackInvalidKey(key)
         return entry
+
+    def str(self) -> str:
+        return self.value
