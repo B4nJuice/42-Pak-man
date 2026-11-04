@@ -247,6 +247,15 @@ class Game:
     def exit(self) -> None:
         self.set_status(GameStatus.EXIT)
 
+    def launch_new_run(self) -> None:
+        self._logger.warning('to implement (game.py)')
+
+    def open_leaderboard(self) -> None:
+        self._logger.warning('to implement (game.py)')
+
+    def open_settings(self) -> None:
+        self._logger.warning('to implement (game.py)')
+
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()
 
