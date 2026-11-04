@@ -29,6 +29,11 @@ class TextureKeys(Enum):
     VICTORY_PACMAN = 'victory-pacman'
     GAMEOVER_GHOST = 'gameover-ghost'
 
+    HOW_TO_PLAY_01 = 'how-to-play-01'
+    HOW_TO_PLAY_02 = 'how-to-play-02'
+    HOW_TO_PLAY_03 = 'how-to-play-03'
+    HOW_TO_PLAY_04 = 'how-to-play-04'
+
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':
         entry: TextureKeys | None = next(

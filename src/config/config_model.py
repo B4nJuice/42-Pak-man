@@ -511,6 +511,36 @@ class ConfigModel(BaseModel):
         description=''
     )
 
+    # how to play
+    how_to_play_bg: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    how_to_play_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    how_to_play_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    how_to_play_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    how_to_play_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    how_to_play_button_bg: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    how_to_play_button_text: tuple[int, int, int] = Field(
+        default=(13, 16, 38),
+        description=''
+    )
+
     # Game version
     game_version: tuple[int, int, int] = Field(
         default=(0, 1, 0)
