@@ -5,8 +5,8 @@
   "screen_height": 720,
   "levels": [
     {
-      "level_height":4,
-      "level_width":4,
+      "level_height":14,
+      "level_width":14,
       "max_time":50
     },
     {
