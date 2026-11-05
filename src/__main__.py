@@ -79,6 +79,18 @@ def main(verbose: bool, logger: Logger) -> None:
         verbose=verbose
     )
 
+    if not leaderboard.get():
+        test_entries: list[tuple[str, int, float, bool]] = [
+            ('GHOSTBUSTER', 48620, 600, True),
+            ('PELLETKING', 42180, 600, True),
+            ('BLINKY', 36840, 600, True),
+            ('CHERRYBOMB', 21460, 531, False),
+            ('DOT_EATER', 19720, 494, False),
+            ('INKEY', 16380, 462, False),
+        ]
+        for name, score, run_time, victory in test_entries:
+            leaderboard.add_run(name, score, run_time, victory)
+
     app: App = App(
         config=config,
         ctx=screen.moderngl_context,

@@ -11,6 +11,8 @@ from src.utils import utc_now
 class LeaderboardEntryModel(BaseModel):
     name: str = Field(min_length=3, max_length=15)
     score: int = Field(ge=0)
+    run_time: float = Field(ge=0)
+    victory: bool
     timestamp: datetime = Field(default_factory=utc_now)
 
     sig: str | None = Field(default=None)

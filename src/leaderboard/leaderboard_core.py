@@ -37,11 +37,28 @@ class LeaderboardCore:
         self._logger.log(f'Loading leaderboard from: {self._path!r}')
         self.load()
 
-    def add(self, entry: LeaderboardEntryModel) -> bool:
+    def add(
+                self,
+                entry: LeaderboardEntryModel
+            ) -> bool:
         added: bool = self._leaderboard.add(entry)
         if added:
             self.save()
         return added
+
+    def add_run(
+                self,
+                name: str,
+                score: int,
+                run_time: float,
+                victory: bool
+            ) -> bool:
+        return self.add(LeaderboardEntryModel(
+            name=name,
+            score=score,
+            run_time=run_time,
+            victory=victory
+        ))
 
     def get(self) -> list[LeaderboardEntryModel]:
         return self._leaderboard.entries

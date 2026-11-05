@@ -1,6 +1,9 @@
 from collections.abc import Iterator
+from math import floor
 from typing import TYPE_CHECKING
 
+from src.app import App
+from src.config.config_model import ConfigModel
 from src.fonts import FontKey
 from src.graphics import ButtonState, Color, Position
 from src.graphics.super_meshes import AlignEnum, Button
@@ -18,6 +21,8 @@ from src.ui.interface import Interface
 
 
 class LeaderboardInterface(Interface):
+    config: ConfigModel
+    app: App
     game: 'Game'
     layer: MeshLayer
 
@@ -26,11 +31,13 @@ class LeaderboardInterface(Interface):
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
         self.game = game
+        self.app = game._app
         self.layer = MeshLayer()
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
         config = self.game._config
+        self.config = config
         size = self.game._app.size
         fonts = self.game._app.fonts
 
@@ -148,7 +155,7 @@ class LeaderboardInterface(Interface):
             button: Button = Button(
                 position=Position(
                     align_left,
-                    entry_y + (h + 1) * idx
+                    entry_y + (h + size.get(1)) * idx
                 ),
                 width=w,
                 height=h,
@@ -226,6 +233,8 @@ class LeaderboardInterface(Interface):
         for entry in self.table_entry:
             self.layer.meshes.append(entry)
 
+        self._update_entries()
+
         button_y: int = size.get(606)
         button_w: int = size.get(260)
         self.layer.meshes.append(Button(
@@ -260,7 +269,6 @@ class LeaderboardInterface(Interface):
             ]
         ))
 
-
         self.layer.meshes.append(FontSequence(
             text='ARROW KEYS  MOVE   /   ENTER  SELECT',
             font=fonts.get(FontKey.TITLE_SECONDARY_9),
@@ -291,6 +299,24 @@ class LeaderboardInterface(Interface):
             self._exit()
             return True
         return False
+
+    def _update_entries(self) -> None:
+        for button, entry in zip(
+                self.table_entry,
+                self.app.leaderboard.get()[:len(self.table_entry)]
+        ):
+            button.texts[1].text = entry.name
+            button.texts[2].text = f'{entry.score:,}'
+            total_seconds = floor(entry.run_time)
+            minutes, seconds = divmod(total_seconds, 60)
+            button.texts[3].text = f'{minutes:02d}:{seconds:02d}'
+            button.texts[4].text = 'VICTORY' if entry.victory else 'DEFEAT'
+            button.texts[4].color = Color(*
+                self.config.leaderboard_text_accent
+                if entry.victory else \
+                self.config.leaderboard_text_accent2
+            )
+            button.refresh()
 
     def _exit(self) -> None:
         print('TODO: WARRNING !!!! : exit how to play interface')
