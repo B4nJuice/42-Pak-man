@@ -1,14 +1,15 @@
-from typing import TYPE_CHECKING
-
-from ..fonts.font_manager import FontKey
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from src.game import Game
+
 from src.app import App
+from src.core.displayable import DisplayableEntity
 from src.graphics import Color, Plane, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.super_meshes import AlignEnum, Bar, FontSequence, MeshLevel
 
+from ..fonts.font_manager import FontKey
 from .interface import Interface
 
 
@@ -144,7 +145,7 @@ class GameInterface(Interface):
         self.game._player._level_bar = self.level_bar
         for entity in self.game._level.store.all():
             if hasattr(entity, 'set_mesh_level_position'):
-                self.maze.register_entity(entity)
+                self.maze.register_entity(cast(DisplayableEntity, entity))
         self.game._level._to_register = []
         self.game._level._to_unregister = []
 
