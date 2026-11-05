@@ -168,9 +168,10 @@ class LeaderboardInterface(Interface):
                     ButtonTextConfig(
                         text=f'{idx+1:02d}',
                         font=fonts.get(FontKey.TITLE_18),
-                        color=Color(*
+                        color=Color(
+                            *
                             config.leaderboard_text_accent
-                            if idx == 0 else \
+                            if idx == 0 else
                             config.leaderboard_text_secondary
                         ),
                         offset_x=-x_text_pos + size.get(24),
@@ -311,9 +312,10 @@ class LeaderboardInterface(Interface):
             minutes, seconds = divmod(total_seconds, 60)
             button.texts[3].text = f'{minutes:02d}:{seconds:02d}'
             button.texts[4].text = 'VICTORY' if entry.victory else 'DEFEAT'
-            button.texts[4].color = Color(*
+            button.texts[4].color = Color(
+                *
                 self.config.leaderboard_text_accent
-                if entry.victory else \
+                if entry.victory else
                 self.config.leaderboard_text_accent2
             )
             button.refresh()
