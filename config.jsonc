@@ -1,6 +1,21 @@
 {
   "level_width": 21,
   "level_height": 16,
-  "screen_width": 1920,
-  "screen_height": 1080
+  "screen_width": 1240,
+  "screen_height": 720,
+  "levels": [
+    {
+      "level_height":4,
+      "level_width":4,
+      "max_time":50,
+    },
+    {
+      "level_height":15,
+      "level_width":15
+    },
+    {
+      "level_height":20,
+      "level_width":20
+    }
+  ]
 }

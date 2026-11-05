@@ -55,6 +55,7 @@ class Game:
     _player: Player
     _freeze_ghost: bool
     _timer: Timer
+    _level_index: int
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -63,6 +64,8 @@ class Game:
         self._interface_manager = InterfaceManager(self)
 
         self.set_status(GameStatus.INITIALIZING)
+
+        self._level_index = 0
 
         self._set_config(config)
         self._set_screen(screen)
@@ -78,7 +81,7 @@ class Game:
         self.init_timer()
 
     def init_timer(self) -> None:
-        self._timer = Timer(600)
+        self._timer = Timer(self._config.levels[self._level_index].max_time)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
         self._timer.set_cb_finish(lambda: print('player win'))
 
@@ -117,9 +120,24 @@ class Game:
 
     def generate_level(self) -> None:
         self._level.generate(
-            self._config.level_width,
-            self._config.level_height
+            self._config.levels[self._level_index]
         )
+
+    def next_level(self) -> None:
+        if self._level_index + 1 >= len(self._config.levels):
+            return
+
+        self._level_index += 1
+        player = self._player
+
+        self._init_level()
+        self.set_status(GameStatus.INITIALIZING)
+        self.init_timer()
+        self.generate_level()
+        self.init_entities(player)
+        self._game_interface.update_level()
+        self._stats_interface.refresh()
+        self.toggle_freeze(self._freeze_ghost)
 
     def update(self, dt: float) -> None:
         self._timer.update(dt)
@@ -128,6 +146,8 @@ class Game:
         self._stats_interface.refresh()
         self._screen.refresh()
         self._game_interface.refresh(dt)
+        if self._level.is_finished():
+            self.next_level()
 
         if not self._player.alive:
             self._player.on_death()
@@ -152,7 +172,7 @@ class Game:
             self._game_interface.maze.unregister_entity(e)
         self._level._to_unregister = []
 
-    def init_entities(self) -> None:
+    def init_entities(self, player: Player | None = None) -> None:
         super_pacgum_positions: list[tuple[int, int]] = [
             (0, 0),
             (self._level.get_width() - 1, 0),
@@ -191,16 +211,26 @@ class Game:
                 level_height // 2 - 1 + level_height % 2
             )
 
-        self._player = Player(
-            'player',
-            self._player_start_position,
-            self._level,
-            self._config.player_level_exp_multiplier,
-            self._config.player_first_level_exp,
-            self._config.player_exp_per_second,
-            self._app,
-            self
-        )
+        if player is None:
+            self._player = Player(
+                'player',
+                self._player_start_position,
+                self._level,
+                self._config.player_level_exp_multiplier,
+                self._config.player_first_level_exp,
+                self._config.player_exp_per_second,
+                self._app,
+                self
+            )
+        else:
+            self._player = player
+            self._player.level = self._level
+            self._player.set_tile(self._player_start_position)
+            self._player._direction = None
+            self._player._progress = 0
+            self._player._target = None
+            self._player._queued = None
+            self._level.register_entity(self._player)
 
         ghost_reward: float = self._config.ghost_reward
 
@@ -296,7 +326,7 @@ class Game:
         self.exit()
 
     def _init_level(self) -> None:
-        self._level = Level(1)
+        self._level = Level(self._config.levels[self._level_index])
 
     def _init_screen(self) -> None:
         self._clock = Clock()

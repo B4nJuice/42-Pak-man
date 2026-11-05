@@ -1,18 +1,21 @@
 from pydantic import BaseModel, Field
 
+from src.config.level_model import LevelModel
+
 
 class ConfigModel(BaseModel):
     highscore_path: str = Field(
         default='data/highscores.json',
         description='Path to the highscore file'
     )
-    level_width: int = Field(
-        default=20,
-        description='Width of the level'
-    )
-    level_height: int = Field(
-        default=20,
-        description='Height of the level'
+    levels: list[LevelModel] = Field(
+        default=[LevelModel(
+            name='default level',
+            seed=42,
+            level_height=20,
+            level_width=20,
+            max_time=600
+        )]
     )
 
     max_player_ameliorations: int = Field(
