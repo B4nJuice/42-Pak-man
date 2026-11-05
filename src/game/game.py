@@ -50,6 +50,7 @@ class Game:
     _player: Player
     _freeze_ghost: bool
     _timer: Timer
+    _level_index: int
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -58,6 +59,8 @@ class Game:
         self._interface_manager = InterfaceManager(self)
 
         self.set_status(GameStatus.INITIALIZING)
+
+        self._level_index = 0
 
         self._set_config(config)
         self._set_screen(screen)
@@ -73,7 +76,7 @@ class Game:
         self.init_timer()
 
     def init_timer(self) -> None:
-        self._timer = Timer(600)
+        self._timer = Timer(600) #TODO change to level timer
         self._timer.set_cb_update(self._game_interface.refresh_timer)
         self._timer.set_cb_finish(lambda: print('player win'))
 
@@ -112,8 +115,7 @@ class Game:
 
     def generate_level(self) -> None:
         self._level.generate(
-            self._config.level_width,
-            self._config.level_height
+            self._config.levels[self._level_index]
         )
 
     def update(self, dt: float) -> None:
@@ -287,7 +289,7 @@ class Game:
         self.exit()
 
     def _init_level(self) -> None:
-        self._level = Level(1)
+        self._level = Level(self._config.levels[self._level_index])
 
     def _init_screen(self) -> None:
         self._clock = Clock()

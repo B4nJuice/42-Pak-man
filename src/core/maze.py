@@ -2,6 +2,8 @@ from random import randint
 
 from mazegenerator import MazeGenerator
 
+from src.config.level_model import LevelModel
+
 from ..utils import Direction, Pos
 from .tile import Tile
 
@@ -17,11 +19,11 @@ class Maze:
         self.set_seed(seed)
         self._moves_cache = {}
 
-    def generate(self, width: int, height: int) -> None:
+    def generate(self, level: LevelModel) -> None:
         self.invalidate_moves_cache()
         self._grid = []
         generator: MazeGenerator = MazeGenerator(
-            size=(width, height),
+            size=(level.level_width, level.level_height),
             perfect=False,
             seed=self._seed
         )

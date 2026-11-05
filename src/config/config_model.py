@@ -14,6 +14,7 @@ class ConfigModel(BaseModel):
             seed=42,
             level_height=20,
             level_width=20,
+            max_time=600
         )]
     )
 

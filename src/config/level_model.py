@@ -18,3 +18,7 @@ class LevelModel(BaseModel):
         default=20,
         description='Height of the level'
     )
+    max_time: int = Field(
+        default=600,
+        description='Max time to finish th level'
+    )
