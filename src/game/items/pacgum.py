@@ -43,9 +43,7 @@ class PacGum(Edible, Collider, Displayable, Entity):
     def eat(self, eater: Player) -> bool:
         if super().eat(eater):
             self.level.unregister_entity(cast(DisplayableEntity, self))
-            print(self.level.is_finished())
             return True
-        print(self.level.is_finished())
         return False
 
     def init_displayable(self) -> None:
