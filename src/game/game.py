@@ -4,7 +4,6 @@ from pygame.time import Clock
 
 from src.app import App
 from src.config import ConfigModel
-from src.config.level_model import LevelModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.core.interface_manager import InterfaceManager
