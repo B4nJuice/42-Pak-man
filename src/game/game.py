@@ -4,6 +4,7 @@ from pygame.time import Clock
 
 from src.app import App
 from src.config import ConfigModel
+from src.config.level_model import LevelModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.core.interface_manager import InterfaceManager
@@ -76,7 +77,7 @@ class Game:
         self.init_timer()
 
     def init_timer(self) -> None:
-        self._timer = Timer(600) #TODO change to level timer
+        self._timer = Timer(self._config.levels[self._level_index].max_time)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
         self._timer.set_cb_finish(lambda: print('player win'))
 
@@ -127,6 +128,7 @@ class Game:
 
         self._init_level()
         self.set_status(GameStatus.INITIALIZING)
+        self.init_timer()
         self.generate_level()
         self.init_entities(player)
         self._game_interface.update_level()
