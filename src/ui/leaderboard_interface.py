@@ -2,7 +2,7 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from src.fonts import FontKey
-from src.graphics import Color, Position
+from src.graphics import ButtonState, Color, Position
 from src.graphics.super_meshes import AlignEnum, Button
 from src.graphics.super_meshes.button import ButtonTextConfig
 from src.graphics.super_meshes.font_sequence import FontSequence
@@ -42,7 +42,7 @@ class LeaderboardInterface(Interface):
             height=screen_height
         ))
 
-        align_left: float = size.get(120)
+        align_left: float = size.get(160)
 
         def _how_to_play_texts() -> Iterator[FontSequence]:
             def make(
@@ -87,11 +87,68 @@ class LeaderboardInterface(Interface):
         self.table_entry = []
         entry_y: float = size.get(219)
         w, h = size.get(960), size.get(46)
+        x_text_pos: int = w // 2
+
+        self.layer.meshes.append(Button(
+            position=Position(
+                align_left,
+                entry_y - size.get(38)
+            ),
+            width=w,
+            height=size.get(38),
+            normal_color=Color(*config.leaderboard_bg_secondary),
+            hover_color=Color(*config.leaderboard_bg_secondary),
+            border_color=Color(*config.leaderboard_border),
+            hover_border_color=Color(*config.leaderboard_border),
+            border_thickness=size.get(1),
+            texts=[
+                ButtonTextConfig(
+                    text='RANK',
+                    font=fonts.get(FontKey.BOLD_10),
+                    color=Color(*config.leaderboard_text_secondary),
+                    offset_x=-x_text_pos + size.get(24),
+                    offset_y=size.get(4),
+                    alignment=AlignEnum.LEFT
+                ),
+                ButtonTextConfig(
+                    text='PLAYER',
+                    font=fonts.get(FontKey.BOLD_10),
+                    color=Color(*config.how_to_play_text_secondary),
+                    offset_x=-x_text_pos + size.get(108),
+                    offset_y=size.get(4),
+                    alignment=AlignEnum.LEFT
+                ),
+                ButtonTextConfig(
+                    text='SCORE',
+                    font=fonts.get(FontKey.BOLD_10),
+                    color=Color(*config.how_to_play_text_secondary),
+                    offset_x=x_text_pos - size.get(352),
+                    offset_y=size.get(4),
+                    alignment=AlignEnum.RIGHT
+                ),
+                ButtonTextConfig(
+                    text='TIME',
+                    font=fonts.get(FontKey.BOLD_10),
+                    color=Color(*config.how_to_play_text_secondary),
+                    offset_x=x_text_pos - size.get(232),
+                    offset_y=size.get(4),
+                    alignment=AlignEnum.RIGHT
+                ),
+                ButtonTextConfig(
+                    text='RESULT',
+                    font=fonts.get(FontKey.BOLD_10),
+                    color=Color(*config.how_to_play_text_secondary),
+                    offset_x=x_text_pos - size.get(24),
+                    offset_y=size.get(4),
+                    alignment=AlignEnum.RIGHT
+                )
+            ]
+        ))
         for idx in range(8):
-            self.table_entry.append(Button(
+            button: Button = Button(
                 position=Position(
                     align_left,
-                    entry_y + h * idx
+                    entry_y + (h + 1) * idx
                 ),
                 width=w,
                 height=h,
@@ -99,12 +156,75 @@ class LeaderboardInterface(Interface):
                 hover_color=Color(*config.leaderboard_bg_accent),
                 border_color=Color(*config.leaderboard_border),
                 hover_border_color=Color(*config.leaderboard_border_accent),
-                border_thickness=size.get(1)
-            ))
+                border_thickness=size.get(1),
+                texts=[
+                    ButtonTextConfig(
+                        text=f'{idx+1:02d}',
+                        font=fonts.get(FontKey.TITLE_18),
+                        color=Color(*
+                            config.leaderboard_text_accent
+                            if idx == 0 else \
+                            config.leaderboard_text_secondary
+                        ),
+                        offset_x=-x_text_pos + size.get(24),
+                        offset_y=size.get(7),
+                        alignment=AlignEnum.LEFT,
+                        state_colors={
+                            ButtonState.HOVER: Color(
+                                *config.how_to_play_text_accent
+                            )
+                        }
+                    ),
+                    ButtonTextConfig(
+                        text='--',
+                        font=fonts.get(FontKey.TITLE_SECONDARY_10),
+                        color=Color(*config.how_to_play_text),
+                        offset_x=-x_text_pos + size.get(108),
+                        offset_y=size.get(7),
+                        alignment=AlignEnum.LEFT,
+                        state_colors={
+                            ButtonState.HOVER: Color(
+                                *config.how_to_play_text_accent
+                            )
+                        }
+                    ),
+                    ButtonTextConfig(
+                        text='--',
+                        font=fonts.get(FontKey.TITLE_18),
+                        color=Color(*config.how_to_play_text),
+                        offset_x=x_text_pos - size.get(352),
+                        offset_y=size.get(7),
+                        alignment=AlignEnum.RIGHT,
+                        state_colors={
+                            ButtonState.HOVER: Color(
+                                *config.how_to_play_text_accent
+                            )
+                        }
+                    ),
+                    ButtonTextConfig(
+                        text='--:--',
+                        font=fonts.get(FontKey.BOLD_14),
+                        color=Color(*config.how_to_play_text_secondary),
+                        offset_x=x_text_pos - size.get(232),
+                        offset_y=size.get(5),
+                        alignment=AlignEnum.RIGHT
+                    ),
+                    ButtonTextConfig(
+                        text='--',
+                        font=fonts.get(FontKey.BOLD_12),
+                        color=Color(*config.leaderboard_text_accent2),
+                        offset_x=x_text_pos - size.get(24),
+                        offset_y=size.get(5),
+                        alignment=AlignEnum.RIGHT
+                    )
+                ]
+            )
+            self.table_entry.append(button)
+            if idx == 3:
+                button.set_hovered(True)
 
         for entry in self.table_entry:
             self.layer.meshes.append(entry)
-
 
         button_y: int = size.get(606)
         button_w: int = size.get(260)
@@ -115,16 +235,16 @@ class LeaderboardInterface(Interface):
             ),
             width=button_w,
             height=size.get(52),
-            normal_color=Color(*config.how_to_play_button_bg),
-            hover_color=Color(*config.how_to_play_button_bg),
-            border_color=Color(*config.how_to_play_button_bg),
+            normal_color=Color(*config.leaderboard_bg_secondary),
+            hover_color=Color(*config.leaderboard_bg_secondary),
+            border_color=Color(*config.leaderboard_border),
             border_thickness=size.get(1),
             on_click=self._exit,
             texts=[
                 ButtonTextConfig(
                     text='MAIN MENU',
                     font=fonts.get(FontKey.TITLE_18),
-                    color=Color(*config.how_to_play_button_text),
+                    color=Color(*config.leaderboard_text),
                     alignment=AlignEnum.LEFT,
                     offset_y=size.get(6),
                     offset_x=-(button_w // 2) + size.get(18),
@@ -132,7 +252,7 @@ class LeaderboardInterface(Interface):
                 ButtonTextConfig(
                     text='ESC',
                     font=fonts.get(FontKey.TITLE_SECONDARY_9),
-                    color=Color(*config.how_to_play_button_text),
+                    color=Color(*config.leaderboard_text_secondary),
                     alignment=AlignEnum.RIGHT,
                     offset_x=(button_w // 2) - size.get(18),
                     offset_y=size.get(5),
@@ -144,7 +264,7 @@ class LeaderboardInterface(Interface):
         self.layer.meshes.append(FontSequence(
             text='ARROW KEYS  MOVE   /   ENTER  SELECT',
             font=fonts.get(FontKey.TITLE_SECONDARY_9),
-            color=Color(*config.how_to_play_text_secondary),
+            color=Color(*config.leaderboard_text_secondary),
             position=Position(
                 size.get(40),
                 size.get(700.5)
@@ -154,7 +274,7 @@ class LeaderboardInterface(Interface):
         self.layer.meshes.append(FontSequence(
             text='TOP 8 RUNS',
             font=fonts.get(FontKey.TITLE_SECONDARY_9),
-            color=Color(*config.how_to_play_text_secondary),
+            color=Color(*config.leaderboard_text_secondary),
             position=Position(
                 screen_width - size.get(40),
                 size.get(700.5)
