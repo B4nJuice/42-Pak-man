@@ -289,8 +289,6 @@ class ConfigModel(BaseModel):
         default=0.5
     )
 
-    # leaderboard
-
     # cheat menu
     cheat_overlay_color: tuple[int, int, int] = Field(
         default=(0, 0, 0),
@@ -538,6 +536,44 @@ class ConfigModel(BaseModel):
     )
     how_to_play_button_text: tuple[int, int, int] = Field(
         default=(13, 16, 38),
+        description=''
+    )
+
+    # leaderboard
+    leaderboard_bg: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    leaderboard_bg_secondary: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    leaderboard_bg_accent: tuple[int, int, int] = Field(
+        default=(30, 30, 37),
+        description=''
+    )
+    leaderboard_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    leaderboard_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    leaderboard_text_accent2: tuple[int, int, int] = Field(
+        default=(230, 89, 178),
+        description=''
+    )
+    leaderboard_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    leaderboard_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    leaderboard_border_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
         description=''
     )
 
