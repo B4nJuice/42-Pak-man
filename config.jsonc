@@ -2,5 +2,19 @@
   "level_width": 21,
   "level_height": 16,
   "screen_width": 1240,
-  "screen_height": 720
+  "screen_height": 720,
+  "levels": [
+    {
+      "level_height":4,
+      "level_width":4
+    },
+    {
+      "level_height":15,
+      "level_width":15
+    },
+    {
+      "level_height":20,
+      "level_width":20
+    }
+  ]
 }

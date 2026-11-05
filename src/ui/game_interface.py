@@ -80,40 +80,7 @@ class GameInterface(Interface):
             spacing=1,
         )
 
-        maze_x = self.x_offset + round(self.width * 0.02)
-        maze_y = self.y_offset + level_bar_height + round(self.height * 0.07)
-
-        available_width = self.width - round(self.width * 0.07)
-        available_height = (
-            self.height
-            - level_bar_height
-            - round(self.height * 0.11)
-        )
-
-        maze_base_width = self.game._level.get_width()
-        maze_base_height = self.game._level.get_height()
-
-        scale = min(
-            available_width / maze_base_width,
-            available_height / maze_base_height,
-        )
-
-        maze_width = round(maze_base_width * scale)
-        maze_height = round(maze_base_height * scale)
-
-        maze_x += (available_width - maze_width) // 2
-        maze_y += (available_height - maze_height) // 2
-
-        self.maze: MeshLevel = MeshLevel(
-            self.game._level,
-            Color(*self.game._config.maze_wall_color),
-            Color(*self.game._config.maze_backgroud_color),
-            Position(maze_x, maze_y),
-            maze_width,
-            maze_height,
-            wall_thickness=3,
-            smooth_end=True
-        )
+        self.maze: MeshLevel = self._create_maze(level_bar_height)
 
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.level_bar)
@@ -133,6 +100,53 @@ class GameInterface(Interface):
 
     def set_level_bar_goal(self, goal: float) -> None:
         self.level_bar.set_goal(goal)
+
+    def _create_maze(self, level_bar_height: int | None = None) -> MeshLevel:
+        if level_bar_height is None:
+            level_bar_height = round(self.height * 0.03)
+
+        maze_x = self.x_offset + round(self.width * 0.02)
+        maze_y = self.y_offset + level_bar_height + round(self.height * 0.07)
+        available_width = self.width - round(self.width * 0.07)
+        available_height = self.height - level_bar_height - round(
+            self.height * 0.11
+        )
+
+        maze_base_width = self.game._level.get_width()
+        maze_base_height = self.game._level.get_height()
+        scale = min(
+            available_width / maze_base_width,
+            available_height / maze_base_height,
+        )
+        maze_width = round(maze_base_width * scale)
+        maze_height = round(maze_base_height * scale)
+
+        maze_x += (available_width - maze_width) // 2
+        maze_y += (available_height - maze_height) // 2
+
+        return MeshLevel(
+            self.game._level,
+            Color(*self.game._config.maze_wall_color),
+            Color(*self.game._config.maze_backgroud_color),
+            Position(maze_x, maze_y),
+            maze_width,
+            maze_height,
+            wall_thickness=3,
+            smooth_end=True
+        )
+
+    def update_level(self) -> None:
+        old_maze = self.maze
+        self.maze = self._create_maze()
+        self.layer.meshes[self.layer.meshes.index(old_maze)] = self.maze
+
+        self.game._player.set_level_text = self.set_level_text
+        self.game._player._level_bar = self.level_bar
+        for entity in self.game._level.store.all():
+            if hasattr(entity, 'set_mesh_level_position'):
+                self.maze.register_entity(entity)
+        self.game._level._to_register = []
+        self.game._level._to_unregister = []
 
     def refresh_timer(self, value: float) -> None:
         self.timer.set_sequence_text(self.sec_to_str(max(value, 0.0)))
