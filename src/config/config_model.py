@@ -580,6 +580,48 @@ class ConfigModel(BaseModel):
         description=''
     )
 
+    # Settings
+    settings_bg: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+    settings_bg_secondary: tuple[int, int, int] = Field(
+        default=(32, 40, 61),
+        description=''
+    )
+    settings_bg_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    settings_text: tuple[int, int, int] = Field(
+        default=(248, 245, 233),
+        description=''
+    )
+    settings_text_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    settings_text_accent2: tuple[int, int, int] = Field(
+        default=(230, 89, 178),
+        description=''
+    )
+    settings_text_secondary: tuple[int, int, int] = Field(
+        default=(162, 172, 201),
+        description=''
+    )
+    settings_border: tuple[int, int, int] = Field(
+        default=(53, 64, 95),
+        description=''
+    )
+    settings_border_accent: tuple[int, int, int] = Field(
+        default=(251, 218, 30),
+        description=''
+    )
+    settings_button_text_accent: tuple[int, int, int] = Field(
+        default=(13, 16, 48),
+        description=''
+    )
+
     # Game version
     game_version: tuple[int, int, int] = Field(
         default=(0, 1, 0)

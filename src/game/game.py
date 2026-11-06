@@ -33,6 +33,7 @@ from src.ui.cheat_interface import CheatInterface
 # from src.ui.gameover_interface import GameoverInterface
 # from src.ui.how_to_play_interface import HowToPLayInterface
 # from src.ui.leaderboard_interface import LeaderboardInterface
+from src.ui.settings_interface import SettingsInterface
 from src.utils import Logger, TColor
 
 
@@ -289,6 +290,7 @@ class Game:
         # self._screen.add_mesh(GameoverInterface(self))
         # self._screen.add_mesh(HowToPLayInterface(self))
         # self._screen.add_mesh(LeaderboardInterface(self))
+        self._screen.add_mesh(SettingsInterface(self))
 
     def run(self) -> None:
         dt: float = 0.0
