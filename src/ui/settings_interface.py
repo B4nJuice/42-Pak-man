@@ -219,6 +219,7 @@ class SettingsInterface(Interface):
         def _bind_action(action: ActionKey, slot: int = 0) -> None:
             self._capture_action = action
             self._capture_slot = slot
+            self._refresh_control_buttons()
 
         def _get_action_keys(action: ActionKey) -> list[int]:
             return self.app.key_manager.get_keys(action)
@@ -250,7 +251,7 @@ class SettingsInterface(Interface):
                 width=control_button_w,
                 height=control_button_h,
                 normal_color=Color(*config.settings_bg_secondary),
-                selected_color=Color(*config.settings_bg_secondary),
+                selected_color=Color(*config.settings_bg_accent2),
                 border_color=Color(*config.settings_border),
                 selected_border_color=Color(*config.settings_border_accent),
                 border_thickness=size.get(1),
@@ -276,9 +277,10 @@ class SettingsInterface(Interface):
                 ),
                 width=control_button_w,
                 height=control_button_h,
-                normal_color=Color(*config.settings_bg_secondary,),
-                hover_color=Color(*config.settings_bg_secondary,),
+                normal_color=Color(*config.settings_bg_secondary),
+                selected_color=Color(*config.settings_bg_accent2),
                 border_color=Color(*config.settings_border),
+                selected_border_color=Color(*config.settings_border_accent),
                 border_thickness=size.get(1),
                 on_click=(
                     lambda action=action, slot=1: _bind_action(action, slot)
@@ -440,6 +442,14 @@ class SettingsInterface(Interface):
 
             first_button.texts[0].text = self._key_label(keys[:1])
             second_button.texts[0].text = self._key_label(keys[1:2])
+
+            first_button.set_selected(
+                self._capture_action == action and self._capture_slot == 0
+            )
+            second_button.set_selected(
+                self._capture_action == action and self._capture_slot == 1
+            )
+
             first_button.refresh()
             second_button.refresh()
 
