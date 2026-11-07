@@ -6,7 +6,7 @@ import pygame
 from src.app import App
 from src.fonts import FontKey
 from src.graphics import Color, Mesh, Position
-from src.graphics.meshes import Plane
+from src.graphics.meshes import Line, Plane
 from src.graphics.super_meshes import AlignEnum, Button, Rectangle
 from src.graphics.super_meshes.button import ButtonTextConfig
 from src.graphics.super_meshes.font_sequence import FontSequence
@@ -153,6 +153,18 @@ class SettingsInterface(Interface):
                             y + size.get(36)
                         ),
                         align=AlignEnum.RIGHT
+                    ),
+                    Line(
+                        color=Color(*config.settings_border),
+                        start_position=Position(
+                            x + size.get(20),
+                            y + size.get(56)
+                        ),
+                        end_position=Position(
+                            x + size.get(468 + 20),
+                            y + size.get(56)
+                        ),
+                        thickness=size.get(1)
                     )
                 )
 
