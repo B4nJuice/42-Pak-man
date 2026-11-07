@@ -9,6 +9,7 @@ from src.graphics.super_meshes import AlignEnum, Button, Rectangle
 from src.graphics.super_meshes.button import ButtonTextConfig
 from src.graphics.super_meshes.font_sequence import FontSequence
 from src.settings import ActionKey
+from src.settings.settings_model import ControlSettingsModel
 from src.texture.texture_keys import TextureKeys
 
 if TYPE_CHECKING:
@@ -124,11 +125,123 @@ class SettingsInterface(Interface):
                         height=h,
                         thickness=size.get(1),
                     ),
-                    # FontSequence(
-                    # )
+                    FontSequence(
+                        text=title,
+                        font=fonts.get(FontKey.TITLE_20),
+                        color=Color(*config.settings_text),
+                        position=Position(
+                            x + size.get(20),
+                            y + size.get(40)
+                        ),
+                        align=AlignEnum.LEFT
+                    ),
+                    FontSequence(
+                        text=categorie,
+                        font=fonts.get(FontKey.TITLE_SECONDARY_8),
+                        color=Color(*config.settings_text_secondary),
+                        position=Position(
+                            x + w - size.get(20),
+                            y + size.get(36)
+                        ),
+                        align=AlignEnum.RIGHT
+                    )
                 )
 
-            # yield
+            yield make(
+                x=120,
+                y=168,
+                w=508,
+                h=208,
+                title='AUDIO',
+                categorie='VOLUME'
+            )
+
+            yield make(
+                x=652,
+                y=168,
+                w=508,
+                h=416,
+                title='CONTROLS',
+                categorie='KEYBOARD'
+            )
+
+            yield make(
+                x=120,
+                y=392,
+                w=508,
+                h=192,
+                title='DISPLAY',
+                categorie='VIDEO'
+            )
+
+        for meshs in _settings_box():
+            self.layer.meshes.extend(meshs)
+
+        control_x: int = size.get(672)
+        control_y: int = size.get(238)
+        control_button_x: int = size.get(996)
+        control_button_w: int = size.get(68)
+        control_button_h: int = size.get(30)
+        control_gap: int = size.get(8)
+
+        for idx, (key, val) in enumerate(
+            self.app.settings.get().controls.model_dump().items()
+        ):
+            self.layer.meshes.append(FontSequence(
+                text=ControlSettingsModel.model_fields[key].description or '',
+                font=fonts.get(FontKey.TEXT_13),
+                color=Color(*config.settings_text),
+                position=Position(
+                    control_x,
+                    control_y + size.get(13+5) + (control_button_h + control_gap) * idx
+                ),
+                align= AlignEnum.LEFT,
+            ))
+
+            self.layer.meshes.append(Button(
+                position=Position(
+                    control_button_x,
+                    control_y + (control_button_h + control_gap) * idx
+                ),
+                width=control_button_w,
+                height=control_button_h,
+                normal_color=Color(*config.settings_bg_secondary,),
+                hover_color=Color(*config.settings_bg_secondary,),
+                border_color=Color(*config.settings_border),
+                border_thickness=size.get(1),
+                on_click=None,
+                texts=[
+                    ButtonTextConfig(
+                        text='R',
+                        font=fonts.get(FontKey.TITLE_SECONDARY_8),
+                        color=Color(*config.settings_text),
+                        offset_y=size.get(5),
+                    )
+                ]
+            ))
+            self.layer.meshes.append(Button(
+                position=Position(
+                    control_button_x + control_button_w + control_gap,
+                    control_y + (control_button_h + control_gap) * idx
+                ),
+                width=control_button_w,
+                height=control_button_h,
+                normal_color=Color(*config.settings_bg_secondary,),
+                hover_color=Color(*config.settings_bg_secondary,),
+                border_color=Color(*config.settings_border),
+                border_thickness=size.get(1),
+                on_click=None,
+                texts=[
+                    ButtonTextConfig(
+                        text='R',
+                        font=fonts.get(FontKey.TITLE_SECONDARY_8),
+                        color=Color(*config.settings_text),
+                        offset_y=size.get(5),
+                    )
+                ]
+            ))
+            # print(ControlSettingsModel.model_fields[key].description)
+            # print(val)
 
         def _settings_buttons() -> Iterator[Button]:
             def make(
