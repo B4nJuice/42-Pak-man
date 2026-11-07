@@ -58,6 +58,8 @@ class Game:
     _timer: Timer
     _level_index: int
 
+    _settings_interface: SettingsInterface
+
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
         self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
@@ -290,7 +292,8 @@ class Game:
         # self._screen.add_mesh(GameoverInterface(self))
         # self._screen.add_mesh(HowToPLayInterface(self))
         # self._screen.add_mesh(LeaderboardInterface(self))
-        self._screen.add_mesh(SettingsInterface(self))
+        self._settings_interface = SettingsInterface(self)
+        self._screen.add_mesh(self._settings_interface)
 
     def run(self) -> None:
         dt: float = 0.0
@@ -346,6 +349,7 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
+            self._settings_interface.handle_key(event.key) or
             self._cheat_interface.handle_key(event.key) or
             self.get_status() == GameStatus.AMELIORATION
             and self._amelioration_interface.handle_key(event.key) or

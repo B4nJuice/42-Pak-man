@@ -1,6 +1,8 @@
 from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING
 
+import pygame
+
 from src.app import App
 from src.fonts import FontKey
 from src.graphics import Color, Mesh, Position
@@ -25,13 +27,16 @@ class SettingsInterface(Interface):
     game: 'Game'
     layer: MeshLayer
 
-    table_entry: list[Button]
+    _bindings: dict[str, list[int]]
+    _capture_action: ActionKey | None
 
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
         self.game = game
         self.app = game._app
         self.layer = MeshLayer()
+        self._bindings = {}
+        self._capture_action = None
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
@@ -183,19 +188,53 @@ class SettingsInterface(Interface):
         control_button_w: int = size.get(68)
         control_button_h: int = size.get(30)
         control_gap: int = size.get(8)
+        controls = self.app.settings.get().controls.model_dump()
+        self._bindings = controls
+        actions: list[ActionKey] = [
+            ActionKey.MOVE_UP,
+            ActionKey.MOVE_DOWN,
+            ActionKey.MOVE_LEFT,
+            ActionKey.MOVE_RIGHT,
+            ActionKey.SELECT,
+            ActionKey.BACK_PAUSE_RESUME,
+            ActionKey.REROLL,
+        ]
 
-        for idx, (key, val) in enumerate(
-            self.app.settings.get().controls.model_dump().items()
-        ):
+        def _key_label(keys: list[int]) -> str:
+            if not keys:
+                return '-'
+            labels = [
+                (
+                    pygame.key.name(code).upper()
+                    if code != pygame.K_SPACE else 'SPACE'
+                )
+                for code in keys
+            ]
+            return ' / '.join(labels)
+
+        def _bind_action(action: ActionKey) -> None:
+            self._capture_action = action
+
+        def _get_action_keys(action: ActionKey) -> list[int]:
+            return self.app.key_manager.get_keys(action)
+
+        for idx, action in enumerate(actions):
+            key_list = _get_action_keys(action)
+            label = ControlSettingsModel.model_fields[
+                self._action_to_field_name(action)
+            ].description or ''
+
             self.layer.meshes.append(FontSequence(
-                text=ControlSettingsModel.model_fields[key].description or '',
+                text=label,
                 font=fonts.get(FontKey.TEXT_13),
                 color=Color(*config.settings_text),
                 position=Position(
                     control_x,
-                    control_y + size.get(13+5) + (control_button_h + control_gap) * idx
+                    control_y
+                    + size.get(13 + 5)
+                    + (control_button_h + control_gap) * idx,
                 ),
-                align= AlignEnum.LEFT,
+                align=AlignEnum.LEFT,
             ))
 
             self.layer.meshes.append(Button(
@@ -205,14 +244,15 @@ class SettingsInterface(Interface):
                 ),
                 width=control_button_w,
                 height=control_button_h,
-                normal_color=Color(*config.settings_bg_secondary,),
-                hover_color=Color(*config.settings_bg_secondary,),
+                normal_color=Color(*config.settings_bg_secondary),
+                selected_color=Color(*config.settings_bg_secondary),
                 border_color=Color(*config.settings_border),
+                selected_border_color=Color(*config.settings_border_accent),
                 border_thickness=size.get(1),
-                on_click=None,
+                on_click=lambda action=action: _bind_action(action),
                 texts=[
                     ButtonTextConfig(
-                        text='R',
+                        text=_key_label(key_list[:1]),
                         font=fonts.get(FontKey.TITLE_SECONDARY_8),
                         color=Color(*config.settings_text),
                         offset_y=size.get(5),
@@ -230,18 +270,16 @@ class SettingsInterface(Interface):
                 hover_color=Color(*config.settings_bg_secondary,),
                 border_color=Color(*config.settings_border),
                 border_thickness=size.get(1),
-                on_click=None,
+                on_click=lambda action=action: _bind_action(action),
                 texts=[
                     ButtonTextConfig(
-                        text='R',
+                        text=_key_label(key_list[1:2]),
                         font=fonts.get(FontKey.TITLE_SECONDARY_8),
                         color=Color(*config.settings_text),
                         offset_y=size.get(5),
                     )
                 ]
             ))
-            # print(ControlSettingsModel.model_fields[key].description)
-            # print(val)
 
         def _settings_buttons() -> Iterator[Button]:
             def make(
@@ -351,9 +389,49 @@ class SettingsInterface(Interface):
             align=AlignEnum.RIGHT
         ))
 
+    def _action_to_field_name(self, action: ActionKey) -> str:
+        match action:
+            case ActionKey.MOVE_UP:
+                return 'move_up'
+            case ActionKey.MOVE_DOWN:
+                return 'move_down'
+            case ActionKey.MOVE_LEFT:
+                return 'move_left'
+            case ActionKey.MOVE_RIGHT:
+                return 'move_right'
+            case ActionKey.SELECT:
+                return 'select'
+            case ActionKey.BACK_PAUSE_RESUME:
+                return 'back_pause_resume'
+            case ActionKey.REROLL:
+                return 'reroll'
+            case _:
+                raise ValueError(f'Unknown action {action!r}')
+
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
+
+        if self._capture_action is not None:
+            if key in self.game._app.key_manager.get_keys(
+                ActionKey.BACK_PAUSE_RESUME
+            ):
+                self._capture_action = None
+                return True
+
+            current_keys = self.app.key_manager.get_keys(self._capture_action)
+            if key in current_keys:
+                return True
+
+            new_keys = list(current_keys)
+            if len(new_keys) > 1 and key in new_keys:
+                return True
+
+            self.app.key_manager.set_keys(self._capture_action, [key])
+            self._capture_action = None
+            self.refresh()
+            return True
+
         if key in self.game._app.key_manager.get_keys(
                 ActionKey.BACK_PAUSE_RESUME
         ):
@@ -361,14 +439,21 @@ class SettingsInterface(Interface):
             return True
         return False
 
+    def refresh(self) -> None:
+        self.layer = MeshLayer()
+        self.__init__(self.game)
+
     def _exit(self) -> None:
-        print('TODO: WARRNING !!!! : exit how to play interface')
+        self.hide()
 
     def _restore_default(self) -> None:
-        print('TODO: WARRNING !!!! : exit how to play interface')
+        self.app.settings.get().controls = ControlSettingsModel()
+        self.app.settings.save()
+        self.refresh()
 
     def _apply(self) -> None:
-        print('TODO: WARRNING !!!! : exit how to play interface')
+        self.app.settings.save()
+        self.hide()
 
     def get_layer(self) -> MeshLayer:
         return self.layer

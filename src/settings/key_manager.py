@@ -28,6 +28,8 @@ class KeyManager:
                     return self._settings.get().controls.select
                 case ActionKey.BACK_PAUSE_RESUME:
                     return self._settings.get().controls.back_pause_resume
+                case ActionKey.REROLL:
+                    return self._settings.get().controls.reroll
         return list(chain.from_iterable(
             [self.get_keys(_action) for _action in action]
         ))
@@ -47,8 +49,10 @@ class KeyManager:
         self._pressed_keys = pygame.key.get_pressed()
 
     def add_key(self, action: ActionKey, key: int) -> None:
-        self.get_keys(action).append(key)
-        self._settings.save()
+        current = self.get_keys(action)
+        if key not in current:
+            current.append(key)
+            self._settings.save()
 
     def remove_key(self, action: ActionKey, key: int) -> None:
         if key in self.get_keys(action):
@@ -56,10 +60,35 @@ class KeyManager:
             self._settings.save()
 
     def set(self, action: ActionKey, key: int) -> None:
-        self.get_keys(action).clear()
-        self.get_keys(action).append(key)
+        keys = self.get_keys(action)
+        keys.clear()
+        keys.append(key)
+        self._settings.save()
+
+    def set_keys(self, action: ActionKey, keys: list[int]) -> None:
+        for other_action in self._iter_actions():
+            if other_action is action:
+                continue
+            for key in list(self.get_keys(other_action)):
+                if key in keys and key in self.get_keys(other_action):
+                    self.get_keys(other_action).remove(key)
+
+        target = self.get_keys(action)
+        target.clear()
+        target.extend(keys)
         self._settings.save()
 
     def clear(self, action: ActionKey) -> None:
         self.get_keys(action).clear()
         self._settings.save()
+
+    def _iter_actions(self) -> list[ActionKey]:
+        return [
+            ActionKey.MOVE_UP,
+            ActionKey.MOVE_DOWN,
+            ActionKey.MOVE_LEFT,
+            ActionKey.MOVE_RIGHT,
+            ActionKey.SELECT,
+            ActionKey.BACK_PAUSE_RESUME,
+            ActionKey.REROLL,
+        ]
