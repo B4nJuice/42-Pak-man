@@ -1,21 +1,13 @@
 {
-  "level_width": 21,
-  "level_height": 16,
-  "screen_width": 1240,
-  "screen_height": 720,
+  "screen_width": 1920,
+  "screen_height": 1080,
   "levels": [
     {
-      "level_height":4,
-      "level_width":4,
-      "max_time":50,
-    },
-    {
-      "level_height":15,
-      "level_width":15
-    },
-    {
-      "level_height":20,
-      "level_width":20
+      "name": "default level",
+      "seed": 42,
+      "level_height": 16,
+      "level_width": 25,
+      "max_time": 600
     }
   ]
 }
