@@ -49,7 +49,7 @@ class SettingsManager:
             path = Path(self._path)
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(path, 'w', encoding='UTF-8') as f:
-                f.write(self._settings.model_dump_json())
+                f.write(self._settings.model_dump_json(indent=4))
                 return True
         except (OSError, RuntimeError, ValueError) as e:
             self._logger.warning(f'Cannot save settings : {e!s}')

@@ -33,6 +33,7 @@ from src.ui.cheat_interface import CheatInterface
 # from src.ui.gameover_interface import GameoverInterface
 # from src.ui.how_to_play_interface import HowToPLayInterface
 # from src.ui.leaderboard_interface import LeaderboardInterface
+# from src.ui.settings_interface import SettingsInterface
 from src.utils import Logger, TColor
 
 
@@ -56,6 +57,8 @@ class Game:
     _freeze_ghost: bool
     _timer: Timer
     _level_index: int
+
+    # _settings_interface: SettingsInterface
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -289,6 +292,8 @@ class Game:
         # self._screen.add_mesh(GameoverInterface(self))
         # self._screen.add_mesh(HowToPLayInterface(self))
         # self._screen.add_mesh(LeaderboardInterface(self))
+        # self._settings_interface = SettingsInterface(self)
+        # self._screen.add_mesh(self._settings_interface)
 
     def run(self) -> None:
         dt: float = 0.0
@@ -344,6 +349,7 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
+            # self._settings_interface.handle_key(event.key) or
             self._cheat_interface.handle_key(event.key) or
             self.get_status() == GameStatus.AMELIORATION
             and self._amelioration_interface.handle_key(event.key) or
