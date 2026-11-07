@@ -11,7 +11,10 @@ from src.graphics.super_meshes import AlignEnum, Button, Rectangle
 from src.graphics.super_meshes.button import ButtonTextConfig
 from src.graphics.super_meshes.font_sequence import FontSequence
 from src.settings import ActionKey
-from src.settings.settings_model import ControlSettingsModel
+from src.settings.settings_model import (
+    ControlSettingsModel,
+    DisplaySettingsModel,
+)
 from src.texture.texture_keys import TextureKeys
 
 if TYPE_CHECKING:
@@ -168,13 +171,21 @@ class SettingsInterface(Interface):
                     )
                 )
 
+            # yield make(
+            #     x=120,
+            #     y=168,
+            #     w=508,
+            #     h=208,
+            #     title='AUDIO',
+            #     categorie='VOLUME'
+            # )
             yield make(
                 x=120,
                 y=168,
                 w=508,
-                h=208,
-                title='AUDIO',
-                categorie='VOLUME'
+                h=416,
+                title='DISPLAY',
+                categorie='VIDEO'
             )
 
             yield make(
@@ -186,17 +197,155 @@ class SettingsInterface(Interface):
                 categorie='KEYBOARD'
             )
 
-            yield make(
-                x=120,
-                y=392,
-                w=508,
-                h=192,
-                title='DISPLAY',
-                categorie='VIDEO'
-            )
-
         for meshs in _settings_box():
             self.layer.meshes.extend(meshs)
+
+        display_x: int = size.get(140)
+        display_y: int = size.get(237)
+        display_button_x: int = size.get(420)
+        display_button_w: int = size.get(188)
+        display_button_h: int = size.get(30)
+        display_gap: int = size.get(8)
+
+        def _display_settings() -> Iterator[tuple[Mesh, ...]]:
+            display_settings = self.app.settings.get().display
+            resolution_values = (
+                DisplaySettingsModel.standard_16_9_resolutions()
+            )
+            resolution_labels = [
+                DisplaySettingsModel.resolution_label(resolution)
+                for resolution in resolution_values
+            ]
+
+            def make(
+                idx: int,
+                description: str,
+                values: list[str],
+                current_id: int,
+                cb: Callable[[int], None]
+            ) -> tuple[Mesh, ...]:
+                _status: dict[int, int] = {idx: current_id}
+
+                value: FontSequence = FontSequence(
+                    text=values[current_id],
+                    font=fonts.get(FontKey.TITLE_SECONDARY_9),
+                    color=Color(*config.settings_text),
+                    position=Position(
+                        display_button_x + display_button_w / 2,
+                        display_y
+                        + size.get(13 + 7)
+                        + (display_button_h + display_gap) * idx,
+                    ),
+                )
+
+                def _next() -> None:
+                    _status[idx] = (_status[idx] + 1) % len(values)
+                    value.set_sequence_text(values[_status[idx]])
+                    cb(_status[idx])
+
+                def _prev() -> None:
+                    _status[idx] = (_status[idx] - 1) % len(values)
+                    value.set_sequence_text(values[_status[idx]])
+                    cb(_status[idx])
+
+                return (
+                    FontSequence(
+                        text=description,
+                        font=fonts.get(FontKey.TEXT_14),
+                        color=Color(*config.settings_text),
+                        position=Position(
+                            display_x,
+                            display_y
+                            + size.get(13 + 5)
+                            + (display_button_h + display_gap) * idx,
+                        ),
+                        align=AlignEnum.LEFT
+                    ),
+                    Button(
+                        position=Position(
+                            display_button_x,
+                            display_y + (display_button_h + display_gap) * idx
+                        ),
+                        width=display_button_w,
+                        height=display_button_h,
+                        normal_color=Color(*config.settings_bg_secondary),
+                        border_color=Color(*config.settings_border),
+                        border_thickness=size.get(1),
+                    ),
+                    Button(
+                        position=Position(
+                            display_button_x + size.get(1),
+                            display_y + (display_button_h + display_gap) * idx
+                            + size.get(1)
+                        ),
+                        width=display_button_h - size.get(2),
+                        height=display_button_h - size.get(2),
+                        normal_color=Color(*config.settings_bg_secondary),
+                        on_click=_prev,
+                        texts=[
+                            ButtonTextConfig(
+                                text='<',
+                                font=fonts.get(FontKey.TITLE_SECONDARY_9),
+                                color=Color(*config.settings_text_secondary),
+                                offset_y=size.get(5),
+                            )
+                        ]
+                    ),
+                    Button(
+                        position=Position(
+                            display_button_x + size.get(1) + display_button_w
+                            - display_button_h,
+                            display_y + (display_button_h + display_gap) * idx
+                            + size.get(1)
+                        ),
+                        width=display_button_h - size.get(2),
+                        height=display_button_h - size.get(2),
+                        normal_color=Color(*config.settings_bg_secondary),
+                        on_click=_next,
+                        texts=[
+                            ButtonTextConfig(
+                                text='>',
+                                font=fonts.get(FontKey.TITLE_SECONDARY_9),
+                                color=Color(*config.settings_text_secondary),
+                                offset_y=size.get(5),
+                            )
+                        ]
+                    ),
+                    value
+                )
+
+            yield make(
+                0,
+                'Window mode',
+                ['WINDOWED', 'FULLSCREEN'],
+                int(display_settings.full_screen),
+                lambda value_id: setattr(
+                    self.app.settings.get().display,
+                    'full_screen',
+                    bool(value_id)
+                )
+            )
+            yield make(
+                1,
+                'Resolution',
+                resolution_labels,
+                next(
+                    (
+                        idx
+                        for idx, resolution in enumerate(resolution_values)
+                        if resolution == display_settings.resolution
+                    ),
+                    0,
+                ),
+                lambda value_id: setattr(
+                    self.app.settings.get().display,
+                    'resolution',
+                    resolution_values[value_id]
+                )
+            )
+
+        for display_setting in _display_settings():
+            self.layer.meshes.extend(display_setting)
 
         control_x: int = size.get(672)
         control_y: int = size.get(238)
@@ -527,6 +676,7 @@ class SettingsInterface(Interface):
 
     def _restore_default(self) -> None:
         self.app.settings.get().controls = ControlSettingsModel()
+        self.app.settings.get().display = DisplaySettingsModel()
         self.app.settings.save()
         self._refresh_control_buttons()
 

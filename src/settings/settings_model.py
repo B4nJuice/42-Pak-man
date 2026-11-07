@@ -36,12 +36,22 @@ class ControlSettingsModel(BaseModel):
 class DisplaySettingsModel(BaseModel):
     full_screen: bool = Field(
         default=False,
-        description=''
+        description='Whether the game should run in fullscreen mode.'
     )
     resolution: tuple[int, int] = Field(
         default=(1280, 720),
-        description=''
+        description='Current display resolution in 16:9 aspect ratio.'
     )
+
+    @staticmethod
+    def standard_16_9_resolutions() -> list[tuple[int, int]]:
+        widths = [3840, 2560, 1920, 1600, 1366, 1280, 1024, 960, 854, 768, 640]
+        return [(width, round(width * 9 / 16)) for width in widths]
+
+    @staticmethod
+    def resolution_label(resolution: tuple[int, int]) -> str:
+        width, height = resolution
+        return f'{width} × {height}'
 
 
 class SettingsModel(BaseModel):
