@@ -29,6 +29,8 @@ class SettingsInterface(Interface):
 
     _bindings: dict[str, list[int]]
     _capture_action: ActionKey | None
+    _capture_slot: int | None
+    _control_buttons: list[Button]
 
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
@@ -37,6 +39,8 @@ class SettingsInterface(Interface):
         self.layer = MeshLayer()
         self._bindings = {}
         self._capture_action = None
+        self._capture_slot = None
+        self._control_buttons = []
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
@@ -212,8 +216,9 @@ class SettingsInterface(Interface):
             ]
             return ' / '.join(labels)
 
-        def _bind_action(action: ActionKey) -> None:
+        def _bind_action(action: ActionKey, slot: int = 0) -> None:
             self._capture_action = action
+            self._capture_slot = slot
 
         def _get_action_keys(action: ActionKey) -> list[int]:
             return self.app.key_manager.get_keys(action)
@@ -237,7 +242,7 @@ class SettingsInterface(Interface):
                 align=AlignEnum.LEFT,
             ))
 
-            self.layer.meshes.append(Button(
+            first_button = Button(
                 position=Position(
                     control_button_x,
                     control_y + (control_button_h + control_gap) * idx
@@ -249,7 +254,9 @@ class SettingsInterface(Interface):
                 border_color=Color(*config.settings_border),
                 selected_border_color=Color(*config.settings_border_accent),
                 border_thickness=size.get(1),
-                on_click=lambda action=action: _bind_action(action),
+                on_click=(
+                    lambda action=action, slot=0: _bind_action(action, slot)
+                ),
                 texts=[
                     ButtonTextConfig(
                         text=_key_label(key_list[:1]),
@@ -258,8 +265,11 @@ class SettingsInterface(Interface):
                         offset_y=size.get(5),
                     )
                 ]
-            ))
-            self.layer.meshes.append(Button(
+            )
+            self.layer.meshes.append(first_button)
+            self._control_buttons.append(first_button)
+
+            second_button = Button(
                 position=Position(
                     control_button_x + control_button_w + control_gap,
                     control_y + (control_button_h + control_gap) * idx
@@ -270,7 +280,9 @@ class SettingsInterface(Interface):
                 hover_color=Color(*config.settings_bg_secondary,),
                 border_color=Color(*config.settings_border),
                 border_thickness=size.get(1),
-                on_click=lambda action=action: _bind_action(action),
+                on_click=(
+                    lambda action=action, slot=1: _bind_action(action, slot)
+                ),
                 texts=[
                     ButtonTextConfig(
                         text=_key_label(key_list[1:2]),
@@ -279,7 +291,9 @@ class SettingsInterface(Interface):
                         offset_y=size.get(5),
                     )
                 ]
-            ))
+            )
+            self.layer.meshes.append(second_button)
+            self._control_buttons.append(second_button)
 
         def _settings_buttons() -> Iterator[Button]:
             def make(
@@ -408,6 +422,39 @@ class SettingsInterface(Interface):
             case _:
                 raise ValueError(f'Unknown action {action!r}')
 
+    def _refresh_control_buttons(self) -> None:
+        actions = [
+            ActionKey.MOVE_UP,
+            ActionKey.MOVE_DOWN,
+            ActionKey.MOVE_LEFT,
+            ActionKey.MOVE_RIGHT,
+            ActionKey.SELECT,
+            ActionKey.BACK_PAUSE_RESUME,
+            ActionKey.REROLL,
+        ]
+
+        for index, action in enumerate(actions):
+            keys = self.app.key_manager.get_keys(action)
+            first_button = self._control_buttons[index * 2]
+            second_button = self._control_buttons[index * 2 + 1]
+
+            first_button.texts[0].text = self._key_label(keys[:1])
+            second_button.texts[0].text = self._key_label(keys[1:2])
+            first_button.refresh()
+            second_button.refresh()
+
+    def _key_label(self, keys: list[int]) -> str:
+        if not keys:
+            return '-'
+        labels = [
+            (
+                pygame.key.name(code).upper()
+                if code != pygame.K_SPACE else 'SPACE'
+            )
+            for code in keys
+        ]
+        return ' / '.join(labels)
+
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
@@ -417,19 +464,30 @@ class SettingsInterface(Interface):
                 ActionKey.BACK_PAUSE_RESUME
             ):
                 self._capture_action = None
+                self._capture_slot = None
                 return True
 
             current_keys = self.app.key_manager.get_keys(self._capture_action)
             if key in current_keys:
+                self._capture_action = None
+                self._capture_slot = None
                 return True
 
-            new_keys = list(current_keys)
-            if len(new_keys) > 1 and key in new_keys:
-                return True
+            slot = self._capture_slot if self._capture_slot is not None else 0
+            if not current_keys:
+                new_keys = [key]
+            elif slot == 1:
+                if len(current_keys) >= 2:
+                    new_keys = [current_keys[0], key]
+                else:
+                    new_keys = [current_keys[0], key]
+            else:
+                new_keys = [key]
 
-            self.app.key_manager.set_keys(self._capture_action, [key])
+            self.app.key_manager.set_keys(self._capture_action, new_keys)
             self._capture_action = None
-            self.refresh()
+            self._capture_slot = None
+            self._refresh_control_buttons()
             return True
 
         if key in self.game._app.key_manager.get_keys(
@@ -440,8 +498,7 @@ class SettingsInterface(Interface):
         return False
 
     def refresh(self) -> None:
-        self.layer = MeshLayer()
-        self.__init__(self.game)
+        self._refresh_control_buttons()
 
     def _exit(self) -> None:
         self.hide()
@@ -449,7 +506,7 @@ class SettingsInterface(Interface):
     def _restore_default(self) -> None:
         self.app.settings.get().controls = ControlSettingsModel()
         self.app.settings.save()
-        self.refresh()
+        self._refresh_control_buttons()
 
     def _apply(self) -> None:
         self.app.settings.save()
