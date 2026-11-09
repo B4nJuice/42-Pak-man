@@ -1,6 +1,5 @@
-import json
+import json5
 import os
-from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import ClassVar
 
@@ -26,7 +25,8 @@ class ConfigManager:
         try:
             self._set_config_path(config_path)
             self._load_config()
-        except (FileNotFoundError, PermissionError, JSONDecodeError):
+        except (FileNotFoundError, PermissionError, ValueError) as e:
+            print(e)
             self._logger.warning(
                 'Failed to load config, using default settings'
             )
@@ -59,14 +59,16 @@ class ConfigManager:
         self._in_comment_block = -1
 
     def _load_config(self) -> None:
-        self._logger.log(f'Loading config from {self._config_path}')
+        self._logger.log(
+            f'Loading config from {self._config_path.absolute().as_posix()!r}'
+        )
         self._init_formater()
 
         with self._config_path.open('r') as f:
             lines: list[str] = [self._format_line(line.strip()) for line in f]
 
         self._logger.log(f'Formatted {len(lines)} lines for JSON parsing')
-        raw_data = json.loads(''.join(lines))
+        raw_data = json5.loads(''.join(lines))
 
         if not isinstance(raw_data, dict):
             self._logger.warning(
