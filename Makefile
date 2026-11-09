@@ -1,11 +1,12 @@
 UV_RUN	= uv run
 MYPY	= $(UV_RUN) -m mypy
 FLAKE8	= $(UV_RUN) -m flake8
+CONFIG	:= config.json
 
 ARGS	?=
 
 run: install
-	@$(UV_RUN) -m src $(ARGS)
+	@PYGAME_HIDE_SUPPORT_PROMPT=1 $(UV_RUN) -m src $(ARGS) $(CONFIG)
 
 install:
 	uv sync
@@ -31,8 +32,15 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
+	rm -rf build dist
+	uv clean
 
 fclean: clean
 	rm -rf .venv
 
-.PHONY: run clean fclean install lint lint-strict debug test
+build: clean
+	uv run --locked pyinstaller --noconfirm --clean "pak-man.spec"
+	cd dist && zip -qr "pac-man.zip" pak-man
+	rm -rf build
+
+.PHONY: run clean fclean install lint lint-strict debug test build
