@@ -103,7 +103,6 @@ class LeaderboardInterface(Interface):
             normal_color=Color(*config.leaderboard_bg_secondary),
             border_color=Color(*config.leaderboard_border),
             border_thickness=size.get(1),
-            on_click=self._exit,
             texts=[
                 ButtonTextConfig(
                     text='ALL TIME',

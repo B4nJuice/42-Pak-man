@@ -105,6 +105,8 @@ class LobbyInterface(Interface):
             width=w
         ))
 
+        from src.game import GameStatus
+
         buttons_params: list[dict[str, Any]] = [
             {
                 'label': 'START RUN',
@@ -121,7 +123,7 @@ class LobbyInterface(Interface):
                 'label_hover': '> LEADERBOARD',
                 'action_key_label': None,
                 'action_key': None,
-                'action': game.open_leaderboard,
+                'action': lambda: self.game.set_status(GameStatus.LEADERBOARD),
                 'hover': self._hover_callback,
                 'y': 433,
                 'selected': False
@@ -131,7 +133,7 @@ class LobbyInterface(Interface):
                 'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
-                'action': game.open_settings,
+                'action': lambda: self.game.set_status(GameStatus.SETTINGS),
                 'hover': self._hover_callback,
                 'y': 495,
                 'selected': False

@@ -31,6 +31,7 @@ from src.ui.cheat_interface import CheatInterface
 from src.ui.gameover_interface import GameoverInterface
 from src.ui.how_to_play_interface import HowToPLayInterface
 from src.ui.leaderboard_interface import LeaderboardInterface
+from src.ui.lobby_interface import LobbyInterface
 from src.ui.settings_interface import SettingsInterface
 from src.ui.victory_interface import VictoryInterface
 from src.utils import Logger, TColor
@@ -64,6 +65,7 @@ class Game:
     _leaderboard_interface: LeaderboardInterface
     _victory_interface: VictoryInterface
     _settings_interface: SettingsInterface
+    _lobby_interface: LobbyInterface
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -296,6 +298,7 @@ class Game:
         self._settings_interface = SettingsInterface(self)
         self._leaderboard_interface = LeaderboardInterface(self)
         self._howtoplay_interface = HowToPLayInterface(self)
+        self._lobby_interface = LobbyInterface(self)
 
         gameplay_statuses = [
             GameStatus.RUNNING,
@@ -350,7 +353,12 @@ class Game:
             GameStatus.SETTINGS,
             self._settings_interface
         )
+        self._interface_manager.set_interface(
+            GameStatus.LOBBY,
+            self._lobby_interface
+        )
 
+        self._screen.add_mesh(self._lobby_interface)
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
@@ -385,12 +393,6 @@ class Game:
         self.set_status(GameStatus.EXIT)
 
     def launch_new_run(self) -> None:
-        self._logger.warning('to implement (game.py)')
-
-    def open_leaderboard(self) -> None:
-        self._logger.warning('to implement (game.py)')
-
-    def open_settings(self) -> None:
         self._logger.warning('to implement (game.py)')
 
     def _on_exit(self, _: Event, __: int) -> None:

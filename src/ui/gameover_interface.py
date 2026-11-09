@@ -243,7 +243,7 @@ class GameoverInterface(Interface):
                 'label': 'MAIN MENU',
                 'label_hover': '> MAIN MENU',
                 'action_key_label': 'ESC',
-                'action': game.open_leaderboard,
+                'action': lambda: self.game.set_status(GameStatus.LOBBY),
                 'hover': self._hover_callback,
                 'y': 474,
                 'selected': False
