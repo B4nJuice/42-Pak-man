@@ -5,39 +5,53 @@ from pydantic import BaseModel, Field
 class ControlSettingsModel(BaseModel):
     move_up: list[int] = Field(
         default=[pygame.K_w, pygame.K_UP],
-        description=''
+        description='Move up'
     )
     move_down: list[int] = Field(
         default=[pygame.K_s, pygame.K_DOWN],
-        description=''
+        description='Move down'
     )
     move_left: list[int] = Field(
         default=[pygame.K_a, pygame.K_LEFT],
-        description=''
+        description='Move left'
     )
     move_right: list[int] = Field(
         default=[pygame.K_d, pygame.K_RIGHT],
-        description=''
+        description='Move right'
     )
     select: list[int] = Field(
-        default=[pygame.K_SPACE, pygame.K_KP_ENTER, pygame.K_RETURN],
-        description=''
+        default=[pygame.K_SPACE, pygame.K_RETURN],
+        description='Select'
     )
     back_pause_resume: list[int] = Field(
         default=[pygame.K_ESCAPE],
-        description=''
+        description='Pause / Resume / Back'
+    )
+    reroll: list[int] = Field(
+        default=[pygame.K_r],
+        description='Reroll'
     )
 
 
 class DisplaySettingsModel(BaseModel):
     full_screen: bool = Field(
         default=False,
-        description=''
+        description='Whether the game should run in fullscreen mode.'
     )
     resolution: tuple[int, int] = Field(
         default=(1280, 720),
-        description=''
+        description='Current display resolution in 16:9 aspect ratio.'
     )
+
+    @staticmethod
+    def standard_16_9_resolutions() -> list[tuple[int, int]]:
+        widths = [3840, 2560, 1920, 1600, 1366, 1280, 1024, 960, 854, 768, 640]
+        return [(width, round(width * 9 / 16)) for width in widths]
+
+    @staticmethod
+    def resolution_label(resolution: tuple[int, int]) -> str:
+        width, height = resolution
+        return f'{width} × {height}'
 
 
 class SettingsModel(BaseModel):

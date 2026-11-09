@@ -36,6 +36,7 @@ class FontKey(Enum):
     TITLE_13 = (13, FontKeys.TITLE)
     TITLE_14 = (14, FontKeys.TITLE)
     TITLE_18 = (18, FontKeys.TITLE)
+    TITLE_20 = (20, FontKeys.TITLE)
     TITLE_22 = (22, FontKeys.TITLE)
     TITLE_24 = (24, FontKeys.TITLE)
     TITLE_36 = (36, FontKeys.TITLE)

@@ -97,7 +97,7 @@ class Button(SuperMesh):
                 width: int,
                 height: int,
                 normal_color: Color,
-                hover_color: Color,
+                hover_color: Color | None = None,
                 selected_color: Color | None = None,
                 state: ButtonState = ButtonState.NORMAL,
                 operation: OperationEnum = OperationEnum.ALPHA,
@@ -119,11 +119,11 @@ class Button(SuperMesh):
         self.width = width
         self.height = height
         self.normal_color = normal_color
-        self.hover_color = hover_color
-        self.selected_color = selected_color or hover_color
+        self.hover_color = hover_color or normal_color
+        self.selected_color = selected_color or self.hover_color
         self.border_thickness = max(0, border_thickness)
         self.border_color = border_color or normal_color
-        self.hover_border_color = hover_border_color or hover_color
+        self.hover_border_color = hover_border_color or self.hover_color
         self.selected_border_color = (
             selected_border_color or self.selected_color
         )
@@ -138,7 +138,7 @@ class Button(SuperMesh):
                 border_thickness=self.border_thickness,
             ),
             hover=ButtonStyle(
-                color=hover_color,
+                color=self.hover_color,
                 border_color=self.hover_border_color,
                 border_thickness=self.border_thickness,
             ),
