@@ -136,7 +136,11 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             return
 
         if isinstance(other, Edible):
-            other.eat(self)
+            if other.eat(self):
+                self._game.record_collection(
+                    other.get_reward(),
+                    ghost=isinstance(other, Ghost),
+                )
 
         if isinstance(other, Ghost):
             match other.get_state():
