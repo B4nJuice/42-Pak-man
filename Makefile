@@ -37,6 +37,7 @@ clean:
 
 fclean: clean
 	rm -rf .venv
+	rm -rf .pak-man
 
 build: clean
 	uv run --locked pyinstaller --noconfirm --clean "pak-man.spec"
