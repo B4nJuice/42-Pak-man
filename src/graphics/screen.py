@@ -38,12 +38,21 @@ class Screen:
 
         self.width = width
         self.height = height
-        self.gpu_renderer = GPURenderer(width, height)
+        window_width, window_height = pygame_screen.get_size()
+        self.gpu_renderer = GPURenderer(
+            width,
+            height,
+            window_width,
+            window_height,
+        )
         self.moderngl_context = self.gpu_renderer.context
         self.layer = MeshLayer()
         self.clickables = []
         self._hovered_clickables = set()
         self._last_mouse_position = None
+
+    def resize(self, width: int, height: int) -> None:
+        self.gpu_renderer.set_window_size(width, height)
 
     def add_layer(
                 self,

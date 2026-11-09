@@ -678,6 +678,17 @@ class SettingsInterface(Interface):
 
     def _apply(self) -> None:
         self.app.settings.save()
+        width, height = self.app.settings.get().display.resolution
+
+        self.game._app.size.BASE_WIDTH = width
+        self.game._app.size.BASE_HEIGHT = height
+
+        pygame.event.post(
+            pygame.event.Event(pygame.VIDEORESIZE, size=(width, height), w=width, h=height)
+        )
+
+        pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
+
         self._exit()
 
     def get_layer(self) -> MeshLayer:
