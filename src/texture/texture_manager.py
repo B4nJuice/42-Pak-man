@@ -74,14 +74,13 @@ class TextureManager:
             return self._default
         return self._user
 
-    def get_available_pack_paths(self) -> list[Path]:
-        paths = [self._default.root]
-        paths.extend(sorted(
+    def get_available_pack_paths(self) -> tuple[Path, list[Path]]:
+        paths = sorted(
             manifest.parent
             for manifest in self._textures_pack_folder.rglob('pack.json')
             if manifest.parent != self._default.root
-        ))
-        return paths
+        )
+        return (self._default.root, paths)
 
     def get_font(self, key: FontKeys) -> Path:
         if self._user and (path := self._user.get_font(key)):

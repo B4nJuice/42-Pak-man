@@ -339,7 +339,10 @@ class SettingsInterface(Interface):
                 )
             )
 
-            pack_paths = self.app.texture.get_available_pack_paths()
+            default_path, pack_paths = (
+                self.app.texture.get_available_pack_paths()
+            )
+            pack_paths.insert(0, default_path)
             pack_labels = [
                 'DEFAULT' if path == pack_paths[0] else path.name.upper()
                 for path in pack_paths
@@ -708,7 +711,8 @@ class SettingsInterface(Interface):
 
     def _apply(self) -> None:
         try:
-            if self._pending_pack_path == self.app.texture.get_available_pack_paths()[0]:
+            user_pack, _ = self.app.texture.get_available_pack_paths()
+            if self._pending_pack_path == user_pack:
                 if self.app.texture.get_pack().root != self._pending_pack_path:
                     self.game.unload_pack()
             elif self.app.texture.get_pack().root != self._pending_pack_path:
