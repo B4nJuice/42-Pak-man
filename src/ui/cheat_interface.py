@@ -256,7 +256,7 @@ class CheatInterface(Interface):
                     *config.cheat_toggle_text_active_color
                 ),
                 border_color=Color(*config.cheat_toggle_border_color),
-                border_thickness=2,
+                border_thickness=size.get(2),
                 operation=OperationEnum.ALPHA,
                 switch_padding=size.get(12),
                 switch_padding_inner=size.get(4),

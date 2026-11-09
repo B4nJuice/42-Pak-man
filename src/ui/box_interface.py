@@ -64,7 +64,7 @@ class BoxInterface(Interface):
             position,
             width,
             height,
-            thickness=2,
+            thickness=size.get(2),
             smooth_end=True
         )
 

@@ -55,7 +55,7 @@ class StatsInterface(Interface):
             Position(self.game._app.size.get(27), self.game._app.size.get(15)),
             self.game._app.size.get(265),
             self.game._app.size.get(689),
-            3,
+            self.game._app.size.get(3),
             smooth_end=True
         )
 
@@ -120,7 +120,7 @@ class StatsInterface(Interface):
                 ),
                 single_bar_width,
                 self.game._app.size.get(8),
-                border_thickness=1,
+                border_thickness=self.game._app.size.get(1),
                 goal=1,
                 progression=0,
                 smooth_end=True,
@@ -133,8 +133,8 @@ class StatsInterface(Interface):
         skill_gap = self.game._app.size.get(12)
         skill_width = self.game._app.size.get(106.5)
         skill_height = self.game._app.size.get(53)
-        skill_title_font_size = 13
-        skill_value_font_size = 40
+        skill_title_font_size = self.game._app.size.get(8.66)
+        skill_value_font_size = self.game._app.size.get(26.66)
         skills = (
             ("SPEED", SpeedSkill),
             ("LUCK", LuckSkill),

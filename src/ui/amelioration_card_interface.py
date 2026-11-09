@@ -63,7 +63,7 @@ class AmeliorationCardInterface(Interface):
             position,
             self.size.get(193),
             self.size.get(289),
-            thickness=1,
+            thickness=self.size.get(1),
             smooth_end=True
         )
 

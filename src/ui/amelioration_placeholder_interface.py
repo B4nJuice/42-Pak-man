@@ -57,7 +57,7 @@ class AmeliorationPlaceholderInterface(Interface):
             position,
             width,
             height,
-            thickness=2,
+            thickness=self.game._app.size.get(2),
             smooth_end=True
         )
 

@@ -50,7 +50,7 @@ class GameInterface(Interface):
             Position(level_bar_x, level_bar_y),
             level_bar_width,
             level_bar_height,
-            border_thickness=2,
+            border_thickness=self.app.size.get(2),
             goal=100,
             progression=0,
             smooth_end=True,
@@ -64,9 +64,9 @@ class GameInterface(Interface):
             Color(*self.game._config.level_bar_color),
             Position(
                 level_bar_x - round(self.width * 0.01),
-                level_bar_y + level_bar_height - 2
+                level_bar_y + level_bar_height - self.app.size.get(2)
             ),
-            spacing=1,
+            spacing=self.app.size.get(1),
             align=AlignEnum.RIGHT,
         )
 
@@ -75,10 +75,10 @@ class GameInterface(Interface):
             self.app.fonts.get(FontKey.TITLE_24),
             Color(*self.game._config.timer_color),
             Position(
-                    self.x_offset + round(self.width / 2),
-                    self.y_offset + round(self.height*0.07)
-                ),
-            spacing=1,
+                self.x_offset + round(self.width / 2),
+                self.y_offset + round(self.height * 0.07)
+            ),
+            spacing=self.app.size.get(1),
         )
 
         self.maze: MeshLevel = self._create_maze(level_bar_height)
@@ -132,7 +132,7 @@ class GameInterface(Interface):
             Position(maze_x, maze_y),
             maze_width,
             maze_height,
-            wall_thickness=3,
+            wall_thickness=self.app.size.get(3),
             smooth_end=True
         )
 
