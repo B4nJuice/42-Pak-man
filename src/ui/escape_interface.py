@@ -135,7 +135,7 @@ class EscapeInterface(Interface):
                 'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
-                'action': None,
+                'action': lambda: self.game.set_status(GameStatus.SETTINGS),
                 'hover': self._hover_callback,
                 'y': 246,
                 'selected': False
@@ -145,7 +145,7 @@ class EscapeInterface(Interface):
                 'label_hover': '> MAIN MENU',
                 'action_key_label': None,
                 'action_key': None,
-                'action': self.action_main_menu,
+                'action': lambda: self.game.set_status(GameStatus.LOBBY),
                 'hover': self._hover_callback,
                 'y': 318,
                 'selected': False

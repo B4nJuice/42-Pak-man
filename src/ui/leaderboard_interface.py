@@ -103,7 +103,6 @@ class LeaderboardInterface(Interface):
             normal_color=Color(*config.leaderboard_bg_secondary),
             border_color=Color(*config.leaderboard_border),
             border_thickness=size.get(1),
-            on_click=self._exit,
             texts=[
                 ButtonTextConfig(
                     text='ALL TIME',
@@ -317,6 +316,10 @@ class LeaderboardInterface(Interface):
             ),
             align=AlignEnum.RIGHT
         ))
+
+    def display(self) -> None:
+        self._update_entries()
+        super().display()
 
     def handle_key(self, key: int) -> bool:
         if self.hidden:

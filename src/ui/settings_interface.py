@@ -171,14 +171,6 @@ class SettingsInterface(Interface):
                     )
                 )
 
-            # yield make(
-            #     x=120,
-            #     y=168,
-            #     w=508,
-            #     h=208,
-            #     title='AUDIO',
-            #     categorie='VOLUME'
-            # )
             yield make(
                 x=120,
                 y=168,
@@ -672,7 +664,11 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _exit(self) -> None:
-        self.hide()
+        previous_status = self.game._interface_manager.get_previous_status()
+        if previous_status is None:
+            self.hide()
+            return
+        self.game.set_status(previous_status)
 
     def _restore_default(self) -> None:
         self.app.settings.get().controls = ControlSettingsModel()
@@ -682,7 +678,7 @@ class SettingsInterface(Interface):
 
     def _apply(self) -> None:
         self.app.settings.save()
-        self.hide()
+        self._exit()
 
     def get_layer(self) -> MeshLayer:
         return self.layer

@@ -243,7 +243,7 @@ class GameoverInterface(Interface):
                 'label': 'MAIN MENU',
                 'label_hover': '> MAIN MENU',
                 'action_key_label': 'ESC',
-                'action': game.open_leaderboard,
+                'action': lambda: self.game.set_status(GameStatus.LOBBY),
                 'hover': self._hover_callback,
                 'y': 474,
                 'selected': False
@@ -381,6 +381,12 @@ class GameoverInterface(Interface):
         if key in self.game._app.key_manager.get_keys(ActionKey.SELECT):
             self.buttons[self._selected_index].sim_click()
             return True
+        if key in self.game._app.key_manager.get_keys(
+            ActionKey.BACK_PAUSE_RESUME
+        ):
+            self.game.set_status(GameStatus.LOBBY)
+            return True
+
         return False
 
     def get_layer(self) -> MeshLayer:
