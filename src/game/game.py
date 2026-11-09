@@ -29,11 +29,10 @@ from src.ui import (
 )
 from src.ui.cheat_interface import CheatInterface
 from src.ui.gameover_interface import GameoverInterface
-
-# from src.ui.how_to_play_interface import HowToPLayInterface
-# from src.ui.leaderboard_interface import LeaderboardInterface
+from src.ui.how_to_play_interface import HowToPLayInterface
+from src.ui.leaderboard_interface import LeaderboardInterface
+from src.ui.settings_interface import SettingsInterface
 from src.ui.victory_interface import VictoryInterface
-# from src.ui.settings_interface import SettingsInterface
 from src.utils import Logger, TColor
 
 
@@ -61,8 +60,10 @@ class Game:
     _time_survived: float
     _ghosts_defeated: int
     _pellets_eaten: int
-
-    # _settings_interface: SettingsInterface
+    _howtoplay_interface: HowToPLayInterface
+    _leaderboard_interface: LeaderboardInterface
+    _victory_interface: VictoryInterface
+    _settings_interface: SettingsInterface
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
         self._app = app
@@ -291,6 +292,10 @@ class Game:
         self._cheat_interface = CheatInterface(self)
         self._victory_interface = VictoryInterface(self)
         self._gameover_interface = GameoverInterface(self)
+        self._victory_interface = VictoryInterface(self)
+        self._settings_interface = SettingsInterface(self)
+        self._leaderboard_interface = LeaderboardInterface(self)
+        self._howtoplay_interface = HowToPLayInterface(self)
 
         gameplay_statuses = [
             GameStatus.RUNNING,
@@ -298,6 +303,8 @@ class Game:
             GameStatus.PAUSED,
             GameStatus.AMELIORATION,
             GameStatus.CHEAT_MENU,
+            GameStatus.HOWTOPLAY,
+            GameStatus.SETTINGS,
         ]
         self._interface_manager.set_interface(
             gameplay_statuses,
@@ -327,6 +334,22 @@ class Game:
             GameStatus.GAMEOVER,
             self._gameover_interface
         )
+        self._interface_manager.set_interface(
+            GameStatus.VICTORY,
+            self._victory_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.HOWTOPLAY,
+            self._howtoplay_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.LEADERBOARD,
+            self._leaderboard_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.SETTINGS,
+            self._settings_interface
+        )
 
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
@@ -335,6 +358,10 @@ class Game:
         self._screen.add_mesh(self._cheat_interface)
         self._screen.add_mesh(self._victory_interface)
         self._screen.add_mesh(self._gameover_interface)
+        self._screen.add_mesh(self._victory_interface)
+        self._screen.add_mesh(self._howtoplay_interface)
+        self._screen.add_mesh(self._leaderboard_interface)
+        self._screen.add_mesh(self._settings_interface)
         self._interface_manager.refresh_interfaces()
 
     def run(self) -> None:
@@ -388,7 +415,7 @@ class Game:
 
     def _on_key_down(self, event: Event, _: int) -> None:
         if (
-            # self._settings_interface.handle_key(event.key) or
+            self._settings_interface.handle_key(event.key) or
             self._cheat_interface.handle_key(event.key) or
             self.get_status() == GameStatus.AMELIORATION
             and self._amelioration_interface.handle_key(event.key) or

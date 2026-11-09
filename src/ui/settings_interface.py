@@ -171,14 +171,6 @@ class SettingsInterface(Interface):
                     )
                 )
 
-            # yield make(
-            #     x=120,
-            #     y=168,
-            #     w=508,
-            #     h=208,
-            #     title='AUDIO',
-            #     categorie='VOLUME'
-            # )
             yield make(
                 x=120,
                 y=168,
@@ -681,8 +673,9 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _apply(self) -> None:
+        from src.game import GameStatus
         self.app.settings.save()
-        self.hide()
+        self.game.set_status(GameStatus.PAUSED)
 
     def get_layer(self) -> MeshLayer:
         return self.layer

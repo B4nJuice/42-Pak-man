@@ -318,6 +318,10 @@ class LeaderboardInterface(Interface):
             align=AlignEnum.RIGHT
         ))
 
+    def display(self) -> None:
+        self._update_entries()
+        super().display()
+
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
