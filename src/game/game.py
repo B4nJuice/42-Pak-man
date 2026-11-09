@@ -162,10 +162,16 @@ class Game:
         self._stats_interface.refresh()
         self._screen.refresh()
         self._game_interface.refresh(dt)
-        if self._level.is_finished():
+        if self.get_status() in [
+            GameStatus.RUNNING,
+            GameStatus.INITIALIZING
+        ] and self._level.is_finished():
             self.next_level()
 
-        if not self._player.alive:
+        if self.get_status() in [
+            GameStatus.RUNNING,
+            GameStatus.INITIALIZING
+        ] and not self._player.alive:
             self._player.on_death()
             if self._player.over:
                 self.set_status(GameStatus.GAMEOVER)

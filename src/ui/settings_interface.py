@@ -664,7 +664,11 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _exit(self) -> None:
-        self.hide()
+        previous_status = self.game._interface_manager.get_previous_status()
+        if previous_status is None:
+            self.hide()
+            return
+        self.game.set_status(previous_status)
 
     def _restore_default(self) -> None:
         self.app.settings.get().controls = ControlSettingsModel()
@@ -673,9 +677,8 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _apply(self) -> None:
-        from src.game import GameStatus
         self.app.settings.save()
-        self.game.set_status(GameStatus.PAUSED)
+        self._exit()
 
     def get_layer(self) -> MeshLayer:
         return self.layer
