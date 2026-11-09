@@ -679,6 +679,7 @@ class SettingsInterface(Interface):
     def _apply(self) -> None:
         self.app.settings.save()
         width, height = self.app.settings.get().display.resolution
+        fs = pygame.FULLSCREEN if self.app.settings.get().display.full_screen else 0
 
         self.game._app.size.BASE_WIDTH = width
         self.game._app.size.BASE_HEIGHT = height
@@ -690,7 +691,7 @@ class SettingsInterface(Interface):
         )
 
         pygame.display.set_mode(
-            (width, height), pygame.OPENGL | pygame.DOUBLEBUF
+            (width, height), pygame.OPENGL | pygame.DOUBLEBUF | fs
         )
 
         self._exit()
