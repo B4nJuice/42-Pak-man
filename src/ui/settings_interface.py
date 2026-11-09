@@ -684,10 +684,14 @@ class SettingsInterface(Interface):
         self.game._app.size.BASE_HEIGHT = height
 
         pygame.event.post(
-            pygame.event.Event(pygame.VIDEORESIZE, size=(width, height), w=width, h=height)
+            pygame.event.Event(
+                pygame.VIDEORESIZE, size=(width, height), w=width, h=height
+            )
         )
 
-        pygame.display.set_mode((width, height), pygame.OPENGL | pygame.DOUBLEBUF)
+        pygame.display.set_mode(
+            (width, height), pygame.OPENGL | pygame.DOUBLEBUF
+        )
 
         self._exit()
 
