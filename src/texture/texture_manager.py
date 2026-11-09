@@ -22,11 +22,13 @@ class TextureManager:
     _user: TexturePack | None
 
     _textures: dict[TextureKeys, Texture]
+    _textures_pack_folder: Path
 
     def __init__(
         self,
         texture_loader: TextureLoader,
         default_path: str,
+        textures_pack_folder: str = 'textures',
         verbose: bool = True
     ) -> None:
         self._logger = Logger(
@@ -35,6 +37,7 @@ class TextureManager:
             verbose=verbose
         )
         self._loader = texture_loader
+        self._textures_pack_folder = Path(textures_pack_folder)
 
         self._default = TexturePack.from_directory(default_path)
         self._user = None
@@ -70,6 +73,14 @@ class TextureManager:
         if self._user is None:
             return self._default
         return self._user
+
+    def get_available_pack_paths(self) -> tuple[Path, list[Path]]:
+        paths = sorted(
+            manifest.parent
+            for manifest in self._textures_pack_folder.rglob('pack.json')
+            if manifest.parent != self._default.root
+        )
+        return (self._default.root, paths)
 
     def get_font(self, key: FontKeys) -> Path:
         if self._user and (path := self._user.get_font(key)):
