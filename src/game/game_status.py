@@ -14,6 +14,7 @@ class GameStatus(Enum):
     LEADERBOARD = 8
     SETTINGS = 9
     LOBBY = 10
+    SAVE_RUN = 11
 
     @classmethod
     def get_all(cls) -> list["GameStatus"]:

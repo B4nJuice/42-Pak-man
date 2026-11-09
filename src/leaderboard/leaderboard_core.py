@@ -63,6 +63,12 @@ class LeaderboardCore:
     def get(self) -> list[LeaderboardEntryModel]:
         return self._leaderboard.entries
 
+    def snapshot(self, score: int, max_rank: int = 10) -> int | None:
+        rank = sum(entry.score >= score for entry in self._leaderboard.entries)
+        if rank >= max_rank:
+            return None
+        return rank
+
     def save(self) -> bool:
         try:
             path = Path(self._path)
