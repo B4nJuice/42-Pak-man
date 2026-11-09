@@ -678,27 +678,9 @@ class SettingsInterface(Interface):
 
     def _apply(self) -> None:
         self.app.settings.save()
-        width, height = self.app.settings.get().display.resolution
-        fs = pygame.FULLSCREEN if self.app.settings.get().display.full_screen else 0
 
-        max_width, max_height = pygame.display.get_desktop_sizes()[0]
-
-        width = min(width, max_width)
-        height = min(height, max_height)
-
-        self.game._app.size.BASE_WIDTH = width
-        self.game._app.size.BASE_HEIGHT = height
-
-
-        pygame.event.post(
-            pygame.event.Event(
-                pygame.VIDEORESIZE, size=(width, height), w=width, h=height
-            )
-        )
-
-        pygame.display.set_mode(
-            (width, height), pygame.OPENGL | pygame.DOUBLEBUF | fs
-        )
+        self.game._app.size.BASE_WIDTH, self.game._app.size.BASE_HEIGHT =\
+            self.app.settings.refresh_screen_resolution()
 
         self._exit()
 

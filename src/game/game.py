@@ -71,6 +71,8 @@ class Game:
         self._app = app
         self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
 
+        self._app.settings.refresh_screen_resolution()
+
         self._interface_manager = InterfaceManager(self)
 
         self.set_status(GameStatus.INITIALIZING)
