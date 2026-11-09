@@ -83,7 +83,7 @@ class Game:
     def init_timer(self) -> None:
         self._timer = Timer(self._config.levels[self._level_index].max_time)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
-        self._timer.set_cb_finish(lambda: print('player win'))
+        self._timer.set_cb_finish(lambda: self.set_status(GameStatus.GAMEOVER))
 
     def toggle_freeze(self, value: bool) -> None:
         self._freeze_ghost = value
