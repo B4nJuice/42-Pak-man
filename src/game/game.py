@@ -28,11 +28,11 @@ from src.ui import (
     StatsInterface,
 )
 from src.ui.cheat_interface import CheatInterface
+from src.ui.gameover_interface import GameoverInterface
 
-# from src.ui.victory_interface import VictoryInterface
-# from src.ui.gameover_interface import GameoverInterface
 # from src.ui.how_to_play_interface import HowToPLayInterface
 # from src.ui.leaderboard_interface import LeaderboardInterface
+from src.ui.victory_interface import VictoryInterface
 # from src.ui.settings_interface import SettingsInterface
 from src.utils import Logger, TColor
 
@@ -94,7 +94,7 @@ class Game:
     def init_timer(self) -> None:
         self._timer = Timer(self._config.levels[self._level_index].max_time)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
-        self._timer.set_cb_finish(lambda: print('player win'))
+        self._timer.set_cb_finish(lambda: self.set_status(GameStatus.GAMEOVER))
 
     def toggle_freeze(self, value: bool) -> None:
         self._freeze_ghost = value
@@ -136,6 +136,7 @@ class Game:
 
     def next_level(self) -> None:
         if self._level_index + 1 >= len(self._config.levels):
+            self.set_status(GameStatus.VICTORY)
             return
 
         self._level_index += 1
@@ -163,6 +164,11 @@ class Game:
 
         if not self._player.alive:
             self._player.on_death()
+            if self._player.over:
+                self.set_status(GameStatus.GAMEOVER)
+                pygame.display.flip()
+                return
+
             self._player._direction = None
             self._player._progress = 0
             self._player._target = None
@@ -170,9 +176,9 @@ class Game:
             self._player.set_tile(self._player_start_position)
 
             for ghost in self._ghosts:
-                self.set_status(GameStatus.INITIALIZING)
                 ghost._target = None
                 ghost.tile = ghost.get_spawn_tile()
+            self.set_status(GameStatus.INITIALIZING)
 
         pygame.display.flip()
 
@@ -283,13 +289,22 @@ class Game:
         self._escape_interface = EscapeInterface(self)
         self._amelioration_interface = AmeliorationInterface(self)
         self._cheat_interface = CheatInterface(self)
+        self._victory_interface = VictoryInterface(self)
+        self._gameover_interface = GameoverInterface(self)
 
+        gameplay_statuses = [
+            GameStatus.RUNNING,
+            GameStatus.INITIALIZING,
+            GameStatus.PAUSED,
+            GameStatus.AMELIORATION,
+            GameStatus.CHEAT_MENU,
+        ]
         self._interface_manager.set_interface(
-            GameStatus.get_all(),
+            gameplay_statuses,
             self._game_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.get_all(),
+            gameplay_statuses,
             self._stats_interface
         )
         self._interface_manager.set_interface(
@@ -304,21 +319,23 @@ class Game:
             GameStatus.CHEAT_MENU,
             self._cheat_interface
         )
+        self._interface_manager.set_interface(
+            GameStatus.VICTORY,
+            self._victory_interface
+        )
+        self._interface_manager.set_interface(
+            GameStatus.GAMEOVER,
+            self._gameover_interface
+        )
 
         self._screen.add_mesh(self._game_interface)
         self._screen.add_mesh(self._stats_interface)
         self._screen.add_mesh(self._escape_interface)
         self._screen.add_mesh(self._amelioration_interface)
         self._screen.add_mesh(self._cheat_interface)
+        self._screen.add_mesh(self._victory_interface)
+        self._screen.add_mesh(self._gameover_interface)
         self._interface_manager.refresh_interfaces()
-
-        # self._screen.add_mesh(LobbyInterface(self))
-        # self._screen.add_mesh(VictoryInterface(self))
-        # self._screen.add_mesh(GameoverInterface(self))
-        # self._screen.add_mesh(HowToPLayInterface(self))
-        # self._screen.add_mesh(LeaderboardInterface(self))
-        # self._settings_interface = SettingsInterface(self)
-        # self._screen.add_mesh(self._settings_interface)
 
     def run(self) -> None:
         dt: float = 0.0
@@ -334,9 +351,6 @@ class Game:
 
             if self.get_status() != GameStatus.RUNNING:
                 dt = 0.0
-
-            if self._player.over:
-                break
 
             self.update(dt)
 

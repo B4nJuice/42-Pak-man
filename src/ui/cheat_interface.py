@@ -155,7 +155,7 @@ class CheatInterface(Interface):
                 *config.pause_menu_button_hover_color
             ),
             border_thickness=size.get(1),
-            on_click=self.display,
+            on_click=self.hide,
             texts=[
                 ButtonTextConfig(
                     text='ESC',
