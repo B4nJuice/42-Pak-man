@@ -392,7 +392,20 @@ class Game:
         self.set_status(GameStatus.EXIT)
 
     def launch_new_run(self) -> None:
-        self._logger.warning('to implement (game.py)')
+        self._level_index = 0
+        self._score = 0
+        self._time_survived = 0
+        self._ghosts_defeated = 0
+        self._pellets_eaten = 0
+
+        self.set_status(GameStatus.INITIALIZING)
+        self._init_level()
+        self.generate_level()
+        self.init_entities()
+        self._game_interface.update_level()
+        self._stats_interface.refresh()
+        self.init_timer()
+        self.toggle_freeze(False)
 
     def _on_exit(self, _: Event, __: int) -> None:
         self.exit()
