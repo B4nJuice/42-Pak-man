@@ -1,7 +1,7 @@
 UV_RUN	= uv run
 MYPY	= $(UV_RUN) -m mypy
 FLAKE8	= $(UV_RUN) -m flake8
-CONFIG	:= config.json
+CONFIG	:= config.jsonc
 
 ARGS	?=
 

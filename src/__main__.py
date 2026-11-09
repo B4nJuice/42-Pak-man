@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 
 from src.config.config_manager import ConfigManager
@@ -26,12 +28,17 @@ def init_pygame() -> None:
     )
 
 
-def main(verbose: bool, logger: Logger) -> None:
+def main(args: list[str], verbose: bool, logger: Logger) -> None:
     from src.app import App
 
     logger.log('Starting Pak-man')
 
-    config: ConfigManager = ConfigManager('config.jsonc', verbose)
+    config_file: str = (
+        args[0]
+        if len(args) > 0
+        else 'config.jsonc'
+    )
+    config: ConfigManager = ConfigManager(config_file, verbose)
 
     init_pygame()
     pygame_screen = pygame.display.set_mode(
@@ -111,6 +118,6 @@ if __name__ == '__main__':
 
     logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
     try:
-        main(verbose, logger)
+        main(sys.argv[1:], verbose, logger)
     except BaseError as e:
         logger.error(str(e))
