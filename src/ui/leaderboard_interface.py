@@ -1,4 +1,4 @@
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from math import floor
 from typing import TYPE_CHECKING
 
@@ -27,6 +27,8 @@ class LeaderboardInterface(Interface):
     layer: MeshLayer
 
     table_entry: list[Button]
+    hovered_entry: int
+    hovered_button: Button | None
 
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
@@ -91,7 +93,29 @@ class LeaderboardInterface(Interface):
 
         self.layer.meshes.extend(_how_to_play_texts())
 
+        self.layer.meshes.append(Button(
+            position=Position(
+                size.get(1016),
+                size.get(92.5)
+            ),
+            width=size.get(104),
+            height=size.get(36),
+            normal_color=Color(*config.leaderboard_bg_secondary),
+            border_color=Color(*config.leaderboard_border),
+            border_thickness=size.get(1),
+            on_click=self._exit,
+            texts=[
+                ButtonTextConfig(
+                    text='ALL TIME',
+                    font=fonts.get(FontKey.TITLE_SECONDARY_9),
+                    color=Color(*config.leaderboard_text_accent),
+                    offset_y=size.get(5),
+                )
+            ]
+        ))
+
         self.table_entry = []
+        self.hovered_entry = 3
         entry_y: float = size.get(219)
         w, h = size.get(960), size.get(46)
         x_text_pos: int = w // 2
@@ -164,6 +188,7 @@ class LeaderboardInterface(Interface):
                 border_color=Color(*config.leaderboard_border),
                 hover_border_color=Color(*config.leaderboard_border_accent),
                 border_thickness=size.get(1),
+                on_hover=self._hover_callback(idx),
                 texts=[
                     ButtonTextConfig(
                         text=f'{idx+1:02d}',
@@ -228,7 +253,9 @@ class LeaderboardInterface(Interface):
                 ]
             )
             self.table_entry.append(button)
-            if idx == 3:
+
+            if idx == self.hovered_entry:
+                self.hovered_button = button
                 button.set_hovered(True)
 
         for entry in self.table_entry:
@@ -300,6 +327,27 @@ class LeaderboardInterface(Interface):
             self._exit()
             return True
         return False
+
+    def _update_selection(self) -> None:
+        for button in self.table_entry:
+            button.set_hovered(
+                button == self.table_entry[self.hovered_entry]
+            )
+
+    def _hover_callback(self, index: int) -> Callable[[], None]:
+        def hover() -> None:
+            self._hover_button(index)
+            self.hovered_entry = index
+            self._update_selection()
+        return hover
+
+    def _hover_button(self, index: int) -> None:
+        if self.table_entry[index] is self.hovered_button:
+            return
+
+        self.hovered_button = self.table_entry[index]
+        for button in self.table_entry:
+            button.set_hovered(False)
 
     def _update_entries(self) -> None:
         for button, entry in zip(
