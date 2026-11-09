@@ -314,20 +314,25 @@ class GameoverInterface(Interface):
         for button in self.buttons:
             self.layer.meshes.append(button)
 
-    def open(
+    def update_values(
         self,
-        final_score: int | str,
-        time_survived: int | str,
-        level_reached: int | str,
-        ghosts_defeated: int | str,
-        pellets_eaten: int | str,
+        final_score: int,
+        time_survived: int,
+        level_reached: int,
+        ghosts_defeated: int,
+        pellets_eaten: int,
     ) -> None:
-        self.final_score.refresh(str(final_score))
-        self.time_survived.refresh(str(time_survived))
-        self.level_reached.refresh(str(level_reached))
-        self.ghosts_defeated.refresh(str(ghosts_defeated))
-        self.pellets_eaten.refresh(str(pellets_eaten))
-        self.display()
+        self.final_score.refresh(f'{final_score:,}')
+        self.time_survived.refresh(
+            f'{time_survived // 60:02}:{time_survived % 60:02}'
+        )
+        self.level_reached.refresh(f'{level_reached:,}')
+        self.ghosts_defeated.refresh(f'{ghosts_defeated:,}')
+        self.pellets_eaten.refresh(f'{pellets_eaten:,}')
+
+    def display(self) -> None:
+        self.update_values(*self.game.get_victory_values())
+        super().display()
 
     def _update_selection(self) -> None:
         for button in self.buttons:

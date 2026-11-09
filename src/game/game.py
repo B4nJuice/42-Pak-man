@@ -57,6 +57,10 @@ class Game:
     _freeze_ghost: bool
     _timer: Timer
     _level_index: int
+    _score: float
+    _time_survived: float
+    _ghosts_defeated: int
+    _pellets_eaten: int
 
     # _settings_interface: SettingsInterface
 
@@ -69,6 +73,10 @@ class Game:
         self.set_status(GameStatus.INITIALIZING)
 
         self._level_index = 0
+        self._score = 0
+        self._time_survived = 0
+        self._ghosts_defeated = 0
+        self._pellets_eaten = 0
 
         self._set_config(config)
         self._set_screen(screen)
@@ -143,6 +151,7 @@ class Game:
         self.toggle_freeze(self._freeze_ghost)
 
     def update(self, dt: float) -> None:
+        self._time_survived += dt
         self._timer.update(dt)
         self._level.update(dt)
         self.refresh_maze()
@@ -166,6 +175,22 @@ class Game:
                 ghost.tile = ghost.get_spawn_tile()
 
         pygame.display.flip()
+
+    def record_collection(self, reward: float, ghost: bool = False) -> None:
+        self._score += reward
+        if ghost:
+            self._ghosts_defeated += 1
+        else:
+            self._pellets_eaten += 1
+
+    def get_victory_values(self) -> tuple[int, int, int, int, int]:
+        return (
+            round(self._score),
+            round(self._time_survived),
+            self._player._actual_level,
+            self._ghosts_defeated,
+            self._pellets_eaten,
+        )
 
     def refresh_maze(self) -> None:
         for e in self._level._to_register:
