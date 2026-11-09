@@ -307,7 +307,6 @@ class Game:
             GameStatus.AMELIORATION,
             GameStatus.CHEAT_MENU,
             GameStatus.HOWTOPLAY,
-            GameStatus.SETTINGS,
         ]
         self._interface_manager.set_interface(
             gameplay_statuses,
@@ -416,15 +415,9 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
-        if (
-            self._settings_interface.handle_key(event.key) or
-            self._cheat_interface.handle_key(event.key) or
-            self.get_status() == GameStatus.AMELIORATION
-            and self._amelioration_interface.handle_key(event.key) or
-            self.get_status() == GameStatus.PAUSED
-            and self._escape_interface.handle_key(event.key)
-        ):
-            return
+        for interface in self._interface_manager.get_interfaces():
+            if interface.handle_key(event.key):
+                return
 
         if self._app.key_manager.is_pressed_event(
             ActionKey.BACK_PAUSE_RESUME,

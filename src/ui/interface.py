@@ -22,6 +22,9 @@ class Interface(ABC):
     def display(self) -> None:
         self.hidden = False
 
+    def handle_key(self, key: int) -> bool:
+        return False
+
     @abstractmethod
     def get_layer(self) -> MeshLayer:
         ...

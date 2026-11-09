@@ -29,6 +29,9 @@ class InterfaceManager:
             for _status in status:
                 self.set_interface(_status, interface)
 
+    def get_interfaces(self) -> list[Interface]:
+        return self._interfaces.get(self._game.get_status()) or []
+
     def refresh_interfaces(self) -> None:
         status: GameStatus = self._game.get_status()
         if status not in self._interfaces:
