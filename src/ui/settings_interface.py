@@ -1,9 +1,11 @@
 from collections.abc import Callable, Iterator
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pygame
 
 from src.app import App
+from src.errors import PackError
 from src.fonts import FontKey
 from src.graphics import Color, Mesh, Position
 from src.graphics.meshes import Line, Plane
@@ -34,6 +36,7 @@ class SettingsInterface(Interface):
     _capture_action: ActionKey | None
     _capture_slot: int | None
     _control_buttons: list[Button]
+    _pending_pack_path: Path
 
     def __init__(self, game: 'Game') -> None:
         super().__init__(game)
@@ -334,6 +337,33 @@ class SettingsInterface(Interface):
                     'resolution',
                     resolution_values[value_id]
                 )
+            )
+
+            pack_paths = self.app.texture.get_available_pack_paths()
+            pack_labels = [
+                'DEFAULT' if path == pack_paths[0] else path.name.upper()
+                for path in pack_paths
+            ]
+            current_pack = self.app.texture.get_pack().root
+            current_pack_id = next(
+                (
+                    idx
+                    for idx, path in enumerate(pack_paths)
+                    if path == current_pack
+                ),
+                0,
+            )
+            self._pending_pack_path = pack_paths[current_pack_id]
+
+            def _load_pack(pack_id: int) -> None:
+                self._pending_pack_path = pack_paths[pack_id]
+
+            yield make(
+                2,
+                'Texture pack',
+                pack_labels,
+                current_pack_id,
+                _load_pack
             )
 
         for display_setting in _display_settings():
@@ -677,6 +707,15 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _apply(self) -> None:
+        try:
+            if self._pending_pack_path == self.app.texture.get_available_pack_paths()[0]:
+                if self.app.texture.get_pack().root != self._pending_pack_path:
+                    self.game.unload_pack()
+            elif self.app.texture.get_pack().root != self._pending_pack_path:
+                self.game.load_pack(str(self._pending_pack_path))
+        except PackError:
+            return
+
         self.app.settings.save()
         self._exit()
 
