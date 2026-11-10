@@ -7,7 +7,6 @@ from src.config import ConfigModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.core.interface_manager import InterfaceManager
-from src.errors import PackError
 from src.game.ameliorations.amelioration import Amelioration
 from src.game.characters import (
     BlinkyGhost,
@@ -17,10 +16,9 @@ from src.game.characters import (
     PinkyGhost,
     Player,
 )
-from src.game.game_status import GameStatus
+from src.game.game_status import GameStatus, InterfaceStatus
 from src.game.items import PacGum, SuperPacGum
 from src.graphics.screen import Screen
-from src.settings.action_key import ActionKey
 from src.ui import (
     AmeliorationInterface,
     EscapeInterface,
@@ -49,6 +47,7 @@ class Game:
     _game_interface: GameInterface
     _cheat_interface: CheatInterface
     _event_handler: EventHandler
+    _status_history: list[GameStatus]
     _config: ConfigModel
     _status: GameStatus
     _screen: Screen
@@ -75,7 +74,9 @@ class Game:
 
         self._interface_manager = InterfaceManager(self)
 
-        self.set_status(GameStatus.SAVE_RUN)
+        self._status_history = []
+        self._status = GameStatus.IDLE
+        self.set_interface_status(InterfaceStatus.LOBBY)
 
         self._level_index = 0
         self._score = 0
@@ -127,9 +128,39 @@ class Game:
     def get_godmod_status(self) -> bool:
         return self._player._godmod
 
-    def set_status(self, status: GameStatus) -> None:
+    def set_status(self, status: GameStatus, remember: bool = True) -> None:
+        if remember and self._status is not status:
+            self._status_history.append(self._status)
+
         self._status = status
-        self._interface_manager.refresh_interfaces()
+        interface_status = {
+            GameStatus.RUNNING: InterfaceStatus.RUNNING,
+            GameStatus.PAUSED: InterfaceStatus.PAUSED,
+            GameStatus.INITIALIZING: InterfaceStatus.INITIALIZING,
+            GameStatus.AMELIORATION: InterfaceStatus.AMELIORATION,
+            GameStatus.VICTORY: InterfaceStatus.VICTORY,
+            GameStatus.GAMEOVER: InterfaceStatus.GAMEOVER,
+        }.get(status)
+        if interface_status is not None:
+            self._interface_manager.set_status(interface_status)
+
+        if status in (GameStatus.GAMEOVER, GameStatus.VICTORY):
+            rank = self._app.leaderboard.snapshot(round(self._score))
+            if rank:
+                self.set_interface_status(InterfaceStatus.SAVE_RUN)
+
+    def set_back_status(self) -> bool:
+        if not self._status_history:
+            return False
+        self.set_status(self._status_history.pop(), remember=False)
+
+        return True
+
+    def set_interface_status(self, status: InterfaceStatus) -> None:
+        self._interface_manager.set_status(status)
+
+    def get_interface_status(self) -> InterfaceStatus | None:
+        return self._interface_manager.get_status()
 
     def get_status(self) -> GameStatus:
         return self._status
@@ -310,12 +341,12 @@ class Game:
         self._save_run_interface = SaveRunInterface(self)
 
         gameplay_statuses = [
-            GameStatus.RUNNING,
-            GameStatus.INITIALIZING,
-            GameStatus.PAUSED,
-            GameStatus.AMELIORATION,
-            GameStatus.CHEAT_MENU,
-            GameStatus.HOWTOPLAY,
+            InterfaceStatus.RUNNING,
+            InterfaceStatus.INITIALIZING,
+            InterfaceStatus.PAUSED,
+            InterfaceStatus.AMELIORATION,
+            InterfaceStatus.CHEAT_MENU,
+            InterfaceStatus.HOWTOPLAY,
         ]
         self._interface_manager.set_interface(
             gameplay_statuses,
@@ -326,47 +357,47 @@ class Game:
             self._stats_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.PAUSED,
+            InterfaceStatus.PAUSED,
             self._escape_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.AMELIORATION,
+            InterfaceStatus.AMELIORATION,
             self._amelioration_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.CHEAT_MENU,
+            InterfaceStatus.CHEAT_MENU,
             self._cheat_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.VICTORY,
+            InterfaceStatus.VICTORY,
             self._victory_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.GAMEOVER,
+            InterfaceStatus.GAMEOVER,
             self._gameover_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.VICTORY,
+            InterfaceStatus.VICTORY,
             self._victory_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.SAVE_RUN,
+            InterfaceStatus.SAVE_RUN,
             self._save_run_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.HOWTOPLAY,
+            InterfaceStatus.HOWTOPLAY,
             self._howtoplay_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.LEADERBOARD,
+            InterfaceStatus.LEADERBOARD,
             self._leaderboard_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.SETTINGS,
+            InterfaceStatus.SETTINGS,
             self._settings_interface
         )
         self._interface_manager.set_interface(
-            GameStatus.LOBBY,
+            InterfaceStatus.LOBBY,
             self._lobby_interface
         )
 
@@ -442,32 +473,21 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
-        for interface in self._interface_manager.get_interfaces():
+        interfaces = self._interface_manager.get_interfaces()
+        print(interfaces)
+        for interface in interfaces:
             if interface.handle_key(event.key):
                 return
 
-        if self._app.key_manager.is_pressed_event(
-            ActionKey.BACK_PAUSE_RESUME,
-            event
-        ):
-            game_status: GameStatus = self.get_status()
-            if game_status == GameStatus.PAUSED:
-                self.set_status(GameStatus.RUNNING)
-            elif game_status != GameStatus.AMELIORATION:
-                self.set_status(GameStatus.PAUSED)
-
-        match event.key:
-            case pygame.K_F1:
-                self._cheat_interface.action_toggle()
-            case pygame.K_F9:
-                try:
-                    self.load_pack('textures/reverse-textures')
-                except PackError as e:
-                    self._logger.warning(
-                        f'Cannot load ressource pack: {str(e)!r}'
-                    )
-            case pygame.K_F10:
-                self.unload_pack()
+        # if self._app.key_manager.is_pressed_event(
+        #     ActionKey.BACK_PAUSE_RESUME,
+        #     event
+        # ):
+        #     game_status: GameStatus = self.get_status()
+        #     if game_status == GameStatus.PAUSED:
+        #         self.set_status(GameStatus.RUNNING)
+        #     elif game_status != GameStatus.AMELIORATION:
+        #         self.set_status(GameStatus.PAUSED)
 
     def load_pack(self, path: str) -> None:
         self._app.texture.load_pack(path)

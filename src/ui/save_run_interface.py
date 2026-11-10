@@ -5,7 +5,7 @@ import pygame
 from pydantic import ValidationError
 
 from src.fonts import FontKey
-from src.game.game_status import GameStatus
+from src.game.game_status import GameStatus, InterfaceStatus
 from src.graphics.super_meshes import (
     AlignEnum,
     Button,
@@ -246,7 +246,7 @@ class SaveRunInterface(Interface):
                 score=score,
                 victory=(self.game.get_status() == GameStatus.VICTORY)
             )
-            self.game.set_status()
+            self.game.set_interface_status(InterfaceStatus.LOBBY)
         except ValidationError as e:
             self.game._logger.pydantic_warning(e, prefix='Can\'t save run:')
 

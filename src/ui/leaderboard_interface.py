@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from src.app import App
 from src.config.config_model import ConfigModel
 from src.fonts import FontKey
-from src.game.game_status import GameStatus
+from src.game.game_status import InterfaceStatus
 from src.graphics import ButtonState, Color, Position
 from src.graphics.super_meshes import AlignEnum, Button
 from src.graphics.super_meshes.button import ButtonTextConfig
@@ -373,7 +373,7 @@ class LeaderboardInterface(Interface):
             button.refresh()
 
     def _exit(self) -> None:
-        self.game.set_status(GameStatus.LOBBY)
+        self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def get_layer(self) -> MeshLayer:
         return self.layer

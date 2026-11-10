@@ -64,6 +64,9 @@ class LeaderboardCore:
     def get(self) -> list[LeaderboardEntryModel]:
         return self._leaderboard.entries
 
+    def get_max_score(self) -> int:
+        return max(entry.score for entry in self._leaderboard.entries) or 0
+
     def snapshot(self, score: int, max_rank: int = 10) -> int | None:
         rank = sum(entry.score >= score for entry in self._leaderboard.entries)
         if rank >= max_rank:

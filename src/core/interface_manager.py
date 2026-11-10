@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from src.game.game_status import GameStatus
+from src.game.game_status import InterfaceStatus
 from src.ui.interface import Interface
 
 if TYPE_CHECKING:
@@ -8,25 +8,25 @@ if TYPE_CHECKING:
 
 
 class InterfaceManager:
-    _interfaces: dict[GameStatus, list[Interface]]
+    _interfaces: dict[InterfaceStatus, list[Interface]]
     _interface_list: list[Interface]
     _game: 'Game'
-    _current_status: GameStatus | None
-    _previous_status: GameStatus | None
+    _current_status: InterfaceStatus | None
+    _status_history: list[InterfaceStatus]
 
     def __init__(self, game: 'Game') -> None:
         self._interfaces = {}
         self._interface_list = []
         self._game = game
         self._current_status = None
-        self._previous_status = None
+        self._status_history = []
 
     def set_interface(
                 self,
-                status: list[GameStatus] | GameStatus,
+                status: list[InterfaceStatus] | InterfaceStatus,
                 interface: Interface
             ) -> None:
-        if isinstance(status, GameStatus):
+        if isinstance(status, InterfaceStatus):
             self._interfaces.setdefault(status, []).append(interface)
             self._interface_list.append(interface)
         else:
@@ -34,16 +34,32 @@ class InterfaceManager:
                 self.set_interface(_status, interface)
 
     def get_interfaces(self) -> list[Interface]:
-        return self._interfaces.get(self._game.get_status()) or []
+        if self._current_status is None:
+            return []
+        return self._interfaces.get(self._current_status) or []
 
-    def get_previous_status(self) -> GameStatus | None:
-        return self._previous_status
+    def get_status(self) -> InterfaceStatus | None:
+        return self._current_status
+
+    def set_status(
+            self, status: InterfaceStatus, remember: bool = True
+            ) -> None:
+        if status == self._current_status:
+            return
+        if remember and self._current_status is not None:
+            self._status_history.append(self._current_status)
+        self._current_status = status
+        self.refresh_interfaces()
+
+    def back(self) -> bool:
+        if not self._status_history:
+            return False
+        self._current_status = self._status_history.pop()
+        self.refresh_interfaces()
+        return True
 
     def refresh_interfaces(self) -> None:
-        status: GameStatus = self._game.get_status()
-        if status != self._current_status:
-            self._previous_status = self._current_status
-            self._current_status = status
+        status = self._current_status
         if status not in self._interfaces:
             return
         target_interfaces: list[Interface] = self._interfaces[status]

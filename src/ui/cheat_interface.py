@@ -1,10 +1,12 @@
 from typing import TYPE_CHECKING, Any
 
+import pygame
+
 from src.core.displayable import SimpleDisplayable
 from src.fonts.font_manager import FontKey
 from src.game.ameliorations import Amelioration
 from src.game.characters.player import Player
-from src.game.game_status import GameStatus
+from src.game.game_status import InterfaceStatus
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import (
     AlignEnum,
@@ -37,7 +39,6 @@ from .interface import Interface
 class CheatInterface(Interface):
     logger: Logger
     game: 'Game'
-    prev_game_status: GameStatus
     layer: MeshLayer
 
     time_speed_active: float
@@ -837,15 +838,14 @@ class CheatInterface(Interface):
         self.logger.info(f'Freeze Ghosts: {"ON" if value else "OFF"}')
 
     def action_toggle(self) -> None:
-        if self.game.get_status() == GameStatus.CHEAT_MENU:
-            self.game.set_status(self.prev_game_status)
+        if self.game.get_interface_status() == InterfaceStatus.CHEAT_MENU:
+            self.game._interface_manager.back()
             self.logger.info('Cheat menu closed')
             return
 
         self.sync_cheat_toggles()
         self.refresh_cheat_info()
-        self.prev_game_status = self.game.get_status()
-        self.game.set_status(GameStatus.CHEAT_MENU)
+        self.game.set_interface_status(InterfaceStatus.CHEAT_MENU)
         self.logger.info(
             f'Cheat menu opened ({self.get_active_cheats_count()} active)'
         )
@@ -856,6 +856,9 @@ class CheatInterface(Interface):
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
+        if key == pygame.K_F1:
+            self.action_toggle()
+
         if key in self.game._app.key_manager.get_keys(
                     ActionKey.BACK_PAUSE_RESUME
                 ):

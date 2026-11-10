@@ -156,7 +156,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         super().on_collision_exit(other)
 
     def try_move(self, direction: Direction, force: bool = False) -> bool:
-        if self._game._status == GameStatus.INITIALIZING:
+        if self._game.get_status() == GameStatus.INITIALIZING:
             self._game.set_status(GameStatus.RUNNING)
         return super().try_move(direction, self._noclip or force)
 
@@ -169,7 +169,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
-        if self._game._status not in [
+        if self._game.get_status() not in [
                     GameStatus.RUNNING,
                     GameStatus.INITIALIZING
                 ]:

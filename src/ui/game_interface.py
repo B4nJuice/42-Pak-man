@@ -1,5 +1,10 @@
 from typing import TYPE_CHECKING, cast
 
+import pygame
+
+from src.game.game_status import GameStatus, InterfaceStatus
+from src.settings import ActionKey
+
 if TYPE_CHECKING:
     from src.game import Game
 
@@ -157,3 +162,25 @@ class GameInterface(Interface):
 
     def get_layer(self) -> MeshLayer:
         return self.layer
+
+    def handle_key(self, key: int) -> bool:
+        match key:
+            case pygame.K_F1:
+                self.game._cheat_interface.action_toggle()
+
+        if self.game.get_status() not in [
+            GameStatus.RUNNING,
+            GameStatus.INITIALIZING
+        ] or self.game.get_interface_status() in [
+            InterfaceStatus.CHEAT_MENU,
+            InterfaceStatus.AMELIORATION
+        ]:
+            return False
+
+        if key in self.game._app.key_manager.get_keys(
+            ActionKey.BACK_PAUSE_RESUME
+        ):
+            self.game.set_status(GameStatus.PAUSED)
+            return True
+
+        return super().handle_key(key)
