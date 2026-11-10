@@ -7,6 +7,7 @@ import pygame
 from src.app import App
 from src.errors import PackError
 from src.fonts import FontKey
+from src.game.game_status import InterfaceStatus
 from src.graphics import Color, Mesh, Position
 from src.graphics.meshes import Line, Plane
 from src.graphics.super_meshes import AlignEnum, Button, Rectangle
@@ -697,11 +698,8 @@ class SettingsInterface(Interface):
         self._refresh_control_buttons()
 
     def _exit(self) -> None:
-        previous_status = self.game._interface_manager.get_previous_status()
-        if previous_status is None:
-            self.hide()
-            return
-        self.game.set_status(previous_status)
+        if not self.game._interface_manager.back():
+            self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def _restore_default(self) -> None:
         self.app.settings.get().controls = ControlSettingsModel()
