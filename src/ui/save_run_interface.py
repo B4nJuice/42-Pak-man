@@ -1,7 +1,11 @@
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
+import pygame
+from pydantic import ValidationError
+
 from src.fonts import FontKey
+from src.game.game_status import GameStatus
 from src.graphics.super_meshes import (
     AlignEnum,
     Button,
@@ -24,6 +28,10 @@ from .interface import Interface
 class SaveRunInterface(Interface):
     logger: Logger
     game: 'Game'
+
+    _score_buttons: Button
+    _input: Button
+    _input_value: str
 
     def __init__(self, game: 'Game') -> None:
         self.logger = Logger(
@@ -162,6 +170,7 @@ class SaveRunInterface(Interface):
         )
         self.layer.meshes.append(self._score_buttons)
 
+        self._input_value = ''
         self._input = Button(
             position=Position(
                 align_left,
@@ -229,12 +238,36 @@ class SaveRunInterface(Interface):
         self._score_buttons.texts[1].text = f'{score:,} PTS'
 
     def _submit(self) -> None:
-        pass
+        score, run_time, _, _, _ = self.game.get_victory_values()
+        try:
+            self.game._app.leaderboard.add_run(
+                name=self._input_value.upper().strip(),
+                run_time=run_time,
+                score=score,
+                victory=(self.game.get_status() == GameStatus.VICTORY)
+            )
+            self.game.set_status()
+        except ValidationError as e:
+            self.game._logger.pydantic_warning(e, prefix='Can\'t save run:')
+
+    def _update_input(self) -> None:
+        self._input.texts[0].text = (
+            self._input_value.upper() or 'Enter your nickname'
+        )
+        self._input.refresh()
 
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
 
+        if key == pygame.K_BACKSPACE:
+            self._input_value = self._input_value[:-1]
+        elif key >= pygame.K_a and key <= pygame.K_z or key == pygame.K_SPACE or (key >= pygame.K_0 and key <= pygame.K_9):
+           self._input_value += chr(key)
+        elif key == pygame.K_RETURN:
+            self._submit()
+
+        self._update_input()
         return False
 
     def get_layer(self) -> MeshLayer:

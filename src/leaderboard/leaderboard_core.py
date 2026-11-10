@@ -44,6 +44,7 @@ class LeaderboardCore:
         added: bool = self._leaderboard.add(entry)
         if added:
             self.save()
+            self._logger.info('New entry added to leaderboard.')
         return added
 
     def add_run(
