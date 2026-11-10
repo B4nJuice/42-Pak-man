@@ -140,6 +140,7 @@ class Game:
             GameStatus.AMELIORATION: InterfaceStatus.AMELIORATION,
             GameStatus.VICTORY: InterfaceStatus.VICTORY,
             GameStatus.GAMEOVER: InterfaceStatus.GAMEOVER,
+            GameStatus.CHEAT_MENU: InterfaceStatus.CHEAT_MENU,
         }.get(status)
         if interface_status is not None:
             self._interface_manager.set_status(interface_status)
@@ -152,8 +153,8 @@ class Game:
     def set_back_status(self) -> bool:
         if not self._status_history:
             return False
-        self.set_status(self._status_history.pop(), remember=False)
 
+        self.set_status(self._status_history.pop(), remember=False)
         return True
 
     def set_interface_status(self, status: InterfaceStatus) -> None:

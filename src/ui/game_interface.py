@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, cast
 
 import pygame
 
-from src.game.game_status import GameStatus, InterfaceStatus
+from src.game.game_status import GameStatus
 from src.settings import ActionKey
 
 if TYPE_CHECKING:
@@ -164,18 +164,15 @@ class GameInterface(Interface):
         return self.layer
 
     def handle_key(self, key: int) -> bool:
-        match key:
-            case pygame.K_F1:
-                self.game._cheat_interface.action_toggle()
-
         if self.game.get_status() not in [
             GameStatus.RUNNING,
             GameStatus.INITIALIZING
-        ] or self.game.get_interface_status() in [
-            InterfaceStatus.CHEAT_MENU,
-            InterfaceStatus.AMELIORATION
         ]:
             return False
+
+        match key:
+            case pygame.K_F1:
+                self.game.set_status(GameStatus.CHEAT_MENU)
 
         if key in self.game._app.key_manager.get_keys(
             ActionKey.BACK_PAUSE_RESUME
