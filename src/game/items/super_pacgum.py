@@ -29,7 +29,7 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
             level=level,
             solid=False,
             radius=0.15,
-            proportion=0.3,
+            proportion=0.75,
             reward=reward,
             app=app
         )
