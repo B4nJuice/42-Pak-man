@@ -78,25 +78,13 @@ class HowToPLayInterface(Interface):
                 70 + 40
             )
             yield make(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'CLEAR THE MAZE. OUTRUN THE GHOSTS.',
                 FontKey.TEXT_13,
                 config.how_to_play_text_secondary,
                 128 + 15
             )
 
         self.layer.meshes.extend(_how_to_play_texts())
-
-        # w, h = (size.get(356), size.get(42))
-        # self.layer.meshes.append(SimpleDisplayable(
-        #     app=game._app,
-        #     texture_key=TextureKeys.LOBBY_ASSETS_PACMAN_GHOST,
-        #     position=Position(
-        #         size.get(462) + w / 2,
-        #         size.get(292) + h / 2
-        #     ),
-        #     height=h,
-        #     width=w
-        # ))
 
         button_y: int = size.get(606)
         button_w: int = size.get(260)
@@ -139,9 +127,9 @@ class HowToPLayInterface(Interface):
                 '01',
                 'THE MAZE',
                 [
-                    'Lorem ipsum dolor sit amet, consectetur',
-                    'adipiscing elit. Sed do eiusmod tempor',
-                    'incididunt ut labore et dolore magna aliqua.'
+                    'Eat every pellet to clear the level.',
+                    'Use WASD or the arrow keys to move.',
+                    'Clear all levels to win the run.'
                 ],
                 TextureKeys.HOW_TO_PLAY_01,
                 align_left,
@@ -151,9 +139,9 @@ class HowToPLayInterface(Interface):
                 '02',
                 'GHOSTS',
                 [
-                    'Ut enim ad minim veniam, quis nostrud',
-                    'exercitation ullamco laboris nisi ut aliquip ex',
-                    'ea commodo consequat.'
+                    'Avoid ghosts while they are chasing you.',
+                    'Super pellets make ghosts vulnerable.',
+                    'Eat frightened ghosts for extra points.'
                 ],
                 TextureKeys.HOW_TO_PLAY_02,
                 align_right,
@@ -163,9 +151,9 @@ class HowToPLayInterface(Interface):
                 '03',
                 'SKILLS',
                 [
-                    'Duis aute irure dolor in reprehenderit in',
-                    'voluptate velit esse cillum dolore eu fugiat',
-                    'nulla pariatur.'
+                    'Earn experience as you survive.',
+                    'Choose upgrades when you level up.',
+                    'Build up to three different skills.'
                 ],
                 TextureKeys.HOW_TO_PLAY_03,
                 align_left,
@@ -175,9 +163,15 @@ class HowToPLayInterface(Interface):
                 '04',
                 'STATS',
                 [
-                    'Excepteur sint occaecat cupidatat non',
-                    'proident, sunt in culpa qui officia deserunt',
-                    'mollit anim id est laborum.'
+                    (
+                        'Normal pellets are worth '
+                        f'{config.pacgum_reward:g} points.'
+                    ),
+                    (
+                        'Super pellets are worth '
+                        f'{config.super_pacgum_reward:g} points.'
+                    ),
+                    f'Ghosts are worth {config.ghost_reward:g} points each.'
                 ],
                 TextureKeys.HOW_TO_PLAY_04,
                 align_right,
@@ -234,7 +228,7 @@ class HowToPLayInterface(Interface):
         return False
 
     def _exit(self) -> None:
-        print('TODO: WARRNING !!!! : exit how to play interface')
+        self.game._interface_manager.back()
 
     def get_layer(self) -> MeshLayer:
         return self.layer

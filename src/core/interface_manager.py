@@ -37,7 +37,7 @@ class InterfaceManager:
     def get_interfaces(self) -> list[Interface]:
         if self._current_status is None:
             return []
-        return self._interfaces.get(self._current_status) or []
+        return (self._interfaces.get(self._current_status) or [])[::-1]
 
     def get_status(self) -> InterfaceStatus | None:
         return self._current_status
