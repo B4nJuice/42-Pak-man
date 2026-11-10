@@ -32,6 +32,7 @@ class InterfaceManager:
         else:
             for _status in status:
                 self.set_interface(_status, interface)
+        interface.hide()
 
     def get_interfaces(self) -> list[Interface]:
         if self._current_status is None:

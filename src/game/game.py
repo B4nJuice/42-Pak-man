@@ -231,9 +231,12 @@ class Game:
         else:
             self._pellets_eaten += 1
 
+    def get_score(self) -> int:
+        return round(self._score)
+
     def get_victory_values(self) -> tuple[int, int, int, int, int]:
         return (
-            round(self._score),
+            self.get_score(),
             round(self._time_survived),
             self._player._actual_level,
             self._ghosts_defeated,
@@ -340,13 +343,15 @@ class Game:
         self._lobby_interface = LobbyInterface(self)
         self._save_run_interface = SaveRunInterface(self)
 
-        gameplay_statuses = [
+        gameplay_statuses: list[InterfaceStatus] = [
             InterfaceStatus.RUNNING,
             InterfaceStatus.INITIALIZING,
             InterfaceStatus.PAUSED,
             InterfaceStatus.AMELIORATION,
             InterfaceStatus.CHEAT_MENU,
-            InterfaceStatus.HOWTOPLAY,
+            InterfaceStatus.VICTORY,
+            InterfaceStatus.GAMEOVER,
+            InterfaceStatus.SAVE_RUN
         ]
         self._interface_manager.set_interface(
             gameplay_statuses,

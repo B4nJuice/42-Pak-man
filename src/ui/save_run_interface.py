@@ -5,7 +5,7 @@ import pygame
 from pydantic import ValidationError
 
 from src.fonts import FontKey
-from src.game.game_status import GameStatus, InterfaceStatus
+from src.game.game_status import GameStatus
 from src.graphics.super_meshes import (
     AlignEnum,
     Button,
@@ -227,7 +227,7 @@ class SaveRunInterface(Interface):
         ))
 
     def display(self) -> None:
-        score, _, _, _, _ = self.game.get_victory_values()
+        score = self.game.get_score()
         rank = self.game._app.leaderboard.snapshot(score)
         self._update_score(rank or 10, score)
 
@@ -236,6 +236,7 @@ class SaveRunInterface(Interface):
     def _update_score(self, rank: int, score: int) -> None:
         self._score_buttons.texts[0].text = f'#{rank+1:02d}'
         self._score_buttons.texts[1].text = f'{score:,} PTS'
+        self._score_buttons.refresh()
 
     def _submit(self) -> None:
         score, run_time, _, _, _ = self.game.get_victory_values()
@@ -246,7 +247,7 @@ class SaveRunInterface(Interface):
                 score=score,
                 victory=(self.game.get_status() == GameStatus.VICTORY)
             )
-            self.game.set_interface_status(InterfaceStatus.LOBBY)
+            self.game._interface_manager.back()
         except ValidationError as e:
             self.game._logger.pydantic_warning(e, prefix='Can\'t save run:')
 
@@ -262,8 +263,12 @@ class SaveRunInterface(Interface):
 
         if key == pygame.K_BACKSPACE:
             self._input_value = self._input_value[:-1]
-        elif key >= pygame.K_a and key <= pygame.K_z or key == pygame.K_SPACE or (key >= pygame.K_0 and key <= pygame.K_9):
-           self._input_value += chr(key)
+        elif (
+            key >= pygame.K_a and key <= pygame.K_z
+        ) or key == pygame.K_SPACE or (
+            key >= pygame.K_0 and key <= pygame.K_9
+        ):
+            self._input_value += chr(key)
         elif key == pygame.K_RETURN:
             self._submit()
 

@@ -64,7 +64,7 @@ class LobbyInterface(Interface):
             ),
             align=AlignEnum.LEFT
         )
-        self._update_max_score()
+        # self._update_max_score()
         self.layer.meshes.append(self.high_socre)
 
         self.layer.meshes.append(FontSequence(
