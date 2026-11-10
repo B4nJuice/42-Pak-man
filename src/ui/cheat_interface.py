@@ -6,7 +6,6 @@ from src.core.displayable import SimpleDisplayable
 from src.fonts.font_manager import FontKey
 from src.game.ameliorations import Amelioration
 from src.game.characters.player import Player
-from src.game.game_status import InterfaceStatus
 from src.graphics.meshes.line import Line
 from src.graphics.super_meshes import (
     AlignEnum,
@@ -156,7 +155,7 @@ class CheatInterface(Interface):
                 *config.pause_menu_button_hover_color
             ),
             border_thickness=size.get(1),
-            on_click=self.hide,
+            on_click=self.close,
             texts=[
                 ButtonTextConfig(
                     text='ESC',
@@ -675,7 +674,7 @@ class CheatInterface(Interface):
             hover_color=Color(*config.pause_menu_button_hover_color),
             border_color=Color(*config.pause_menu_button_hover_color),
             border_thickness=size.get(1),
-            on_click=self.hide,
+            on_click=self.close,
             texts=[
                 ButtonTextConfig(
                     text='> Back to game',
@@ -837,31 +836,30 @@ class CheatInterface(Interface):
         self.refresh_cheat_info()
         self.logger.info(f'Freeze Ghosts: {"ON" if value else "OFF"}')
 
-    def action_toggle(self) -> None:
-        if self.game.get_interface_status() == InterfaceStatus.CHEAT_MENU:
-            self.game._interface_manager.back()
-            self.logger.info('Cheat menu closed')
-            return
-
-        self.sync_cheat_toggles()
-        self.refresh_cheat_info()
-        self.game.set_interface_status(InterfaceStatus.CHEAT_MENU)
+    def display(self) -> None:
         self.logger.info(
             f'Cheat menu opened ({self.get_active_cheats_count()} active)'
         )
 
+        return super().display()
+
     def get_layer(self) -> MeshLayer:
         return self.layer
+
+    def close(self) -> None:
+        self.game.set_back_status()
 
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
+
         if key == pygame.K_F1:
-            self.action_toggle()
+            self.close()
+            return True
 
         if key in self.game._app.key_manager.get_keys(
-                    ActionKey.BACK_PAUSE_RESUME
-                ):
-            self.action_toggle()
+            ActionKey.BACK_PAUSE_RESUME
+        ):
+            self.close()
             return True
         return False

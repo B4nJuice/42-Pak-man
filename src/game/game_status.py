@@ -10,6 +10,7 @@ class GameStatus(Enum):
     AMELIORATION = 4
     VICTORY = 5
     GAMEOVER = 6
+    CHEAT_MENU = 7
 
     @classmethod
     def get_all(cls) -> list["GameStatus"]:
