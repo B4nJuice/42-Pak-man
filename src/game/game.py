@@ -473,21 +473,9 @@ class Game:
         )
 
     def _on_key_down(self, event: Event, _: int) -> None:
-        interfaces = self._interface_manager.get_interfaces()
-        print(interfaces)
-        for interface in interfaces:
+        for interface in self._interface_manager.get_interfaces():
             if interface.handle_key(event.key):
                 return
-
-        # if self._app.key_manager.is_pressed_event(
-        #     ActionKey.BACK_PAUSE_RESUME,
-        #     event
-        # ):
-        #     game_status: GameStatus = self.get_status()
-        #     if game_status == GameStatus.PAUSED:
-        #         self.set_status(GameStatus.RUNNING)
-        #     elif game_status != GameStatus.AMELIORATION:
-        #         self.set_status(GameStatus.PAUSED)
 
     def load_pack(self, path: str) -> None:
         self._app.texture.load_pack(path)
