@@ -44,17 +44,17 @@ class AmeliorationInterface(Interface):
         self._title_font = Font(
             game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
             context,
-            config.amelioration_title_font_size
+            size.get(config.amelioration_title_font_size)
         )
         self._rarity_font = Font(
             game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
             context,
-            config.amelioration_rarity_font_size
+            size.get(config.amelioration_rarity_font_size)
         )
         self._skill_font = Font(
             game._app.texture.get_font(FontKeys.DEFAULT).as_posix(),
             context,
-            config.amelioration_skill_font_size
+            size.get(config.amelioration_skill_font_size)
         )
         self._skill_line_count = max(
             1,
@@ -115,24 +115,27 @@ class AmeliorationInterface(Interface):
         )
 
         panel_width = min(
-            max(round(screen_width * 0.72), 520), screen_width - 32
+            max(round(screen_width * 0.72), size.get(520)),
+            screen_width - size.get(32)
         )
         button_width = round(panel_width * 0.88)
-        line_gap = 4
+        line_gap = size.get(4)
         content_height = (
-            config.amelioration_title_font_size
-            + config.amelioration_rarity_font_size
-            + self._skill_line_count * config.amelioration_skill_font_size
+            size.get(config.amelioration_title_font_size)
+            + size.get(config.amelioration_rarity_font_size)
+            + self._skill_line_count * size.get(
+                config.amelioration_skill_font_size
+            )
             + 3 * line_gap
         )
         button_height = max(
-            round(screen_height * 0.18), content_height + 24
+            round(screen_height * 0.18), content_height + size.get(24)
         )
-        button_gap = max(round(screen_height * 0.025), 12)
+        button_gap = max(round(screen_height * 0.025), size.get(12))
         buttons_height = 3 * button_height + 2 * button_gap
-        panel_padding = max(round(screen_height * 0.08), 32)
+        panel_padding = max(round(screen_height * 0.08), size.get(32))
         panel_height = min(
-            buttons_height + 2 * panel_padding, screen_height - 48
+            buttons_height + 2 * panel_padding, screen_height - size.get(48)
         )
         panel_x = (screen_width - panel_width) // 2
         panel_y = (screen_height - panel_height) // 2
@@ -163,7 +166,7 @@ class AmeliorationInterface(Interface):
                 FontSequence,
             ]
         ] = []
-        icon_offset = 12
+        icon_offset = size.get(12)
         icon_size = button_height - 2 * icon_offset
         self._icon_size = icon_size
         text_left = button_x + icon_offset + icon_size + icon_offset
@@ -184,10 +187,13 @@ class AmeliorationInterface(Interface):
             selected_button = Plane(
                 Color(*config.pause_menu_button_color),
                 (
-                    Position(button_x - 8, y - 8),
                     Position(
-                        button_x + button_width + 8,
-                        y + button_height + 8,
+                        button_x - size.get(8),
+                        y - size.get(8)
+                    ),
+                    Position(
+                        button_x + button_width + size.get(8),
+                        y + button_height + size.get(8),
                     )
                 ),
                 OperationEnum.ALPHA,
@@ -209,9 +215,11 @@ class AmeliorationInterface(Interface):
                 Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
-                    y + 12 + config.amelioration_title_font_size
+                    y + size.get(12) + size.get(
+                        config.amelioration_title_font_size
+                    )
                 ),
-                spacing=4,
+                spacing=size.get(4),
                 align=AlignEnum.LEFT,
             )
             rarity = FontSequence(
@@ -220,10 +228,14 @@ class AmeliorationInterface(Interface):
                 Color(*config.pause_menu_text_button),
                 Position(
                     text_left,
-                    y + 12 + config.amelioration_title_font_size
-                    + line_gap + config.amelioration_rarity_font_size
+                    y + size.get(12) + size.get(
+                        config.amelioration_title_font_size
+                    )
+                    + line_gap + size.get(
+                        config.amelioration_rarity_font_size
+                    )
                 ),
-                spacing=2,
+                spacing=size.get(2),
                 align=AlignEnum.LEFT,
             )
             skill_lines = [
@@ -233,15 +245,19 @@ class AmeliorationInterface(Interface):
                     Color(*config.pause_menu_text_button),
                     Position(
                         text_left,
-                        y + 12 + config.amelioration_title_font_size
-                        + config.amelioration_rarity_font_size
+                        y + size.get(12) + size.get(
+                            config.amelioration_title_font_size
+                        )
+                        + size.get(config.amelioration_rarity_font_size)
                         + 2 * line_gap
-                        + config.amelioration_skill_font_size
+                        + size.get(config.amelioration_skill_font_size)
                         + skill_index * (
-                            config.amelioration_skill_font_size + line_gap
+                            size.get(
+                                config.amelioration_skill_font_size
+                            ) + line_gap
                         )
                     ),
-                    spacing=2,
+                    spacing=size.get(2),
                     align=AlignEnum.LEFT,
                 )
                 for skill_index in range(self._skill_line_count)
@@ -252,9 +268,11 @@ class AmeliorationInterface(Interface):
                 Color(*config.pause_menu_text_button),
                 Position(
                     text_right,
-                    y + 12 + config.amelioration_title_font_size
+                    y + size.get(12) + size.get(
+                        config.amelioration_title_font_size
+                    )
                 ),
-                spacing=2,
+                spacing=size.get(2),
                 align=AlignEnum.RIGHT,
             )
             texts = [title, rarity, *skill_lines]

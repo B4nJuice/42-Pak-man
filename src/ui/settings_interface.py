@@ -719,6 +719,10 @@ class SettingsInterface(Interface):
             return
 
         self.app.settings.save()
+
+        self.game._app.size.BASE_WIDTH, self.game._app.size.BASE_HEIGHT =\
+            self.app.settings.refresh_screen_resolution()
+
         self._exit()
 
     def get_layer(self) -> MeshLayer:

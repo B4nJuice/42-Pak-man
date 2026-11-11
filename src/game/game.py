@@ -72,6 +72,8 @@ class Game:
         self._app = app
         self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
 
+        self._app.settings.refresh_screen_resolution()
+
         self._interface_manager = InterfaceManager(self)
 
         self._status_history = []
@@ -477,6 +479,12 @@ class Game:
         self._event_handler.register_listener(
             pygame.MOUSEMOTION, self._screen.hover
         )
+        self._event_handler.register_listener(
+            pygame.VIDEORESIZE, self._on_resize
+        )
+
+    def _on_resize(self, event: Event, _: int) -> None:
+        self._screen.resize(event.w, event.h)
 
     def _on_key_down(self, event: Event, _: int) -> None:
         for interface in self._interface_manager.get_interfaces():

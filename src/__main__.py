@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pygame
@@ -16,6 +17,8 @@ from src.utils.size import SizeCore
 
 
 def init_pygame() -> None:
+    os.environ['SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR'] = '0'
+
     pygame.init()
 
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
@@ -46,7 +49,7 @@ def main(args: list[str], verbose: bool, logger: Logger) -> None:
             config.get_config().screen_width,
             config.get_config().screen_height,
         ),
-        pygame.OPENGL | pygame.DOUBLEBUF  # | pygame.FULLSCREEN,
+        pygame.OPENGL | pygame.DOUBLEBUF,
     )
     pygame.display.set_caption("Pak-man")
 

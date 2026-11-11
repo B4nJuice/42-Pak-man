@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pygame
 from pydantic import ValidationError
 
 from src.settings.settings_model import SettingsModel
@@ -29,6 +30,27 @@ class SettingsManager:
 
         self._settings = settings
         self._logger.info('Settings successfully loaded !')
+
+    def refresh_screen_resolution(self) -> tuple[int, int]:
+        width, height = self.get().display.resolution
+        fs = pygame.FULLSCREEN if self.get().display.full_screen else 0
+
+        max_width, max_height = pygame.display.get_desktop_sizes()[0]
+
+        width = min(width, max_width)
+        height = min(height, max_height)
+
+        pygame.event.post(
+            pygame.event.Event(
+                pygame.VIDEORESIZE, size=(width, height), w=width, h=height
+            )
+        )
+
+        pygame.display.set_mode(
+            (width, height), pygame.OPENGL | pygame.DOUBLEBUF | fs
+        )
+
+        return width, height
 
     def _load_settings_from_file(self) -> SettingsModel | None:
         try:

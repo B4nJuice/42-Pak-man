@@ -18,6 +18,7 @@ from src.graphics.meshes import (
     Plane,
     Polygon,
 )
+from src.graphics.scaling_mode import ScalingMode
 
 
 def get_uniform(
@@ -33,9 +34,19 @@ def _load_shader(name: str) -> str:
 
 
 class GPURenderer:
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(
+        self,
+        width: int,
+        height: int,
+        window_width: int | None = None,
+        window_height: int | None = None,
+        scaling_mode: 'ScalingMode' = ScalingMode.FIT,
+    ) -> None:
         self.width = width
         self.height = height
+        self.window_width = width if window_width is None else window_width
+        self.window_height = height if window_height is None else window_height
+        self.scaling_mode = scaling_mode
         self.context = moderngl.create_context()
 
         self.mesh_program = self.context.program(
@@ -71,6 +82,16 @@ class GPURenderer:
             self.context.framebuffer(color_attachments=texture)
             for texture in self.textures
         ]
+
+    def set_window_size(self, width: int, height: int) -> None:
+        self.window_width = max(0, width)
+        self.window_height = max(0, height)
+
+    def resize(self, width: int, height: int) -> None:
+        self.set_window_size(width, height)
+
+    def set_scaling_mode(self, scaling_mode: 'ScalingMode') -> None:
+        self.scaling_mode = scaling_mode
 
     def _create_screen_quad(self) -> moderngl.VertexArray:
         vertices = np.array(
@@ -490,6 +511,7 @@ class GPURenderer:
             ) -> None:
         self.source_index = 0
         self.target_index = 1
+        self.context.viewport = (0, 0, self.width, self.height)
         self.framebuffers[self.source_index].clear(0.0, 0.0, 0.0, 0.0)
 
         for mesh in self._iter_meshes(meshes):
@@ -504,9 +526,25 @@ class GPURenderer:
                 self.target_index, self.source_index
             )
 
+        if self.window_width == 0 or self.window_height == 0:
+            return
+
         self.context.screen.use()
+        self.context.viewport = (
+            0, 0, self.window_width, self.window_height
+        )
+        self.context.screen.clear(0.0, 0.0, 0.0, 1.0)
         self.textures[self.source_index].use(0)
         get_uniform(self.blit_program, 'source_texture').value = 0
+        get_uniform(self.blit_program, 'logical_size').value = (
+            self.width, self.height
+        )
+        get_uniform(self.blit_program, 'window_size').value = (
+            self.window_width, self.window_height
+        )
+        get_uniform(self.blit_program, 'scaling_mode').value = (
+            self.scaling_mode.value
+        )
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
 
     def release(self) -> None:

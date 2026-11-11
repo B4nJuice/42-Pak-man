@@ -49,6 +49,7 @@ class SkillInterface(Interface):
         self.width = width
         self.height = height
         self.default_value = default_value
+        size = self.game._app.size
 
         self.background = Plane(
             Color(*self.game._config.skill_interface_background_color),
@@ -63,11 +64,9 @@ class SkillInterface(Interface):
             position,
             width,
             height,
-            thickness=2,
+            thickness=size.get(2),
             smooth_end=True
         )
-
-        size = self.game._app.size
 
         self.title = FontSequence(
             title,
@@ -77,7 +76,7 @@ class SkillInterface(Interface):
                 position.x + size.get(8),
                 position.y + size.get(skill_title_font_size)
             ),
-            spacing=1,
+            spacing=size.get(1),
             align=AlignEnum.LEFT
         )
 
@@ -89,7 +88,7 @@ class SkillInterface(Interface):
                 position.x + size.get(8),
                 position.y + size.get(skill_value_font_size)
             ),
-            spacing=1,
+            spacing=size.get(1),
             align=AlignEnum.LEFT,
         )
 
