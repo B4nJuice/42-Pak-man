@@ -12,7 +12,7 @@
 | **Cheat menu** | **Leaderboard** |
 | ![Cheat menu](docs/screenshots/cheat.png) | ![Leaderboard](docs/screenshots/leaderboard.png) |
 
-**Play it:** TODO - itch.io link
+**Play it:** https://69nesta.itch.io/pak-man
 
 **Design mockups (Figma):** [42 - Pakman](https://www.figma.com/design/cSfGNa7qtEZC10juktc8Ys/42---Pakman?node-id=0-1&t=foPbcMUUIEDrhbBq-1)
 
