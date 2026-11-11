@@ -43,6 +43,25 @@ class BoxInterface(Interface):
                 title_font_size: float = 20,
                 value_font_size: float = 22 + 27,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+            title: Title used by the operation.
+            value: Value to assign or apply.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            title_color: Title color used by the operation.
+            value_color: Value color used by the operation.
+            bg_color: Bg color used by the operation.
+            border_color: Border color used by the operation.
+            title_fontkey: Title fontkey used by the operation.
+            value_fontkey: Value fontkey used by the operation.
+            title_font_size: Title font size used by the operation.
+            value_font_size: Value font size used by the operation.
+        """
         super().__init__(game)
         self.layer = MeshLayer()
         self.game = game
@@ -96,8 +115,20 @@ class BoxInterface(Interface):
         self.layer.meshes.append(self.value_f)
 
     def refresh(self, value: str) -> None:
+        """
+        Refresh the rendered state.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.value = value
         self.value_f.set_sequence_text(self.value)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

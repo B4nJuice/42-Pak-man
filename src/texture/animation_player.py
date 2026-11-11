@@ -23,6 +23,14 @@ class AnimationPlayer:
         autoplay: bool = True,
         speed: float = 1.0,
     ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            animation: Animation used by the operation.
+            autoplay: Autoplay used by the operation.
+            speed: Speed used by the operation.
+        """
         self.anim = animation
         self.speed = speed
         self.playing = autoplay
@@ -35,6 +43,15 @@ class AnimationPlayer:
 
     @staticmethod
     def _flatten(anim: Animation) -> list[tuple[TextureFrame, float]]:
+        """
+        Handle flatten.
+
+        Args:
+            anim: Anim used by the operation.
+
+        Returns:
+            The value produced by the flatten operation.
+        """
         items: list[tuple[TextureFrame, float]] = []
         for f in anim.frames:
             if isinstance(f, Animation):
@@ -49,6 +66,9 @@ class AnimationPlayer:
         return items
 
     def _build(self) -> None:
+        """
+        Handle build.
+        """
         t = 0.0
         for frame, d in self._flatten(self.anim):
             t += d
@@ -57,22 +77,40 @@ class AnimationPlayer:
         self._total = t
 
     def play(self) -> None:
+        """
+        Handle play.
+        """
         if self.finished:
             self.time = 0.0
         self.playing = True
 
     def pause(self) -> None:
+        """
+        Handle pause.
+        """
         self.playing = False
 
     def stop(self) -> None:
+        """
+        Handle stop.
+        """
         self.playing = False
         self.time = 0.0
 
     def restart(self) -> None:
+        """
+        Handle restart.
+        """
         self.time = 0.0
         self.playing = True
 
     def seek(self, t: float) -> None:
+        """
+        Handle seek.
+
+        Args:
+            t: Interpolation factor between the two values.
+        """
         if self._total <= 0:
             self.time = 0.0
         elif self.anim.loop:
@@ -81,6 +119,12 @@ class AnimationPlayer:
             self.time = max(0.0, min(t, self._total))
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         if not self.playing or self._total <= 0:
             return
 
@@ -94,17 +138,41 @@ class AnimationPlayer:
 
     @property
     def duration(self) -> float:
+        """
+        Handle duration.
+
+        Returns:
+            The value produced by the duration operation.
+        """
         return self._total
 
     @property
     def finished(self) -> bool:
+        """
+        Handle finished.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return not self.anim.loop and self.time >= self._total
 
     @property
     def frame(self) -> TextureFrame:
+        """
+        Handle frame.
+
+        Returns:
+            The value produced by the frame operation.
+        """
         idx = bisect_right(self._ends, self.time)
         return self._frames[min(idx, len(self._frames) - 1)]
 
     @property
     def texture(self) -> Texture:
+        """
+        Handle texture.
+
+        Returns:
+            The value produced by the texture operation.
+        """
         return self.frame.texture

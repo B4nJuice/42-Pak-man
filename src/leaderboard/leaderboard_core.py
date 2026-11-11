@@ -26,6 +26,13 @@ class LeaderboardCore:
                 path: str = DEFAULT_PATH,
                 verbose: bool = False
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+            verbose: Whether verbose logging is enabled.
+        """
         self._logger = Logger(
             name='Leaderboard',
             color=TColor.BRIGHT_YELLOW,
@@ -41,6 +48,15 @@ class LeaderboardCore:
                 self,
                 entry: LeaderboardEntryModel
             ) -> bool:
+        """
+        Handle add.
+
+        Args:
+            entry: Entry used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         added: bool = self._leaderboard.add(entry)
         if added:
             self.save()
@@ -54,6 +70,18 @@ class LeaderboardCore:
                 run_time: float,
                 victory: bool
             ) -> bool:
+        """
+        Add the run to the collection.
+
+        Args:
+            name: Name assigned to the object or requested value.
+            score: Score to record or compare.
+            run_time: Run time used by the operation.
+            victory: Victory used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self.add(LeaderboardEntryModel(
             name=name,
             score=score,
@@ -62,18 +90,46 @@ class LeaderboardCore:
         ))
 
     def get(self) -> list[LeaderboardEntryModel]:
+        """
+        Handle get.
+
+        Returns:
+            The value produced by the get operation.
+        """
         return self._leaderboard.entries
 
     def get_max_score(self) -> int:
+        """
+        Return the current max score.
+
+        Returns:
+            The current max score.
+        """
         return max(entry.score for entry in self._leaderboard.entries) or 0
 
     def snapshot(self, score: int, max_rank: int = 10) -> int | None:
+        """
+        Return the rank a score would occupy in the leaderboard.
+
+        Args:
+            score: Score to record or compare.
+            max_rank: Maximum leaderboard rank to include in the snapshot.
+
+        Returns:
+            The value produced by the snapshot operation.
+        """
         rank = sum(entry.score >= score for entry in self._leaderboard.entries)
         if rank >= max_rank:
             return None
         return rank
 
     def save(self) -> bool:
+        """
+        Save the associated data.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         try:
             path = Path(self._path)
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -91,6 +147,9 @@ class LeaderboardCore:
         return False
 
     def load(self) -> None:
+        """
+        Load the associated data.
+        """
         leaderboard = self._load_leaderboard_file()
 
         if leaderboard is None:
@@ -112,6 +171,12 @@ class LeaderboardCore:
         )
 
     def _load_leaderboard_file(self) -> LeaderboardModel | None:
+        """
+        Handle load leaderboard file.
+
+        Returns:
+            The value produced by the load leaderboard file operation.
+        """
         try:
             with open(self._path, 'r', encoding='utf-8') as f:
                 leaderboard = LeaderboardModel.model_validate_json(f.read())
@@ -134,9 +199,21 @@ class LeaderboardCore:
         return None
 
     def _generate_empty_leaderboard(self) -> LeaderboardModel:
+        """
+        Handle generate empty leaderboard.
+
+        Returns:
+            The value produced by the generate empty leaderboard operation.
+        """
         return LeaderboardModel()
 
     def get_secret(self) -> bytes:
+        """
+        Return the current secret.
+
+        Returns:
+            The current secret.
+        """
         if self._secret is None:
             self._load_secret()
 
@@ -147,6 +224,9 @@ class LeaderboardCore:
         return self._secret
 
     def _load_secret(self) -> None:
+        """
+        Handle load secret.
+        """
         try:
             with open(SECRET_PATH, 'r') as f:
                 secret = f.read()
@@ -157,6 +237,9 @@ class LeaderboardCore:
             pass
 
     def _save_secret(self) -> None:
+        """
+        Handle save secret.
+        """
         try:
             Path(self._path).parent.mkdir(exist_ok=True)
             with open(SECRET_PATH, 'w', encoding='UTF-8') as f:
@@ -166,14 +249,41 @@ class LeaderboardCore:
             print(e)
 
     def generate_secret(self) -> bytes:
+        """
+        Generate a cryptographic secret for the leaderboard.
+
+        Returns:
+            The value produced by the generate secret operation.
+        """
         return secrets.token_hex(nbytes=16).encode('utf-8')
 
     def _hash_function(self, payload: bytes) -> str:
+        """
+        Handle hash function.
+
+        Args:
+            payload: Bytes to hash or encode.
+
+        Returns:
+            The value produced by the hash function operation.
+        """
         return hmac.new(self.get_secret(), payload, hashlib.sha256).hexdigest()
 
     def _get_first_hash(self) -> str:
+        """
+        Handle get first hash.
+
+        Returns:
+            The value produced by the get first hash operation.
+        """
         return self._hash_function(b'None|0|' + self.get_secret())
 
     def set_path(self, path: str) -> None:
+        """
+        Assign the path.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+        """
         normalized_path = str(Path(path).expanduser().resolve())
         self._path = normalized_path

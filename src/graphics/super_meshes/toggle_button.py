@@ -18,6 +18,15 @@ class ToggleState(Enum):
 
     @classmethod
     def get(cls, value: bool) -> 'ToggleState':
+        """
+        Handle get.
+
+        Args:
+            value: Value to assign or apply.
+
+        Returns:
+            The value produced by the get operation.
+        """
         if value:
             return cls.ACTIVE
         else:
@@ -43,6 +52,15 @@ class ToggleTheme:
                 self,
                 state: ToggleState,
             ) -> ToggleStyle:
+        """
+        Return the current for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current for state.
+        """
         if state is ToggleState.ACTIVE and self.active is not None:
             return self.active
         return self.inactive
@@ -70,6 +88,15 @@ class ToggleTextConfig:
     )
 
     def get_text_for_state(self, state: ToggleState) -> str:
+        """
+        Return the current text for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current text for state.
+        """
         if state is ToggleState.ACTIVE and self.active_text is not None:
             return self.active_text
         if state is ToggleState.INACTIVE and self.inactive_text is not None:
@@ -77,6 +104,15 @@ class ToggleTextConfig:
         return self.text
 
     def get_color_for_state(self, state: ToggleState) -> Color | None:
+        """
+        Return the current color for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current color for state.
+        """
         if state is ToggleState.ACTIVE and self.active_color is not None:
             return self.active_color
         if state is ToggleState.INACTIVE and self.inactive_color is not None:
@@ -84,6 +120,15 @@ class ToggleTextConfig:
         return self.color
 
     def is_visible_for_state(self, state: ToggleState) -> bool:
+        """
+        Check whether the visible for state condition holds.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return state in self.visible_states
 
 
@@ -134,6 +179,33 @@ class ToggleButton(SuperMesh):
                 thumb_size: int | None = None,
                 switch_side: str = "right",
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            inactive_color: Inactive color used by the operation.
+            active_color: Active color used by the operation.
+            inactive_track_color: Inactive track color used by the operation.
+            active_track_color: Active track color used by the operation.
+            thumb_inactive_color: Thumb inactive color used by the operation.
+            thumb_active_color: Thumb active color used by the operation.
+            state: State used by the operation.
+            operation: Operation used by the operation.
+            on_click: On click used by the operation.
+            border_thickness: Border thickness used by the operation.
+            border_color: Border color used by the operation.
+            theme: Theme used by the operation.
+            texts: Texts used by the operation.
+            switch_padding: Switch padding used by the operation.
+            switch_padding_inner: Switch padding inner used by the operation.
+            track_width: Track width used by the operation.
+            track_height: Track height used by the operation.
+            thumb_size: Thumb size used by the operation.
+            switch_side: Switch side used by the operation.
+        """
         super().__init__(
             inactive_color,
             operation=operation,
@@ -245,6 +317,9 @@ class ToggleButton(SuperMesh):
         self.refresh()
 
     def _on_click(self) -> None:
+        """
+        Handle on click.
+        """
         self.active = not self.active
         self.refresh()
 
@@ -252,33 +327,72 @@ class ToggleButton(SuperMesh):
             self._action(self.active)
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         pass
 
     def _current_style(self) -> ToggleStyle:
+        """
+        Handle current style.
+
+        Returns:
+            The value produced by the current style operation.
+        """
         return self.theme.get_for_state(
             ToggleState.ACTIVE if self.active else ToggleState.INACTIVE,
         )
 
     def _current_background_color(self) -> Color:
+        """
+        Handle current background color.
+
+        Returns:
+            The value produced by the current background color operation.
+        """
         return self._current_style().background_color
 
     def _current_track_color(self) -> Color:
+        """
+        Handle current track color.
+
+        Returns:
+            The value produced by the current track color operation.
+        """
         return (
             self._current_style().track_color
             or self._current_background_color()
         )
 
     def _current_thumb_color(self) -> Color:
+        """
+        Handle current thumb color.
+
+        Returns:
+            The value produced by the current thumb color operation.
+        """
         return (
             self._current_style().thumb_color
             or self._current_background_color()
         )
 
     def _current_border_color(self) -> Color:
+        """
+        Handle current border color.
+
+        Returns:
+            The value produced by the current border color operation.
+        """
         style = self._current_style()
         return style.border_color or self._current_background_color()
 
     def _track_position(self) -> Position:
+        """
+        Handle track position.
+
+        Returns:
+            The value produced by the track position operation.
+        """
         if self.switch_side == "left":
             x = self.position.x + self.switch_padding
         else:
@@ -291,6 +405,12 @@ class ToggleButton(SuperMesh):
         return Position(x, y)
 
     def _thumb_position(self) -> Position:
+        """
+        Handle thumb position.
+
+        Returns:
+            The value produced by the thumb position operation.
+        """
         track_origin = self._track_position()
         base_x = track_origin.x + self.switch_padding_inner
         base_y = track_origin.y + ((self.track_height - self.thumb_size) // 2)
@@ -309,6 +429,9 @@ class ToggleButton(SuperMesh):
         return Position(base_x + offset_x, base_y)
 
     def _refresh_texts(self) -> None:
+        """
+        Handle refresh texts.
+        """
         for index, text_config in enumerate(self.texts):
             if index >= len(self._text_sequences):
                 continue
@@ -336,6 +459,15 @@ class ToggleButton(SuperMesh):
             sequence.set_scale(text_config.scale)
 
     def add_text(self, config: ToggleTextConfig) -> FontSequence:
+        """
+        Add the text to the collection.
+
+        Args:
+            config: Configuration values used to initialize the component.
+
+        Returns:
+            The value produced by the add text operation.
+        """
         if config.font is None:
             raise ValueError(
                 "ToggleTextConfig.font is required to render text"
@@ -362,9 +494,18 @@ class ToggleButton(SuperMesh):
         return label
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.background.positions[1].x = self.position.x + self.width
         self.background.positions[1].y = self.position.y + self.height
         self.background.set_color(self._current_background_color())
@@ -398,14 +539,33 @@ class ToggleButton(SuperMesh):
         self._refresh_texts()
 
     def set_active(self, active: bool) -> None:
+        """
+        Assign the active.
+
+        Args:
+            active: Active used by the operation.
+        """
         self.active = active
         self.refresh()
 
     def set_position(self, position: Position) -> None:
+        """
+        Assign the position.
+
+        Args:
+            position: Screen or world coordinates of the object.
+        """
         self.position = position
         self.refresh()
 
     def set_size(self, width: int, height: int) -> None:
+        """
+        Assign the size.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.width = max(1, width)
         self.height = max(1, height)
         self.refresh()
@@ -415,33 +575,77 @@ class ToggleButton(SuperMesh):
                 padding: int,
                 inner_padding: int | None = None,
             ) -> None:
+        """
+        Assign the switch padding.
+
+        Args:
+            padding: Padding used by the operation.
+            inner_padding: Inner padding used by the operation.
+        """
         self.switch_padding = max(0, padding)
         if inner_padding is not None:
             self.switch_padding_inner = max(0, inner_padding)
         self.refresh()
 
     def set_switch_padding_inner(self, padding: int) -> None:
+        """
+        Assign the switch padding inner.
+
+        Args:
+            padding: Padding used by the operation.
+        """
         self.switch_padding_inner = max(0, padding)
         self.refresh()
 
     def set_track_size(self, width: int, height: int) -> None:
+        """
+        Assign the track size.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.track_width = max(1, width)
         self.track_height = max(1, height)
         self.refresh()
 
     def set_thumb_size(self, size: int) -> None:
+        """
+        Assign the thumb size.
+
+        Args:
+            size: Size value to convert or apply.
+        """
         self.thumb_size = max(6, size)
         self.refresh()
 
     def set_switch_side(self, side: str) -> None:
+        """
+        Assign the switch side.
+
+        Args:
+            side: Side used by the operation.
+        """
         self.switch_side = side.lower()
         self.refresh()
 
     def set_theme(self, theme: ToggleTheme) -> None:
+        """
+        Assign the theme.
+
+        Args:
+            theme: Theme used by the operation.
+        """
         self.theme = theme
         self.refresh()
 
     def set_operation(self, operation: OperationEnum) -> None:
+        """
+        Assign the operation.
+
+        Args:
+            operation: Operation used by the operation.
+        """
         super().set_operation(operation)
         self.background.set_operation(operation)
         self.track.set_operation(operation)
@@ -452,5 +656,11 @@ class ToggleButton(SuperMesh):
             sequence.set_operation(operation)
 
     def set_color(self, color: Color) -> None:
+        """
+        Assign the color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         super().set_color(color)
         self.background.set_color(color)

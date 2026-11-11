@@ -34,6 +34,15 @@ class AmeliorationPlaceholderInterface(Interface):
                 width: int,
                 height: int
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.layer = MeshLayer()
         self.position = position
         self.width = width
@@ -75,6 +84,12 @@ class AmeliorationPlaceholderInterface(Interface):
         )
 
     def set_amelioration(self, amelioration: Amelioration) -> None:
+        """
+        Assign the amelioration.
+
+        Args:
+            amelioration: Amelioration used by the operation.
+        """
         self.amelioration = amelioration
         if self.icon is not None:
             self.layer.meshes.remove(self.icon)
@@ -99,4 +114,10 @@ class AmeliorationPlaceholderInterface(Interface):
         self.layer.meshes.append(self.level)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

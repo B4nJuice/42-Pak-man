@@ -25,6 +25,16 @@ class ImageTexture(Mesh):
                 height: int = 0,
                 operation: OperationEnum = OperationEnum.SET,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            operation: Operation used by the operation.
+        """
         super().__init__(
             Color.default(),
             operation,
@@ -39,16 +49,43 @@ class ImageTexture(Mesh):
         self.texture = None
 
     def get_position(self) -> Position:
+        """
+        Return the current position.
+
+        Returns:
+            The current position.
+        """
         return self.position
 
     def get_width(self) -> int:
+        """
+        Return the current width.
+
+        Returns:
+            The current width.
+        """
         return self.width
 
     def get_height(self) -> int:
+        """
+        Return the current height.
+
+        Returns:
+            The current height.
+        """
         return self.height
 
     @classmethod
     def create_blank(cls, path: str) -> 'ImageTexture':
+        """
+        Handle create blank.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+
+        Returns:
+            The value produced by the create blank operation.
+        """
         return cls(
             path=path,
             position=Position(0, 0),

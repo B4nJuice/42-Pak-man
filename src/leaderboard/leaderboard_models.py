@@ -20,6 +20,15 @@ class LeaderboardEntryModel(BaseModel):
     @field_validator('name')
     @classmethod
     def validate_name(cls, value: str) -> str:
+        """
+        Handle validate name.
+
+        Args:
+            value: Value to assign or apply.
+
+        Returns:
+            The value produced by the validate name operation.
+        """
         cleaned = value.strip()
         if not cleaned:
             raise ValueError('name cannot be empty')
@@ -30,6 +39,15 @@ class LeaderboardEntryModel(BaseModel):
         return cleaned
 
     def compile(self, prevus_sig: str) -> str:
+        """
+        Handle compile.
+
+        Args:
+            prevus_sig: Prevus sig used by the operation.
+
+        Returns:
+            The value produced by the compile operation.
+        """
         self.sig = prevus_sig
         payload = self.model_dump_json()
         return payload
@@ -40,6 +58,15 @@ class LeaderboardModel(BaseModel):
     sig: str | None = Field(default=None)
 
     def add(self, entry: LeaderboardEntryModel) -> bool:
+        """
+        Handle add.
+
+        Args:
+            entry: Entry used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         min_score: int = min((x.score for x in self.entries), default=0)
         leaderboard_is_full: bool = len(self.entries) >= 10
 
@@ -55,6 +82,9 @@ class LeaderboardModel(BaseModel):
         return True
 
     def _sort(self) -> None:
+        """
+        Handle sort.
+        """
         self.entries.sort(
             key=lambda x: (-x.score, x.timestamp)
         )
@@ -64,6 +94,16 @@ class LeaderboardModel(BaseModel):
                 hash_func: Callable[[bytes], str],
                 first_hash: str
             ) -> bool:
+        """
+        Handle verify.
+
+        Args:
+            hash_func: Hash func used by the operation.
+            first_hash: First hash used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.sig is None:
             return False
 
@@ -71,9 +111,15 @@ class LeaderboardModel(BaseModel):
         return hmac.compare_digest(compiled, self.sig)
 
     def clean(self) -> None:
+        """
+        Handle clean.
+        """
         self.sig = None
 
     def clear(self) -> None:
+        """
+        Handle clear.
+        """
         self.entries = []
         self.clean()
 
@@ -82,6 +128,16 @@ class LeaderboardModel(BaseModel):
                 hash_func: Callable[[bytes], str],
                 first_hash: str
             ) -> str:
+        """
+        Handle compile.
+
+        Args:
+            hash_func: Hash func used by the operation.
+            first_hash: First hash used by the operation.
+
+        Returns:
+            The value produced by the compile operation.
+        """
         entries: list[str] = []
         last_hash: str = first_hash
 

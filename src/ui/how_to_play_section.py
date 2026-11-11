@@ -48,6 +48,24 @@ class HowToPlaySection(Interface):
                 text_accent_color: tuple[int, int, int],
                 image_key: TextureKeys,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            title: Title used by the operation.
+            number: Number used by the operation.
+            texts: Texts used by the operation.
+            bg_color: Bg color used by the operation.
+            border_color: Border color used by the operation.
+            title_color: Title color used by the operation.
+            text_color: Text color used by the operation.
+            text_accent_color: Text accent color used by the operation.
+            image_key: Image key used by the operation.
+        """
         super().__init__(game)
         self.layer = MeshLayer()
         self.game = game
@@ -131,7 +149,16 @@ class HowToPlaySection(Interface):
             self.layer.meshes.append(text_sequance)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         pass
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

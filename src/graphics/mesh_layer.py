@@ -11,20 +11,47 @@ class MeshLayer:
     hidden: bool
 
     def __init__(self) -> None:
+        """
+        Initialize the instance.
+        """
         self.meshes = []
         self.hidden = False
 
     def get_layer(self) -> 'MeshLayer':
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self
 
     def is_hidden(self) -> bool:
+        """
+        Check whether the hidden condition holds.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self.hidden
 
 
 @runtime_checkable
 class LayerProtocol(Protocol):
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         ...
 
     def is_hidden(self) -> bool:
+        """
+        Check whether the hidden condition holds.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         ...

@@ -51,6 +51,12 @@ class CheatInterface(Interface):
     amelioration_text: FontSequence
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         self.logger = Logger(
             name='Cheat',
             color=TColor.BRIGHT_MAGENTA,
@@ -714,9 +720,18 @@ class CheatInterface(Interface):
         self.refresh_cheat_info()
 
     def get_player(self) -> Player:
+        """
+        Return the current player.
+
+        Returns:
+            The current player.
+        """
         return self.game._level._entities.get(Player)
 
     def init_ameliorations(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self.ameliorations = [
             _amelioration()
             for _amelioration in Amelioration.__subclasses__()
@@ -730,52 +745,95 @@ class CheatInterface(Interface):
         self.amelioration_index = 0
 
     def update_amelioration(self) -> None:
+        """
+        Update the amelioration.
+        """
         _amelioration = self.ameliorations[self.amelioration_index]
 
         self.amelioration_icon.set_texture_key(_amelioration.get_texture_key())
         self.amelioration_text.set_sequence_text(_amelioration.get_name())
 
     def change_amelioration(self, d: int) -> None:
+        """
+        Handle change amelioration.
+
+        Args:
+            d: D used by the operation.
+        """
         new_index = (self.amelioration_index + d) % len(self.ameliorations)
 
         self.amelioration_index = new_index
         self.update_amelioration()
 
     def change_amelioration_up(self) -> None:
+        """
+        Handle change amelioration up.
+        """
         self.change_amelioration(1)
 
     def change_amelioration_down(self) -> None:
+        """
+        Handle change amelioration down.
+        """
         self.change_amelioration(-1)
 
     def give_amelioration(self) -> None:
+        """
+        Handle give amelioration.
+        """
         amelioration = self.ameliorations[self.amelioration_index]
 
         self.get_player().add_amelioration(amelioration)
         self.logger.info(f'Given amelioration: {amelioration.get_name()}')
 
     def add_lives(self) -> None:
+        """
+        Add the lives to the collection.
+        """
         self.get_player().add_lives(3)
         self.logger.info('Added 3 lives to player')
 
     def add_xp(self) -> None:
+        """
+        Add the xp to the collection.
+        """
         self.get_player().add_exp(50)
         self.logger.info('Added 50 XP to player')
 
     def add_timer(self) -> None:
+        """
+        Add the timer to the collection.
+        """
         self.game._timer.add_time(60)
         self.logger.info('Timer increased by 60 seconds')
 
     def remove_timer(self) -> None:
+        """
+        Remove the timer from the collection.
+        """
         self.game._timer.remove_time(60)
         self.logger.info('Timer reduced by 60 seconds')
 
     def prev_level(self) -> None:
+        """
+        Handle prev level.
+        """
         self.logger.warning('Previous level cheat is not implemented yet')
 
     def next_level(self) -> None:
+        """
+        Handle next level.
+        """
         self.logger.warning('Next level cheat is not implemented yet')
 
     def set_time_speed(self, value: float, log: bool = True) -> None:
+        """
+        Assign the time speed.
+
+        Args:
+            value: Value to assign or apply.
+            log: Log used by the operation.
+        """
         self.time_speed_active = value
         self.game._timer.set_speed(value)
 
@@ -786,6 +844,12 @@ class CheatInterface(Interface):
             self.logger.info(f'Timer speed set to {value}×')
 
     def get_active_cheats_count(self) -> int:
+        """
+        Return the current active cheats count.
+
+        Returns:
+            The current active cheats count.
+        """
         return sum([
             self.game.get_godmod_status(),
             self.game.get_noclip_status(),
@@ -794,11 +858,17 @@ class CheatInterface(Interface):
         ])
 
     def refresh_cheat_info(self) -> None:
+        """
+        Handle refresh cheat info.
+        """
         active_count = self.get_active_cheats_count()
         label = 'cheat active' if active_count == 1 else 'cheats active'
         self.cheat_status_text.set_sequence_text(f'{active_count} {label}')
 
     def sync_cheat_toggles(self) -> None:
+        """
+        Handle sync cheat toggles.
+        """
         statuses: dict[str, bool] = {
             'godmod': self.game.get_godmod_status(),
             'noclip': self.game.get_noclip_status(),
@@ -817,26 +887,53 @@ class CheatInterface(Interface):
             self.set_time_speed(current_speed, log=False)
 
     def toggle_godmod(self, value: bool) -> None:
+        """
+        Handle toggle godmod.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.game.toggle_godmod(value)
         self.refresh_cheat_info()
         self.logger.info(f'God Mod: {"ON" if value else "OFF"}')
 
     def toggle_noclip(self, value: bool) -> None:
+        """
+        Handle toggle noclip.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.game.toggle_noclip(value)
         self.refresh_cheat_info()
         self.logger.info(f'No Clip: {"ON" if value else "OFF"}')
 
     def toggle_wallhack(self, value: bool) -> None:
+        """
+        Handle toggle wallhack.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.game.toggle_wallhack(value)
         self.refresh_cheat_info()
         self.logger.info(f'Wall Hack: {"ON" if value else "OFF"}')
 
     def toggle_freeze(self, value: bool) -> None:
+        """
+        Handle toggle freeze.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.game.toggle_freeze(value)
         self.refresh_cheat_info()
         self.logger.info(f'Freeze Ghosts: {"ON" if value else "OFF"}')
 
     def display(self) -> None:
+        """
+        Display the interface contents.
+        """
         self.logger.info(
             f'Cheat menu opened ({self.get_active_cheats_count()} active)'
         )
@@ -844,12 +941,30 @@ class CheatInterface(Interface):
         return super().display()
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def close(self) -> None:
+        """
+        Handle close.
+        """
         self.game.set_back_status()
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
 

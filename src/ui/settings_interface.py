@@ -40,6 +40,12 @@ class SettingsInterface(Interface):
     _pending_pack_path: Path
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
         self.game = game
         self.app = game._app
@@ -66,6 +72,12 @@ class SettingsInterface(Interface):
         align_left: float = size.get(120)
 
         def _settings_texts() -> Iterator[FontSequence]:
+            """
+            Handle settings texts.
+
+            Returns:
+                The value produced by the settings texts operation.
+            """
             def make(
                         text: str,
                         font_key: FontKey,
@@ -73,6 +85,19 @@ class SettingsInterface(Interface):
                         y_offset: float,
                         x_offset: float = 0.0
                     ) -> FontSequence:
+                """
+                Handle make.
+
+                Args:
+                    text: Text used by the operation.
+                    font_key: Font key used by the operation.
+                    color: Color applied to the rendered element.
+                    y_offset: Y offset used by the operation.
+                    x_offset: X offset used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return FontSequence(
                     text=text,
                     font=fonts.get(font_key),
@@ -105,6 +130,12 @@ class SettingsInterface(Interface):
         self.layer.meshes.extend(_settings_texts())
 
         def _settings_box() -> Iterator[tuple[Mesh, ...]]:
+            """
+            Handle settings box.
+
+            Returns:
+                The value produced by the settings box operation.
+            """
             def make(
                     x: float,
                     y: float,
@@ -113,6 +144,20 @@ class SettingsInterface(Interface):
                     title: str,
                     categorie: str
             ) -> tuple[Mesh, ...]:
+                """
+                Handle make.
+
+                Args:
+                    x: Horizontal coordinate or value.
+                    y: Vertical coordinate or value.
+                    w: W used by the operation.
+                    h: H used by the operation.
+                    title: Title used by the operation.
+                    categorie: Categorie used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 x = size.get(x)
                 y = size.get(y)
                 w = size.get(w)
@@ -204,6 +249,12 @@ class SettingsInterface(Interface):
         display_gap: int = size.get(8)
 
         def _display_settings() -> Iterator[tuple[Mesh, ...]]:
+            """
+            Handle display settings.
+
+            Returns:
+                The value produced by the display settings operation.
+            """
             display_settings = self.app.settings.get().display
             resolution_values = (
                 DisplaySettingsModel.standard_16_9_resolutions()
@@ -220,6 +271,19 @@ class SettingsInterface(Interface):
                 current_id: int,
                 cb: Callable[[int], None]
             ) -> tuple[Mesh, ...]:
+                """
+                Handle make.
+
+                Args:
+                    idx: Idx used by the operation.
+                    description: Description used by the operation.
+                    values: Values used by the operation.
+                    current_id: Current id used by the operation.
+                    cb: Cb used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 _status: dict[int, int] = {idx: current_id}
 
                 value: FontSequence = FontSequence(
@@ -235,11 +299,17 @@ class SettingsInterface(Interface):
                 )
 
                 def _next() -> None:
+                    """
+                    Handle next.
+                    """
                     _status[idx] = (_status[idx] + 1) % len(values)
                     value.set_sequence_text(values[_status[idx]])
                     cb(_status[idx])
 
                 def _prev() -> None:
+                    """
+                    Handle prev.
+                    """
                     _status[idx] = (_status[idx] - 1) % len(values)
                     value.set_sequence_text(values[_status[idx]])
                     cb(_status[idx])
@@ -360,6 +430,12 @@ class SettingsInterface(Interface):
             self._pending_pack_path = pack_paths[current_pack_id]
 
             def _load_pack(pack_id: int) -> None:
+                """
+                Handle load pack.
+
+                Args:
+                    pack_id: Pack id used by the operation.
+                """
                 self._pending_pack_path = pack_paths[pack_id]
 
             yield make(
@@ -392,6 +468,15 @@ class SettingsInterface(Interface):
         ]
 
         def _key_label(keys: list[int]) -> str:
+            """
+            Handle key label.
+
+            Args:
+                keys: Keyboard key codes associated with the action.
+
+            Returns:
+                The value produced by the key label operation.
+            """
             if not keys:
                 return '-'
             labels = [
@@ -404,11 +489,27 @@ class SettingsInterface(Interface):
             return ' / '.join(labels)
 
         def _bind_action(action: ActionKey, slot: int = 0) -> None:
+            """
+            Handle bind action.
+
+            Args:
+                action: Action whose key bindings or state are queried.
+                slot: Slot used by the operation.
+            """
             self._capture_action = action
             self._capture_slot = slot
             self._refresh_control_buttons()
 
         def _get_action_keys(action: ActionKey) -> list[int]:
+            """
+            Handle get action keys.
+
+            Args:
+                action: Action whose key bindings or state are queried.
+
+            Returns:
+                The value produced by the get action keys operation.
+            """
             return self.app.key_manager.get_keys(action)
 
         for idx, action in enumerate(actions):
@@ -485,6 +586,12 @@ class SettingsInterface(Interface):
             self._control_buttons.append(second_button)
 
         def _settings_buttons() -> Iterator[Button]:
+            """
+            Handle settings buttons.
+
+            Returns:
+                The value produced by the settings buttons operation.
+            """
             def make(
                         w: float,
                         h: float,
@@ -503,6 +610,25 @@ class SettingsInterface(Interface):
                         config.settings_text_secondary
 
                     ) -> Button:
+                """
+                Handle make.
+
+                Args:
+                    w: W used by the operation.
+                    h: H used by the operation.
+                    x: Horizontal coordinate or value.
+                    y: Vertical coordinate or value.
+                    cb: Cb used by the operation.
+                    txt: Txt used by the operation.
+                    key: Keyboard key code associated with the action.
+                    bg_color: Bg color used by the operation.
+                    border_color: Border color used by the operation.
+                    txt_color: Txt color used by the operation.
+                    key_color: Key color used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return Button(
                     position=Position(
                         x,
@@ -593,6 +719,15 @@ class SettingsInterface(Interface):
         ))
 
     def _action_to_field_name(self, action: ActionKey) -> str:
+        """
+        Handle action to field name.
+
+        Args:
+            action: Action whose key bindings or state are queried.
+
+        Returns:
+            The value produced by the action to field name operation.
+        """
         match action:
             case ActionKey.MOVE_UP:
                 return 'move_up'
@@ -612,6 +747,9 @@ class SettingsInterface(Interface):
                 raise ValueError(f'Unknown action {action!r}')
 
     def _refresh_control_buttons(self) -> None:
+        """
+        Handle refresh control buttons.
+        """
         actions = [
             ActionKey.MOVE_UP,
             ActionKey.MOVE_DOWN,
@@ -641,6 +779,15 @@ class SettingsInterface(Interface):
             second_button.refresh()
 
     def _key_label(self, keys: list[int]) -> str:
+        """
+        Handle key label.
+
+        Args:
+            keys: Keyboard key codes associated with the action.
+
+        Returns:
+            The value produced by the key label operation.
+        """
         if not keys:
             return '-'
         labels = [
@@ -653,6 +800,15 @@ class SettingsInterface(Interface):
         return ' / '.join(labels)
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
 
@@ -695,19 +851,31 @@ class SettingsInterface(Interface):
         return False
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self._refresh_control_buttons()
 
     def _exit(self) -> None:
+        """
+        Handle exit.
+        """
         if not self.game._interface_manager.back():
             self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def _restore_default(self) -> None:
+        """
+        Handle restore default.
+        """
         self.app.settings.get().controls = ControlSettingsModel()
         self.app.settings.get().display = DisplaySettingsModel()
         self.app.settings.save()
         self._refresh_control_buttons()
 
     def _apply(self) -> None:
+        """
+        Handle apply.
+        """
         try:
             user_pack, _ = self.app.texture.get_available_pack_paths()
             if self._pending_pack_path == user_pack:
@@ -726,4 +894,10 @@ class SettingsInterface(Interface):
         self._exit()
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

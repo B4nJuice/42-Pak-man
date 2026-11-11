@@ -45,11 +45,26 @@ class DisplaySettingsModel(BaseModel):
 
     @staticmethod
     def standard_16_9_resolutions() -> list[tuple[int, int]]:
+        """
+        Handle standard 16 9 resolutions.
+
+        Returns:
+            The value produced by the standard 16 9 resolutions operation.
+        """
         widths = [3840, 2560, 1920, 1600, 1366, 1280, 1024, 960, 854, 768, 640]
         return [(width, round(width * 9 / 16)) for width in widths]
 
     @staticmethod
     def resolution_label(resolution: tuple[int, int]) -> str:
+        """
+        Handle resolution label.
+
+        Args:
+            resolution: Screen resolution represented as width and height.
+
+        Returns:
+            The value produced by the resolution label operation.
+        """
         width, height = resolution
         return f'{width} × {height}'
 

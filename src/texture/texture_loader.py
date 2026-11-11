@@ -16,10 +16,25 @@ class TextureLoader:
     _textures: dict[Path, TextureData]
 
     def __init__(self, ctx: Context) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            ctx: Ctx used by the operation.
+        """
         self._ctx = ctx
         self._textures = {}
 
     def load(self, path: Path) -> TextureData:
+        """
+        Load the associated data.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+
+        Returns:
+            The value produced by the load operation.
+        """
         if path in self._textures:
             return self._textures[path]
 
@@ -47,6 +62,12 @@ class TextureLoader:
             ) from exc
 
     def unload(self, path: Path) -> None:
+        """
+        Handle unload.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+        """
         if path not in self._textures:
             return
 
@@ -54,4 +75,13 @@ class TextureLoader:
         del self._textures[path]
 
     def get(self, path: Path) -> TextureData:
+        """
+        Handle get.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+
+        Returns:
+            The value produced by the get operation.
+        """
         return self._textures[path]

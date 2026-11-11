@@ -22,6 +22,16 @@ class InkyGhost(Ghost):
                 reward: float,
                 app: App
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            id: Identifier assigned to the object.
+            tile: Grid tile occupied by or assigned to the entity.
+            level: Level containing the entity or navigation data.
+            reward: Reward used by the operation.
+            app: Application instance that owns the object.
+        """
         self._texture_path = 'assets/characters/ghosts/cyan'
         self._tracking_entity = level._entities.get(Player)
         self._mirror_ghost = level._entities.get(BlinkyGhost)
@@ -39,6 +49,12 @@ class InkyGhost(Ghost):
         )
 
     def get_chase_tracking_tile(self) -> Tile:
+        """
+        Return the current chase tracking tile.
+
+        Returns:
+            The current chase tracking tile.
+        """
         player_tile: Tile = self._tracking_entity.get_tile()
         blinky_tile: Tile = self._mirror_ghost.get_tile()
 
@@ -58,4 +74,7 @@ class InkyGhost(Ghost):
         return self.level.get_grid()[tracking_y][tracking_x]
 
     def on_arrive_ai(self) -> None:
+        """
+        Handle the arrive ai event.
+        """
         return super().on_arrive_ai()

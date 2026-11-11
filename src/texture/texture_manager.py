@@ -31,6 +31,15 @@ class TextureManager:
         textures_pack_folder: str = 'textures',
         verbose: bool = True
     ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            texture_loader: Texture loader used by the operation.
+            default_path: Default path used by the operation.
+            textures_pack_folder: Textures pack folder used by the operation.
+            verbose: Whether verbose logging is enabled.
+        """
         self._logger = Logger(
             name='Texture',
             color=TColor.CYAN,
@@ -46,6 +55,12 @@ class TextureManager:
         self.load_textures(self._default)
 
     def load_pack(self, path: str) -> None:
+        """
+        Load the associated data.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+        """
         self._logger.log(f'Loading texture pack: {path}')
 
         self._user = TexturePack.from_directory(path)
@@ -54,6 +69,9 @@ class TextureManager:
         self._logger.info(f'Texture pack loaded: {self._user.name!r}')
 
     def unload_pack(self) -> None:
+        """
+        Handle unload pack.
+        """
         self._logger.log('Unloading user texture pack, restoring default')
 
         self._user = None
@@ -62,6 +80,16 @@ class TextureManager:
         self._logger.info('Default texture pack restored')
 
     def get(self, key: TextureKeys, variant: str | None = None) -> Animation:
+        """
+        Handle get.
+
+        Args:
+            key: Keyboard key code associated with the action.
+            variant: Variant used by the operation.
+
+        Returns:
+            The value produced by the get operation.
+        """
         texture: Texture = self._textures[key]
 
         if variant is None or variant not in texture.variants:
@@ -70,11 +98,23 @@ class TextureManager:
             return self._textures[key].variants[variant]
 
     def get_pack(self) -> TexturePack:
+        """
+        Return the current pack.
+
+        Returns:
+            The current pack.
+        """
         if self._user is None:
             return self._default
         return self._user
 
     def get_available_pack_paths(self) -> tuple[Path, list[Path]]:
+        """
+        Return the current available pack paths.
+
+        Returns:
+            The current available pack paths.
+        """
         paths = sorted(
             manifest.parent
             for manifest in self._textures_pack_folder.rglob('pack.json')
@@ -83,6 +123,15 @@ class TextureManager:
         return (self._default.root, paths)
 
     def get_font(self, key: FontKeys) -> Path:
+        """
+        Return the current font.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            The current font.
+        """
         if self._user and (path := self._user.get_font(key)):
             return path
 
@@ -94,6 +143,12 @@ class TextureManager:
         )
 
     def load_textures(self, pack: TexturePack) -> None:
+        """
+        Load the associated data.
+
+        Args:
+            pack: Pack used by the operation.
+        """
         missing_textures: list[TextureKeys] = []
 
         for key in TextureKeys:
@@ -117,6 +172,15 @@ class TextureManager:
             ])
 
     def _transform_animation(self, definition: AnimationDef) -> Animation:
+        """
+        Handle transform animation.
+
+        Args:
+            definition: Definition used by the operation.
+
+        Returns:
+            The value produced by the transform animation operation.
+        """
         return Animation(
             frames=[
                 self._build_frame(frame)
@@ -130,6 +194,15 @@ class TextureManager:
         self,
         frame: Frame | AnimationDef,
     ) -> Animation | TextureFrame:
+        """
+        Handle build frame.
+
+        Args:
+            frame: Frame used by the operation.
+
+        Returns:
+            The value produced by the build frame operation.
+        """
         if isinstance(frame, AnimationDef):
             return self._transform_animation(frame)
         data = self._loader.load(frame.path)

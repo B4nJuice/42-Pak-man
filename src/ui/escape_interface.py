@@ -26,6 +26,12 @@ from .interface import Interface
 
 class EscapeInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
         self.game: Game = game
         self.hidden: bool = True
@@ -241,6 +247,15 @@ class EscapeInterface(Interface):
         self.layer.meshes.append(line)
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
         key_manager = self.game._app.key_manager
@@ -276,17 +291,38 @@ class EscapeInterface(Interface):
         return False
 
     def _update_selection(self) -> None:
+        """
+        Handle update selection.
+        """
         for button in self.buttons:
             button.set_selected(button == self.buttons[self._selected_index])
 
     def _hover_callback(self, index: int) -> Callable[[], None]:
+        """
+        Handle hover callback.
+
+        Args:
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the hover callback operation.
+        """
         def hover() -> None:
+            """
+            Handle hover.
+            """
             self._hover_button(index)
             self._selected_index = index
             self._update_selection()
         return hover
 
     def _hover_button(self, index: int) -> None:
+        """
+        Handle hover button.
+
+        Args:
+            index: Index used by the operation.
+        """
         if self.buttons[index] is self.hovered_button:
             return
 
@@ -295,7 +331,16 @@ class EscapeInterface(Interface):
             button.set_hovered(False)
 
     def action_main_menu(self) -> None:
+        """
+        Handle action main menu.
+        """
         self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

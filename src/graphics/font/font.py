@@ -16,6 +16,14 @@ class Font:
                 context: Context,
                 pixel_size: int = 48
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            font_path: Font path used by the operation.
+            context: Context used by the operation.
+            pixel_size: Pixel size used by the operation.
+        """
         self._font_path = font_path
         self._context = context
 
@@ -48,4 +56,10 @@ class Font:
             }
 
     def get_characters(self) -> dict[str, Any]:
+        """
+        Return the current characters.
+
+        Returns:
+            The current characters.
+        """
         return self._characters

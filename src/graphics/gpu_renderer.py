@@ -25,11 +25,30 @@ def get_uniform(
     program: moderngl.Program,
     name: str,
 ) -> moderngl.Uniform:
+    """
+    Return the current uniform.
+
+    Args:
+        program: Program used by the operation.
+        name: Name assigned to the object or requested value.
+
+    Returns:
+        The current uniform.
+    """
     return cast(moderngl.Uniform, program[name])
 
 
 @cache
 def _load_shader(name: str) -> str:
+    """
+    Handle load shader.
+
+    Args:
+        name: Name assigned to the object or requested value.
+
+    Returns:
+        The value produced by the load shader operation.
+    """
     return (files('src.graphics.shaders') / name).read_text()
 
 
@@ -42,6 +61,16 @@ class GPURenderer:
         window_height: int | None = None,
         scaling_mode: 'ScalingMode' = ScalingMode.FIT,
     ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            window_width: Window width used by the operation.
+            window_height: Window height used by the operation.
+            scaling_mode: Scaling mode used by the operation.
+        """
         self.width = width
         self.height = height
         self.window_width = width if window_width is None else window_width
@@ -84,16 +113,42 @@ class GPURenderer:
         ]
 
     def set_window_size(self, width: int, height: int) -> None:
+        """
+        Assign the window size.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.window_width = max(0, width)
         self.window_height = max(0, height)
 
     def resize(self, width: int, height: int) -> None:
+        """
+        Handle resize.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.set_window_size(width, height)
 
     def set_scaling_mode(self, scaling_mode: 'ScalingMode') -> None:
+        """
+        Assign the scaling mode.
+
+        Args:
+            scaling_mode: Scaling mode used by the operation.
+        """
         self.scaling_mode = scaling_mode
 
     def _create_screen_quad(self) -> moderngl.VertexArray:
+        """
+        Handle create screen quad.
+
+        Returns:
+            The value produced by the create screen quad operation.
+        """
         vertices = np.array(
             [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
             dtype='f4',
@@ -106,6 +161,12 @@ class GPURenderer:
         )
 
     def _create_copy_quad(self) -> moderngl.VertexArray:
+        """
+        Handle create copy quad.
+
+        Returns:
+            The value produced by the create copy quad operation.
+        """
         vertices = np.array(
             [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
             dtype='f4',
@@ -119,10 +180,28 @@ class GPURenderer:
 
     @singledispatchmethod
     def _vertices(self, mesh: Mesh) -> tuple[np.ndarray, int]:
+        """
+        Handle vertices.
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+
+        Returns:
+            The value produced by the vertices operation.
+        """
         raise TypeError(f'Unsupported mesh type: {type(mesh).__name__}')
 
     @_vertices.register
     def _(self, plane: Plane) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            plane: Plane used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         first, second = plane.get_positions()
         vertices = np.array(
             [
@@ -137,6 +216,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, line: Line) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            line: Line used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         return self._thick_segment_vertices(
             line.start_position.x,
             line.start_position.y,
@@ -147,6 +235,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, polygon: Polygon) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            polygon: Polygon used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         if len(polygon.positions) < 2:
             return np.empty(0, dtype='f4'), moderngl.TRIANGLES
 
@@ -182,6 +279,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, image: ImageTexture) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            image: Image used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         x, y = image.get_position().x, image.get_position().y
 
         image_width: int = image.get_width()
@@ -212,6 +318,15 @@ class GPURenderer:
     @_vertices.register
     def _(self, entity: Displayable) -> tuple[np.ndarray, int]:
 
+        """
+        Handle .
+
+        Args:
+            entity: Entity used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         pos = entity.get_position_on_screen()
 
         x, y = pos.x, pos.y
@@ -235,6 +350,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, character: Character) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            character: Character used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         x, y = character.position.x, character.position.y
         width = character.infos['width'] * character.scale
         height = character.infos['height'] * character.scale
@@ -250,6 +374,15 @@ class GPURenderer:
 
     @_vertices.register
     def _(self, circle: Circle) -> tuple[np.ndarray, int]:
+        """
+        Handle .
+
+        Args:
+            circle: Circle used by the operation.
+
+        Returns:
+            The value produced by the  operation.
+        """
         x, y = circle.get_position().x, circle.get_position().y
         radius = circle.radius
         vertices = np.array(
@@ -271,6 +404,19 @@ class GPURenderer:
         end_y: float,
         thickness: int,
     ) -> tuple[np.ndarray, int]:
+        """
+        Handle thick segment vertices.
+
+        Args:
+            start_x: Start x used by the operation.
+            start_y: Start y used by the operation.
+            end_x: End x used by the operation.
+            end_y: End y used by the operation.
+            thickness: Thickness used by the operation.
+
+        Returns:
+            The value produced by the thick segment vertices operation.
+        """
         dx = end_x - start_x
         dy = end_y - start_y
         length = max((dx * dx + dy * dy) ** 0.5, 1.0)
@@ -296,6 +442,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle draw mesh.
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         raise TypeError(f'Unsupported mesh type: {type(mesh).__name__}')
 
     @_draw_mesh.register
@@ -305,6 +459,14 @@ class GPURenderer:
                  source: moderngl.Texture,
                  target: moderngl.Framebuffer
              ) -> None:
+        """
+        Handle .
+
+        Args:
+            entity: Entity used by the operation.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         if entity.is_hidden():
             return
 
@@ -342,6 +504,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle .
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         if mesh.is_hidden():
             return
 
@@ -379,6 +549,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle .
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         if mesh.is_hidden():
             return
 
@@ -418,6 +596,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle .
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         if mesh.is_hidden():
             return
 
@@ -457,6 +643,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle .
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         if mesh.is_hidden():
             return
 
@@ -500,6 +694,14 @@ class GPURenderer:
                 source: moderngl.Texture,
                 target: moderngl.Framebuffer
             ) -> None:
+        """
+        Handle .
+
+        Args:
+            layer: Mesh layer to add or inspect.
+            source: Source used by the operation.
+            target: Target used by the operation.
+        """
         for mesh in layer.meshes:
             if hasattr(mesh, "get_layer"):
                 mesh = mesh.get_layer()
@@ -509,6 +711,12 @@ class GPURenderer:
                 self,
                 meshes: Iterable[Mesh | LayerProtocol | Displayable]
             ) -> None:
+        """
+        Render the element using the active renderer.
+
+        Args:
+            meshes: Meshes used by the operation.
+        """
         self.source_index = 0
         self.target_index = 1
         self.context.viewport = (0, 0, self.width, self.height)
@@ -548,6 +756,9 @@ class GPURenderer:
         self.screen_quad.render(mode=moderngl.TRIANGLE_STRIP)
 
     def release(self) -> None:
+        """
+        Handle release.
+        """
         for framebuffer in self.framebuffers:
             framebuffer.release()
         for texture in self.textures:
@@ -564,6 +775,15 @@ class GPURenderer:
         self,
         meshes: Iterable[Mesh | LayerProtocol | Displayable],
     ) -> Iterator[Mesh | LayerProtocol | Displayable]:
+        """
+        Handle iter meshes.
+
+        Args:
+            meshes: Meshes used by the operation.
+
+        Returns:
+            The value produced by the iter meshes operation.
+        """
         for mesh in meshes:
             if mesh.is_hidden():
                 continue

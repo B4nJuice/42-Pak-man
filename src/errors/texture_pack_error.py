@@ -12,6 +12,15 @@ class TexturePackError(PackError):
         key: str | None = None,
         value: object | None = None,
     ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            message: Message to write to the log or display.
+            pack: Pack used by the operation.
+            key: Keyboard key code associated with the action.
+            value: Value to assign or apply.
+        """
         details: list[str] = []
         if pack is not None:
             details.append(f'pack={str(pack)!r}')

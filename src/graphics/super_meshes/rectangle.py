@@ -26,6 +26,18 @@ class Rectangle(SuperMesh):
                 operation: OperationEnum = OperationEnum.SET,
                 smooth_end: bool = False
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            color: Color applied to the rendered element.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            thickness: Thickness used by the operation.
+            operation: Operation used by the operation.
+            smooth_end: Smooth end used by the operation.
+        """
         super().__init__(
             color,
             operation=operation,
@@ -42,6 +54,9 @@ class Rectangle(SuperMesh):
         self.init()
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self.position2 = Position(
             self.position.x + self.width, self.position.y
         )
@@ -68,6 +83,9 @@ class Rectangle(SuperMesh):
         self.layer.meshes.append(self.rectangle)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.position2.x = self.position.x + self.width
         self.position2.y = self.position.y
 
@@ -82,29 +100,71 @@ class Rectangle(SuperMesh):
         self.rectangle.thickness = self.thickness
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def set_position(self, position: Position) -> None:
+        """
+        Assign the position.
+
+        Args:
+            position: Screen or world coordinates of the object.
+        """
         self.position.x = position.x
         self.position.y = position.y
         self.refresh()
 
     def set_width(self, width: int) -> None:
+        """
+        Assign the width.
+
+        Args:
+            width: Width of the screen or rendered element.
+        """
         self.width = width
         self.refresh()
 
     def set_height(self, height: int) -> None:
+        """
+        Assign the height.
+
+        Args:
+            height: Height of the screen or rendered element.
+        """
         self.height = height
         self.refresh()
 
     def set_thickness(self, thickness: int) -> None:
+        """
+        Assign the thickness.
+
+        Args:
+            thickness: Thickness used by the operation.
+        """
         self.thickness = thickness
         self.refresh()
 
     def set_operation(self, operation: OperationEnum) -> None:
+        """
+        Assign the operation.
+
+        Args:
+            operation: Operation used by the operation.
+        """
         super().set_operation(operation)
         self.refresh()
 
     def set_color(self, color: Color) -> None:
+        """
+        Assign the color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         super().set_color(color)
         self.refresh()
