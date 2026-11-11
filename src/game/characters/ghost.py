@@ -49,6 +49,21 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 update_tracking_interval: float | None = 0.6,
                 path_color: Color = Color(255, 0, 0, 100),
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            name: Name assigned to the object or requested value.
+            tile: Grid tile occupied by or assigned to the entity.
+            level: Level containing the entity or navigation data.
+            reward: Reward used by the operation.
+            app: Application instance that owns the object.
+            ghost_type: Ghost type used by the operation.
+            texture_key: Texture key used by the operation.
+            update_tracking_interval: Update tracking interval used by
+            the operation.
+            path_color: Path color used by the operation.
+        """
         self._ghost_type = ghost_type
         self._texture_key = texture_key
 
@@ -74,12 +89,30 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         self._frightened_tile = None
 
     def get_state(self) -> GhostState:
+        """
+        Return the current state.
+
+        Returns:
+            The current state.
+        """
         return self._state
 
     def is_edible(self) -> bool:
+        """
+        Check whether the edible condition holds.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._state == GhostState.FRIGHTENED
 
     def set_state(self, state: GhostState) -> None:
+        """
+        Assign the state.
+
+        Args:
+            state: State used by the operation.
+        """
         self._state_cooldown = None
         self.set_edible(False)
 
@@ -98,6 +131,9 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         self.force_update_tracking()
 
     def on_arrive_ai(self) -> None:
+        """
+        Handle the arrive ai event.
+        """
         match self._state:
             case GhostState.FRIGHTENED:
                 self._frightened_tile = None
@@ -107,25 +143,61 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         return super().on_arrive_ai()
 
     def get_spawn_tile(self) -> Tile:
+        """
+        Return the current spawn tile.
+
+        Returns:
+            The current spawn tile.
+        """
         return self._spawn_tile
 
     def set_spawn_tile(self, tile: Tile) -> None:
+        """
+        Assign the spawn tile.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+        """
         self._spawn_tile = tile
 
     @abstractmethod
     def get_chase_tracking_tile(self) -> Tile:
+        """
+        Return the current chase tracking tile.
+
+        Returns:
+            The current chase tracking tile.
+        """
         pass
 
     def get_frightened_tracking_tile(self) -> Tile:
+        """
+        Return the current frightened tracking tile.
+
+        Returns:
+            The current frightened tracking tile.
+        """
         if self._frightened_tile is None:
             self._frightened_tile = self.generate_new_frightened_tile()
 
         return self._frightened_tile
 
     def generate_new_frightened_tile(self) -> Tile:
+        """
+        Handle generate new frightened tile.
+
+        Returns:
+            The value produced by the generate new frightened tile operation.
+        """
         return self.level.get_random_valid_tile()
 
     def get_tracking_tile(self) -> Tile:
+        """
+        Return the current tracking tile.
+
+        Returns:
+            The current tracking tile.
+        """
         match self.get_state():
             case GhostState.CHASE:
                 return self.get_chase_tracking_tile()
@@ -135,12 +207,24 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 return self.get_frightened_tracking_tile()
 
     def on_collision(self, other: 'Collider') -> None:
+        """
+        Handle the collision event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         if not isinstance(other, Entity):
             return
 
         super().on_collision(other)
 
     def go_to(self, tile: Tile) -> None:
+        """
+        Handle go to.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+        """
         if tile == self.get_tile() and self.is_moving():
             self.clear_next_moves()
             self.on_arrive_ai()
@@ -155,6 +239,12 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         self.apply_path(path)
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         super().update(dt)
 
         if not self._freeze:
@@ -164,6 +254,12 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         self.update_state(dt)
 
     def update_state(self, dt: float) -> None:
+        """
+        Update the state.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         if self._state_cooldown is None:
             return
 
@@ -175,6 +271,9 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 self.set_state(GhostState.CHASE)
 
     def init_displayable(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self._animations_alive = {
             direction: AnimationPlayer(
                 self.app.texture.get(self._texture_key, direction.to_string())
@@ -193,6 +292,12 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         )
 
     def get_animation(self) -> AnimationPlayer:
+        """
+        Return the current animation.
+
+        Returns:
+            The current animation.
+        """
         match self.get_state():
             case GhostState.CHASE | GhostState.WAITING_RESPAWN:
                 if self._direction is None:
@@ -207,6 +312,9 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
                 return self._animation_frightened
 
     def update_tracking(self) -> None:
+        """
+        Update the tracking.
+        """
         if self._tracking_tile is None:
             return
 

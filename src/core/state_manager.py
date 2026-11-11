@@ -13,6 +13,12 @@ class StateManager:
     frightened_phase: CooldownState
 
     def __init__(self, level: 'Level') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            level: Level containing the entity or navigation data.
+        """
         self.level = level
         self._to_update = []
 
@@ -22,9 +28,15 @@ class StateManager:
         self._to_update.append(self.frightened_phase)
 
     def set_to_default(self) -> None:
+        """
+        Assign the to default.
+        """
         self.frightened_phase.set(0.0)
 
     def set_frightened_phase(self) -> None:
+        """
+        Assign the frightened phase.
+        """
         from src.game.characters.ghost import Ghost
         from src.game.characters.ghost_state import GhostState
         from src.game.characters.player import Player
@@ -42,6 +54,9 @@ class StateManager:
         player.set_state(PlayerState.SUPER)
 
     def _set_ghost_to_chase(self) -> None:
+        """
+        Handle set ghost to chase.
+        """
         from src.game.characters.ghost import Ghost
         from src.game.characters.ghost_state import GhostState
         from src.game.characters.player import Player
@@ -54,5 +69,11 @@ class StateManager:
         self.level.store.get(Player).set_state(PlayerState.NORMAL)
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         for element in self._to_update:
             element.update(dt)

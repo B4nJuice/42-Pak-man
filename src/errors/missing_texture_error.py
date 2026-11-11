@@ -3,6 +3,12 @@ from src.errors.base_error import BaseError
 
 class MissingTextureError(BaseError):
     def __init__(self, missing: list[str] | None = None) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            missing: Missing used by the operation.
+        """
         if missing is None:
             super().__init__(
                 'Missing textures in base texture pack. Please restore '

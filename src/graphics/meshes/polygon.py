@@ -16,6 +16,16 @@ class Polygon(Mesh):
                 thickness: int = 1,
                 smooth_end: bool = False
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            color: Color applied to the rendered element.
+            positions: Positions used by the operation.
+            operation: Operation used by the operation.
+            thickness: Thickness used by the operation.
+            smooth_end: Smooth end used by the operation.
+        """
         super().__init__(
                 color,
                 operation,

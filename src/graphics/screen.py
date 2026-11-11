@@ -35,6 +35,14 @@ class Screen:
                 height: int,
                 pygame_screen: Surface
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            pygame_screen: Pygame screen used by the operation.
+        """
         if not pygame_screen.get_flags() & pygame.OPENGL:
             raise ValueError("Screen requires a pygame OpenGL display")
 
@@ -54,22 +62,50 @@ class Screen:
         self._last_mouse_position = None
 
     def resize(self, width: int, height: int) -> None:
+        """
+        Handle resize.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.gpu_renderer.set_window_size(width, height)
 
     def add_layer(
                 self,
                 layer: MeshLayer
             ) -> None:
+        """
+        Add the layer to the collection.
+
+        Args:
+            layer: Mesh layer to add or inspect.
+        """
         self.layer.meshes.append(layer)
         self.search_for_clickable(layer, [layer])
 
     def get_mouse_pos(self) -> tuple[int, int]:
+        """
+        Return the current mouse pos.
+
+        Returns:
+            The current mouse pos.
+        """
         return self._translate_mouse_pos(pygame.mouse.get_pos())
 
     def _translate_mouse_pos(
             self,
             position: tuple[int, int]
             ) -> tuple[int, int]:
+        """
+        Handle translate mouse pos.
+
+        Args:
+            position: Screen or world coordinates of the object.
+
+        Returns:
+            The value produced by the translate mouse pos operation.
+        """
         x, y = position
         window_width = self.gpu_renderer.window_width
         window_height = self.gpu_renderer.window_height
@@ -103,6 +139,13 @@ class Screen:
                 layer: MeshLayer,
                 parents: list[LayerProtocol] | None = None
             ) -> None:
+        """
+        Handle search for clickable.
+
+        Args:
+            layer: Mesh layer to add or inspect.
+            parents: Parent meshes used to preserve the element hierarchy.
+        """
         if parents is None:
             parents = []
 
@@ -118,11 +161,17 @@ class Screen:
                 self.clickables.append(mesh)
 
     def click(self, _: Event, __: int) -> None:
+        """
+        Handle click.
+        """
         x, y = self.get_mouse_pos()
         for c in self.clickables:
             c.click(x, y)
 
     def hover(self, _: Event, __: int) -> None:
+        """
+        Handle hover.
+        """
         position = pygame.mouse.get_pos()
         if position == self._last_mouse_position:
             return
@@ -138,6 +187,12 @@ class Screen:
         self._hovered_clickables = hovered_clickables
 
     def add_mesh(self, mesh: 'Mesh | Interface') -> None:
+        """
+        Add the mesh to the collection.
+
+        Args:
+            mesh: Mesh to add, configure, or render.
+        """
         from src.ui.interface import Interface
 
         if isinstance(mesh, Interface | SuperMesh):
@@ -154,4 +209,7 @@ class Screen:
         self.layer.meshes.append(mesh)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.gpu_renderer.render(self.layer.meshes)

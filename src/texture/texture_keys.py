@@ -36,6 +36,15 @@ class TextureKeys(Enum):
 
     @classmethod
     def get(cls, key: str) -> 'TextureKeys':
+        """
+        Handle get.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            The value produced by the get operation.
+        """
         entry: TextureKeys | None = next(
             (member for member in cls if member.value == key),
             None
@@ -45,4 +54,10 @@ class TextureKeys(Enum):
         return entry
 
     def str(self) -> str:
+        """
+        Handle str.
+
+        Returns:
+            The value produced by the str operation.
+        """
         return self.value

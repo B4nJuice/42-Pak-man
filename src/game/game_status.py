@@ -14,6 +14,12 @@ class GameStatus(Enum):
 
     @classmethod
     def get_all(cls) -> list["GameStatus"]:
+        """
+        Return the current all.
+
+        Returns:
+            The current all.
+        """
         return [status for status in cls]
 
 
@@ -33,4 +39,10 @@ class InterfaceStatus(Enum):
 
     @classmethod
     def get_all(cls) -> list["InterfaceStatus"]:
+        """
+        Return the current all.
+
+        Returns:
+            The current all.
+        """
         return [status for status in cls]

@@ -26,6 +26,12 @@ from .skill_interface import SkillInterface
 
 class StatsInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
         self.game: Game = game
         self.layer: MeshLayer = MeshLayer()
@@ -226,6 +232,9 @@ class StatsInterface(Interface):
         self.refresh_ameliorations()
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         player = self.game._player
 
         for skill_interface in self.skill_interfaces:
@@ -240,6 +249,9 @@ class StatsInterface(Interface):
             )
 
     def refresh_ameliorations(self) -> None:
+        """
+        Handle refresh ameliorations.
+        """
         ameliorations = self.game._player._ameliorations.all()
         for placeholder, amelioration in zip(
                 self.amelioration_placeholders, ameliorations
@@ -247,4 +259,10 @@ class StatsInterface(Interface):
             placeholder.set_amelioration(amelioration)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

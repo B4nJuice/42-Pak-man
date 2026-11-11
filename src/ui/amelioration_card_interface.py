@@ -39,6 +39,15 @@ class AmeliorationCardInterface(Interface):
                 on_choose: Callable[[], None] | None = None,
                 on_hover: Callable[[], None] | None = None,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+            position: Screen or world coordinates of the object.
+            on_choose: On choose used by the operation.
+            on_hover: On hover used by the operation.
+        """
         super().__init__(game)
         self.layer = MeshLayer()
         self.position = position
@@ -218,6 +227,14 @@ class AmeliorationCardInterface(Interface):
                 upgrades: list[tuple[Skill, float]],
                 rarity: tuple[str, tuple[int, int, int]]
             ) -> None:
+        """
+        Assign the amelioration.
+
+        Args:
+            amelioration: Amelioration used by the operation.
+            upgrades: Upgrades used by the operation.
+            rarity: Rarity used by the operation.
+        """
         self.amelioration = amelioration
         if self.icon is not None:
             self.layer.meshes.remove(self.icon)
@@ -308,6 +325,9 @@ class AmeliorationCardInterface(Interface):
         self.layer.meshes.append(self.icon)
 
     def select(self) -> None:
+        """
+        Handle select.
+        """
         self.border.set_thickness(2)
         self.border.set_color(self.rarity_color)
         self.choose_button_background.set_color(self.rarity_color)
@@ -317,6 +337,9 @@ class AmeliorationCardInterface(Interface):
         )
 
     def unselect(self) -> None:
+        """
+        Handle unselect.
+        """
         self.border.set_thickness(1)
         self.border.set_color(
             Color(*self.game._config.amelioration_card_border_color)
@@ -330,4 +353,10 @@ class AmeliorationCardInterface(Interface):
         )
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

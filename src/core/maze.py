@@ -16,10 +16,22 @@ class Maze:
     _moves_cache: dict[Tile, list[tuple[Tile, Direction]]]
 
     def __init__(self, seed: int) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            seed: Seed used by the operation.
+        """
         self.set_seed(seed)
         self._moves_cache = {}
 
     def generate(self, level: LevelModel) -> None:
+        """
+        Handle generate.
+
+        Args:
+            level: Level containing the entity or navigation data.
+        """
         self.invalidate_moves_cache()
         self._grid = []
         generator: MazeGenerator = MazeGenerator(
@@ -33,12 +45,38 @@ class Maze:
                 self._grid[y].append(Tile(walls=col, x=x, y=y))
 
     def get_grid(self) -> list[list[Tile]]:
+        """
+        Return the current grid.
+
+        Returns:
+            The current grid.
+        """
         return self._grid
 
     def get_tile(self, x: int, y: int) -> Tile:
+        """
+        Return the current tile.
+
+        Args:
+            x: Horizontal coordinate or value.
+            y: Vertical coordinate or value.
+
+        Returns:
+            The current tile.
+        """
         return self._grid[y][x]
 
     def get_next_tile(self, tile: Tile, direction: Direction) -> Tile | None:
+        """
+        Return the current next tile.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+            direction: Direction in which the entity should move.
+
+        Returns:
+            The current next tile.
+        """
         x: int = tile.get_x() + direction.vector[0]
         y: int = tile.get_y() + direction.vector[1]
         if not self.is_within_bounds((x, y)):
@@ -52,6 +90,17 @@ class Maze:
                 direction: Direction,
                 distance: int
             ) -> Tile:
+        """
+        Return the current tile ahead.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+            direction: Direction in which the entity should move.
+            distance: Distance used by the operation.
+
+        Returns:
+            The current tile ahead.
+        """
         x: int = tile.get_x() + direction.vector[0] * distance
         y: int = tile.get_y() + direction.vector[1] * distance
 
@@ -63,10 +112,28 @@ class Maze:
         return self._grid[y][x]
 
     def is_within_bounds(self, pos: Pos) -> bool:
+        """
+        Check whether the within bounds condition holds.
+
+        Args:
+            pos: Pos used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return 0 <= pos[0] < self.get_width() \
             and 0 <= pos[1] < self.get_height()
 
     def get_possible_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
+        """
+        Return the current possible moves.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+
+        Returns:
+            The current possible moves.
+        """
         moves = self._moves_cache.get(tile)
         if moves is None:
             moves = self._compute_moves(tile)
@@ -74,12 +141,24 @@ class Maze:
         return moves
 
     def get_random_tile(self) -> Tile:
+        """
+        Return the current random tile.
+
+        Returns:
+            The current random tile.
+        """
         x: int = randint(0, self.get_width() - 1)
         y: int = randint(0, self.get_height() - 1)
 
         return self.get_tile(x, y)
 
     def get_random_valid_tile(self) -> Tile:
+        """
+        Return the current random valid tile.
+
+        Returns:
+            The current random valid tile.
+        """
         tile: Tile | None = None
 
         while tile is None:
@@ -90,6 +169,15 @@ class Maze:
         return tile
 
     def _compute_moves(self, tile: Tile) -> list[tuple[Tile, Direction]]:
+        """
+        Handle compute moves.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+
+        Returns:
+            The value produced by the compute moves operation.
+        """
         x0, y0 = tile.get_x(), tile.get_y()
         width, height = self.get_width(), self.get_height()
         moves: list[tuple[Tile, Direction]] = []
@@ -105,21 +193,51 @@ class Maze:
         return moves
 
     def invalidate_moves_cache(self) -> None:
+        """
+        Handle invalidate moves cache.
+        """
         self._moves_cache.clear()
 
     def get_width(self) -> int:
+        """
+        Return the current width.
+
+        Returns:
+            The current width.
+        """
         return len(self._grid[0])
 
     def get_height(self) -> int:
+        """
+        Return the current height.
+
+        Returns:
+            The current height.
+        """
         return len(self._grid)
 
     def set_seed(self, seed: int) -> None:
+        """
+        Assign the seed.
+
+        Args:
+            seed: Seed used by the operation.
+        """
         self._seed = seed
 
     def get_seed(self) -> int:
+        """
+        Return the current seed.
+
+        Returns:
+            The current seed.
+        """
         return self._seed
 
     def print_grid(self) -> None:
+        """
+        Handle print grid.
+        """
         for _, row in enumerate(self._grid):
             top = ''
 

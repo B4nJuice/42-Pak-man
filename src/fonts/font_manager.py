@@ -52,6 +52,13 @@ class FontKey(Enum):
     TITLE_SECONDARY_11 = (11, FontKeys.TITLE_SECONDARY)
 
     def __init__(self, size: int, style: FontKeys):
+        """
+        Initialize the instance.
+
+        Args:
+            size: Size value to convert or apply.
+            style: Style used by the operation.
+        """
         self.size = size
         self.style = style
 
@@ -68,6 +75,14 @@ class FontManager:
                 texture_manager: 'TextureManager',
                 context: Context
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            sizes: Sizes used by the operation.
+            texture_manager: Texture manager used by the operation.
+            context: Context used by the operation.
+        """
         self._sizes = sizes
         self._texture_manager = texture_manager
         self._context = context
@@ -75,9 +90,21 @@ class FontManager:
         self.calculate()
 
     def get(self, key: FontKey) -> Font:
+        """
+        Handle get.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            The value produced by the get operation.
+        """
         return self._fonts[key]
 
     def calculate(self) -> None:
+        """
+        Handle calculate.
+        """
         self._fonts = {}
 
         for font_key in FontKey:

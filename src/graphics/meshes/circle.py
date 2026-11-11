@@ -18,6 +18,17 @@ class Circle(Mesh):
                 thickness: int = 1,
                 filled: bool = False,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            color: Color applied to the rendered element.
+            position: Screen or world coordinates of the object.
+            radius: Collision radius of the entity.
+            operation: Operation used by the operation.
+            thickness: Thickness used by the operation.
+            filled: Filled used by the operation.
+        """
         super().__init__(
                 color,
                 operation,
@@ -29,4 +40,10 @@ class Circle(Mesh):
         self.filled = filled
 
     def get_position(self) -> Position:
+        """
+        Return the current position.
+
+        Returns:
+            The current position.
+        """
         return self.position

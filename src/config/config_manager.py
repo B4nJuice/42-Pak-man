@@ -19,6 +19,13 @@ class ConfigManager:
     COMMENTS_BLOCK: ClassVar[list[tuple[str, str]]] = [('/*', '*/')]
 
     def __init__(self, config_path: str, verbose: bool = False) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            config_path: Config path used by the operation.
+            verbose: Whether verbose logging is enabled.
+        """
         self._init_logger(verbose)
         self._logger.log('Initializing config manager')
 
@@ -33,17 +40,38 @@ class ConfigManager:
         self._logger.info('Configuration loaded successfully')
 
     def get_config(self) -> ConfigModel:
+        """
+        Return the current config.
+
+        Returns:
+            The current config.
+        """
         return self._config
 
     def display_config(self) -> None:
+        """
+        Handle display config.
+        """
         print(self._config.model_dump_json(indent=2))
 
     def _init_logger(self, verbose: bool) -> None:
+        """
+        Handle init logger.
+
+        Args:
+            verbose: Whether verbose logging is enabled.
+        """
         self._logger = Logger(
             verbose=verbose, name='ConfigManager', color=TColor.BRIGHT_BLUE
         )
 
     def _set_config_path(self, path: str) -> None:
+        """
+        Handle set config path.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+        """
         self._config_path = Path(path)
         if not self._config_path.is_file():
             raise FileNotFoundError(
@@ -55,9 +83,15 @@ class ConfigManager:
             )
 
     def _init_formater(self) -> None:
+        """
+        Handle init formater.
+        """
         self._in_comment_block = -1
 
     def _load_config(self) -> None:
+        """
+        Handle load config.
+        """
         self._logger.log(
             f'Loading config from {self._config_path.absolute().as_posix()!r}'
         )
@@ -99,6 +133,15 @@ class ConfigManager:
         self._config = ConfigModel(**validated_data)
 
     def _format_line(self, line: str) -> str:
+        """
+        Handle format line.
+
+        Args:
+            line: Line used by the operation.
+
+        Returns:
+            The value produced by the format line operation.
+        """
         formatted_line: list[str] = []
         in_string: bool = False
         escaped: bool = False
@@ -166,11 +209,31 @@ class ConfigManager:
         return end_idx + len(end_token), True
 
     def _starts_line_comment(self, line: str, idx: int) -> bool:
+        """
+        Handle starts line comment.
+
+        Args:
+            line: Line used by the operation.
+            idx: Idx used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return any(line.startswith(c, idx) for c in self.COMMENTS_LINE)
 
     def _match_block_comment_start(
         self, line: str, idx: int
     ) -> tuple[int, str, str] | None:
+        """
+        Handle match block comment start.
+
+        Args:
+            line: Line used by the operation.
+            idx: Idx used by the operation.
+
+        Returns:
+            The value produced by the match block comment start operation.
+        """
         return next(
             (
                 (block_idx, start, end)

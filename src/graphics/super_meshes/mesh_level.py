@@ -43,6 +43,20 @@ class MeshLevel(SuperMesh):
                 operation: OperationEnum = OperationEnum.SET,
                 smooth_end: bool = False,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            level: Level containing the entity or navigation data.
+            color: Color applied to the rendered element.
+            bg_color: Bg color used by the operation.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            wall_thickness: Wall thickness used by the operation.
+            operation: Operation used by the operation.
+            smooth_end: Smooth end used by the operation.
+        """
         super().__init__(
             color,
             operation=operation,
@@ -86,6 +100,9 @@ class MeshLevel(SuperMesh):
         self.init()
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         from src.game.characters import Player
         for row in self.level.get_grid():
             for tile in row:
@@ -182,6 +199,12 @@ class MeshLevel(SuperMesh):
         self.player = self.level._entities.get(Player)
 
     def register_entity(self, entity: DisplayableEntity) -> None:
+        """
+        Handle register entity.
+
+        Args:
+            entity: Entity used by the operation.
+        """
         entity.set_mesh_level_position(self.position)
         entity.set_tile_size(self.tile_height, self.tile_width)
 
@@ -189,10 +212,19 @@ class MeshLevel(SuperMesh):
         self.layer.meshes.append(entity)
 
     def unregister_entity(self, entity: DisplayableEntity) -> None:
+        """
+        Handle unregister entity.
+
+        Args:
+            entity: Entity used by the operation.
+        """
         self.entity_meshes.remove(entity)
         self.layer.meshes.remove(entity)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         for tile_mesh in self.tiles:
             tile_mesh.set_color(self.bg_color)
 
@@ -220,4 +252,10 @@ class MeshLevel(SuperMesh):
                 self.tiles[index].set_color(ghost._path_color)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

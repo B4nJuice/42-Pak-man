@@ -17,6 +17,15 @@ class Edible:
                 edible: bool = True,
                 **kwargs: Any
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            reward: Reward used by the operation.
+            edible: Edible used by the operation.
+            args: Command-line arguments passed to the application.
+            kwargs: Kwargs used by the operation.
+        """
         super().__init__(*args, **kwargs)
 
         if not isinstance(self, Entity):
@@ -28,12 +37,33 @@ class Edible:
         self.set_edible(edible)
 
     def get_reward(self) -> float:
+        """
+        Return the current reward.
+
+        Returns:
+            The current reward.
+        """
         return self._reward
 
     def set_edible(self, value: bool) -> None:
+        """
+        Assign the edible.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self._edible = value
 
     def eat(self, eater: 'Player') -> bool:
+        """
+        Handle eat.
+
+        Args:
+            eater: Eater used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if not self._edible:
             return False
 

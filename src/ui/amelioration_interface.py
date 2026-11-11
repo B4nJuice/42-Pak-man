@@ -29,6 +29,12 @@ class AmeliorationInterface(Interface):
     ]
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         self.game: Game = game
         super().__init__(game)
         self._selected_index = 0
@@ -294,6 +300,9 @@ class AmeliorationInterface(Interface):
         self.layer.meshes.extend(self.cards)
 
     def start(self) -> None:
+        """
+        Handle start.
+        """
         self._next_ameliorations = []
         self._selected_index = 0
         rarity_colors = self._rarity_colors()
@@ -340,6 +349,15 @@ class AmeliorationInterface(Interface):
         self.game.set_status(GameStatus.AMELIORATION)
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
         if key in (pygame.K_UP, pygame.K_LEFT):
@@ -356,6 +374,9 @@ class AmeliorationInterface(Interface):
         return False
 
     def _update_selection(self) -> None:
+        """
+        Handle update selection.
+        """
         for index, (button_data, card) in enumerate(
                 zip(self.buttons, self.cards)
         ):
@@ -377,22 +398,58 @@ class AmeliorationInterface(Interface):
                 card.unselect()
 
     def _select_amelioration(self, index: int) -> None:
+        """
+        Handle select amelioration.
+
+        Args:
+            index: Index used by the operation.
+        """
         if self._selected_index == index:
             return
         self._selected_index = index
         self._update_selection()
 
     def _choose_callback(self, index: int) -> Callable[[], None]:
+        """
+        Handle choose callback.
+
+        Args:
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the choose callback operation.
+        """
         def choose() -> None:
+            """
+            Handle choose.
+            """
             self._choose_amelioration(index)
         return choose
 
     def _hover_callback(self, index: int) -> Callable[[], None]:
+        """
+        Handle hover callback.
+
+        Args:
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the hover callback operation.
+        """
         def hover() -> None:
+            """
+            Handle hover.
+            """
             self._select_amelioration(index)
         return hover
 
     def _choose_amelioration(self, index: int) -> None:
+        """
+        Handle choose amelioration.
+
+        Args:
+            index: Index used by the operation.
+        """
         amelioration, _, upgrades = self._next_ameliorations[index]
         amelioration.level_up(upgrades)
         self.game._player.add_amelioration(amelioration)
@@ -401,6 +458,12 @@ class AmeliorationInterface(Interface):
     def _rarity_colors(self) -> dict[
             AmeliorationRarity, tuple[int, int, int]
     ]:
+        """
+        Handle rarity colors.
+
+        Returns:
+            The value produced by the rarity colors operation.
+        """
         config = self.game._config
         return {
             AmeliorationRarity.COMMON: config.amelioration_common_color,
@@ -415,6 +478,16 @@ class AmeliorationInterface(Interface):
     def _format_skill(
             upgrades: list[tuple[Skill, float]], index: int
     ) -> str:
+        """
+        Handle format skill.
+
+        Args:
+            upgrades: Upgrades used by the operation.
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the format skill operation.
+        """
         if index >= len(upgrades):
             return ""
         skill, value = upgrades[index]
@@ -425,7 +498,16 @@ class AmeliorationInterface(Interface):
         return f"{skill_name} {before:.2f}{suffix} -> {after:.2f}{suffix}"
 
     def end(self) -> None:
+        """
+        Handle end.
+        """
         self.game.set_status(GameStatus.RUNNING)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

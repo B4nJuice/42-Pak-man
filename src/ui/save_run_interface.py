@@ -34,6 +34,12 @@ class SaveRunInterface(Interface):
     _input_value: str
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         self.logger = Logger(
             name='Cheat',
             color=TColor.BRIGHT_MAGENTA,
@@ -79,6 +85,12 @@ class SaveRunInterface(Interface):
         width_middle: float = screen_width / 2
 
         def _victory_texts() -> Iterator[FontSequence]:
+            """
+            Handle victory texts.
+
+            Returns:
+                The value produced by the victory texts operation.
+            """
             def make(
                         text: str,
                         font_key: FontKey,
@@ -87,6 +99,20 @@ class SaveRunInterface(Interface):
                         x_offset: float = 0.0,
                         left: bool = True
                     ) -> FontSequence:
+                """
+                Handle make.
+
+                Args:
+                    text: Text used by the operation.
+                    font_key: Font key used by the operation.
+                    color: Color applied to the rendered element.
+                    y_offset: Y offset used by the operation.
+                    x_offset: X offset used by the operation.
+                    left: Left used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return FontSequence(
                     text=text,
                     font=fonts.get(font_key),
@@ -227,6 +253,9 @@ class SaveRunInterface(Interface):
         ))
 
     def display(self) -> None:
+        """
+        Display the interface contents.
+        """
         score = self.game.get_score()
         rank = self.game._app.leaderboard.snapshot(score)
         self._update_score(rank or 10, score)
@@ -234,11 +263,21 @@ class SaveRunInterface(Interface):
         return super().display()
 
     def _update_score(self, rank: int, score: int) -> None:
+        """
+        Handle update score.
+
+        Args:
+            rank: Rank used by the operation.
+            score: Score to record or compare.
+        """
         self._score_buttons.texts[0].text = f'#{rank+1:02d}'
         self._score_buttons.texts[1].text = f'{score:,} PTS'
         self._score_buttons.refresh()
 
     def _submit(self) -> None:
+        """
+        Handle submit.
+        """
         score, run_time, _, _, _ = self.game.get_victory_values()
         try:
             self.game._app.leaderboard.add_run(
@@ -252,12 +291,24 @@ class SaveRunInterface(Interface):
             self.game._logger.pydantic_warning(e, prefix='Can\'t save run:')
 
     def _update_input(self) -> None:
+        """
+        Handle update input.
+        """
         self._input.texts[0].text = (
             self._input_value.upper() or 'Enter your nickname'
         )
         self._input.refresh()
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
 
@@ -276,4 +327,10 @@ class SaveRunInterface(Interface):
         return False
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

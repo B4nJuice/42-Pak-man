@@ -32,6 +32,12 @@ class LeaderboardInterface(Interface):
     hovered_button: Button | None
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
         self.game = game
         self.app = game._app
@@ -55,6 +61,12 @@ class LeaderboardInterface(Interface):
         align_left: float = size.get(160)
 
         def _how_to_play_texts() -> Iterator[FontSequence]:
+            """
+            Handle how to play texts.
+
+            Returns:
+                The value produced by the how to play texts operation.
+            """
             def make(
                         text: str,
                         font_key: FontKey,
@@ -62,6 +74,19 @@ class LeaderboardInterface(Interface):
                         y_offset: float,
                         x_offset: float = 0.0
                     ) -> FontSequence:
+                """
+                Handle make.
+
+                Args:
+                    text: Text used by the operation.
+                    font_key: Font key used by the operation.
+                    color: Color applied to the rendered element.
+                    y_offset: Y offset used by the operation.
+                    x_offset: X offset used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return FontSequence(
                     text=text,
                     font=fonts.get(font_key),
@@ -319,10 +344,22 @@ class LeaderboardInterface(Interface):
         ))
 
     def display(self) -> None:
+        """
+        Display the interface contents.
+        """
         self._update_entries()
         super().display()
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
         if key in self.game._app.key_manager.get_keys(
@@ -333,19 +370,40 @@ class LeaderboardInterface(Interface):
         return False
 
     def _update_selection(self) -> None:
+        """
+        Handle update selection.
+        """
         for button in self.table_entry:
             button.set_hovered(
                 button == self.table_entry[self.hovered_entry]
             )
 
     def _hover_callback(self, index: int) -> Callable[[], None]:
+        """
+        Handle hover callback.
+
+        Args:
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the hover callback operation.
+        """
         def hover() -> None:
+            """
+            Handle hover.
+            """
             self._hover_button(index)
             self.hovered_entry = index
             self._update_selection()
         return hover
 
     def _hover_button(self, index: int) -> None:
+        """
+        Handle hover button.
+
+        Args:
+            index: Index used by the operation.
+        """
         if self.table_entry[index] is self.hovered_button:
             return
 
@@ -354,6 +412,9 @@ class LeaderboardInterface(Interface):
             button.set_hovered(False)
 
     def _update_entries(self) -> None:
+        """
+        Handle update entries.
+        """
         for button, entry in zip(
                 self.table_entry,
                 self.app.leaderboard.get()[:len(self.table_entry)]
@@ -373,7 +434,16 @@ class LeaderboardInterface(Interface):
             button.refresh()
 
     def _exit(self) -> None:
+        """
+        Handle exit.
+        """
         self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

@@ -17,6 +17,24 @@ def generate_popup_bg(
             position: Position | None = None
         ) -> tuple[Position, tuple[int, int], Plane, Rectangle]:
 
+    """
+    Handle generate popup bg.
+
+    Args:
+        width: Width of the screen or rendered element.
+        height: Height of the screen or rendered element.
+        bg_color: Bg color used by the operation.
+        border_color: Border color used by the operation.
+        border_tickness: Border tickness used by the operation.
+        screen_width: Screen width used by the operation.
+        screen_height: Screen height used by the operation.
+        size: Size value to convert or apply.
+        border_inside: Border inside used by the operation.
+        position: Screen or world coordinates of the object.
+
+    Returns:
+        The value produced by the generate popup bg operation.
+    """
     r_width: int = size.get(width)
     r_height: int = size.get(height)
     r_border_tickness: int = size.get(2)

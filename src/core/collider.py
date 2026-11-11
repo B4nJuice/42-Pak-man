@@ -17,6 +17,16 @@ class Collider:
                 primary: bool = False,
                 **kwargs: Any
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            solid: Solid used by the operation.
+            radius: Collision radius of the entity.
+            primary: Primary used by the operation.
+            args: Command-line arguments passed to the application.
+            kwargs: Kwargs used by the operation.
+        """
         super().__init__(*args, **kwargs)
 
         if not isinstance(self, Entity):
@@ -29,21 +39,57 @@ class Collider:
         self.set_primary(primary)
 
     def set_solid(self, solid: bool) -> None:
+        """
+        Assign the solid.
+
+        Args:
+            solid: Solid used by the operation.
+        """
         self._solid = solid
 
     def set_radius(self, radius: float) -> None:
+        """
+        Assign the radius.
+
+        Args:
+            radius: Collision radius of the entity.
+        """
         self._radius = radius
 
     def set_primary(self, primary: bool) -> None:
+        """
+        Assign the primary.
+
+        Args:
+            primary: Primary used by the operation.
+        """
         self._primary = primary
 
     def is_solid(self) -> bool:
+        """
+        Check whether the solid condition holds.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._solid
 
     def get_radius(self) -> float:
+        """
+        Return the current radius.
+
+        Returns:
+            The current radius.
+        """
         return self._radius
 
     def occupied_tile(self) -> set[Tile]:
+        """
+        Handle occupied tile.
+
+        Returns:
+            The value produced by the occupied tile operation.
+        """
         if not isinstance(self, Entity):
             return set()
 
@@ -57,6 +103,15 @@ class Collider:
         return tiles
 
     def overlaps(self, other: 'Collider') -> bool:
+        """
+        Handle overlaps.
+
+        Args:
+            other: Other collider involved in the collision.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if not isinstance(self, Entity) or not isinstance(other, Entity):
             return False
 
@@ -66,7 +121,19 @@ class Collider:
         return (ax - bx) ** 2 + (ay - by) ** 2 < r * r
 
     def on_collision(self, other: 'Collider') -> None:
+        """
+        Handle the collision event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         ...
 
     def on_collision_exit(self, other: 'Collider') -> None:
+        """
+        Handle the collision exit event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         pass

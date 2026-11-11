@@ -11,10 +11,25 @@ class AmeliorationRarity(Enum):
 
     @classmethod
     def get_rarity(cls, value: float) -> 'AmeliorationRarity':
+        """
+        Return the current rarity.
+
+        Args:
+            value: Value to assign or apply.
+
+        Returns:
+            The current rarity.
+        """
         for rarity in cls:
             if value <= rarity.value:
                 return rarity
         return cls.MYTHIC
 
     def get_rarity_power(self) -> float:
+        """
+        Return the current rarity power.
+
+        Returns:
+            The current rarity power.
+        """
         return 1.5 ** list(type(self)).index(self)

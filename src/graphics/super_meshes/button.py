@@ -33,6 +33,15 @@ class ButtonTheme:
     selected: ButtonStyle | None = None
 
     def get_for_state(self, state: ButtonState) -> ButtonStyle:
+        """
+        Return the current for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current for state.
+        """
         if state is ButtonState.SELECTED and self.selected is not None:
             return self.selected
         if state is ButtonState.HOVER and self.hover is not None:
@@ -61,12 +70,39 @@ class ButtonTextConfig:
     )
 
     def get_text_for_state(self, state: ButtonState) -> str:
+        """
+        Return the current text for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current text for state.
+        """
         return self.state_texts.get(state, self.text)
 
     def get_color_for_state(self, state: ButtonState) -> Color | None:
+        """
+        Return the current color for state.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            The current color for state.
+        """
         return self.state_colors.get(state, self.color)
 
     def is_visible_for_state(self, state: ButtonState) -> bool:
+        """
+        Check whether the visible for state condition holds.
+
+        Args:
+            state: State used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return state in self.visible_states
 
 
@@ -110,6 +146,27 @@ class Button(SuperMesh):
                 theme: ButtonTheme | None = None,
                 texts: list[ButtonTextConfig] | None = None,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            normal_color: Normal color used by the operation.
+            hover_color: Hover color used by the operation.
+            selected_color: Selected color used by the operation.
+            state: State used by the operation.
+            operation: Operation used by the operation.
+            on_click: On click used by the operation.
+            on_hover: On hover used by the operation.
+            border_thickness: Border thickness used by the operation.
+            border_color: Border color used by the operation.
+            hover_border_color: Hover border color used by the operation.
+            selected_border_color: Selected border color used by the operation.
+            theme: Theme used by the operation.
+            texts: Texts used by the operation.
+        """
         super().__init__(
             normal_color,
             operation=operation,
@@ -152,6 +209,12 @@ class Button(SuperMesh):
         self._text_sequences = []
 
         def _on_hover() -> Any:
+            """
+            Handle on hover.
+
+            Returns:
+                The value produced by the on hover operation.
+            """
             if on_hover:
                 return on_hover()
 
@@ -189,12 +252,27 @@ class Button(SuperMesh):
         self.set_state(state)
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         pass
 
     def _current_style(self) -> ButtonStyle:
+        """
+        Handle current style.
+
+        Returns:
+            The value produced by the current style operation.
+        """
         return self.theme.get_for_state(self.state)
 
     def _current_color(self) -> Color:
+        """
+        Handle current color.
+
+        Returns:
+            The value produced by the current color operation.
+        """
         if self.selected:
             return self.selected_color
         if self.hovered:
@@ -202,6 +280,12 @@ class Button(SuperMesh):
         return self.normal_color
 
     def _current_border_color(self) -> Color:
+        """
+        Handle current border color.
+
+        Returns:
+            The value produced by the current border color operation.
+        """
         if self.selected:
             return self.selected_border_color
         if self.hovered:
@@ -209,6 +293,9 @@ class Button(SuperMesh):
         return self.border_color
 
     def _sync_state(self) -> None:
+        """
+        Handle sync state.
+        """
         if self.selected:
             self.state = ButtonState.SELECTED
         elif self.hovered:
@@ -217,6 +304,15 @@ class Button(SuperMesh):
             self.state = ButtonState.NORMAL
 
     def add_text(self, config: ButtonTextConfig) -> FontSequence:
+        """
+        Add the text to the collection.
+
+        Args:
+            config: Configuration values used to initialize the component.
+
+        Returns:
+            The value produced by the add text operation.
+        """
         if config.font is None:
             raise ValueError(
                 "ButtonTextConfig.font is required to render text"
@@ -240,9 +336,18 @@ class Button(SuperMesh):
         return label
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def _refresh_texts(self) -> None:
+        """
+        Handle refresh texts.
+        """
         for index, text_config in enumerate(self.texts):
             if index >= len(self._text_sequences):
                 continue
@@ -271,6 +376,9 @@ class Button(SuperMesh):
             sequence.set_scale(text_config.scale)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.plane.positions[1].x = self.position.x + self.width
         self.plane.positions[1].y = self.position.y + self.height
         self.plane.set_color(self._current_color())
@@ -288,6 +396,12 @@ class Button(SuperMesh):
         self._refresh_texts()
 
     def set_state(self, state: ButtonState) -> None:
+        """
+        Assign the state.
+
+        Args:
+            state: State used by the operation.
+        """
         self.state = state
         self.hovered = state is ButtonState.HOVER
         self.selected = state is ButtonState.SELECTED
@@ -295,37 +409,86 @@ class Button(SuperMesh):
         self.refresh()
 
     def set_selected(self, selected: bool) -> None:
+        """
+        Assign the selected.
+
+        Args:
+            selected: Selected used by the operation.
+        """
         self.selected = selected
         self._sync_state()
         self.refresh()
 
     def set_hovered(self, hovered: bool) -> None:
+        """
+        Assign the hovered.
+
+        Args:
+            hovered: Hovered used by the operation.
+        """
         self.hovered = hovered
         self._sync_state()
         self.refresh()
 
     def set_position(self, position: Position) -> None:
+        """
+        Assign the position.
+
+        Args:
+            position: Screen or world coordinates of the object.
+        """
         self.position = position
         self.refresh()
 
     def set_size(self, width: int, height: int) -> None:
+        """
+        Assign the size.
+
+        Args:
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+        """
         self.width = width
         self.height = height
         self.refresh()
 
     def set_normal_color(self, color: Color) -> None:
+        """
+        Assign the normal color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.normal_color = color
         self.refresh()
 
     def set_hover_color(self, color: Color) -> None:
+        """
+        Assign the hover color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.hover_color = color
         self.refresh()
 
     def set_selected_color(self, color: Color) -> None:
+        """
+        Assign the selected color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.selected_color = color
         self.refresh()
 
     def set_border_thickness(self, thickness: int) -> None:
+        """
+        Assign the border thickness.
+
+        Args:
+            thickness: Thickness used by the operation.
+        """
         self.border_thickness = max(0, thickness)
         if self.border is None and self.border_thickness > 0:
             self.border = Rectangle(
@@ -343,22 +506,52 @@ class Button(SuperMesh):
         self.refresh()
 
     def set_border_color(self, color: Color) -> None:
+        """
+        Assign the border color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.border_color = color
         self.refresh()
 
     def set_hover_border_color(self, color: Color) -> None:
+        """
+        Assign the hover border color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.hover_border_color = color
         self.refresh()
 
     def set_selected_border_color(self, color: Color) -> None:
+        """
+        Assign the selected border color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         self.selected_border_color = color
         self.refresh()
 
     def set_theme(self, theme: ButtonTheme) -> None:
+        """
+        Assign the theme.
+
+        Args:
+            theme: Theme used by the operation.
+        """
         self.theme = theme
         self.refresh()
 
     def set_operation(self, operation: OperationEnum) -> None:
+        """
+        Assign the operation.
+
+        Args:
+            operation: Operation used by the operation.
+        """
         super().set_operation(operation)
         self.plane.set_operation(operation)
         if self.border is not None:
@@ -367,8 +560,24 @@ class Button(SuperMesh):
             sequence.set_operation(operation)
 
     def set_color(self, color: Color) -> None:
+        """
+        Assign the color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         super().set_color(color)
         self.plane.set_color(color)
 
     def sim_click(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        Handle sim click.
+
+        Args:
+            args: Command-line arguments passed to the application.
+            kwargs: Kwargs used by the operation.
+
+        Returns:
+            The value produced by the sim click operation.
+        """
         return self.plane.sim_click(*args, **kwargs)
