@@ -20,6 +20,12 @@ class Level(Maze):
     _to_unregister: list[DisplayableEntity]
 
     def __init__(self, level: LevelModel):
+        """
+        Initialize the instance.
+
+        Args:
+            level: Level containing the entity or navigation data.
+        """
         super().__init__(level.seed)
 
         self._entities = EntityStore()
@@ -30,10 +36,19 @@ class Level(Maze):
         self.state = StateManager(self)
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         for entity in self._entities.all():
             entity.init()
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         for entity in self._entities.all():
             entity.update(dt)
         self._check_collisions()
@@ -41,6 +56,12 @@ class Level(Maze):
         self.state.update(dt)
 
     def register_entity(self, entity: DisplayableEntity | Entity) -> None:
+        """
+        Handle register entity.
+
+        Args:
+            entity: Entity used by the operation.
+        """
         self._entities.add(entity)
         if isinstance(entity, Collider):
             self._colliders.append(entity)
@@ -48,6 +69,12 @@ class Level(Maze):
             self._to_register.append(entity)
 
     def unregister_entity(self, entity: DisplayableEntity | Entity) -> None:
+        """
+        Handle unregister entity.
+
+        Args:
+            entity: Entity used by the operation.
+        """
         self._entities.remove(entity)
         if entity in self._colliders:
             self._colliders.remove(cast(Collider, entity))
@@ -56,9 +83,18 @@ class Level(Maze):
 
     @property
     def store(self) -> EntityStore:
+        """
+        Handle store.
+
+        Returns:
+            The value produced by the store operation.
+        """
         return self._entities
 
     def _check_collisions(self) -> None:
+        """
+        Handle check collisions.
+        """
         grid: defaultdict[Tile, list[Collider]] = defaultdict(list)
         for collider in self._colliders:
             for tile in collider.occupied_tile():
@@ -85,9 +121,21 @@ class Level(Maze):
                     b.on_collision(a)
 
     def get_entities(self) -> list[Entity]:
+        """
+        Return the current entities.
+
+        Returns:
+            The current entities.
+        """
         return self._entities.all()
 
     def is_finished(self) -> bool:
+        """
+        Check whether the finished condition holds.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         from src.game.items.pacgum import PacGum
         from src.game.items.super_pacgum import SuperPacGum
 

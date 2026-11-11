@@ -41,6 +41,22 @@ class SkillInterface(Interface):
                 skill_title_font_size: float = 23,
                 skill_value_font_size: float = 55.5,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+            skill: Skill used by the operation.
+            title: Title used by the operation.
+            position: Screen or world coordinates of the object.
+            width: Width of the screen or rendered element.
+            height: Height of the screen or rendered element.
+            default_value: Default value used by the operation.
+            skill_title_fontkey: Skill title fontkey used by the operation.
+            skill_value_fontkey: Skill value fontkey used by the operation.
+            skill_title_font_size: Skill title font size used by the operation.
+            skill_value_font_size: Skill value font size used by the operation.
+        """
         super().__init__(game)
         self.game = game
         self.layer = MeshLayer()
@@ -98,12 +114,30 @@ class SkillInterface(Interface):
         self.layer.meshes.append(self.value)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.value.set_sequence_text(self._format_skill(type(self.skill)))
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def _format_skill(self, skill_type: type[Skill]) -> str:
+        """
+        Handle format skill.
+
+        Args:
+            skill_type: Skill type used by the operation.
+
+        Returns:
+            The value produced by the format skill operation.
+        """
         player = self.game._player
         skill = skill_type()
         value = self.default_value + sum(

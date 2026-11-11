@@ -17,6 +17,9 @@ from src.utils.size import SizeCore
 
 
 def init_pygame() -> None:
+    """
+    Initialize the associated state.
+    """
     os.environ['SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR'] = '0'
 
     pygame.init()
@@ -32,6 +35,14 @@ def init_pygame() -> None:
 
 
 def main(args: list[str], verbose: bool, logger: Logger) -> None:
+    """
+    Handle main.
+
+    Args:
+        args: Command-line arguments passed to the application.
+        verbose: Whether verbose logging is enabled.
+        logger: Logger used to report application messages.
+    """
     from src.app import App
 
     logger.log('Starting Pak-man')

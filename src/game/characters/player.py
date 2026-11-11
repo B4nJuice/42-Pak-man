@@ -57,6 +57,19 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
                 app: App,
                 game: 'Game'
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            id: Identifier assigned to the object.
+            tile: Grid tile occupied by or assigned to the entity.
+            level: Level containing the entity or navigation data.
+            level_exp_multiplier: Level exp multiplier used by the operation.
+            first_level_exp: First level exp used by the operation.
+            exp_per_second: Exp per second used by the operation.
+            app: Application instance that owns the object.
+            game: Game instance associated with the component.
+        """
         super().__init__(
             name=id,
             tile=tile,
@@ -86,6 +99,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._noclip = False
 
     def add_amelioration(self, amelioration: Amelioration) -> None:
+        """
+        Add the amelioration to the collection.
+
+        Args:
+            amelioration: Amelioration used by the operation.
+        """
         if type(amelioration) not in [
                     a.__class__ for a in self._ameliorations.all()
                 ]:
@@ -93,6 +112,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         self._game._stats_interface.refresh_ameliorations()
 
     def get_luck(self) -> float:
+        """
+        Return the current luck.
+
+        Returns:
+            The current luck.
+        """
         multiplier: float = sum([
             s.get_skill(LuckSkill).get_value()
             for s in self._ameliorations.gets(LuckSkill)
@@ -101,6 +126,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         return 1 + 1 * multiplier / 100
 
     def get_speed(self) -> float:
+        """
+        Return the current speed.
+
+        Returns:
+            The current speed.
+        """
         initial_speed: float = super().get_speed()
         multiplier: float = sum([
             s.get_skill(SpeedSkill).get_value()
@@ -110,6 +141,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         return initial_speed + initial_speed * multiplier / 100
 
     def get_upgrade_power(self) -> float:
+        """
+        Return the current upgrade power.
+
+        Returns:
+            The current upgrade power.
+        """
         return sum(
             skill.get_value()
             for skill in (
@@ -119,28 +156,51 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         )
 
     def get_additional_super_time(self) -> float:
+        """
+        Return the current additional super time.
+
+        Returns:
+            The current additional super time.
+        """
         return sum(
             [s.get_skill(SuperTimeSkill).get_value()
              for s in self._ameliorations.gets(SuperTimeSkill)]
         )
 
     def set_state(self, state: PlayerState) -> None:
+        """
+        Assign the state.
+
+        Args:
+            state: State used by the operation.
+        """
         self._state = state
 
     def get_state(self) -> PlayerState:
+        """
+        Return the current state.
+
+        Returns:
+            The current state.
+        """
         return self._state
 
     def on_collision(self, other: 'Collider') -> None:
+        """
+        Handle the collision event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         from src.game.characters import Ghost
         if not isinstance(other, Entity):
             return
 
-        if isinstance(other, Edible):
-            if other.eat(self):
-                self._game.record_collection(
-                    other.get_reward(),
-                    ghost=isinstance(other, Ghost),
-                )
+        if isinstance(other, Edible) and other.eat(self):
+            self._game.record_collection(
+                other.get_reward(),
+                ghost=isinstance(other, Ghost),
+            )
 
         if isinstance(other, Ghost):
             match other.get_state():
@@ -153,17 +213,48 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         super().on_collision(other)
 
     def on_collision_exit(self, other: 'Collider') -> None:
+        """
+        Handle the collision exit event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         super().on_collision_exit(other)
 
     def try_move(self, direction: Direction, force: bool = False) -> bool:
+        """
+        Handle try move.
+
+        Args:
+            direction: Direction in which the entity should move.
+            force: Whether to bypass the usual movement restrictions.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self._game.get_status() == GameStatus.INITIALIZING:
             self._game.set_status(GameStatus.RUNNING)
         return super().try_move(direction, self._noclip or force)
 
     def try_move_forward(self, force: bool = False) -> bool:
+        """
+        Handle try move forward.
+
+        Args:
+            force: Whether to bypass the usual movement restrictions.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return super().try_move_forward(self._noclip or force)
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         super().update(dt)
         self.update_animation(dt)
 
@@ -185,6 +276,13 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self.try_move(Direction.EAST)
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:
+        """
+        Handle the arrive event.
+
+        Args:
+            tile: Grid tile occupied by or assigned to the entity.
+            direction: Direction in which the entity should move.
+        """
         if self._queued is not None:
             if not self.try_move(self._queued):
                 self.try_move_forward()
@@ -196,6 +294,9 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         return super().on_arrive(tile, direction)
 
     def refresh_bar_progression(self) -> None:
+        """
+        Handle refresh bar progression.
+        """
         if not self._level_bar:
             return
         self._level_bar.set_progression(
@@ -203,9 +304,15 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             )
 
     def refresh_level_text(self) -> None:
+        """
+        Handle refresh level text.
+        """
         self.set_level_text(self._actual_level)
 
     def set_bar_goal(self) -> None:
+        """
+        Assign the bar goal.
+        """
         if not self._level_bar:
             return
         self._level_bar.set_goal(
@@ -213,6 +320,12 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             )
 
     def add_exp(self, amount: float) -> None:
+        """
+        Add the exp to the collection.
+
+        Args:
+            amount: Amount used by the operation.
+        """
         multiplier: float = sum(
             [s.get_skill(ExpSkill).get_value()
              for s in self._ameliorations.gets(ExpSkill)]
@@ -231,12 +344,18 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             self.set_bar_goal()
 
     def on_death(self) -> None:
+        """
+        Handle the death event.
+        """
         self._direction = None
         if self._godmod:
             return
         super().on_death()
 
     def init_displayable(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self._animations = {
             direction: AnimationPlayer(
                 self.app.texture.get(TextureKeys.PACMAN, direction.to_string())
@@ -249,14 +368,29 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
         ))
 
     def get_animation(self) -> AnimationPlayer:
+        """
+        Return the current animation.
+
+        Returns:
+            The current animation.
+        """
         return self._animations[self._direction]
 
     def on_level_up(self) -> None:
+        """
+        Handle the level up event.
+        """
         self._game._amelioration_interface.start()
 
     def get_next_ameliorations(self) -> tuple[
                 Amelioration, ...
             ]:
+        """
+        Return the current next ameliorations.
+
+        Returns:
+            The current next ameliorations.
+        """
         current_ameliorations = self._ameliorations.all()
 
         if len(current_ameliorations) ==\

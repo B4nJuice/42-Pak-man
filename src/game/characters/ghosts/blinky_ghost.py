@@ -20,6 +20,16 @@ class BlinkyGhost(Ghost):
                 reward: float,
                 app: App
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            id: Identifier assigned to the object.
+            tile: Grid tile occupied by or assigned to the entity.
+            level: Level containing the entity or navigation data.
+            reward: Reward used by the operation.
+            app: Application instance that owns the object.
+        """
         self._texture_path = 'assets/characters/ghosts/red'
         self._tracking_entity = level._entities.get(Player)
 
@@ -36,7 +46,16 @@ class BlinkyGhost(Ghost):
         )
 
     def get_chase_tracking_tile(self) -> Tile:
+        """
+        Return the current chase tracking tile.
+
+        Returns:
+            The current chase tracking tile.
+        """
         return self._tracking_entity.get_tile()
 
     def on_arrive_ai(self) -> None:
+        """
+        Handle the arrive ai event.
+        """
         return super().on_arrive_ai()

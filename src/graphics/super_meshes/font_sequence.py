@@ -33,6 +33,18 @@ class FontSequence(SuperMesh):
                 align: AlignEnum = AlignEnum.CENTER,
                 operation: OperationEnum = OperationEnum.ALPHA,
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            text: Text used by the operation.
+            font: Font used by the operation.
+            color: Color applied to the rendered element.
+            position: Screen or world coordinates of the object.
+            spacing: Spacing used by the operation.
+            align: Align used by the operation.
+            operation: Operation used by the operation.
+        """
         super().__init__(
                 color,
                 operation,
@@ -50,9 +62,18 @@ class FontSequence(SuperMesh):
         self.set_sequence_text(text)
 
     def init(self) -> None:
+        """
+        Initialize the associated state.
+        """
         pass
 
     def set_color(self, color: Color) -> None:
+        """
+        Assign the color.
+
+        Args:
+            color: Color applied to the rendered element.
+        """
         super().set_color(color)
         for char in self.characters:
             char.set_color(color)
@@ -62,6 +83,13 @@ class FontSequence(SuperMesh):
                 color: Color,
                 indexes: list[int] | None
             ) -> None:
+        """
+        Assign the color indexes.
+
+        Args:
+            color: Color applied to the rendered element.
+            indexes: Indexes used by the operation.
+        """
         if indexes is None:
             for char in self.characters:
                 char.set_color(color)
@@ -73,6 +101,12 @@ class FontSequence(SuperMesh):
                 self.characters[i].set_color(color)
 
     def set_sequence_text(self, text: str) -> None:
+        """
+        Assign the sequence text.
+
+        Args:
+            text: Text used by the operation.
+        """
         self.text = text
         self.characters = []
         self.layer.meshes.clear()
@@ -122,12 +156,27 @@ class FontSequence(SuperMesh):
             cursor_x += infos["advance"] + self.spacing
 
     def set_scale(self, scale: float) -> None:
+        """
+        Assign the scale.
+
+        Args:
+            scale: Scale used by the operation.
+        """
         self.scale = scale
         for character in self.characters:
             character.set_scale(scale)
 
     def refresh(self) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.set_sequence_text(self.text)
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

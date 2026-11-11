@@ -9,6 +9,16 @@ from .tile import Tile
 
 
 def heuristic(a: Tile, b: Tile) -> float:
+    """
+    Calculate the Manhattan distance between two tiles.
+
+    Args:
+        a: First value used in the calculation.
+        b: Second value used in the calculation.
+
+    Returns:
+        The Manhattan distance between the tiles.
+    """
     return abs(a.get_x() - b.get_x()) + abs(a.get_y() - b.get_y())
 
 
@@ -21,6 +31,15 @@ class Node:
 
 
 def reconstruct_path(goal_node: Node) -> Path:
+    """
+    Build the path represented by the goal node.
+
+    Args:
+        goal_node: Goal node used by the operation.
+
+    Returns:
+        The ordered path between the tiles.
+    """
     path: Path = []
     current: Node | None = goal_node
 
@@ -36,9 +55,25 @@ class AStar:
     _level: Level
 
     def __init__(self, level: Level):
+        """
+        Initialize the instance.
+
+        Args:
+            level: Level containing the entity or navigation data.
+        """
         self._level = level
 
     def find_path(self, start: Tile, end: Tile) -> Path:
+        """
+        Find the shortest walkable path between two tiles.
+
+        Args:
+            start: Starting tile for the path search.
+            end: String written after the log message.
+
+        Returns:
+            The ordered path between the tiles.
+        """
         start_node: Node = Node(start, 0.0)
         nodes: dict[Tile, Node] = {start: start_node}
         closed: set[Tile] = set()

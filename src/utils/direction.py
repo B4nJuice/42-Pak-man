@@ -11,6 +11,12 @@ class Direction(Enum):
 
     @property
     def vector(self) -> Pos:
+        """
+        Handle vector.
+
+        Returns:
+            The value produced by the vector operation.
+        """
         return {
             Direction.NORTH: (0, -1),
             Direction.EAST: (1, 0),
@@ -19,6 +25,12 @@ class Direction(Enum):
         }[self]
 
     def opposite(self) -> 'Direction':
+        """
+        Handle opposite.
+
+        Returns:
+            The value produced by the opposite operation.
+        """
         return {
             Direction.NORTH: Direction.SOUTH,
             Direction.EAST: Direction.WEST,
@@ -27,6 +39,12 @@ class Direction(Enum):
         }[self]
 
     def __str__(self) -> str:
+        """
+        Return the string representation.
+
+        Returns:
+            The value produced by the str operation.
+        """
         return {
             Direction.NORTH: 'NORTH',
             Direction.EAST: 'EAST',
@@ -35,4 +53,10 @@ class Direction(Enum):
         }[self]
 
     def to_string(self) -> str:
+        """
+        Handle to string.
+
+        Returns:
+            The value produced by the to string operation.
+        """
         return str(self).lower()

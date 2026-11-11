@@ -32,6 +32,15 @@ class TexturePack:
                 textures: dict[TextureKeys, TextureDef],
                 fonts: dict[FontKeys, Path]
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            root: Root used by the operation.
+            name: Name assigned to the object or requested value.
+            textures: Textures used by the operation.
+            fonts: Fonts used by the operation.
+        """
         self.root = root
         self.name = name
         self._textures = textures
@@ -39,6 +48,15 @@ class TexturePack:
 
     @classmethod
     def from_directory(cls, root: str | Path) -> 'TexturePack':
+        """
+        Handle from directory.
+
+        Args:
+            root: Root used by the operation.
+
+        Returns:
+            The value produced by the from directory operation.
+        """
         root = Path(root).resolve()
         manifest = root / 'pack.json'
 
@@ -94,13 +112,41 @@ class TexturePack:
         return cls(root, data.get('name', root.name), textures, fonts)
 
     def get(self, key: TextureKeys) -> TextureDef | None:
+        """
+        Handle get.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            The value produced by the get operation.
+        """
         return self._textures.get(key)
 
     def get_font(self, key: FontKeys) -> Path | None:
+        """
+        Return the current font.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            The current font.
+        """
         return self._fonts.get(key)
 
     @staticmethod
     def _parse_font(root: Path, raw: Any) -> Path:
+        """
+        Handle parse font.
+
+        Args:
+            root: Root used by the operation.
+            raw: Raw used by the operation.
+
+        Returns:
+            The value produced by the parse font operation.
+        """
         if not isinstance(raw, str):
             raise PackError(
                 f'font element must be a string, found: {type(raw)!r}'
@@ -109,6 +155,16 @@ class TexturePack:
 
     @staticmethod
     def _parse_texture(root: Path, raw: TRAW) -> TextureDef:
+        """
+        Handle parse texture.
+
+        Args:
+            root: Root used by the operation.
+            raw: Raw used by the operation.
+
+        Returns:
+            The value produced by the parse texture operation.
+        """
         if isinstance(raw, dict) and 'variants' in raw:
             inherit = {k: raw[k] for k in ('frame_time', 'loop') if k in raw}
             variants = {
@@ -143,6 +199,17 @@ class TexturePack:
                 raw: TRAW,
                 inherit: dict
             ) -> AnimationDef:
+        """
+        Handle parse animation raw.
+
+        Args:
+            root: Root used by the operation.
+            raw: Raw used by the operation.
+            inherit: Inherit used by the operation.
+
+        Returns:
+            The value produced by the parse animation raw operation.
+        """
         frame_time: float
         loop: bool
 
@@ -194,6 +261,18 @@ class TexturePack:
                 frame_time: float,
                 loop: bool
             ) -> AnimationDef:
+        """
+        Handle parse animation.
+
+        Args:
+            root: Root used by the operation.
+            items: Items used by the operation.
+            frame_time: Frame time used by the operation.
+            loop: Loop used by the operation.
+
+        Returns:
+            The value produced by the parse animation operation.
+        """
         if not isinstance(items, list) or not 0 < len(items) <= MAX_FRAMES:
             raise PackError(
                 f'\'frames\' must be a list of 1..{MAX_FRAMES} entries'
@@ -221,6 +300,16 @@ class TexturePack:
 
     @staticmethod
     def _safe_path(root: Path, rel: str) -> Path:
+        """
+        Handle safe path.
+
+        Args:
+            root: Root used by the operation.
+            rel: Rel used by the operation.
+
+        Returns:
+            The value produced by the safe path operation.
+        """
         path = (root / rel).resolve()
         if root not in path.parents:
             raise PackError(f'path escapes pack: {rel!r}')

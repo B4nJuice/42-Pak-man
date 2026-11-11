@@ -13,6 +13,13 @@ class SettingsManager:
     _logger: Logger
 
     def __init__(self, path: str, verbose: bool) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+            verbose: Whether verbose logging is enabled.
+        """
         self._path = path
         self._logger = Logger(
             name='Settings',
@@ -23,6 +30,9 @@ class SettingsManager:
         self.load()
 
     def load(self) -> None:
+        """
+        Load the associated data.
+        """
         settings: SettingsModel | None = self._load_settings_from_file()
 
         if settings is None:
@@ -32,6 +42,12 @@ class SettingsManager:
         self._logger.info('Settings successfully loaded !')
 
     def refresh_screen_resolution(self) -> tuple[int, int]:
+        """
+        Handle refresh screen resolution.
+
+        Returns:
+            The value produced by the refresh screen resolution operation.
+        """
         width, height = self.get().display.resolution
         fs = pygame.FULLSCREEN if self.get().display.full_screen else 0
 
@@ -53,6 +69,12 @@ class SettingsManager:
         return width, height
 
     def _load_settings_from_file(self) -> SettingsModel | None:
+        """
+        Handle load settings from file.
+
+        Returns:
+            The value produced by the load settings from file operation.
+        """
         try:
             with open(self._path, 'r', encoding='utf-8') as f:
                 return SettingsModel.model_validate_json(f.read())
@@ -67,6 +89,12 @@ class SettingsManager:
         return None
 
     def save(self) -> bool:
+        """
+        Save the associated data.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         try:
             path = Path(self._path)
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -78,4 +106,10 @@ class SettingsManager:
         return False
 
     def get(self) -> SettingsModel:
+        """
+        Handle get.
+
+        Returns:
+            The value produced by the get operation.
+        """
         return self._settings

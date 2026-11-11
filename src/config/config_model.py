@@ -636,5 +636,11 @@ class ConfigModel(BaseModel):
     )
 
     def get_version(self) -> str:
+        """
+        Return the current version.
+
+        Returns:
+            The current version.
+        """
         return f'{self.game_version[0]}.{self.game_version[1]}.'\
             f'{self.game_version[2]}'

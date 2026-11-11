@@ -69,6 +69,14 @@ class Game:
     _save_run_interface: SaveRunInterface
 
     def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            config: Configuration values used to initialize the component.
+            screen: Display surface used for rendering.
+            app: Application instance that owns the object.
+        """
         self._app = app
         self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
 
@@ -100,37 +108,95 @@ class Game:
         self.init_timer()
 
     def init_timer(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self._timer = Timer(self._config.levels[self._level_index].max_time)
         self._timer.set_cb_update(self._game_interface.refresh_timer)
         self._timer.set_cb_finish(lambda: self.set_status(GameStatus.GAMEOVER))
 
     def toggle_freeze(self, value: bool) -> None:
+        """
+        Handle toggle freeze.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self._freeze_ghost = value
         for ghost in self._level._entities.gets(Ghost):
             ghost.set_freeze(self._freeze_ghost)
 
     def toggle_wallhack(self, value: bool) -> None:
+        """
+        Handle toggle wallhack.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self._player._wallhack = value
 
     def toggle_noclip(self, value: bool) -> None:
+        """
+        Handle toggle noclip.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self._player._noclip = value
 
     def toggle_godmod(self, value: bool) -> None:
+        """
+        Handle toggle godmod.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self._player._godmod = value
 
     def get_freeze_status(self) -> bool:
+        """
+        Return the current freeze status.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._freeze_ghost
 
     def get_wallhack_status(self) -> bool:
+        """
+        Return the current wallhack status.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._player._wallhack
 
     def get_noclip_status(self) -> bool:
+        """
+        Return the current noclip status.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._player._noclip
 
     def get_godmod_status(self) -> bool:
+        """
+        Return the current godmod status.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         return self._player._godmod
 
     def set_status(self, status: GameStatus, remember: bool = True) -> None:
+        """
+        Assign the status.
+
+        Args:
+            status: New state to assign to the object.
+            remember: Remember used by the operation.
+        """
         if remember and self._status is not status:
             self._status_history.append(self._status)
 
@@ -153,6 +219,12 @@ class Game:
                 self.set_interface_status(InterfaceStatus.SAVE_RUN)
 
     def set_back_status(self) -> bool:
+        """
+        Assign the back status.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if not self._status_history:
             return False
 
@@ -160,20 +232,44 @@ class Game:
         return True
 
     def set_interface_status(self, status: InterfaceStatus) -> None:
+        """
+        Assign the interface status.
+
+        Args:
+            status: New state to assign to the object.
+        """
         self._interface_manager.set_status(status)
 
     def get_interface_status(self) -> InterfaceStatus | None:
+        """
+        Return the current interface status.
+
+        Returns:
+            The current interface status.
+        """
         return self._interface_manager.get_status()
 
     def get_status(self) -> GameStatus:
+        """
+        Return the current status.
+
+        Returns:
+            The current status.
+        """
         return self._status
 
     def generate_level(self) -> None:
+        """
+        Handle generate level.
+        """
         self._level.generate(
             self._config.levels[self._level_index]
         )
 
     def next_level(self) -> None:
+        """
+        Handle next level.
+        """
         if self._level_index + 1 >= len(self._config.levels):
             self.set_status(GameStatus.VICTORY)
             return
@@ -191,6 +287,12 @@ class Game:
         self.toggle_freeze(self._freeze_ghost)
 
     def update(self, dt: float) -> None:
+        """
+        Handle update.
+
+        Args:
+            dt: Elapsed time since the previous update, in seconds.
+        """
         self._time_survived += dt
         self._timer.update(dt)
         self._level.update(dt)
@@ -228,6 +330,13 @@ class Game:
         pygame.display.flip()
 
     def record_collection(self, reward: float, ghost: bool = False) -> None:
+        """
+        Handle record collection.
+
+        Args:
+            reward: Reward used by the operation.
+            ghost: Ghost used by the operation.
+        """
         self._score += reward
         if ghost:
             self._ghosts_defeated += 1
@@ -235,9 +344,21 @@ class Game:
             self._pellets_eaten += 1
 
     def get_score(self) -> int:
+        """
+        Return the current score.
+
+        Returns:
+            The current score.
+        """
         return round(self._score)
 
     def get_victory_values(self) -> tuple[int, int, int, int, int]:
+        """
+        Return the current victory values.
+
+        Returns:
+            The current victory values.
+        """
         return (
             self.get_score(),
             round(self._time_survived),
@@ -247,6 +368,9 @@ class Game:
         )
 
     def refresh_maze(self) -> None:
+        """
+        Handle refresh maze.
+        """
         for e in self._level._to_register:
             self._game_interface.maze.register_entity(e)
         self._level._to_register = []
@@ -255,6 +379,12 @@ class Game:
         self._level._to_unregister = []
 
     def init_entities(self, player: Player | None = None) -> None:
+        """
+        Initialize the associated state.
+
+        Args:
+            player: Player used by the operation.
+        """
         super_pacgum_positions: list[tuple[int, int]] = [
             (0, 0),
             (self._level.get_width() - 1, 0),
@@ -330,6 +460,9 @@ class Game:
             )
 
     def init_interfaces(self) -> None:
+        """
+        Initialize the associated state.
+        """
         Amelioration._app = self._app
 
         self._game_interface = GameInterface(self)
@@ -425,6 +558,9 @@ class Game:
         self._interface_manager.refresh_interfaces()
 
     def run(self) -> None:
+        """
+        Handle run.
+        """
         dt: float = 0.0
 
         self._app.key_manager.update()
@@ -442,9 +578,15 @@ class Game:
             self.update(dt)
 
     def exit(self) -> None:
+        """
+        Handle exit.
+        """
         self.set_status(GameStatus.EXIT)
 
     def launch_new_run(self) -> None:
+        """
+        Handle launch new run.
+        """
         self._level_index = 0
         self._score = 0
         self._time_survived = 0
@@ -461,12 +603,21 @@ class Game:
         self.toggle_freeze(False)
 
     def _on_exit(self, _: Event, __: int) -> None:
+        """
+        Handle on exit.
+        """
         self.exit()
 
     def _init_level(self) -> None:
+        """
+        Handle init level.
+        """
         self._level = Level(self._config.levels[self._level_index])
 
     def _init_screen(self) -> None:
+        """
+        Handle init screen.
+        """
         self._clock = Clock()
         self._running = False
         self._event_handler.register_listener(pygame.QUIT, self._on_exit)
@@ -484,14 +635,32 @@ class Game:
         )
 
     def _on_resize(self, event: Event, _: int) -> None:
+        """
+        Handle on resize.
+
+        Args:
+            event: Pygame event being handled.
+        """
         self._screen.resize(event.w, event.h)
 
     def _on_key_down(self, event: Event, _: int) -> None:
+        """
+        Handle on key down.
+
+        Args:
+            event: Pygame event being handled.
+        """
         for interface in self._interface_manager.get_interfaces():
             if interface.handle_key(event.key):
                 return
 
     def load_pack(self, path: str) -> None:
+        """
+        Load the associated data.
+
+        Args:
+            path: Filesystem path used to load or save the data.
+        """
         self._app.texture.load_pack(path)
 
         for e in self._level.store.all():
@@ -500,6 +669,9 @@ class Game:
             e.init_displayable()
 
     def unload_pack(self) -> None:
+        """
+        Handle unload pack.
+        """
         self._app.texture.unload_pack()
 
         for e in self._level.store.all():
@@ -508,10 +680,25 @@ class Game:
             e.init_displayable()
 
     def _init_event_handler(self) -> None:
+        """
+        Handle init event handler.
+        """
         self._event_handler = EventHandler()
 
     def _set_config(self, config: ConfigModel) -> None:
+        """
+        Handle set config.
+
+        Args:
+            config: Configuration values used to initialize the component.
+        """
         self._config = config
 
     def _set_screen(self, screen: Screen) -> None:
+        """
+        Handle set screen.
+
+        Args:
+            screen: Display surface used for rendering.
+        """
         self._screen = screen

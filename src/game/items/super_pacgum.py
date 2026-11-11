@@ -23,6 +23,16 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
                 reward: float,
                 app: App
             ) -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            id: Identifier assigned to the object.
+            pos: Pos used by the operation.
+            level: Level containing the entity or navigation data.
+            reward: Reward used by the operation.
+            app: Application instance that owns the object.
+        """
         super().__init__(
             name=id,
             tile=pos,
@@ -35,12 +45,27 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
         )
 
     def on_collision(self, other: 'Collider') -> None:
+        """
+        Handle the collision event.
+
+        Args:
+            other: Other collider involved in the collision.
+        """
         if not isinstance(other, Entity):
             return
 
         return super().on_collision(other)
 
     def eat(self, eater: 'Player') -> bool:
+        """
+        Handle eat.
+
+        Args:
+            eater: Eater used by the operation.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if super().eat(eater):
             self.level.unregister_entity(cast(DisplayableEntity, self))
             self.level.state.set_frightened_phase()
@@ -48,9 +73,18 @@ class SuperPacGum(Edible, Collider, Displayable, Entity):
         return False
 
     def init_displayable(self) -> None:
+        """
+        Initialize the associated state.
+        """
         self._animation = AnimationPlayer(
             self.app.texture.get(TextureKeys.SUPER_PACGUM)
         )
 
     def get_animation(self) -> AnimationPlayer:
+        """
+        Return the current animation.
+
+        Returns:
+            The current animation.
+        """
         return self._animation

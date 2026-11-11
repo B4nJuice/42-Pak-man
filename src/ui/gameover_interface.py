@@ -41,6 +41,12 @@ class GameoverInterface(Interface):
     pellets_eaten: BoxInterface
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         self.logger = Logger(
             name='Cheat',
             color=TColor.BRIGHT_MAGENTA,
@@ -86,6 +92,12 @@ class GameoverInterface(Interface):
         width_middle: float = screen_width / 2
 
         def _victory_texts() -> Iterator[FontSequence]:
+            """
+            Handle victory texts.
+
+            Returns:
+                The value produced by the victory texts operation.
+            """
             def make(
                         text: str,
                         font_key: FontKey,
@@ -93,6 +105,19 @@ class GameoverInterface(Interface):
                         y_offset: float,
                         x_offset: float = 0.0
                     ) -> FontSequence:
+                """
+                Handle make.
+
+                Args:
+                    text: Text used by the operation.
+                    font_key: Font key used by the operation.
+                    color: Color applied to the rendered element.
+                    y_offset: Y offset used by the operation.
+                    x_offset: X offset used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return FontSequence(
                     text=text,
                     font=fonts.get(font_key),
@@ -324,6 +349,16 @@ class GameoverInterface(Interface):
         ghosts_defeated: int,
         pellets_eaten: int,
     ) -> None:
+        """
+        Update the values.
+
+        Args:
+            final_score: Final score used by the operation.
+            time_survived: Time survived used by the operation.
+            level_reached: Level reached used by the operation.
+            ghosts_defeated: Ghosts defeated used by the operation.
+            pellets_eaten: Pellets eaten used by the operation.
+        """
         self.final_score.refresh(f'{final_score:,}')
         self.time_survived.refresh(
             f'{time_survived // 60:02}:{time_survived % 60:02}'
@@ -333,21 +368,45 @@ class GameoverInterface(Interface):
         self.pellets_eaten.refresh(f'{pellets_eaten:,}')
 
     def display(self) -> None:
+        """
+        Display the interface contents.
+        """
         self.update_values(*self.game.get_victory_values())
         super().display()
 
     def _update_selection(self) -> None:
+        """
+        Handle update selection.
+        """
         for button in self.buttons:
             button.set_selected(button == self.buttons[self._selected_index])
 
     def _hover_callback(self, index: int) -> Callable[[], None]:
+        """
+        Handle hover callback.
+
+        Args:
+            index: Index used by the operation.
+
+        Returns:
+            The value produced by the hover callback operation.
+        """
         def hover() -> None:
+            """
+            Handle hover.
+            """
             self._hover_button(index)
             self._selected_index = index
             self._update_selection()
         return hover
 
     def _hover_button(self, index: int) -> None:
+        """
+        Handle hover button.
+
+        Args:
+            index: Index used by the operation.
+        """
         if self.buttons[index] is self.hovered_button:
             return
 
@@ -356,6 +415,15 @@ class GameoverInterface(Interface):
             button.set_hovered(False)
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
         if key in self.game._app.key_manager.get_keys(
@@ -392,4 +460,10 @@ class GameoverInterface(Interface):
         return False
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

@@ -25,6 +25,12 @@ class HowToPLayInterface(Interface):
     high_socre: FontSequence
 
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
         self.game = game
         self.layer = MeshLayer()
@@ -48,6 +54,12 @@ class HowToPLayInterface(Interface):
         width_middle: float = screen_width / 2
 
         def _how_to_play_texts() -> Iterator[FontSequence]:
+            """
+            Handle how to play texts.
+
+            Returns:
+                The value produced by the how to play texts operation.
+            """
             def make(
                         text: str,
                         font_key: FontKey,
@@ -55,6 +67,19 @@ class HowToPLayInterface(Interface):
                         y_offset: float,
                         x_offset: float = 0.0
                     ) -> FontSequence:
+                """
+                Handle make.
+
+                Args:
+                    text: Text used by the operation.
+                    font_key: Font key used by the operation.
+                    color: Color applied to the rendered element.
+                    y_offset: Y offset used by the operation.
+                    x_offset: X offset used by the operation.
+
+                Returns:
+                    The value produced by the make operation.
+                """
                 return FontSequence(
                     text=text,
                     font=fonts.get(font_key),
@@ -218,6 +243,15 @@ class HowToPLayInterface(Interface):
         ))
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.hidden:
             return False
         if key in self.game._app.key_manager.get_keys(
@@ -228,7 +262,16 @@ class HowToPLayInterface(Interface):
         return False
 
     def _exit(self) -> None:
+        """
+        Handle exit.
+        """
         self.game._interface_manager.back()
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer

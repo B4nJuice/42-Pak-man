@@ -20,6 +20,12 @@ from .interface import Interface
 
 class GameInterface(Interface):
     def __init__(self, game: 'Game') -> None:
+        """
+        Initialize the instance.
+
+        Args:
+            game: Game instance associated with the component.
+        """
         super().__init__(game)
 
         self.app: App = game._app
@@ -96,18 +102,54 @@ class GameInterface(Interface):
 
     @staticmethod
     def sec_to_str(seconds: float) -> str:
+        """
+        Handle sec to str.
+
+        Args:
+            seconds: Seconds used by the operation.
+
+        Returns:
+            The value produced by the sec to str operation.
+        """
         return f"{int(seconds//60):02}:{int(seconds) % 60:02}"
 
     def set_level_text(self, level: int) -> None:
+        """
+        Assign the level text.
+
+        Args:
+            level: Level containing the entity or navigation data.
+        """
         self.level_text.set_sequence_text(f"LV. {level}")
 
     def set_level_bar_progression(self, progression: float) -> None:
+        """
+        Assign the level bar progression.
+
+        Args:
+            progression: Progression used by the operation.
+        """
         self.level_bar.set_progression(progression)
 
     def set_level_bar_goal(self, goal: float) -> None:
+        """
+        Assign the level bar goal.
+
+        Args:
+            goal: Goal used by the operation.
+        """
         self.level_bar.set_goal(goal)
 
     def _create_maze(self, level_bar_height: int | None = None) -> MeshLevel:
+        """
+        Handle create maze.
+
+        Args:
+            level_bar_height: Level bar height used by the operation.
+
+        Returns:
+            The value produced by the create maze operation.
+        """
         if level_bar_height is None:
             level_bar_height = round(self.height * 0.03)
 
@@ -142,6 +184,9 @@ class GameInterface(Interface):
         )
 
     def update_level(self) -> None:
+        """
+        Update the level.
+        """
         old_maze = self.maze
         self.maze = self._create_maze()
         self.layer.meshes[self.layer.meshes.index(old_maze)] = self.maze
@@ -155,15 +200,39 @@ class GameInterface(Interface):
         self.game._level._to_unregister = []
 
     def refresh_timer(self, value: float) -> None:
+        """
+        Handle refresh timer.
+
+        Args:
+            value: Value to assign or apply.
+        """
         self.timer.set_sequence_text(self.sec_to_str(max(value, 0.0)))
 
     def refresh(self, _: float) -> None:
+        """
+        Refresh the rendered state.
+        """
         self.maze.refresh()
 
     def get_layer(self) -> MeshLayer:
+        """
+        Return the current layer.
+
+        Returns:
+            The current layer.
+        """
         return self.layer
 
     def handle_key(self, key: int) -> bool:
+        """
+        Handle handle key.
+
+        Args:
+            key: Keyboard key code associated with the action.
+
+        Returns:
+            Whether the operation succeeded or the condition is true.
+        """
         if self.game.get_status() not in [
             GameStatus.RUNNING,
             GameStatus.INITIALIZING
