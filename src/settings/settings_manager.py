@@ -40,7 +40,6 @@ class SettingsManager:
         width = min(width, max_width)
         height = min(height, max_height)
 
-
         pygame.event.post(
             pygame.event.Event(
                 pygame.VIDEORESIZE, size=(width, height), w=width, h=height
