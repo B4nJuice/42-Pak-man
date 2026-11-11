@@ -208,7 +208,7 @@ class SaveRunInterface(Interface):
             on_click=self._submit,
             texts=[
                 ButtonTextConfig(
-                    text='PLAY AGAIN',
+                    text='CONTINUE',
                     font=fonts.get(FontKey.TITLE_18),
                     color=Color(*config.victory_bg),
                     alignment=AlignEnum.LEFT,
