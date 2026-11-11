@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 from src.errors import BaseError
@@ -16,6 +18,8 @@ from .utils import Logger, TColor
 
 
 def init_pygame() -> None:
+    os.environ['SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR'] = '0'
+
     pygame.init()
 
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
