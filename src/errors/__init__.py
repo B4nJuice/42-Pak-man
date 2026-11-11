@@ -2,6 +2,7 @@ from .amelioration_store_error import AmeliorationStoreNotFound
 from .asset_load_error import AssetLoadError
 from .base_error import BaseError
 from .entity_store_error import EntityStoreNotFound
+from .maze_generation_error import MazeGenerationError
 from .missing_texture_error import MissingTextureError
 from .missing_textures_error import MissingTexturesError
 from .pack_error import PackError
@@ -15,6 +16,7 @@ __all__: list[str] = [
     'AssetLoadError',
     'BaseError',
     'EntityStoreNotFound',
+    'MazeGenerationError',
     'MissingTextureError',
     'MissingTexturesError',
     'PackError',

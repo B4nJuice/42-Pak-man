@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import json5
 from pydantic import ValidationError
 
 from ..utils import Logger, TColor
 from .config_model import ConfigModel
+from .level_model import LevelModel
 
 
 class ConfigManager:
@@ -110,10 +111,20 @@ class ConfigManager:
             self._config = ConfigModel()
             return
 
-        validated_data = {}
+        validated_data: dict[str, Any] = {}
         default_instance = ConfigModel()
 
         for key, value in raw_data.items():
+            if key == 'levels':
+                levels = self._validate_levels(value)
+                if levels:
+                    validated_data[key] = levels
+                else:
+                    self._logger.warning(
+                        'No valid level found, falling back to default '
+                        'levels'
+                    )
+                continue
             if key in ConfigModel.model_fields:
                 try:
                     test_obj = ConfigModel.model_validate(
@@ -131,6 +142,54 @@ class ConfigManager:
                     continue
 
         self._config = ConfigModel(**validated_data)
+
+    def _validate_levels(self, value: object) -> list[LevelModel]:
+        """
+        Validate each level independently.
+
+        Invalid fields of a level fall back to their default value, so one
+        faulty value does not discard the whole list of levels.
+
+        Args:
+            value: Raw value of the ``levels`` key.
+
+        Returns:
+            The list of valid levels (empty if none could be built).
+        """
+        if not isinstance(value, list):
+            self._logger.warning(
+                f'Invalid value for levels: expected a list, got '
+                f'{type(value).__name__}'
+            )
+            return []
+
+        levels: list[LevelModel] = []
+        default_level = LevelModel().model_dump()
+        for index, raw_level in enumerate(value):
+            if not isinstance(raw_level, dict):
+                self._logger.warning(
+                    f'Ignoring level {index}: expected an object'
+                )
+                continue
+            level_data: dict[str, object] = {}
+            for key, field_value in raw_level.items():
+                if key not in LevelModel.model_fields:
+                    continue
+                try:
+                    LevelModel.model_validate(
+                        {**default_level, key: field_value}
+                    )
+                    level_data[key] = field_value
+                except ValidationError as e:
+                    self._logger.pydantic_warning(
+                        e, prefix=f'Invalid value in level {index} for'
+                    )
+                    self._logger.log(
+                        f'Falling back to default value for {key} '
+                        f'({field_value} -> {default_level[key]})'
+                    )
+            levels.append(LevelModel.model_validate(level_data))
+        return levels
 
     def _format_line(self, line: str) -> str:
         """

@@ -1,9 +1,12 @@
+from random import randint
+
 import pygame
 from pygame.event import Event
 from pygame.time import Clock
 
 from src.app import App
 from src.config import ConfigModel
+from src.config.level_model import FIRST_LEVEL_SEED, LevelModel
 from src.core import EventHandler, Level, Timer
 from src.core.displayable import Displayable
 from src.core.interface_manager import InterfaceManager
@@ -215,7 +218,7 @@ class Game:
 
         if status in (GameStatus.GAMEOVER, GameStatus.VICTORY):
             rank = self._app.leaderboard.snapshot(round(self._score))
-            if rank:
+            if rank is not None:
                 self.set_interface_status(InterfaceStatus.SAVE_RUN)
 
     def set_back_status(self) -> bool:
@@ -610,9 +613,21 @@ class Game:
 
     def _init_level(self) -> None:
         """
-        Handle init level.
+        Create the level at the current index.
+
+        The seed comes from the configuration. When it is omitted, the
+        first level uses a fixed seed and the next ones a random seed.
         """
-        self._level = Level(self._config.levels[self._level_index])
+        level: LevelModel = self._config.levels[self._level_index]
+        seed: int | None = level.seed
+        if seed is None:
+            seed = (
+                FIRST_LEVEL_SEED
+                if self._level_index == 0
+                else randint(1, 2 ** 31 - 1)
+            )
+        self._logger.log(f'Level {self._level_index + 1} seed: {seed}')
+        self._level = Level(level, seed)
 
     def _init_screen(self) -> None:
         """

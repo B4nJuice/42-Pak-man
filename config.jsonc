@@ -1,19 +1,29 @@
+// Pak-Man configuration file (JSON with comments: #, // and /* */)
+// Unknown keys are ignored, invalid values fall back to their default.
 {
   "screen_width": 1920,
   "screen_height": 1080,
+
+  # Where the top 10 highscores are saved (created if missing)
+  "highscore_path": ".pak-man/highscore.json",
+
+  /* Rewards (score and experience) */
+  "pacgum_reward": 3,
+  "super_pacgum_reward": 30,
+  "ghost_reward": 60,
+
+  // Levels are played in order. Without "seed", level 1 uses seed 42 and
+  // the next ones are random. Sizes must be between 5 and 100.
   "levels": [
-    {
-      "level_height": 14,
-      "level_width": 14,
-      "max_time": 50
-    },
-    {
-      "level_height": 15,
-      "level_width": 15
-    },
-    {
-      "level_height": 20,
-      "level_width": 20
-    }
+    { "name": "level 1", "level_width": 12, "level_height": 12, "max_time": 90 },
+    { "name": "level 2", "level_width": 13, "level_height": 13, "max_time": 90 },
+    { "name": "level 3", "level_width": 14, "level_height": 14, "max_time": 90 },
+    { "name": "level 4", "level_width": 15, "level_height": 15, "max_time": 90 },
+    { "name": "level 5", "level_width": 16, "level_height": 16, "max_time": 100 },
+    { "name": "level 6", "level_width": 17, "level_height": 17, "max_time": 100 },
+    { "name": "level 7", "level_width": 18, "level_height": 18, "max_time": 110 },
+    { "name": "level 8", "level_width": 19, "level_height": 19, "max_time": 110 },
+    { "name": "level 9", "level_width": 20, "level_height": 20, "max_time": 120 },
+    { "name": "level 10", "level_width": 21, "level_height": 21, "max_time": 120 }
   ]
 }

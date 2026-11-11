@@ -7,9 +7,25 @@ from pydantic import BaseModel, Field, field_validator
 
 from src.utils import utc_now
 
+MAX_NAME_LENGTH: int = 10
+MAX_ENTRIES: int = 10
+
+
+def is_valid_name_char(char: str) -> bool:
+    """
+    Check whether a character is allowed in a player name.
+
+    Args:
+        char: Character to check.
+
+    Returns:
+        True for ASCII letters, digits and spaces.
+    """
+    return char == ' ' or (char.isascii() and char.isalnum())
+
 
 class LeaderboardEntryModel(BaseModel):
-    name: str = Field(min_length=3, max_length=15)
+    name: str = Field(min_length=1, max_length=MAX_NAME_LENGTH)
     score: int = Field(ge=0)
     run_time: float = Field(ge=0)
     victory: bool
@@ -32,10 +48,14 @@ class LeaderboardEntryModel(BaseModel):
         cleaned = value.strip()
         if not cleaned:
             raise ValueError('name cannot be empty')
-        if len(cleaned) < 3 or len(cleaned) > 15:
-            raise ValueError('name must be between 3 and 15 characters long')
-        if any(ord(ch) < 32 or ord(ch) == 127 for ch in cleaned):
-            raise ValueError('name contains invalid control characters')
+        if len(cleaned) > MAX_NAME_LENGTH:
+            raise ValueError(
+                f'name must be at most {MAX_NAME_LENGTH} characters long'
+            )
+        if not all(is_valid_name_char(ch) for ch in cleaned):
+            raise ValueError(
+                'name must contain only letters, digits and spaces'
+            )
         return cleaned
 
     def compile(self, prevus_sig: str) -> str:
@@ -68,7 +88,7 @@ class LeaderboardModel(BaseModel):
             Whether the operation succeeded or the condition is true.
         """
         min_score: int = min((x.score for x in self.entries), default=0)
-        leaderboard_is_full: bool = len(self.entries) >= 10
+        leaderboard_is_full: bool = len(self.entries) >= MAX_ENTRIES
 
         self._sort()
         if leaderboard_is_full and entry.score <= min_score:

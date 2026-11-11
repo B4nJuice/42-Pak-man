@@ -12,6 +12,7 @@ from src.graphics.super_meshes import (
     FontSequence,
 )
 from src.graphics.super_meshes.button import ButtonTextConfig
+from src.leaderboard.leaderboard_models import MAX_ENTRIES, MAX_NAME_LENGTH
 from src.utils import Logger, TColor
 
 if TYPE_CHECKING:
@@ -258,7 +259,9 @@ class SaveRunInterface(Interface):
         """
         score = self.game.get_score()
         rank = self.game._app.leaderboard.snapshot(score)
-        self._update_score(rank or 10, score)
+        self._update_score(
+            rank if rank is not None else MAX_ENTRIES, score
+        )
 
         return super().display()
 
@@ -315,10 +318,10 @@ class SaveRunInterface(Interface):
         if key == pygame.K_BACKSPACE:
             self._input_value = self._input_value[:-1]
         elif (
-            key >= pygame.K_a and key <= pygame.K_z
-        ) or key == pygame.K_SPACE or (
-            key >= pygame.K_0 and key <= pygame.K_9
-        ):
+            pygame.K_a <= key <= pygame.K_z
+            or pygame.K_0 <= key <= pygame.K_9
+            or (key == pygame.K_SPACE and self._input_value)
+        ) and len(self._input_value) < MAX_NAME_LENGTH:
             self._input_value += chr(key)
         elif key == pygame.K_RETURN:
             self._submit()

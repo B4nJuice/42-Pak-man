@@ -19,14 +19,15 @@ class Level(Maze):
     _to_register: list[DisplayableEntity]
     _to_unregister: list[DisplayableEntity]
 
-    def __init__(self, level: LevelModel):
+    def __init__(self, level: LevelModel, seed: int) -> None:
         """
         Initialize the instance.
 
         Args:
             level: Level containing the entity or navigation data.
+            seed: Seed given to the maze generator for this level.
         """
-        super().__init__(level.seed)
+        super().__init__(seed)
 
         self._entities = EntityStore()
         self._colliders = []
