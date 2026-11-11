@@ -1,0 +1,38 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Sync deps
+        run: uv sync --locked
+
+      - name: Build
+        run: make build
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: false
+          files: dist/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}  # v1.0.0-rc1 => prerelease
