@@ -3,17 +3,17 @@
   "screen_height": 1080,
   "levels": [
     {
-      "level_height":14,
-      "level_width":14,
-      "max_time":50
+      "level_height": 14,
+      "level_width": 14,
+      "max_time": 50
     },
     {
-      "level_height":15,
-      "level_width":15
+      "level_height": 15,
+      "level_width": 15
     },
     {
-      "level_height":20,
-      "level_width":20
+      "level_height": 20,
+      "level_width": 20
     }
   ]
 }
