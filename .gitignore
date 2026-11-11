@@ -3,6 +3,7 @@ build
 dist
 /textures
 .pak-man
+en.subject.pdf
 
 # Virtual environment
 .venv

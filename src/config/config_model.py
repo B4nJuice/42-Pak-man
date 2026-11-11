@@ -5,17 +5,23 @@ from src.config.level_model import LevelModel
 
 class ConfigModel(BaseModel):
     highscore_path: str = Field(
-        default='data/highscores.json',
+        default='.pak-man/highscore.json',
         description='Path to the highscore file'
     )
     levels: list[LevelModel] = Field(
-        default=[LevelModel(
-            name='default level',
-            seed=42,
-            level_height=20,
-            level_width=20,
-            max_time=600
-        )]
+        default=[
+            LevelModel(
+                name=f'level {index + 1}',
+                level_width=size,
+                level_height=size,
+                max_time=90
+            )
+            for index, size in enumerate(
+                [12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+            )
+        ],
+        min_length=1,
+        description='Ordered list of the levels of a run'
     )
 
     max_player_ameliorations: int = Field(

@@ -3,6 +3,7 @@ from random import randint
 from mazegenerator import MazeGenerator
 
 from src.config.level_model import LevelModel
+from src.errors import MazeGenerationError
 
 from ..utils import Direction, Pos
 from .tile import Tile
@@ -34,12 +35,25 @@ class Maze:
         """
         self.invalidate_moves_cache()
         self._grid = []
-        generator: MazeGenerator = MazeGenerator(
-            size=(level.level_width, level.level_height),
-            perfect=False,
-            seed=self._seed
-        )
-        for y, row in enumerate(generator.maze):
+        try:
+            generator: MazeGenerator = MazeGenerator(
+                size=(level.level_width, level.level_height),
+                perfect=False,
+                seed=self._seed
+            )
+            maze: list[list[int]] = generator.maze
+        except Exception as e:
+            raise MazeGenerationError(
+                f'Maze generator failed for level {level.name!r} '
+                f'({level.level_width}x{level.level_height}, '
+                f'seed={self._seed}): {type(e).__name__}: {e}'
+            ) from e
+        if not maze or not maze[0]:
+            raise MazeGenerationError(
+                f'Maze generator returned an empty maze for level '
+                f'{level.name!r}'
+            )
+        for y, row in enumerate(maze):
             self._grid.append([])
             for x, col in enumerate(row):
                 self._grid[y].append(Tile(walls=col, x=x, y=y))

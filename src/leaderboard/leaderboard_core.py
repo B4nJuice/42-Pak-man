@@ -12,7 +12,7 @@ from src.leaderboard.leaderboard_models import (
 from src.utils import Logger, TColor
 
 DEFAULT_PATH = '.pak-man/highscore.json'
-SECRET_PATH = '.pak-man/.secret'
+SECRET_FILENAME = '.secret'
 
 
 class LeaderboardCore:
@@ -105,7 +105,10 @@ class LeaderboardCore:
         Returns:
             The current max score.
         """
-        return max(entry.score for entry in self._leaderboard.entries) or 0
+        return max(
+            (entry.score for entry in self._leaderboard.entries),
+            default=0
+        )
 
     def snapshot(self, score: int, max_rank: int = 10) -> int | None:
         """
@@ -228,7 +231,7 @@ class LeaderboardCore:
         Handle load secret.
         """
         try:
-            with open(SECRET_PATH, 'r') as f:
+            with open(self._secret_path(), 'r') as f:
                 secret = f.read()
                 if len(secret.strip()) > 0:
                     self._secret = secret.encode()
@@ -241,12 +244,20 @@ class LeaderboardCore:
         Handle save secret.
         """
         try:
-            Path(self._path).parent.mkdir(exist_ok=True)
-            with open(SECRET_PATH, 'w', encoding='UTF-8') as f:
+            Path(self._path).parent.mkdir(parents=True, exist_ok=True)
+            with open(self._secret_path(), 'w', encoding='UTF-8') as f:
                 f.write(self.get_secret().decode())
-
         except (OSError, RuntimeError) as e:
-            print(e)
+            self._logger.warning(f'Cannot save leaderboard secret : {e!s}')
+
+    def _secret_path(self) -> Path:
+        """
+        Return the path of the secret, stored next to the highscore file.
+
+        Returns:
+            The path of the secret file.
+        """
+        return Path(self._path).parent / SECRET_FILENAME
 
     def generate_secret(self) -> bytes:
         """
