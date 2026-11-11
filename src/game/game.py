@@ -289,6 +289,23 @@ class Game:
         self._stats_interface.refresh()
         self.toggle_freeze(self._freeze_ghost)
 
+    def prev_level(self) -> None:
+        """
+        Handle prev level.
+        """
+        self._level_index = max(self._level_index - 1, 0)
+
+        player = self._player
+
+        self._init_level()
+        self.set_status(GameStatus.INITIALIZING)
+        self.init_timer()
+        self.generate_level()
+        self.init_entities(player)
+        self._game_interface.update_level()
+        self._stats_interface.refresh()
+        self.toggle_freeze(self._freeze_ghost)
+
     def update(self, dt: float) -> None:
         """
         Handle update.
