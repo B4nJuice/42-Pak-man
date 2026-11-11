@@ -818,13 +818,13 @@ class CheatInterface(Interface):
         """
         Handle prev level.
         """
-        self.logger.warning('Previous level cheat is not implemented yet')
+        self.game.prev_level()
 
     def next_level(self) -> None:
         """
         Handle next level.
         """
-        self.logger.warning('Next level cheat is not implemented yet')
+        self.game.next_level()
 
     def set_time_speed(self, value: float, log: bool = True) -> None:
         """
