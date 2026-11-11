@@ -33,8 +33,10 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ github.ref_name }}
+          tag_name: build-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Build ${{ github.run_number }} (${{ github.sha }})
           generate_release_notes: false
           files: dist/*
           draft: false
-          prerelease: ${{ contains(github.ref_name, '-') }}  # v1.0.0-rc1 => prerelease
+          prerelease: false
