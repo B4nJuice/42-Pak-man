@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 
 from src.core.displayable import SimpleDisplayable
 from src.fonts import FontKey
-from src.game.game_status import GameStatus
+from src.game.game_status import GameStatus, InterfaceStatus
 from src.graphics.super_meshes import (
     AlignEnum,
     Button,
@@ -243,7 +243,9 @@ class GameoverInterface(Interface):
                 'label': 'MAIN MENU',
                 'label_hover': '> MAIN MENU',
                 'action_key_label': 'ESC',
-                'action': lambda: self.game.set_status(GameStatus.LOBBY),
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.LOBBY
+                ),
                 'hover': self._hover_callback,
                 'y': 474,
                 'selected': False
@@ -384,7 +386,7 @@ class GameoverInterface(Interface):
         if key in self.game._app.key_manager.get_keys(
             ActionKey.BACK_PAUSE_RESUME
         ):
-            self.game.set_status(GameStatus.LOBBY)
+            self.game.set_interface_status(InterfaceStatus.LOBBY)
             return True
 
         return False

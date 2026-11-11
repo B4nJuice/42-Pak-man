@@ -1,20 +1,19 @@
 import os
+import sys
 
 import pygame
 
+from src.config.config_manager import ConfigManager
 from src.errors import BaseError
 from src.fonts.font_manager import FontManager
 from src.game.game import Game
+from src.graphics.screen import Screen
 from src.leaderboard import LeaderboardCore
 from src.settings import KeyManager, SettingsManager
 from src.texture.texture_loader import TextureLoader
 from src.texture.texture_manager import TextureManager
+from src.utils import Logger, TColor
 from src.utils.size import SizeCore
-
-from .app import App
-from .config.config_manager import ConfigManager
-from .graphics.screen import Screen
-from .utils import Logger, TColor
 
 
 def init_pygame() -> None:
@@ -32,10 +31,17 @@ def init_pygame() -> None:
     )
 
 
-def main(verbose: bool, logger: Logger) -> None:
+def main(args: list[str], verbose: bool, logger: Logger) -> None:
+    from src.app import App
+
     logger.log('Starting Pak-man')
 
-    config: ConfigManager = ConfigManager('config.jsonc', verbose)
+    config_file: str = (
+        args[0]
+        if len(args) > 0
+        else 'config.jsonc'
+    )
+    config: ConfigManager = ConfigManager(config_file, verbose)
 
     init_pygame()
     pygame_screen = pygame.display.set_mode(
@@ -115,6 +121,6 @@ if __name__ == '__main__':
 
     logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
     try:
-        main(verbose, logger)
+        main(sys.argv[1:], verbose, logger)
     except BaseError as e:
         logger.error(str(e))

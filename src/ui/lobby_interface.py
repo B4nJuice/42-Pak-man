@@ -2,6 +2,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from src.fonts import FontKey
+from src.game.game_status import InterfaceStatus
 from src.graphics import Color, Position
 from src.graphics.super_meshes import AlignEnum, Button, ButtonState
 from src.graphics.super_meshes.button import ButtonTextConfig
@@ -54,7 +55,7 @@ class LobbyInterface(Interface):
         ))
 
         self.high_socre = FontSequence(
-            text='048,620',
+            text='---,---',
             font=fonts.get(FontKey.TITLE_SECONDARY_10),
             color=Color(*config.lobby_text_accent),
             position=Position(
@@ -71,7 +72,7 @@ class LobbyInterface(Interface):
             color=Color(*config.lobby_text_accent),
             position=Position(
                 screen_width // 2,
-                size.get(122 + 88)
+                size.get(99 + 88)
             ),
         ))
         self.layer.meshes.append(FontSequence(
@@ -80,7 +81,7 @@ class LobbyInterface(Interface):
             color=Color(*config.lobby_text_primary),
             position=Position(
                 screen_width // 2,
-                size.get(234 + 14)
+                size.get(211 + 14)
             ),
         ))
         self.layer.meshes.append(FontSequence(
@@ -89,7 +90,7 @@ class LobbyInterface(Interface):
             color=Color(*config.lobby_text_secondary),
             position=Position(
                 screen_width // 2,
-                size.get(264 + 9)
+                size.get(241 + 9)
             ),
         ))
 
@@ -99,13 +100,11 @@ class LobbyInterface(Interface):
             texture_key=TextureKeys.LOBBY_ASSETS_PACMAN_GHOST,
             position=Position(
                 size.get(462) + w / 2,
-                size.get(292) + h / 2
+                size.get(269) + h / 2
             ),
             height=h,
             width=w
         ))
-
-        from src.game import GameStatus
 
         buttons_params: list[dict[str, Any]] = [
             {
@@ -115,7 +114,7 @@ class LobbyInterface(Interface):
                 'action_key': None,
                 'action': game.launch_new_run,
                 'hover': self._hover_callback,
-                'y': 371,
+                'y': 345,
                 'selected': True
             },
             {
@@ -123,9 +122,11 @@ class LobbyInterface(Interface):
                 'label_hover': '> LEADERBOARD',
                 'action_key_label': None,
                 'action_key': None,
-                'action': lambda: self.game.set_status(GameStatus.LEADERBOARD),
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.LEADERBOARD
+                ),
                 'hover': self._hover_callback,
-                'y': 433,
+                'y': 407,
                 'selected': False
             },
             {
@@ -133,9 +134,23 @@ class LobbyInterface(Interface):
                 'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
-                'action': lambda: self.game.set_status(GameStatus.SETTINGS),
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.SETTINGS
+                ),
                 'hover': self._hover_callback,
-                'y': 495,
+                'y': 469,
+                'selected': False
+            },
+            {
+                'label': 'HOW TO PLAY',
+                'label_hover': '> HOW TO PLAY',
+                'action_key_label': None,
+                'action_key': None,
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.HOWTOPLAY
+                ),
+                'hover': self._hover_callback,
+                'y': 531,
                 'selected': False
             },
             {
@@ -145,7 +160,7 @@ class LobbyInterface(Interface):
                 'action_key': None,
                 'action': game.exit,
                 'hover': self._hover_callback,
-                'y': 557,
+                'y': 593,
                 'selected': False
             }
         ]
@@ -156,10 +171,10 @@ class LobbyInterface(Interface):
         for index, button_params in enumerate(buttons_params):
             button = Button(
                 position=Position(
-                    size.get(450),
+                    size.get(424),
                     size.get(button_params['y'])
                 ),
-                width=size.get(380),
+                width=size.get(432),
                 height=size.get(52),
                 normal_color=Color(*config.lobby_button_bg),
                 hover_color=Color(*config.lobby_button_bg_accent),
@@ -175,7 +190,7 @@ class LobbyInterface(Interface):
                         color=Color(*config.lobby_button_text),
                         alignment=AlignEnum.LEFT,
                         offset_y=size.get(6),
-                        offset_x=-(size.get(380) // 2) + size.get(18),
+                        offset_x=-(size.get(432) // 2) + size.get(20),
                         state_colors={
                             ButtonState.HOVER: Color(
                                 *config.lobby_button_text_accent
@@ -196,7 +211,7 @@ class LobbyInterface(Interface):
                                 font=fonts.get(FontKey.TITLE_SECONDARY_9),
                                 color=Color(*config.lobby_button_text),
                                 alignment=AlignEnum.RIGHT,
-                                offset_x=(size.get(380) // 2) - size.get(18),
+                                offset_x=(size.get(432) // 2) - size.get(20),
                                 offset_y=size.get(5),
                                 state_colors={
                                     ButtonState.HOVER: Color(
@@ -226,7 +241,7 @@ class LobbyInterface(Interface):
             color=Color(*config.lobby_text_accent),
             position=Position(
                 screen_width // 2,
-                size.get(641 + 9)
+                size.get(673 + 9)
             ),
         ))
         self.layer.meshes.append(FontSequence(
@@ -250,6 +265,11 @@ class LobbyInterface(Interface):
             align=AlignEnum.RIGHT
         ))
 
+    def _update_max_score(self) -> None:
+        self.high_socre.set_sequence_text(
+            f'{self.game._app.leaderboard.get_max_score():07,d}'
+        )
+
     def _update_selection(self) -> None:
         for button in self.buttons:
             button.set_selected(button == self.buttons[self._selected_index])
@@ -260,6 +280,10 @@ class LobbyInterface(Interface):
             self._selected_index = index
             self._update_selection()
         return hover
+
+    def display(self) -> None:
+        self._update_max_score()
+        return super().display()
 
     def _hover_button(self, index: int) -> None:
         if self.buttons[index] is self.hovered_button:

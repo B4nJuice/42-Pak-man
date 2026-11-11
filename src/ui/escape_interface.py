@@ -1,4 +1,3 @@
-import sys
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -16,7 +15,7 @@ from ..graphics.super_meshes.button import (
 if TYPE_CHECKING:
     from src.game.game import Game
 
-from src.game.game_status import GameStatus
+from src.game.game_status import GameStatus, InterfaceStatus
 from src.graphics import Color, OperationEnum, Position
 from src.graphics.mesh_layer import MeshLayer
 from src.graphics.meshes import Plane
@@ -135,7 +134,9 @@ class EscapeInterface(Interface):
                 'label_hover': '> SETTINGS',
                 'action_key_label': None,
                 'action_key': None,
-                'action': lambda: self.game.set_status(GameStatus.SETTINGS),
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.SETTINGS
+                ),
                 'hover': self._hover_callback,
                 'y': 246,
                 'selected': False
@@ -145,7 +146,9 @@ class EscapeInterface(Interface):
                 'label_hover': '> MAIN MENU',
                 'action_key_label': None,
                 'action_key': None,
-                'action': lambda: self.game.set_status(GameStatus.LOBBY),
+                'action': lambda: self.game.set_interface_status(
+                    InterfaceStatus.LOBBY
+                ),
                 'hover': self._hover_callback,
                 'y': 318,
                 'selected': False
@@ -240,31 +243,36 @@ class EscapeInterface(Interface):
     def handle_key(self, key: int) -> bool:
         if self.hidden:
             return False
-        if key in self.game._app.key_manager.get_keys(
-                    [
-                        ActionKey.MOVE_LEFT,
-                        ActionKey.MOVE_UP
-                    ]
-                ):
+        key_manager = self.game._app.key_manager
+
+        if key in key_manager.get_keys(ActionKey.BACK_PAUSE_RESUME):
+            self.game.set_back_status()
+            return True
+
+        if key in key_manager.get_keys([
+            ActionKey.MOVE_LEFT,
+            ActionKey.MOVE_UP
+        ]):
             self._selected_index = (
                     self._selected_index - 1
                 ) % len(self.buttons)
             self._update_selection()
             return True
-        if key in self.game._app.key_manager.get_keys(
-                    [
-                        ActionKey.MOVE_DOWN,
-                        ActionKey.MOVE_RIGHT
-                    ]
-                ):
+
+        if key in key_manager.get_keys([
+            ActionKey.MOVE_DOWN,
+            ActionKey.MOVE_RIGHT
+        ]):
             self._selected_index = (
                     self._selected_index + 1
                 ) % len(self.buttons)
             self._update_selection()
             return True
-        if key in self.game._app.key_manager.get_keys(ActionKey.SELECT):
+
+        if key in key_manager.get_keys(ActionKey.SELECT):
             self.buttons[self._selected_index].sim_click()
             return True
+
         return False
 
     def _update_selection(self) -> None:
@@ -287,9 +295,7 @@ class EscapeInterface(Interface):
             button.set_hovered(False)
 
     def action_main_menu(self) -> None:
-        self.game.set_status(GameStatus.RUNNING)
-        print('To implement (Main Menu -> escape_interface.py)!')
-        sys.exit(0)
+        self.game.set_interface_status(InterfaceStatus.LOBBY)
 
     def get_layer(self) -> MeshLayer:
         return self.layer

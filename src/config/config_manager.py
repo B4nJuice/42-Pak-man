@@ -1,8 +1,8 @@
-import json5
 import os
 from pathlib import Path
 from typing import ClassVar
 
+import json5
 from pydantic import ValidationError
 
 from ..utils import Logger, TColor
@@ -25,8 +25,7 @@ class ConfigManager:
         try:
             self._set_config_path(config_path)
             self._load_config()
-        except (FileNotFoundError, PermissionError, ValueError) as e:
-            print(e)
+        except (FileNotFoundError, PermissionError, ValueError):
             self._logger.warning(
                 'Failed to load config, using default settings'
             )

@@ -437,6 +437,10 @@ class ConfigModel(BaseModel):
         default=(13, 16, 48),
         description=''
     )
+    victory_bg_accent2: tuple[int, int, int] = Field(
+        default=(8, 12, 32),
+        description=''
+    )
     victory_bg_accent: tuple[int, int, int] = Field(
         default=(30, 30, 47),
         description=''

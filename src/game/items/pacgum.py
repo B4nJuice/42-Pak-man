@@ -26,7 +26,7 @@ class PacGum(Edible, Collider, Displayable, Entity):
             level=level,
             solid=False,
             radius=0.05,
-            proportion=0.1,
+            proportion=0.75,
             reward=reward,
             app=app
         )
