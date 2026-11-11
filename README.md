@@ -2,7 +2,7 @@
 
 # Pak-Man
 
-> Ghosts! More ghosts! — a modern, GPU-rendered take on the 1980 arcade classic, written in Python.
+> Ghosts! More ghosts! - a modern, GPU-rendered take on the 1980 arcade classic, written in Python.
 
 ![Lobby](docs/screenshots/lobby.png)
 
@@ -12,9 +12,9 @@
 | **Cheat menu** | **Leaderboard** |
 | ![Cheat menu](docs/screenshots/cheat.png) | ![Leaderboard](docs/screenshots/leaderboard.png) |
 
-**Play it:** TODO — itch.io link
+**Play it:** TODO - itch.io link
 
-**Design mockups (Figma):** [42 — Pakman](https://www.figma.com/design/cSfGNa7qtEZC10juktc8Ys/42---Pakman?node-id=0-1&t=foPbcMUUIEDrhbBq-1)
+**Design mockups (Figma):** [42 - Pakman](https://www.figma.com/design/cSfGNa7qtEZC10juktc8Ys/42---Pakman?node-id=0-1&t=foPbcMUUIEDrhbBq-1)
 
 ---
 
@@ -211,7 +211,7 @@ Around 150 other optional keys control the **colors** and font sizes of every in
 for the full list. Fixed game rules (3 lives, 10 s frightened phase, ghost and player speeds)
 are constants in the code.
 
-### Example — [`config.jsonc`](config.jsonc)
+### Example - [`config.jsonc`](config.jsonc)
 
 ```jsonc
 {
@@ -618,13 +618,13 @@ The project took **9 weeks** (8 September → 11 November 2026) with a team of t
 
 | | **rpetit** (69Nesta) | **lgirard** (B4nJuice) |
 | --- | --- | --- |
-| Design | Figma mockups of the game and interfaces | — |
+| Design | Figma mockups of the game and interfaces | - |
 | Setup | uv project, dependencies, config system & comment parser, logger | Makefile, CI workflow |
 | Engine | Maze adapter, Level, entities & movement, A\*, ghost AI base, states | GPU renderer, shaders, meshes, Screen, collisions, interface manager |
 | Gameplay | Blinky & Pinky, frightened/eaten states | Inky & Clyde, pacgums, lives, eating ghosts, timer, levels, rings |
 | Assets | Texture packs, animations, fonts | Font rendering, anti-aliasing |
 | UI | Lobby, how to play, leaderboard, settings, victory, game over, save run, cheat menu, buttons | HUD, stats, pause, level-up and ring cards, skills, resizable window/fullscreen |
-| Data | Leaderboard (signature), settings & key bindings | — |
+| Data | Leaderboard (signature), settings & key bindings | - |
 | Delivery | PyInstaller build, itch.io | Docstrings |
 
 The full documentation (timeline, team organization, risks, acceptance tests, blocking points)
@@ -636,9 +636,9 @@ is in the dedicated directory: **[`project_management/`](project_management/READ
 
 ### References
 
-- [The Pac-Man Dossier — Jamey Pittman](https://www.gamedeveloper.com/design/the-pac-man-dossier): original ghost behaviours, frightened mode, timings.
-- [Understanding Pac-Man Ghost Behavior — GameInternals](https://gameinternals.com/understanding-pac-man-ghost-behavior): chase targets of Blinky, Pinky, Inky, Clyde.
-- [Introduction to A\* — Red Blob Games](https://www.redblobgames.com/pathfinding/a-star/introduction.html): path-finding for the ghosts.
+- [The Pac-Man Dossier - Jamey Pittman](https://www.gamedeveloper.com/design/the-pac-man-dossier): original ghost behaviours, frightened mode, timings.
+- [Understanding Pac-Man Ghost Behavior - GameInternals](https://gameinternals.com/understanding-pac-man-ghost-behavior): chase targets of Blinky, Pinky, Inky, Clyde.
+- [Introduction to A\* - Red Blob Games](https://www.redblobgames.com/pathfinding/a-star/introduction.html): path-finding for the ghosts.
 - [pygame-ce documentation](https://pyga.me/docs/): window, events, OpenGL context.
 - [ModernGL documentation](https://moderngl.readthedocs.io/) and [LearnOpenGL](https://learnopengl.com/): shaders, framebuffers, blending.
 - [freetype-py documentation](https://freetype-py.readthedocs.io/): rendering glyphs to textures.
