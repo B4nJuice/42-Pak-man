@@ -168,7 +168,6 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
         Returns:
             The current chase tracking tile.
         """
-        pass
 
     def get_frightened_tracking_tile(self) -> Tile:
         """
@@ -299,11 +298,11 @@ class Ghost(Collider, AI, Movable, Edible, Displayable, Entity):
             The current animation.
         """
         match self.get_state():
-            case GhostState.CHASE | GhostState.WAITING_RESPAWN:
+            case GhostState.CHASE:
                 if self._direction is None:
                     return self._animations_alive[Direction.EAST]
                 return self._animations_alive[self._direction]
-            case GhostState.EATEN:
+            case GhostState.EATEN | GhostState.WAITING_RESPAWN:
                 if self._direction is None:
                     return self._animations_eaten[Direction.EAST]
 
