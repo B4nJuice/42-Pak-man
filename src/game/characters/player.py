@@ -260,8 +260,6 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
-
-
     def handle_key(self, key: int) -> None:
         if self._game.get_status() not in [
                     GameStatus.RUNNING,
