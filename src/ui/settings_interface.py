@@ -848,6 +848,11 @@ class SettingsInterface(Interface):
         ):
             self._exit()
             return True
+        if key in self.game._app.key_manager.get_keys(
+                ActionKey.SELECT
+        ):
+            self._apply()
+            return True
         return False
 
     def refresh(self) -> None:

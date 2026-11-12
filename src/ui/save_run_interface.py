@@ -152,7 +152,7 @@ class SaveRunInterface(Interface):
                 208 + 11
             )
             yield make(
-                'Leave blank to appear as “Pac-Runner”.',
+                'Leave blank to appear as “PAC RUNNER”.',
                 FontKey.TEXT_14,
                 config.victory_text_secondary,
                 299 + 14
@@ -284,7 +284,7 @@ class SaveRunInterface(Interface):
         score, run_time, _, _, _ = self.game.get_victory_values()
         try:
             self.game._app.leaderboard.add_run(
-                name=self._input_value.upper().strip(),
+                name=self._input_value.upper().strip() or 'PAC RUNNER',
                 run_time=run_time,
                 score=score,
                 victory=(self.game.get_status() == GameStatus.VICTORY)

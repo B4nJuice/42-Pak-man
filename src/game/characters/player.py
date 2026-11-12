@@ -260,19 +260,22 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
 
         self.add_exp(dt * self._exp_per_second)
 
+
+
+    def handle_key(self, key: int) -> None:
         if self._game.get_status() not in [
                     GameStatus.RUNNING,
                     GameStatus.INITIALIZING
                 ]:
             return
 
-        if self.app.key_manager.is_pressed(ActionKey.MOVE_UP):
+        if key in self.app.key_manager.get_keys(ActionKey.MOVE_UP):
             self.try_move(Direction.NORTH)
-        if self.app.key_manager.is_pressed(ActionKey.MOVE_DOWN):
+        if key in self.app.key_manager.get_keys(ActionKey.MOVE_DOWN):
             self.try_move(Direction.SOUTH)
-        if self.app.key_manager.is_pressed(ActionKey.MOVE_LEFT):
+        if key in self.app.key_manager.get_keys(ActionKey.MOVE_LEFT):
             self.try_move(Direction.WEST)
-        if self.app.key_manager.is_pressed(ActionKey.MOVE_RIGHT):
+        if key in self.app.key_manager.get_keys(ActionKey.MOVE_RIGHT):
             self.try_move(Direction.EAST)
 
     def on_arrive(self, tile: Tile, direction: Direction) -> None:

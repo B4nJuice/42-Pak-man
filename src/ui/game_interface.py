@@ -239,6 +239,8 @@ class GameInterface(Interface):
         ]:
             return False
 
+        self.game._player.handle_key(key)
+
         match key:
             case pygame.K_F1:
                 self.game.set_status(GameStatus.CHEAT_MENU)
