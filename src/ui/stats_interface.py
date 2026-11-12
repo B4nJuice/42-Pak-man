@@ -231,6 +231,10 @@ class StatsInterface(Interface):
         self.refresh()
         self.refresh_ameliorations()
 
+    def clear_ameliorations(self) -> None:
+        for placeholder in self.amelioration_placeholders:
+            placeholder.set_amelioration(None)
+
     def refresh(self) -> None:
         """
         Refresh the rendered state.
