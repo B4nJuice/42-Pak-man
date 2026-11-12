@@ -83,15 +83,29 @@ class StatsInterface(Interface):
 
         content_left = self.x_offset + self.game._app.size.get(20)
 
-        self.lives_text = FontSequence(
-            "LIVES",
+        max_lives = self.game._player._max_lives
+        max_levels = len(self.game._config.levels)
+        lives_bar_width = self.game._app.size.get(225)
+        lives_bar_gap = self.game._app.size.get(6)
+        level_bar_gap = self.game._app.size.get(4)
+        lives_bar_height = self.game._app.size.get(8)
+        lives_section_offset = self.game._app.size.get(39.5)
+        lives_bar_y = self.y_offset + self.game._app.size.get(129)
+        lives_text_y = self.y_offset + self.game._app.size.get(115.5)
+
+        self.level_text = FontSequence(
+            "LEVEL",
             self.game._app.fonts.get(FontKey.BOLD_10),
             Color(*self.game._config.lives_text_color),
-            Position(
-                content_left,
-                self.y_offset + self.game._app.size.get(115.5)
-            ),
+            Position(content_left, lives_text_y),
             align=AlignEnum.LEFT,
+        )
+        self.level_number = FontSequence(
+            f"{self.game._level_index + 1}/{max_levels}",
+            self.game._app.fonts.get(FontKey.BOLD_10),
+            Color(*self.game._config.lives_number_color),
+            Position(content_left + lives_bar_width, lives_text_y),
+            align=AlignEnum.RIGHT,
         )
 
         self.lives_number = FontSequence(
@@ -99,33 +113,61 @@ class StatsInterface(Interface):
             self.game._app.fonts.get(FontKey.BOLD_10),
             Color(*self.game._config.lives_number_color),
             Position(
-                content_left + self.game._app.size.get(225),
-                self.y_offset + self.game._app.size.get(115.5)
+                content_left + lives_bar_width,
+                lives_text_y + lives_section_offset,
             ),
             align=AlignEnum.RIGHT,
         )
+        self.lives_text = FontSequence(
+            "LIVES",
+            self.game._app.fonts.get(FontKey.BOLD_10),
+            Color(*self.game._config.lives_text_color),
+            Position(content_left, lives_text_y + lives_section_offset),
+            align=AlignEnum.LEFT,
+        )
 
-        max_lives = self.game._player._max_lives
-        lives_bar_width = self.game._app.size.get(225)
-        lives_bar_gap = self.game._app.size.get(6)
-        single_bar_width = max(
+        live_bar_width = max(
             1,
             (
                 lives_bar_width
                 - lives_bar_gap * max(0, max_lives - 1)
             ) // max_lives,
         )
+        level_width, level_remainder = divmod(
+            lives_bar_width - level_bar_gap * (max_levels - 1),
+            max_levels,
+        )
+        self.level_bars = []
+        level_bar_x = content_left
+        for index in range(max_levels):
+            level_bar_width = level_width + (
+                1 if index < level_remainder else 0
+            )
+            self.level_bars.append(
+                Bar(
+                    Color(*self.game._config.level_bar_color),
+                    Color(*self.game._config.level_bar_border_color),
+                    Position(level_bar_x, lives_bar_y),
+                    level_bar_width,
+                    lives_bar_height,
+                    border_thickness=self.game._app.size.get(1),
+                    goal=1,
+                    progression=0,
+                    smooth_end=True,
+                )
+            )
+            level_bar_x += level_bar_width + level_bar_gap
         self.lives_bars = [
             Bar(
                 Color(*self.game._config.lives_bar_fill_color),
                 Color(*self.game._config.lives_bar_border_color),
                 Position(
                     content_left
-                    + index * (single_bar_width + lives_bar_gap),
-                    self.y_offset + self.game._app.size.get(129),
+                    + index * (live_bar_width + lives_bar_gap),
+                    lives_bar_y + lives_section_offset,
                 ),
-                single_bar_width,
-                self.game._app.size.get(8),
+                live_bar_width,
+                lives_bar_height,
                 border_thickness=self.game._app.size.get(1),
                 goal=1,
                 progression=0,
@@ -134,7 +176,11 @@ class StatsInterface(Interface):
             for index in range(max_lives)
         ]
 
-        skill_y = self.y_offset + self.game._app.size.get(155)
+        skill_y = (
+            self.y_offset
+            + self.game._app.size.get(155)
+            + lives_section_offset
+        )
 
         skill_gap = self.game._app.size.get(12)
         skill_width = self.game._app.size.get(106.5)
@@ -188,11 +234,16 @@ class StatsInterface(Interface):
             Position(
                 content_left,
                 self.y_offset + self.game._app.size.get(386)
+                + lives_section_offset
             ),
             align=AlignEnum.LEFT,
         )
 
-        placeholder_y = self.y_offset + self.game._app.size.get(404)
+        placeholder_y = (
+            self.y_offset
+            + self.game._app.size.get(404)
+            + lives_section_offset
+        )
         placeholder_size = self.game._app.size.get(64)
         placeholder_gap = (
             self.game._app.size.get(225) -
@@ -216,8 +267,12 @@ class StatsInterface(Interface):
         self.layer.meshes.append(self.background)
         self.layer.meshes.append(self.border)
         self.layer.meshes.append(self.title)
+        self.layer.meshes.append(self.level_text)
+        self.layer.meshes.append(self.level_number)
         self.layer.meshes.append(self.lives_text)
         self.layer.meshes.append(self.lives_number)
+        for level_bar in self.level_bars:
+            self.layer.meshes.append(level_bar)
         for lives_bar in self.lives_bars:
             self.layer.meshes.append(lives_bar)
         for skill_interface in self.skill_interfaces:
@@ -244,12 +299,19 @@ class StatsInterface(Interface):
         for skill_interface in self.skill_interfaces:
             skill_interface.refresh()
 
+        self.level_number.set_sequence_text(
+            f"{self.game._level_index + 1}/{len(self.game._config.levels)}"
+        )
+        for index, level_bar in enumerate(self.level_bars):
+            level_bar.set_progression(
+                1 if index <= self.game._level_index else 0
+            )
         self.lives_number.set_sequence_text(
             f"{player._lives}/{player._max_lives}"
         )
         for index, lives_bar in enumerate(self.lives_bars):
             lives_bar.set_progression(
-                1 if index < player._lives else 0
+                1 if index % player._max_lives < player._lives else 0
             )
 
     def refresh_ameliorations(self) -> None:
