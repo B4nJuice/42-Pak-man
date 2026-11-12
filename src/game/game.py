@@ -617,6 +617,8 @@ class Game:
         self._init_level()
         self.generate_level()
         self.init_entities()
+        self._game_interface.level_bar.set_progression(0)
+        self._game_interface.set_level_text(0)
         self._game_interface.update_level()
         self._stats_interface.clear_ameliorations()
         self._stats_interface.refresh()

@@ -91,14 +91,14 @@ class AmeliorationPlaceholderInterface(Interface):
             amelioration: Amelioration used by the operation.
         """
         if not amelioration:
-            if self.icon is not None:
+            if self.icon in self.layer.meshes:
                 self.layer.meshes.remove(self.icon)
             if self.level in self.layer.meshes:
                 self.layer.meshes.remove(self.level)
             return
         self.amelioration = amelioration
 
-        if self.icon is not None:
+        if self.icon in self.layer.meshes:
             self.layer.meshes.remove(self.icon)
         if self.level in self.layer.meshes:
             self.layer.meshes.remove(self.level)
