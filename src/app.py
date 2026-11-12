@@ -23,3 +23,4 @@ class App:
     settings: SettingsManager
     key_manager: KeyManager
     leaderboard: LeaderboardCore
+    verbose: bool = False

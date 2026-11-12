@@ -1,5 +1,7 @@
+from typing import Self
+
 import pygame
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ControlSettingsModel(BaseModel):
@@ -27,10 +29,6 @@ class ControlSettingsModel(BaseModel):
         default=[pygame.K_ESCAPE],
         description='Pause / Resume / Back'
     )
-    reroll: list[int] = Field(
-        default=[pygame.K_r],
-        description='Reroll'
-    )
 
 
 class DisplaySettingsModel(BaseModel):
@@ -42,6 +40,39 @@ class DisplaySettingsModel(BaseModel):
         default=(1280, 720),
         description='Current display resolution in 16:9 aspect ratio.'
     )
+
+    def get_screen_width(self) -> int:
+        """
+        Handle screen width retrieval.
+
+        Returns:
+            The value produced by the screen width retrieval operation.
+        """
+        return self.resolution[0]
+
+    def get_screen_height(self) -> int:
+        """
+        Handle screen height retrieval.
+
+        Returns:
+            The value produced by the screen height retrieval operation.
+        """
+        return self.resolution[1]
+
+    @model_validator(mode='after')
+    def check_resolution(self) -> Self:
+        """
+        Handle resolution validation.
+        """
+        if self.get_screen_width() * 9 != self.get_screen_height() * 16:
+            raise ValueError(
+                'Resolution must be in 16:9 aspect ratio.'
+            )
+        if self.get_screen_width() < 640 or self.get_screen_height() < 360:
+            raise ValueError(
+                'Resolution must be at least 640x360.'
+            )
+        return self
 
     @staticmethod
     def standard_16_9_resolutions() -> list[tuple[int, int]]:

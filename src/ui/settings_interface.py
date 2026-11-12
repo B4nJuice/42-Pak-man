@@ -464,7 +464,6 @@ class SettingsInterface(Interface):
             ActionKey.MOVE_RIGHT,
             ActionKey.SELECT,
             ActionKey.BACK_PAUSE_RESUME,
-            ActionKey.REROLL,
         ]
 
         def _key_label(keys: list[int]) -> str:
@@ -741,8 +740,6 @@ class SettingsInterface(Interface):
                 return 'select'
             case ActionKey.BACK_PAUSE_RESUME:
                 return 'back_pause_resume'
-            case ActionKey.REROLL:
-                return 'reroll'
             case _:
                 raise ValueError(f'Unknown action {action!r}')
 
@@ -757,7 +754,6 @@ class SettingsInterface(Interface):
             ActionKey.MOVE_RIGHT,
             ActionKey.SELECT,
             ActionKey.BACK_PAUSE_RESUME,
-            ActionKey.REROLL,
         ]
 
         for index, action in enumerate(actions):

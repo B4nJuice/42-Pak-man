@@ -43,8 +43,6 @@ class KeyManager:
                     return self._settings.get().controls.select
                 case ActionKey.BACK_PAUSE_RESUME:
                     return self._settings.get().controls.back_pause_resume
-                case ActionKey.REROLL:
-                    return self._settings.get().controls.reroll
         return list(chain.from_iterable(
             [self.get_keys(_action) for _action in action]
         ))

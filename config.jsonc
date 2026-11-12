@@ -1,8 +1,7 @@
 // Pak-Man configuration file (JSON with comments: #, // and /* */)
 // Unknown keys are ignored, invalid values fall back to their default.
 {
-  "screen_width": 1920,
-  "screen_height": 1080,
+  "resolution": [1920, 1080],
 
   # Where the top 10 highscores are saved (created if missing)
   "highscore_path": ".pak-man/highscore.json",
@@ -13,7 +12,7 @@
   "ghost_reward": 60,
 
   // Levels are played in order. Without "seed", level 1 uses seed 42 and
-  // the next ones are random. Sizes must be between 5 and 100.
+  // the next ones are random. Sizes must be between 5 and 40.
   "levels": [
     { "name": "level 1", "level_width": 12, "level_height": 12, "max_time": 90 },
     { "name": "level 2", "level_width": 13, "level_height": 13, "max_time": 90 },

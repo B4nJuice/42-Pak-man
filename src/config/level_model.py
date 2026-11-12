@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 FIRST_LEVEL_SEED: int = 42
 MIN_LEVEL_SIZE: int = 5
-MAX_LEVEL_SIZE: int = 100
+MAX_LEVEL_SIZE: int = 40
 
 
 class LevelModel(BaseModel):

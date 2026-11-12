@@ -8,4 +8,3 @@ class ActionKey(Enum):
     MOVE_RIGHT = auto()
     SELECT = auto()
     BACK_PAUSE_RESUME = auto()
-    REROLL = auto()
