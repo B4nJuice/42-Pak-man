@@ -9,4 +9,4 @@ class PowerAmelioration(Amelioration):
         """
         self.init([PowerSkill()], "amelioration-power")
         self.set_name("Power Ring")
-        self.set_description("Deal more damage.")
+        self.set_description("Boost amelioration stats.")
