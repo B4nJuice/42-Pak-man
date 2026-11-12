@@ -63,7 +63,6 @@ class Timer:
         Args:
             value: Value to assign or apply.
         """
-        print(self._value)
         self._value = max(self._value - value, 0.1)
 
     def set_speed(self, value: float) -> None:

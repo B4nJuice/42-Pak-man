@@ -328,6 +328,12 @@ class ConfigModel(BaseModel):
         default=0.5
     )
 
+    player_lives: int = Field(
+        default=3,
+        gt=0,
+        lt=20
+    )
+
     # cheat menu
     cheat_overlay_color: tuple[int, int, int] = Field(
         default=(0, 0, 0),

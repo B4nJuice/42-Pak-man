@@ -26,7 +26,7 @@ def is_valid_name_char(char: str) -> bool:
 
 class LeaderboardEntryModel(BaseModel):
     name: str = Field(min_length=1, max_length=MAX_NAME_LENGTH)
-    score: int = Field(ge=0)
+    score: int = Field()
     run_time: float = Field(ge=0)
     victory: bool
     timestamp: datetime = Field(default_factory=utc_now)
