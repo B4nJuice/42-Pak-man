@@ -101,6 +101,7 @@ class GPURenderer:
         get_uniform(self.mesh_program, 'previous_frame').value = 0
         get_uniform(self.image_program, 'previous_frame').value = 0
 
+        self._dirty: tuple[int, int, int, int] | None = None
         self.copy_quad = self._create_copy_quad()
         self.screen_quad = self._create_screen_quad()
         self.textures = [
@@ -471,6 +472,7 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(entity)
+        self._mark_dirty(vertices, 4)
         vertex_buffer = self.context.buffer(vertices.tobytes())
         vao = self.context.vertex_array(
             self.image_program,
@@ -516,6 +518,7 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
+        self._mark_dirty(vertices, 2)
         vertex_buffer = self.context.buffer(vertices.tobytes())
 
         vao = self.context.simple_vertex_array(
@@ -561,6 +564,7 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
+        self._mark_dirty(vertices, 2)
         vertex_buffer = self.context.buffer(vertices.tobytes())
         vao = self.context.simple_vertex_array(
             self.circle_program,
@@ -608,6 +612,7 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
+        self._mark_dirty(vertices, 4)
         vertex_buffer = self.context.buffer(vertices.tobytes())
         vao = self.context.vertex_array(
             self.image_program,
@@ -655,6 +660,7 @@ class GPURenderer:
             return
 
         vertices, mode = self._vertices(mesh)
+        self._mark_dirty(vertices, 4)
         vertex_buffer = self.context.buffer(vertices.tobytes())
         vao = self.context.vertex_array(
             self.image_program,
@@ -707,6 +713,35 @@ class GPURenderer:
                 mesh = mesh.get_layer()
             self._draw_mesh(mesh, source, target)
 
+    def _mark_dirty(self, vertices: np.ndarray, stride: int) -> None:
+        """
+        Record the framebuffer rectangle covered by the given vertices.
+
+        Args:
+            vertices: Flat vertex array whose first two floats per vertex
+                are the position in logical pixels (top-left origin).
+            stride: Number of floats per vertex.
+        """
+        if vertices.size < stride:
+            return
+        points = vertices.reshape(-1, stride)
+        left = max(int(np.floor(points[:, 0].min())) - 1, 0)
+        right = min(int(np.ceil(points[:, 0].max())) + 1, self.width)
+        top = max(int(np.floor(points[:, 1].min())) - 1, 0)
+        bottom = min(int(np.ceil(points[:, 1].max())) + 1, self.height)
+        if right <= left or bottom <= top:
+            return
+        # OpenGL framebuffers have a bottom-left origin.
+        rect = (left, self.height - bottom, right - left, bottom - top)
+        if self._dirty is None:
+            self._dirty = rect
+            return
+        x, y, w, h = self._dirty
+        x0, y0 = min(x, rect[0]), min(y, rect[1])
+        x1 = max(x + w, rect[0] + rect[2])
+        y1 = max(y + h, rect[1] + rect[3])
+        self._dirty = (x0, y0, x1 - x0, y1 - y0)
+
     def render(
                 self,
                 meshes: Iterable[Mesh | LayerProtocol | Displayable]
@@ -720,16 +755,27 @@ class GPURenderer:
         self.source_index = 0
         self.target_index = 1
         self.context.viewport = (0, 0, self.width, self.height)
-        self.framebuffers[self.source_index].clear(0.0, 0.0, 0.0, 0.0)
+        for framebuffer in self.framebuffers:
+            framebuffer.use()
+            self.context.scissor = None
+            framebuffer.clear(0.0, 0.0, 0.0, 0.0)
 
+        # Both buffers hold the same image except for the area touched by
+        # the previous mesh, so only that rectangle needs to be copied.
+        previous_dirty: tuple[int, int, int, int] | None = None
         for mesh in self._iter_meshes(meshes):
             source = self.textures[self.source_index]
             target = self.framebuffers[self.target_index]
             target.use()
-            source.use(0)
-            get_uniform(self.copy_program, 'source_texture').value = 0
-            self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
+            if previous_dirty is not None:
+                source.use(0)
+                get_uniform(self.copy_program, 'source_texture').value = 0
+                self.context.scissor = previous_dirty
+                self.copy_quad.render(mode=moderngl.TRIANGLE_STRIP)
+                self.context.scissor = None
+            self._dirty = None
             self._draw_mesh(mesh, source, target)
+            previous_dirty = self._dirty
             self.source_index, self.target_index = (
                 self.target_index, self.source_index
             )
