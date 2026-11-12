@@ -121,5 +121,7 @@ if __name__ == '__main__':
     logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
     try:
         main(sys.argv[1:], verbose, logger)
-    except BaseError as e:
+    except KeyboardInterrupt:
+        logger.info(TColor.ITALIC.value + 'Exiting Pak-man...')
+    except (BaseError, BaseException) as e:
         logger.error(str(e))
