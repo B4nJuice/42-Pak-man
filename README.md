@@ -11,6 +11,8 @@
 | ![In game](docs/screenshots/game.png) | ![Level up](docs/screenshots/level_up.png) |
 | **Cheat menu** | **Leaderboard** |
 | ![Cheat menu](docs/screenshots/cheat.png) | ![Leaderboard](docs/screenshots/leaderboard.png) |
+| **Settings** | **How To Play** |
+| ![Settings](docs/screenshots/settings.png) | ![How To Play](docs/screenshots/howtoplay.png) |
 
 **Play it:** https://69nesta.itch.io/pak-man
 
