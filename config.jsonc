@@ -15,7 +15,7 @@
   // Levels are played in order. Without "seed", level 1 uses seed 42 and
   // the next ones are random. Sizes must be between 5 and 100.
   "levels": [
-    { "name": "level 1", "level_width": 40, "level_height": 40, "max_time": 90 },
+    { "name": "level 1", "level_width": 12, "level_height": 12, "max_time": 90 },
     { "name": "level 2", "level_width": 13, "level_height": 13, "max_time": 90 },
     { "name": "level 3", "level_width": 14, "level_height": 14, "max_time": 90 },
     { "name": "level 4", "level_width": 15, "level_height": 15, "max_time": 90 },
