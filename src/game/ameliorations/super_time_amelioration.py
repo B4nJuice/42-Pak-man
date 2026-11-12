@@ -9,4 +9,4 @@ class SuperTimeAmelioration(Amelioration):
         """
         self.init([SuperTimeSkill()], "amelioration-super-time")
         self.set_name("SuperTime Ring")
-        self.set_description("Slow time down.")
+        self.set_description("Add super time.")

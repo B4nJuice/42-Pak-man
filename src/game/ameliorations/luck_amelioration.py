@@ -9,4 +9,4 @@ class LuckAmelioration(Amelioration):
         """
         self.init([LuckSkill()], "amelioration-luck")
         self.set_name("Luck Ring")
-        self.set_description("Find better rewards.")
+        self.set_description("Find better amelioration.")
