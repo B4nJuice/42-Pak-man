@@ -836,12 +836,14 @@ class SettingsInterface(Interface):
             ):
                 self._capture_action = None
                 self._capture_slot = None
+                self._refresh_control_buttons()
                 return True
 
             current_keys = self.app.key_manager.get_keys(self._capture_action)
             if key in current_keys:
                 self._capture_action = None
                 self._capture_slot = None
+                self._refresh_control_buttons()
                 return True
 
             slot = self._capture_slot if self._capture_slot is not None else 0
