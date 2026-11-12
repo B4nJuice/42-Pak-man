@@ -16,6 +16,7 @@ class Level(Maze):
     state: StateManager
     _entities: EntityStore
     _colliders: list[Collider]
+    _primary_colliders: list[Collider]
     _to_register: list[DisplayableEntity]
     _to_unregister: list[DisplayableEntity]
 
@@ -31,6 +32,7 @@ class Level(Maze):
 
         self._entities = EntityStore()
         self._colliders = []
+        self._primary_colliders = []
         self._to_register = []
         self._to_unregister = []
 
@@ -66,6 +68,8 @@ class Level(Maze):
         self._entities.add(entity)
         if isinstance(entity, Collider):
             self._colliders.append(entity)
+            if entity.is_primary():
+                self._primary_colliders.append(entity)
         if isinstance(entity, Displayable):
             self._to_register.append(entity)
 
@@ -79,8 +83,27 @@ class Level(Maze):
         self._entities.remove(entity)
         if entity in self._colliders:
             self._colliders.remove(cast(Collider, entity))
+        if entity in self._primary_colliders:
+            self._primary_colliders.remove(cast(Collider, entity))
         if isinstance(entity, Displayable):
             self._to_unregister.append(entity)
+
+    def update_primary_collider(
+                self,
+                collider: Collider,
+                primary: bool
+            ) -> None:
+        """
+        Update the primary collider index.
+
+        Args:
+            collider: Collider to update.
+            primary: Whether the collider initiates collision checks.
+        """
+        if primary and collider not in self._primary_colliders:
+            self._primary_colliders.append(collider)
+        elif not primary and collider in self._primary_colliders:
+            self._primary_colliders.remove(collider)
 
     @property
     def store(self) -> EntityStore:
@@ -101,10 +124,7 @@ class Level(Maze):
             for tile in collider.occupied_tile():
                 grid[tile].append(collider)
 
-        for a in self._colliders:
-            if not a._primary:
-                continue
-
+        for a in self._primary_colliders:
             candidates: set[Collider] = set()
             for tile in a.occupied_tile():
                 for y in range(tile.get_y() - 1, tile.get_y() + 2):
