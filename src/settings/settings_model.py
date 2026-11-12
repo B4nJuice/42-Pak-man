@@ -82,7 +82,7 @@ class DisplaySettingsModel(BaseModel):
         Returns:
             The value produced by the standard 16 9 resolutions operation.
         """
-        widths = [3840, 2560, 1920, 1600, 1366, 1280, 1024, 960, 854, 768, 640]
+        widths = [3840, 2560, 1920, 1600, 1280, 1024, 960, 768, 640]
         return [(width, round(width * 9 / 16)) for width in widths]
 
     @staticmethod
