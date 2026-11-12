@@ -347,7 +347,7 @@ class SettingsInterface(Interface):
                         width=display_button_h - size.get(2),
                         height=display_button_h - size.get(2),
                         normal_color=Color(*config.settings_bg_secondary),
-                        on_click=_prev,
+                        on_click=_next,
                         texts=[
                             ButtonTextConfig(
                                 text='<',
@@ -367,7 +367,7 @@ class SettingsInterface(Interface):
                         width=display_button_h - size.get(2),
                         height=display_button_h - size.get(2),
                         normal_color=Color(*config.settings_bg_secondary),
-                        on_click=_next,
+                        on_click=_prev,
                         texts=[
                             ButtonTextConfig(
                                 text='>',
