@@ -42,7 +42,7 @@ class SaveRunInterface(Interface):
             game: Game instance associated with the component.
         """
         self.logger = Logger(
-            name='Cheat',
+            name='SaveRun',
             color=TColor.BRIGHT_MAGENTA,
             verbose=game._logger.verbose
         )
@@ -257,6 +257,8 @@ class SaveRunInterface(Interface):
         """
         Display the interface contents.
         """
+        self._input_value = ''
+        self._update_input()
         score = self.game.get_score()
         rank = self.game._app.leaderboard.snapshot(score)
         self._update_score(
