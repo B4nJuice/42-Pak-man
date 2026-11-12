@@ -164,6 +164,9 @@ class Movable:
             self._queued = direction
             return False
 
+        if self._queued == direction.opposite():
+            self._queued = None
+
         next_tile = self.level.get_next_tile(self.get_tile(), direction)
         if next_tile is None:
             return False
@@ -233,4 +236,3 @@ class Movable:
             tile: Grid tile occupied by or assigned to the entity.
             direction: Direction in which the entity should move.
         """
-        pass
