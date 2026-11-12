@@ -37,7 +37,7 @@ class DisplaySettingsModel(BaseModel):
         description='Whether the game should run in fullscreen mode.'
     )
     resolution: tuple[int, int] = Field(
-        default=(1280, 720),
+        default=(1920, 1080),
         description='Current display resolution in 16:9 aspect ratio.'
     )
 
