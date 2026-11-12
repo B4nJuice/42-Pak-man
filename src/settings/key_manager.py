@@ -165,5 +165,4 @@ class KeyManager:
             ActionKey.MOVE_RIGHT,
             ActionKey.SELECT,
             ActionKey.BACK_PAUSE_RESUME,
-            ActionKey.REROLL,
         ]
