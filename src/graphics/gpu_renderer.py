@@ -731,7 +731,7 @@ class GPURenderer:
         bottom = min(int(np.ceil(points[:, 1].max())) + 1, self.height)
         if right <= left or bottom <= top:
             return
-        # OpenGL framebuffers have a bottom-left origin.
+
         rect = (left, self.height - bottom, right - left, bottom - top)
         if self._dirty is None:
             self._dirty = rect
@@ -760,8 +760,6 @@ class GPURenderer:
             self.context.scissor = None
             framebuffer.clear(0.0, 0.0, 0.0, 0.0)
 
-        # Both buffers hold the same image except for the area touched by
-        # the previous mesh, so only that rectangle needs to be copied.
         previous_dirty: tuple[int, int, int, int] | None = None
         for mesh in self._iter_meshes(meshes):
             source = self.textures[self.source_index]
