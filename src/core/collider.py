@@ -64,6 +64,9 @@ class Collider:
             primary: Primary used by the operation.
         """
         self._primary = primary
+        level = getattr(self, 'level', None)
+        if level is not None:
+            level.update_primary_collider(self, primary)
 
     def is_solid(self) -> bool:
         """
@@ -73,6 +76,15 @@ class Collider:
             Whether the operation succeeded or the condition is true.
         """
         return self._solid
+
+    def is_primary(self) -> bool:
+        """
+        Return whether this collider initiates collision checks.
+
+        Returns:
+            Whether the collider is primary.
+        """
+        return getattr(self, '_primary', False)
 
     def get_radius(self) -> float:
         """
@@ -127,7 +139,6 @@ class Collider:
         Args:
             other: Other collider involved in the collision.
         """
-        ...
 
     def on_collision_exit(self, other: 'Collider') -> None:
         """
@@ -136,4 +147,3 @@ class Collider:
         Args:
             other: Other collider involved in the collision.
         """
-        pass
