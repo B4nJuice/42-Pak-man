@@ -75,19 +75,3 @@ import"*) and 2026-10-27 (*"merge conflicts"*). They were fixed by the author of
 together when the conflict touched the other teammate's code.
 
 **Lesson:** merge `main` into long branches often; keep shared files small.
-
-### Gaps against the subject found late
-
-During the final review against the subject (2026-11-11) we found: only 3 levels in the
-config, highscore names not limited to 10 alphanumeric characters, the `highscore_path`
-key not used, the same seed for every level, a bug where a #1 score never asked for a name,
-and that one wrong level value reset all the levels. All of them were fixed before the
-submission (see [acceptance_test_plan.md](acceptance_test_plan.md)).
-
-**Lesson:** turn the subject into a checklist at the start and tick it every week.
-
-## Team conflicts
-
-Disagreements were about design choices (how much to add on top of the subject, the look
-of some screens). They were settled by checking the subject first, then the Figma mockup,
-then by the person in charge of the area.
