@@ -1,10 +1,9 @@
 import os
-import sys
+from argparse import ArgumentParser
 
 import pygame
 
 from src.config.config_manager import ConfigManager
-from src.errors import BaseError
 from src.fonts.font_manager import FontManager
 from src.game.game import Game
 from src.graphics.screen import Screen
@@ -34,7 +33,11 @@ def init_pygame() -> None:
     )
 
 
-def main(args: list[str], verbose: bool, logger: Logger) -> None:
+def main(
+        verbose: bool,
+        logger: Logger,
+        config_file: str
+) -> None:
     """
     Handle main.
 
@@ -47,11 +50,6 @@ def main(args: list[str], verbose: bool, logger: Logger) -> None:
 
     logger.log('Starting Pak-man')
 
-    config_file: str = (
-        args[0]
-        if len(args) > 0
-        else 'config.jsonc'
-    )
     config: ConfigManager = ConfigManager(config_file, verbose)
 
     init_pygame()
@@ -116,12 +114,36 @@ def main(args: list[str], verbose: bool, logger: Logger) -> None:
 
 
 if __name__ == '__main__':
-    verbose: bool = False
+    parser = ArgumentParser(
+        prog='Pak man',
+        description=(
+            'A modern take on the 1980 arcade classic, rebuilt from scratch in'
+            ' Python with its own GPU renderer. '
+        ),
+        epilog='Enjoy the game!'
+    )
+    parser.add_argument(
+        'config_file',
+        nargs='?',
+        default='config.jsonc',
+        help='Path to the configuration file (default: config.jsonc)'
+    )
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Enable verbose logging'
+    )
 
-    logger: Logger = Logger(verbose=verbose, name='Main', color=TColor.MAGENTA)
+    args = parser.parse_args()
+    logger: Logger = Logger(
+        verbose=args.verbose,
+        color=TColor.MAGENTA,
+        name='Main'
+    )
     try:
-        main(sys.argv[1:], verbose, logger)
+        main(args.verbose, logger, args.config_file)
     except KeyboardInterrupt:
         logger.info(TColor.ITALIC.value + 'Exiting Pak-man...')
-    except (BaseError, BaseException) as e:
+    except BaseException as e:
         logger.error(str(e))
