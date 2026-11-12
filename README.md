@@ -138,7 +138,6 @@ Everything the game writes goes to `.pak-man/` (ignored by git):
 | Move | `W` `A` `S` `D` or arrow keys |
 | Select / validate | `Space` / `Enter` |
 | Pause / resume / back | `Esc` |
-| Reroll rings (level-up screen) | `R` |
 | **Open cheat menu** | **`F1`** (in game) |
 
 Every binding except `F1` can be changed from **Settings → Controls**. Menus can also be
@@ -188,7 +187,7 @@ keeping string contents intact. Three comment styles are supported:
 
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
-| `screen_width` / `screen_height` | int (> 100) | `1280` / `720` | Rendering resolution |
+| `resolution` | tuple[int, int] | `1280` / `720` | Rendering resolution |
 | `highscore_path` | string | `.pak-man/highscore.json` | Where the top 10 highscores are saved |
 | `levels` | list of levels | 10 levels, 12×12 → 21×21 | Played in order. At least one |
 | `pacgum_reward` | float | `3` | Points (and XP) for a pacgum |
@@ -204,7 +203,7 @@ keeping string contents intact. Three comment styles are supported:
 | Key | Type | Default | Description |
 | --- | --- | --- | --- |
 | `name` | string | `"unnamed level"` | Displayed name |
-| `level_width` / `level_height` | int (5 – 100) | `20` | Maze size, in tiles |
+| `level_width` / `level_height` | int (5 – 40) | `20` | Maze size, in tiles |
 | `max_time` | int (> 0) | `90` | Time limit in seconds; at 0 the run is over |
 | `seed` | int (≥ 0) | *none* | Maze seed. If omitted: `42` for level 1, random for the next ones |
 
@@ -217,8 +216,7 @@ are constants in the code.
 
 ```jsonc
 {
-  "screen_width": 1920,
-  "screen_height": 1080,
+  "resolution": [1920, 1080],
   # Where the top 10 highscores are saved (created if missing)
   "highscore_path": ".pak-man/highscore.json",
   "pacgum_reward": 3,
