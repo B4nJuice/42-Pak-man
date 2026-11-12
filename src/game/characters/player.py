@@ -79,7 +79,7 @@ class Player(Alive, Collider, Movable, Displayable, Entity):
             speed=6,
             proportion=0.9,
             primary=True,
-            lives=3,
+            lives=app.config.get_config().player_lives,
             app=app
         )
 
