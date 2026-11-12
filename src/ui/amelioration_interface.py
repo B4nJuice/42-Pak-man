@@ -360,20 +360,20 @@ class AmeliorationInterface(Interface):
         if self.hidden:
             return False
         if key in (self.game._app.key_manager.get_keys(
-                    [ActionKey.MOVE_UP,ActionKey.MOVE_LEFT])
-                ):
+                    [ActionKey.MOVE_UP, ActionKey.MOVE_LEFT])
+                   ):
             self._selected_index = (self._selected_index - 1) % 3
             self._update_selection()
             return True
         if key in (self.game._app.key_manager.get_keys(
-                    [ActionKey.MOVE_DOWN,ActionKey.MOVE_RIGHT])
-                ):
+                    [ActionKey.MOVE_DOWN, ActionKey.MOVE_RIGHT])
+                   ):
             self._selected_index = (self._selected_index + 1) % 3
             self._update_selection()
             return True
         if key in (self.game._app.key_manager.get_keys(
                     ActionKey.SELECT)
-                ):
+                   ):
             self._choose_amelioration(self._selected_index)
             return True
         return False
