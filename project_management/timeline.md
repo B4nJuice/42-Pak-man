@@ -52,7 +52,9 @@ gantt
     Norm / mypy clean-up                   :done, q2, 2026-10-21, 1d
     PyInstaller build, CLI config          :done, q3, 2026-11-09, 1d
     Resizable window, fullscreen           :done, q4, 2026-11-09, 3d
-    Docstrings, README, PM docs            :done, q5, 2026-11-11, 1d
+    Docstrings, README, PM docs            :done, q5, 2026-11-11, 2d
+    Release workflow (GitHub Releases)     :done, q6, 2026-11-11, 1d
+    Final polish, perf, argparse CLI       :done, q7, 2026-11-12, 1d
 ```
 
 ## Milestones
@@ -69,29 +71,32 @@ gantt
 | 2026-10-26 | Leaderboard and settings cores |
 | 2026-11-04 | All menus built (lobby, victory, game over, how to play, leaderboard) |
 | 2026-11-09 | **Full game loop connected**, first packaged build |
-| 2026-11-11 | Docstrings, README and project-management documents |
+| 2026-11-11 | Docstrings, README, project-management documents, automatic GitHub release on `main` |
+| 2026-11-12 | **Final polish**: collider / renderer optimisations, level-bar indicator, level cheats, `argparse` CLI |
 
 ## Weekly activity (commits, merges excluded)
 
+Weeks are counted from the project start (Tuesday 2026-09-08): week 1 is 08/09 – 14/09.
+
 | Week | Dates | rpetit | lgirard | Main focus |
 | --- | --- | ---: | ---: | --- |
-| W37 | 08/09 – 14/09 | 4 | 11 | Setup, drawing prototype, maze package |
-| W38 | 15/09 – 21/09 | 9 | 5 | Config, logger, GPU renderer, image mesh |
-| W39 | 22/09 – 28/09 | 10 | 13 | Maze display, text, Displayable, MeshLayer |
-| W40 | 29/09 – 05/10 | 11 | 17 | Entities, player, HUD, pause, first ghost |
-| W41 | 06/10 – 12/10 | 29 | 40 | A\*, ghost AI, collisions, lives, super mode, timer |
-| W42 | 13/10 – 19/10 | 15 | 22 | Ghost states, rings, texture packs, animations |
-| W43 | 20/10 – 26/10 | 29 | 47 | CI, mypy, leaderboard, settings, buttons, level-up UI |
-| W44 | 27/10 – 02/11 | 10 | 28 | Hover / click, optimisation, cheat menu |
-| W45 | 03/11 – 09/11 | 29 | 18 | All menus, interface manager, levels, build |
-| W46 | 10/11 – 11/11 | 17 | 19 | Fixes, fullscreen, docstrings, documentation |
+| 1 | 08/09 – 14/09 | 7 | 11 | Setup, drawing prototype, maze package |
+| 2 | 15/09 – 21/09 | 7 | 9 | Config, logger, GPU renderer, image mesh |
+| 3 | 22/09 – 28/09 | 10 | 9 | Maze display, text, Displayable, MeshLayer |
+| 4 | 29/09 – 05/10 | 17 | 19 | Entities, player, HUD, pause, first ghost |
+| 5 | 06/10 – 12/10 | 27 | 41 | A\*, ghost AI, collisions, lives, super mode, timer |
+| 6 | 13/10 – 19/10 | 14 | 20 | Ghost states, rings, texture packs, animations |
+| 7 | 20/10 – 26/10 | 35 | 49 | CI, mypy, leaderboard, settings, buttons, level-up UI |
+| 8 | 27/10 – 02/11 | 5 | 25 | Hover / click, optimisation, cheat menu |
+| 9 | 03/11 – 09/11 | 33 | 31 | All menus, interface manager, levels, build, resizable window |
+| 10 | 10/11 – 12/11 | 29 | 18 | Fullscreen, release CI, docstrings, final polish |
 
 ```mermaid
 xychart-beta
     title "Commits per week"
-    x-axis [W37, W38, W39, W40, W41, W42, W43, W44, W45, W46]
-    y-axis "Commits" 0 --> 80
-    bar [15, 14, 23, 28, 69, 37, 76, 38, 47, 36]
+    x-axis ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10"]
+    y-axis "Commits" 0 --> 90
+    bar [18, 16, 19, 36, 68, 34, 84, 30, 64, 47]
 ```
 
 ## Progress analysis
@@ -99,11 +104,15 @@ xychart-beta
 - **Weeks 1–4**: most of the time went into the **rendering engine**. Writing our own GPU
   renderer was slower than using a game library, but it was needed to respect the
   "MLX-like functions only" rule and it made every later UI screen easier.
-- **Week 5 (W41)** was the turning point: the game became playable, and the ghost AI was
+- **Week 5** was the turning point: the game became playable, and the ghost AI was
   done in a few days thanks to the `Maze` / `AI` / `A*` base built before.
 - **Weeks 6–8**: we added our own **ring progression** system; this was extra work beyond
   the subject, which pushed the menus to the end of the project.
 - **Weeks 8–9**: menus were built quickly from the Figma mockups and the shared `Button`
   widgets; the last days were used for connecting every screen, packaging and documentation.
+- **Week 10** (the last three days): no new features, only fixes found while
+  play-testing (movement queue, input clearing, restore-default button, level bar reset),
+  performance (only iterate primary colliders, copy only the dirty rectangle between
+  ping-pong framebuffers), an automatic GitHub release and a cleaner `argparse` CLI.
 - What we would do differently: build a minimal version of all menus earlier, to test the
   full game loop (menu → game → highscore → menu) sooner.
