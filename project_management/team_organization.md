@@ -32,7 +32,11 @@ Built from the commit history (`git log`), grouped by area.
   (`KeyManager`, `ActionKey`).
 - **UI**: `Button` / themes, lobby, victory, game over, how to play, leaderboard, settings
   (controls rebinding, resolution, texture packs), save run, cheat menu.
-- **Delivery**: PyInstaller build (`pak-man.spec`, `make build`), itch.io page.
+- **Delivery**: PyInstaller build (`pak-man.spec`, `make build`), GitHub Actions release
+  workflow (build + tagged GitHub Release on every push to `main`), itch.io page, README,
+  `argparse` command line, clean `KeyboardInterrupt` handling.
+- **Polish**: player movement queue, prev / next level cheats, renderer dirty-rectangle
+  optimisation, resolution setting (default 1920x1080).
 
 ### lgirard (B4nJuice)
 
@@ -49,6 +53,8 @@ Built from the commit history (`git log`), grouped by area.
 - **Ring progression**: `Amelioration`, `Skill`, rarities, Speed / Exp / Super-time / Luck /
   Power rings, level-up interface and ring cards, skills panel.
 - **Window**: resizable window, fullscreen, mouse position on a scaled screen.
+- **Polish**: collider optimisation (only primary / dynamic colliders), level-bar indicator,
+  key manager in the level-up interface, input and placeholder fixes.
 - **Code quality**: norm and mypy clean-up passes, PEP 257 docstrings.
 
 ### Together
@@ -73,12 +79,14 @@ flowchart LR
 - **Branches**: one per feature or fix (`feat/leaderboard-core`, `fix/lag`,
   `refactor/texture-managments`, …). `main` always stays playable.
 - **Commits**: Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`, `style:`).
-- **Pull requests**: ~90 PRs merged. Most of them (87 of 91) were merged by their author
+- **Pull requests**: 114 PRs merged. Most of them (110 of 114) were merged by their author
   once the CI passed; the other teammate followed the changes on GitHub and in our syncs.
   For a team of two working on separate areas, this kept us fast while CI protected `main`.
 - **Issues**: bugs and TODOs were moved from code comments to GitHub Issues
   (commit `fix: TODO -> github issues`, 2026-10-08).
 - **CI**: GitHub Actions runs `flake8` and `mypy` on every push to `main` and every PR.
+  A second workflow builds the game and publishes a tagged GitHub Release on every push to
+  `main` (Python pinned to 3.13 for the prebuilt `glcontext` wheels).
 
 ## Communication and decisions
 
