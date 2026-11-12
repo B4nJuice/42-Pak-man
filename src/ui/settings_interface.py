@@ -347,7 +347,7 @@ class SettingsInterface(Interface):
                         width=display_button_h - size.get(2),
                         height=display_button_h - size.get(2),
                         normal_color=Color(*config.settings_bg_secondary),
-                        on_click=_prev,
+                        on_click=_next,
                         texts=[
                             ButtonTextConfig(
                                 text='<',
@@ -367,7 +367,7 @@ class SettingsInterface(Interface):
                         width=display_button_h - size.get(2),
                         height=display_button_h - size.get(2),
                         normal_color=Color(*config.settings_bg_secondary),
-                        on_click=_next,
+                        on_click=_prev,
                         texts=[
                             ButtonTextConfig(
                                 text='>',
@@ -464,7 +464,6 @@ class SettingsInterface(Interface):
             ActionKey.MOVE_RIGHT,
             ActionKey.SELECT,
             ActionKey.BACK_PAUSE_RESUME,
-            ActionKey.REROLL,
         ]
 
         def _key_label(keys: list[int]) -> str:
@@ -741,10 +740,33 @@ class SettingsInterface(Interface):
                 return 'select'
             case ActionKey.BACK_PAUSE_RESUME:
                 return 'back_pause_resume'
-            case ActionKey.REROLL:
-                return 'reroll'
             case _:
                 raise ValueError(f'Unknown action {action!r}')
+
+    def _refresh_display_buttons(self) -> None:
+        """
+        Handle refresh display buttons.
+        """
+        display_settings = self.app.settings.get().display
+        for mesh in self.layer.meshes:
+            if isinstance(mesh, FontSequence):
+                if mesh.text == 'Window mode':
+                    mesh.set_sequence_text(
+                        'FULLSCREEN' if display_settings.full_screen
+                        else 'WINDOWED'
+                    )
+                elif mesh.text == 'Resolution':
+                    mesh.set_sequence_text(
+                        DisplaySettingsModel.resolution_label(
+                            display_settings.resolution
+                        )
+                    )
+                elif mesh.text == 'Texture pack':
+                    current_pack = self.app.texture.get_pack().root
+                    mesh.set_sequence_text(
+                        'DEFAULT' if current_pack == self._pending_pack_path
+                        else self._pending_pack_path.name.upper()
+                    )
 
     def _refresh_control_buttons(self) -> None:
         """
@@ -757,7 +779,6 @@ class SettingsInterface(Interface):
             ActionKey.MOVE_RIGHT,
             ActionKey.SELECT,
             ActionKey.BACK_PAUSE_RESUME,
-            ActionKey.REROLL,
         ]
 
         for index, action in enumerate(actions):
@@ -855,6 +876,7 @@ class SettingsInterface(Interface):
         Refresh the rendered state.
         """
         self._refresh_control_buttons()
+        self._refresh_display_buttons()
 
     def _exit(self) -> None:
         """
@@ -870,7 +892,7 @@ class SettingsInterface(Interface):
         self.app.settings.get().controls = ControlSettingsModel()
         self.app.settings.get().display = DisplaySettingsModel()
         self.app.settings.save()
-        self._refresh_control_buttons()
+        self.refresh()
 
     def _apply(self) -> None:
         """
@@ -901,3 +923,8 @@ class SettingsInterface(Interface):
             The current layer.
         """
         return self.layer
+
+    def display(self) -> None:
+        self.refresh()
+
+        return super().display()

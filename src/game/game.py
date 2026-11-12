@@ -71,7 +71,7 @@ class Game:
     _lobby_interface: LobbyInterface
     _save_run_interface: SaveRunInterface
 
-    def __init__(self, config: ConfigModel, screen: Screen, app: App) -> None:
+    def __init__(self, config: ConfigModel, screen: Screen, app: App,) -> None:
         """
         Initialize the instance.
 
@@ -81,7 +81,11 @@ class Game:
             app: Application instance that owns the object.
         """
         self._app = app
-        self._logger = Logger(name='Game', color=TColor.CYAN, verbose=True)
+        self._logger = Logger(
+            name='Game',
+            color=TColor.CYAN,
+            verbose=app.verbose
+        )
 
         self._app.settings.refresh_screen_resolution()
 

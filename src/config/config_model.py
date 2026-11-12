@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from typing import Self
+
+from pydantic import BaseModel, Field, model_validator
 
 from src.config.level_model import LevelModel
 
@@ -29,16 +31,44 @@ class ConfigModel(BaseModel):
         description='Maximum different amelioration a player can have.'
     )
 
-    screen_width: int = Field(
-        gt=100,
-        default=1280,
-        description='Width of the screen'
+    resolution: tuple[int, int] = Field(
+        default=(1920, 1080),
+        description='Current display resolution in 16:9 aspect ratio.'
     )
-    screen_height: int = Field(
-        gt=100,
-        default=720,
-        description='Height of the screen'
-    )
+
+    @property
+    def screen_width(self) -> int:
+        """
+        Handle screen width retrieval.
+
+        Returns:
+            The value produced by the screen width retrieval operation.
+        """
+        return self.resolution[0]
+
+    @property
+    def screen_height(self) -> int:
+        """
+        Handle screen height retrieval.
+
+        Returns:
+            The value produced by the screen height retrieval operation.
+        """
+        return self.resolution[1]
+
+    @model_validator(mode='after')
+    def check_screen_ratio(self) -> Self:
+        if self.screen_width * 9 != self.screen_height * 16:
+            raise ValueError(
+                'Screen dimensions must be in 16:9 aspect ratio.'
+            )
+
+        if self.screen_width < 640 or self.screen_height < 360:
+            raise ValueError(
+                'Resolution must be at least 640x360.'
+            )
+            return self
+        return self
 
     background: tuple[int, int, int] = Field(
         default=(13, 16, 38),

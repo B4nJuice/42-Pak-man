@@ -50,6 +50,8 @@ class CheatInterface(Interface):
     amelioration_icon: SimpleDisplayable
     amelioration_text: FontSequence
 
+    level_button: Button
+
     def __init__(self, game: 'Game') -> None:
         """
         Initialize the instance.
@@ -493,7 +495,7 @@ class CheatInterface(Interface):
 
         for button_params in buttons_params:
             if button_params['type'] == 'label':
-                self.layer.meshes.append(Button(
+                button = Button(
                     position=Position(
                         button_params['x'],
                         button_params['y']
@@ -531,7 +533,10 @@ class CheatInterface(Interface):
                             offset_x=(button_params['w'] // 2) - size.get(12),
                         ),
                     ]
-                ))
+                )
+                self.layer.meshes.append(button)
+                if button_params['content'] == 'Level 01':
+                    self.level_button = button
             else:
                 self.layer.meshes.append(Button(
                     position=Position(
@@ -718,6 +723,7 @@ class CheatInterface(Interface):
 
         self.sync_cheat_toggles()
         self.refresh_cheat_info()
+        self.refresh_level_status()
 
     def get_player(self) -> Player:
         """
@@ -819,12 +825,23 @@ class CheatInterface(Interface):
         Handle prev level.
         """
         self.game.prev_level()
+        self.refresh_level_status()
 
     def next_level(self) -> None:
         """
         Handle next level.
         """
         self.game.next_level()
+        self.refresh_level_status()
+
+    def refresh_level_status(self) -> None:
+        """
+        Refresh the currently selected level.
+        """
+        self.level_button.texts[0].text = (
+            f'Level {self.game._level_index + 1:02}'
+        )
+        self.level_button.refresh()
 
     def set_time_speed(self, value: float, log: bool = True) -> None:
         """
@@ -937,6 +954,9 @@ class CheatInterface(Interface):
         self.logger.info(
             f'Cheat menu opened ({self.get_active_cheats_count()} active)'
         )
+
+        self.refresh_cheat_info()
+        self.refresh_level_status()
 
         return super().display()
 
