@@ -37,6 +37,7 @@ class SettingsInterface(Interface):
     _capture_action: ActionKey | None
     _capture_slot: int | None
     _control_buttons: list[Button]
+    _display_value_texts: list[FontSequence]
     _pending_pack_path: Path
 
     def __init__(self, game: 'Game') -> None:
@@ -54,6 +55,7 @@ class SettingsInterface(Interface):
         self._capture_action = None
         self._capture_slot = None
         self._control_buttons = []
+        self._display_value_texts = []
 
         screen_width = self.game._screen.width
         screen_height = self.game._screen.height
@@ -297,6 +299,7 @@ class SettingsInterface(Interface):
                         + (display_button_h + display_gap) * idx,
                     ),
                 )
+                self._display_value_texts.append(value)
 
                 def _next() -> None:
                     """
@@ -748,25 +751,19 @@ class SettingsInterface(Interface):
         Handle refresh display buttons.
         """
         display_settings = self.app.settings.get().display
-        for mesh in self.layer.meshes:
-            if isinstance(mesh, FontSequence):
-                if mesh.text == 'Window mode':
-                    mesh.set_sequence_text(
-                        'FULLSCREEN' if display_settings.full_screen
-                        else 'WINDOWED'
-                    )
-                elif mesh.text == 'Resolution':
-                    mesh.set_sequence_text(
-                        DisplaySettingsModel.resolution_label(
-                            display_settings.resolution
-                        )
-                    )
-                elif mesh.text == 'Texture pack':
-                    current_pack = self.app.texture.get_pack().root
-                    mesh.set_sequence_text(
-                        'DEFAULT' if current_pack == self._pending_pack_path
-                        else self._pending_pack_path.name.upper()
-                    )
+        self._display_value_texts[0].set_sequence_text(
+            'FULLSCREEN' if display_settings.full_screen else 'WINDOWED'
+        )
+        self._display_value_texts[1].set_sequence_text(
+            DisplaySettingsModel.resolution_label(
+                display_settings.resolution
+            )
+        )
+        current_pack = self.app.texture.get_pack().root
+        self._display_value_texts[2].set_sequence_text(
+            'DEFAULT' if current_pack == self._pending_pack_path
+            else self._pending_pack_path.name.upper()
+        )
 
     def _refresh_control_buttons(self) -> None:
         """
